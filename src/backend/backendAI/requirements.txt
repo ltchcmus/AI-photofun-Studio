@@ -60,12 +60,13 @@ scikit-image==0.24.0
 # basicsr==1.4.2
 
 # ============================================================================
-# ASYNC TASK PROCESSING
+# ASYNC TASK PROCESSING (CELERY + REDIS)
 # ============================================================================
 celery==5.4.0
 redis==5.2.1
-django-celery-beat==2.7.0
-django-celery-results==2.5.1
+flower==2.0.1  # Celery monitoring tool
+django-celery-beat==2.7.0  # Optional: for periodic tasks
+django-celery-results==2.5.1  # Optional: store results in DB (not using)
 
 # ============================================================================
 # FILE STORAGE & CLOUD SERVICES

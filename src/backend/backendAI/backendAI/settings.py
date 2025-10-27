@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "apps.prompt_refinement",  # Standalone prompt refinement service
     "apps.image_generation",   # Standalone image generation service
     "apps.ai_gateway",          # Orchestration layer (no business logic)
+    "apps.ai_tasks",            # Celery + Redis task management (NO DATABASE)
 ]
 
 MIDDLEWARE = [
@@ -376,4 +377,44 @@ SWAGGER_SETTINGS = {
         'delete',
         'patch'
     ],
+}
+
+
+# ============================================================================
+# CELERY CONFIGURATION (Redis Broker + Result Backend)
+# ============================================================================
+
+# Celery broker (Redis)
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+
+# Celery result backend (Redis)
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
+
+# Task serialization
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ['json']
+
+# Timezone
+CELERY_TIMEZONE = 'UTC'
+CELERY_ENABLE_UTC = True
+
+# Result expiration (auto cleanup after 1 hour)
+CELERY_RESULT_EXPIRES = int(os.environ.get('CELERY_RESULT_EXPIRES', 3600))
+
+# Task execution
+CELERY_TASK_ACKS_LATE = True
+CELERY_TASK_REJECT_ON_WORKER_LOST = True
+
+# Worker settings
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1
+CELERY_WORKER_MAX_TASKS_PER_CHILD = 1000
+
+# Task routing (CPU vs GPU queues)
+CELERY_TASK_ROUTES = {
+    'apps.ai_tasks.tasks.process_image_generation': {'queue': 'gpu'},
+    'apps.ai_tasks.tasks.process_face_swap': {'queue': 'gpu'},
+    'apps.ai_tasks.tasks.process_style_transfer': {'queue': 'gpu'},
+    'apps.ai_tasks.tasks.process_background_removal': {'queue': 'cpu'},
+    'apps.ai_tasks.tasks.process_object_removal': {'queue': 'cpu'},
 }

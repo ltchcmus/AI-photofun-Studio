@@ -1,33 +1,9 @@
+"""
+AI Gateway Serializers
+
+VALIDATION ONLY - No database models (using Redis + Celery)
+"""
 from rest_framework import serializers
-from .models import ChatSession, ChatMessage, PromptTemplate
-
-
-class ChatSessionSerializer(serializers.ModelSerializer):
-    """Serializer for ChatSession"""
-    
-    class Meta:
-        model = ChatSession
-        fields = ['id', 'session_id', 'user', 'created_at', 'updated_at', 'is_active']
-        read_only_fields = ['id', 'created_at', 'updated_at']
-
-
-class ChatMessageSerializer(serializers.ModelSerializer):
-    """Serializer for ChatMessage"""
-    
-    class Meta:
-        model = ChatMessage
-        fields = [
-            'id', 'session', 'message_type', 'original_prompt', 'refined_prompt',
-            'detected_intent', 'intent_confidence', 'response_text', 'response_data',
-            'status', 'error_message', 'processing_time', 'generated_image',
-            'result_files', 'created_at', 'updated_at'
-        ]
-        read_only_fields = [
-            'id', 'refined_prompt', 'detected_intent', 'intent_confidence',
-            'response_text', 'response_data', 'status', 'error_message',
-            'processing_time', 'generated_image', 'result_files',
-            'created_at', 'updated_at'
-        ]
 
 
 class ChatRequestSerializer(serializers.Serializer):
@@ -72,12 +48,3 @@ class ChatResponseSerializer(serializers.Serializer):
     # Metadata
     processing_time = serializers.FloatField()
     timestamp = serializers.DateTimeField()
-
-
-class PromptTemplateSerializer(serializers.ModelSerializer):
-    """Serializer for PromptTemplate"""
-    
-    class Meta:
-        model = PromptTemplate
-        fields = '__all__'
-        read_only_fields = ['id', 'usage_count', 'created_at', 'updated_at']
