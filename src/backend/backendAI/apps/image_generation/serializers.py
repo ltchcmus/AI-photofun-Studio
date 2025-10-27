@@ -1,8 +1,9 @@
 """
 Serializers for Image Generation service
+
+Used for INPUT/OUTPUT validation (NO DATABASE)
 """
 from rest_framework import serializers
-from .models import ImageGenerationRequest
 
 
 class ImageGenerationRequestSerializer(serializers.Serializer):
@@ -70,20 +71,3 @@ class ImageGenerationResponseSerializer(serializers.Serializer):
     metadata = serializers.JSONField(required=False)
     error = serializers.CharField(required=False, allow_blank=True)
 
-
-class ImageGenerationStatusSerializer(serializers.ModelSerializer):
-    """Serializer for ImageGenerationRequest model"""
-    
-    class Meta:
-        model = ImageGenerationRequest
-        fields = [
-            'id', 'prompt', 'negative_prompt',
-            'width', 'height', 'num_inference_steps', 'guidance_scale', 'seed',
-            'generated_image', 'model_used', 'processing_time',
-            'status', 'error_message', 'metadata',
-            'created_at', 'updated_at'
-        ]
-        read_only_fields = [
-            'id', 'generated_image', 'model_used', 'processing_time',
-            'status', 'error_message', 'metadata', 'created_at', 'updated_at'
-        ]
