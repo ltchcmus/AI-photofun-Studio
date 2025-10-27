@@ -1,8 +1,9 @@
 """
 Serializers for Prompt Refinement service
+
+Used for INPUT/OUTPUT validation (NO DATABASE)
 """
 from rest_framework import serializers
-from .models import PromptRefinementRequest, PromptTemplate
 
 
 class PromptRefinementRequestSerializer(serializers.Serializer):
@@ -80,27 +81,3 @@ class NegativePromptExtractionResponseSerializer(serializers.Serializer):
     positive_prompt = serializers.CharField()
     negative_prompt = serializers.CharField()
 
-
-class PromptTemplateSerializer(serializers.ModelSerializer):
-    """Serializer for PromptTemplate model"""
-    
-    class Meta:
-        model = PromptTemplate
-        fields = [
-            'id', 'name', 'description', 'category',
-            'template', 'example_input', 'example_output',
-            'quality_keywords', 'style_keywords', 'negative_keywords',
-            'is_active', 'usage_count', 'created_at', 'updated_at'
-        ]
-        read_only_fields = ['id', 'usage_count', 'created_at', 'updated_at']
-
-
-class PromptTemplateApplyRequestSerializer(serializers.Serializer):
-    """Request to apply a template"""
-    
-    template_id = serializers.UUIDField(required=True)
-    variables = serializers.JSONField(
-        required=False,
-        default=dict,
-        help_text="Variables to fill in template"
-    )

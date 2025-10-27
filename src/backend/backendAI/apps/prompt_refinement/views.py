@@ -1,12 +1,17 @@
 """
 Prompt Refinement Views - NO DATABASE
 
-Stateless REST API endpoints
+Stateless REST API endpoints with INPUT VALIDATION
 """
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .service import get_service
+from .serializers import (
+    PromptRefinementRequestSerializer,
+    PromptValidationRequestSerializer,
+    NegativePromptExtractionRequestSerializer
+)
 import logging
 
 logger = logging.getLogger(__name__)
@@ -21,26 +26,28 @@ class PromptRefinementView(APIView):
         
         Body:
         {
-            "original_prompt": "a cat",
+            "prompt": "a cat",
             "context": {"style": "realistic"},
-            "method": "auto"
+            "method": "auto",
+            "extract_negative": true
         }
         """
         try:
-            data = request.data
-            original_prompt = data.get('original_prompt', '')
-            
-            if not original_prompt:
+            # Validate input using serializer
+            serializer = PromptRefinementRequestSerializer(data=request.data)
+            if not serializer.is_valid():
                 return Response(
-                    {'error': 'original_prompt is required'},
+                    {'error': 'Invalid input', 'details': serializer.errors},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             
+            validated_data = serializer.validated_data
+            
             service = get_service()
             result = service.refine_prompt(
-                original_prompt=original_prompt,
-                context=data.get('context'),
-                method=data.get('method', 'auto')
+                original_prompt=validated_data['prompt'],
+                context=validated_data.get('context'),
+                method=validated_data.get('method', 'auto')
             )
             
             return Response(result, status=status.HTTP_200_OK)
@@ -66,16 +73,18 @@ class PromptValidationView(APIView):
         }
         """
         try:
-            prompt = request.data.get('prompt', '')
-            
-            if not prompt:
+            # Validate input
+            serializer = PromptValidationRequestSerializer(data=request.data)
+            if not serializer.is_valid():
                 return Response(
-                    {'error': 'prompt is required'},
+                    {'error': 'Invalid input', 'details': serializer.errors},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             
+            validated_data = serializer.validated_data
+            
             service = get_service()
-            result = service.validate_prompt(prompt)
+            result = service.validate_prompt(validated_data['prompt'])
             
             return Response(result, status=status.HTTP_200_OK)
             
@@ -100,16 +109,18 @@ class ExtractNegativePromptView(APIView):
         }
         """
         try:
-            prompt = request.data.get('prompt', '')
-            
-            if not prompt:
+            # Validate input
+            serializer = NegativePromptExtractionRequestSerializer(data=request.data)
+            if not serializer.is_valid():
                 return Response(
-                    {'error': 'prompt is required'},
+                    {'error': 'Invalid input', 'details': serializer.errors},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             
+            validated_data = serializer.validated_data
+            
             service = get_service()
-            positive, negative = service.extract_negative_prompt(prompt)
+            positive, negative = service.extract_negative_prompt(validated_data['prompt'])
             
             return Response({
                 'positive_prompt': positive,
