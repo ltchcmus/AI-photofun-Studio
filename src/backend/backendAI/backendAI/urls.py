@@ -55,6 +55,9 @@ urlpatterns = [
     # AI Gateway - Orchestration Layer
     path('api/v1/ai-gateway/', include('apps.ai_gateway.urls')),
     
+    # AI Tasks - Celery + Redis (Async Task Management)
+    path('api/v1/tasks/', include('apps.ai_tasks.urls')),
+    
     # path('api/v1/object-removal/', include('apps.object_removal.urls')),
     # path('api/v1/style-transfer/', include('apps.style_transfer.urls')),
     # path('api/v1/image-enhancement/', include('apps.image_enhancement.urls')),
