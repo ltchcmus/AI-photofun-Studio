@@ -10,7 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +27,7 @@ SECRET_KEY = "django-insecure-(x2q%0-9oh7r=0klrzt0#f4^kh2rhy_ajje#uow5racu$ju^3k
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']  # Update in production
 
 
 # Application definition
@@ -37,16 +39,35 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    
+    # Third-party apps
+    "rest_framework",
+    "corsheaders",
+    "django_filters",
+    "drf_yasg",  # API documentation
+    
+    # Local apps
+    "apps.image_processing",
+    "apps.face_swap",
+    "apps.background_removal",
+    "apps.object_removal",
+    "apps.style_transfer",
+    "apps.image_enhancement",
+    "apps.prompt_refinement",  # Standalone prompt refinement service
+    "apps.image_generation",   # Standalone image generation service
+    "apps.ai_gateway",          # Orchestration layer (no business logic)
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # CORS middleware
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "core.middleware.RequestLoggingMiddleware",  # Custom logging middleware
 ]
 
 ROOT_URLCONF = "backendAI.urls"
@@ -74,10 +95,23 @@ WSGI_APPLICATION = "backendAI.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("DB_NAME", "backendai_db"),
+        "USER": os.environ.get("DB_USER", "postgres"),
+        "PASSWORD": os.environ.get("DB_PASSWORD", "postgres"),
+        "HOST": os.environ.get("DB_HOST", "localhost"),
+        "PORT": os.environ.get("DB_PORT", "5432"),
     }
 }
+
+# Fallback to SQLite for development
+if os.environ.get("USE_SQLITE", "False") == "True":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
 # Password validation
@@ -120,3 +154,226 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# ============================================================================
+# REST FRAMEWORK CONFIGURATION
+# ============================================================================
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',  # Uncomment if using JWT
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',  # Change in production
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    'EXCEPTION_HANDLER': 'core.exceptions.custom_exception_handler',
+}
+
+
+# ============================================================================
+# CORS CONFIGURATION
+# ============================================================================
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:5173",  # Vite default port
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5173",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+
+# ============================================================================
+# MEDIA FILES CONFIGURATION
+# ============================================================================
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# ============================================================================
+# STATIC FILES CONFIGURATION
+# ============================================================================
+
+STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+
+# ============================================================================
+# AI/ML MODELS CONFIGURATION
+# ============================================================================
+
+ML_MODELS_DIR = BASE_DIR / 'ml_models'
+
+# Create directories if they don't exist
+os.makedirs(MEDIA_ROOT, exist_ok=True)
+os.makedirs(ML_MODELS_DIR, exist_ok=True)
+
+# Model configurations
+AI_MODEL_CONFIGS = {
+    'face_swap': {
+        'model_path': ML_MODELS_DIR / 'face_swap',
+        'use_gpu': True,
+        'max_image_size': 2048,
+    },
+    'background_removal': {
+        'model_path': ML_MODELS_DIR / 'background_removal',
+        'model_name': 'u2net',
+        'use_gpu': True,
+    },
+    'object_removal': {
+        'model_path': ML_MODELS_DIR / 'object_removal',
+        'model_name': 'lama',
+        'use_gpu': True,
+    },
+    'style_transfer': {
+        'model_path': ML_MODELS_DIR / 'style_transfer',
+        'use_gpu': True,
+    },
+    'image_enhancement': {
+        'model_path': ML_MODELS_DIR / 'image_enhancement',
+        'model_name': 'real_esrgan',
+        'use_gpu': True,
+    },
+}
+
+# GPU Configuration
+USE_GPU = os.environ.get('USE_GPU', 'True') == 'True'
+GPU_DEVICE_ID = int(os.environ.get('GPU_DEVICE_ID', 0))
+
+
+# ============================================================================
+# LOGGING CONFIGURATION
+# ============================================================================
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs' / 'debug.log',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console', 'file'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': False,
+        },
+        'apps': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
+
+# Create logs directory
+os.makedirs(BASE_DIR / 'logs', exist_ok=True)
+
+
+# ============================================================================
+# CELERY CONFIGURATION (for async task processing)
+# ============================================================================
+
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+
+
+# ============================================================================
+# CACHE CONFIGURATION
+# ============================================================================
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': os.environ.get('REDIS_URL', 'redis://localhost:6379/1'),
+    }
+}
+
+
+# ============================================================================
+# API DOCUMENTATION (Swagger/OpenAPI)
+# ============================================================================
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Basic': {
+            'type': 'basic'
+        },
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    },
+    'USE_SESSION_AUTH': True,
+    'JSON_EDITOR': True,
+    'SUPPORTED_SUBMIT_METHODS': [
+        'get',
+        'post',
+        'put',
+        'delete',
+        'patch'
+    ],
+}
