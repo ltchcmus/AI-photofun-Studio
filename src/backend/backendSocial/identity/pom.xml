@@ -8,7 +8,7 @@
         <version>3.5.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>congbooks</groupId>
+    <groupId>service</groupId>
     <artifactId>identity</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>identity</name>

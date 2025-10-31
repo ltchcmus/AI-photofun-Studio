@@ -25,7 +25,8 @@ public enum ErrorCode {
     USERNAME_OR_EMAIL_REQUIRED(1019, "Username or email is required", HttpStatus.BAD_REQUEST),
     INCORRECT_ACCOUNT(1020, "Username/email or password incorrect", HttpStatus.BAD_REQUEST),
     INTERNAL_SERVER_ERROR(1500, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
-    UNAUTHORIZED(1501, "Unauthorized access", HttpStatus.UNAUTHORIZED)
+    UNAUTHORIZED(1501, "Unauthorized access", HttpStatus.UNAUTHORIZED),
+    FAILED_TO_CREATE_PROFILE(1502, "Failed to create profile", HttpStatus.INTERNAL_SERVER_ERROR)
     ;
 
 

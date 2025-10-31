@@ -9,6 +9,8 @@ config:
     secure: ${COOKIE_SECURE:false}
     same-site: ${COOKIE_SAME_SITE:Lax}
     domain: ${COOKIE_DOMAIN:}
+  http:
+    profile: ${PROFILE_SERVICE_URL:http://localhost:8081/profiles}
 
   jwt:
     secret: ${JWT_SECRET:83dc48544aeb79bb92fb8f7271d4cbeb825e5ec19ce7f0b4c1be2048d1bd98671fc1e39e2a0a97c4d7d0a20a63b580e7c238f5ba880bcd2b6a091fd79f72e3e1}

@@ -5,9 +5,12 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import service.identity.DTOs.request.RegisterUserRequest;
+import service.identity.DTOs.request.profile.ProfileCreateRequest;
+import service.identity.DTOs.response.GetMeResponse;
 import service.identity.DTOs.response.GetUserResponse;
 import service.identity.DTOs.response.RegisterUserResponse;
 import service.identity.entity.User;
@@ -16,6 +19,7 @@ import service.identity.exception.ErrorCode;
 import service.identity.helper.MapperHelper;
 import service.identity.mapper.UserMapper;
 import service.identity.repository.UserRepository;
+import service.identity.repository.http.ProfileClient;
 
 import java.util.List;
 
@@ -28,6 +32,7 @@ public class UserService {
     MapperHelper mapperHelper;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
+    ProfileClient profileClient;
 
 
     public RegisterUserResponse register(RegisterUserRequest registerUserRequest){
@@ -54,6 +59,21 @@ public class UserService {
         // Map entity to response
         RegisterUserResponse response = userMapper.toRegisterUserResponse(savedUser);
         response.setRoles(mapperHelper.mapRoleResponseFromRole(savedUser.getRoles()));
+
+
+        ProfileCreateRequest profileCreateRequest = ProfileCreateRequest.builder()
+                .email(response.getEmail())
+                .userId(response.getUserId())
+                .build();
+
+        try{
+            profileClient.create(profileCreateRequest);
+        }
+        catch(Exception e){
+            log.error("Error creating profile for user {}: {}", response.getUserId(), e.getMessage());
+            userRepository.delete(user);
+            throw new AppException(ErrorCode.FAILED_TO_CREATE_PROFILE);
+        }
         return response;
     }
 
@@ -75,6 +95,15 @@ public class UserService {
             response.setRoles(mapperHelper.mapRoleResponseFromRole(user.getRoles()));
             return response;
         }).toList();
+    }
+
+
+    @PostAuthorize("returnObject.userId == authentication.name or hasRole('ADMIN')")
+    public GetMeResponse getMe(){
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        return userMapper.toGetMeResponse(user);
     }
 
 }
