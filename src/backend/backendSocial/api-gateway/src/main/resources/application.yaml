@@ -1,0 +1,20 @@
+server:
+  port: ${PORT:8888}
+  servlet:
+    context-path: /api-gateway
+config:
+  prefix: /api/v1
+  remove-prefix: 2
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: identity-service
+          uri: ${IDENTITY_SERVICE_URL:http://localhost:8080}
+          predicates:
+               - Path=${config.prefix}/identity/**
+          filters:
+                - StripPrefix=${config.remove-prefix}

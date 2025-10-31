@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="740a1931-dd5b-46a1-9947-5fe7d5aa7c77" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/backendSocial.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/copilot.data.migration.agent.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/copilot.data.migration.ask.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/copilot.data.migration.ask2agent.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/copilot.data.migration.edit.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/configuration/ConfigGlobal.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/configuration/WebGlobalFilter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/exception/AppException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/exception/ErrorCode.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/exception/GlobalException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/exception/Response.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/HttpResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/request/CreateAuthorityRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/request/CreateRoleRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/request/LoginRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/request/RegisterUserRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/AuthorityResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/CreateAuthorityResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/CreateRoleResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/GetUserResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/LoginResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/RegisterUserResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/RoleResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/configuration/ConfigGlobal.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/configuration/CookieConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/configuration/CustomValidatorUsername.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/configuration/SecurityGlobal.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/configuration/ValidatetorUsername.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/controller/AuthController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/controller/AuthorityController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/controller/RoleController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/controller/UserController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/entity/Authority.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/entity/RemoveToken.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/entity/Role.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/entity/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/exception/AppException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/exception/ErrorCode.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/exception/GlobalException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/helper/MapperHelper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/mapper/AuthorityMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/mapper/RoleMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/mapper/UserMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/AuthorityRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/RemoveTokenRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/RoleRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/UserRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/AuthService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/AuthorityService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/RoleService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/UserService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/utils/CookieUtils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/utils/Utils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/resources/db/migration/V1__Create_remove_tokens_table_and_trigger.sql" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Record" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 7
+}]]></component>
+  <component name="ProjectId" id="34nDTJc4ZGosOuS006BDKRLeMCx" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.gateway.executor": "Run",
+    "Application.identity.executor": "Run",
+    "Maven.api-gateway [clean].executor": "Run",
+    "Maven.api-gateway [compile].executor": "Run",
+    "Maven.identity [clean].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/ACER/Desktop/Project/NMCNPM/AI photofun Studio/src/backend/backendSocial/identity/src/main/java/service/identity/utils",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\identity\src\main\java\service\identity\utils" />
+      <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\api-gateway\src\main\java\service\api_gateway\exception" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.identity">
+    <configuration name="gateway" type="Application" factoryName="Application">
+      <option name="ALTERNATIVE_JRE_PATH" value="temurin-21" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="service.api_gateway.ApiGatewayApplication" />
+      <module name="api-gateway" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="identity" type="Application" factoryName="Application">
+      <option name="ALTERNATIVE_JRE_PATH" value="temurin-21" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="service.identity.IdentityApplication" />
+      <module name="identity" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.identity" />
+      <item itemvalue="Application.gateway" />
+    </list>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="740a1931-dd5b-46a1-9947-5fe7d5aa7c77" name="Changes" comment="" />
+      <created>1761840450618</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1761840450618</updated>
+    </task>
+    <servers />
+  </component>
+</project>
