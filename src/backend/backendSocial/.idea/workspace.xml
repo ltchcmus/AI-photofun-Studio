@@ -4,42 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="740a1931-dd5b-46a1-9947-5fe7d5aa7c77" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/request/profile/ProfileCreateRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/GetMeResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/profile/ProfileCreateResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/configuration/AutoAddHeader.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/http/ProfileClient.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/DTOs/HttpCode.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/DTOs/HttpResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/DTOs/request/ProfileCreateRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/DTOs/request/ProfileUpdateRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/DTOs/response/GetProfileResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/DTOs/response/ProfileCreateResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/DTOs/response/ProfileUpdateResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/configuration/CustomEntryPoint.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/configuration/CustomJwtDecoder.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/configuration/SecurityGlobal.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/controller/ProfileController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/entity/Profile.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/exception/AppException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/exception/ErrorCode.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/exception/GlobalException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/mapper/ProfileMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/repository/ProfileRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/service/ProfileService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/identity/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/IdentityApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/IdentityApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/exception/ErrorCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/exception/ErrorCode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/mapper/UserMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/mapper/UserMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/resources/application.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/profile/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/profile/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/profile/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/profile/src/main/resources/application.yaml" afterDir="false" />
-    </list>
+    <list default="true" id="740a1931-dd5b-46a1-9947-5fe7d5aa7c77" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
