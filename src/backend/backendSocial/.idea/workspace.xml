@@ -5,34 +5,40 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="740a1931-dd5b-46a1-9947-5fe7d5aa7c77" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/DTOs/response/IntrospectIgnoreRefreshResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/DTOs/response/IntrospectRefreshResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/repository/http/HttpClientIdentity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/IntrospectIgnoreRefreshResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/IntrospectRefreshResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/configuration/CustomEntryPoint.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/configuration/CustomJwtDecoder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/request/profile/ProfileCreateRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/GetMeResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/profile/ProfileCreateResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/configuration/AutoAddHeader.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/http/ProfileClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/DTOs/HttpCode.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/DTOs/HttpResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/DTOs/request/ProfileCreateRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/DTOs/request/ProfileUpdateRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/DTOs/response/GetProfileResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/DTOs/response/ProfileCreateResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/DTOs/response/ProfileUpdateResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/configuration/CustomEntryPoint.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/configuration/CustomJwtDecoder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/configuration/SecurityGlobal.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/controller/ProfileController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/entity/Profile.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/exception/AppException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/exception/ErrorCode.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/exception/GlobalException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/mapper/ProfileMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/repository/ProfileRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/service/ProfileService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/configuration/ConfigGlobal.java" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/configuration/ConfigGlobal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/configuration/WebGlobalFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/configuration/WebGlobalFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/exception/GlobalException.java" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/exception/GlobalException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/exception/Response.java" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/exception/HttpResponse.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/configuration/SecurityGlobal.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/configuration/SecurityGlobal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/controller/AuthorityController.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/controller/AuthorityController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/controller/RoleController.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/controller/RoleController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/entity/RemoveToken.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/entity/RemoveToken.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/identity/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/IdentityApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/IdentityApplication.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/exception/ErrorCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/exception/ErrorCode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/exception/GlobalException.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/exception/GlobalException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/RemoveTokenRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/RemoveTokenRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/AuthService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/AuthorityService.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/AuthorityService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/RoleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/RoleService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/mapper/UserMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/mapper/UserMapper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/utils/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/utils/Utils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/profile/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/profile/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/profile/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/profile/src/main/resources/application.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,6 +69,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.Profile.executor": "Run",
     "Application.gateway.executor": "Run",
     "Application.identity.executor": "Run",
     "Maven.api-gateway [clean].executor": "Run",
@@ -75,7 +82,7 @@
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/ACER/Desktop/Project/NMCNPM/AI photofun Studio/src/backend/backendSocial/identity/src/main/java/service/identity/utils",
+    "last_opened_file_path": "C:/Users/ACER/Desktop/Project/NMCNPM/AI photofun Studio/src/backend/backendSocial/profile/src/main/java/service/profile/configuration",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
@@ -84,14 +91,26 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\identity\src\main\java\service\identity\utils" />
-      <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\api-gateway\src\main\java\service\api_gateway\exception" />
+      <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\profile\src\main\java\service\profile\configuration" />
+      <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\profile\src\main\java\service\profile\exception" />
+      <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\profile\src\main\java\service\profile\DTOs" />
+      <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\profile\src\main\java\service\profile\DTOs\response" />
+      <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\profile\src\main\java\service\profile\DTOs\request" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="service.api_gateway.DTOs.response" />
     </key>
   </component>
   <component name="RunManager" selected="Application.identity">
+    <configuration name="Profile" type="Application" factoryName="Application">
+      <option name="ALTERNATIVE_JRE_PATH" value="temurin-21" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="service.profile.ProfileApplication" />
+      <module name="profile" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="gateway" type="Application" factoryName="Application">
       <option name="ALTERNATIVE_JRE_PATH" value="temurin-21" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
@@ -112,6 +131,7 @@
     </configuration>
     <list>
       <item itemvalue="Application.identity" />
+      <item itemvalue="Application.Profile" />
       <item itemvalue="Application.gateway" />
     </list>
   </component>
