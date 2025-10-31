@@ -3,6 +3,8 @@ package service.identity.service;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import service.identity.DTOs.request.RegisterUserRequest;
@@ -55,6 +57,7 @@ public class UserService {
         return response;
     }
 
+    @PostAuthorize("returnObject.userId == authentication.name or hasRole('ADMIN')")
     public GetUserResponse getUserById(String userId){
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -64,6 +67,7 @@ public class UserService {
         return response;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<GetUserResponse> getAllUsers(){
         List<User> users = userRepository.findAll();
         return users.stream().map(user -> {

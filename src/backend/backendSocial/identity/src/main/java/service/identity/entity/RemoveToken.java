@@ -1,6 +1,7 @@
 package service.identity.entity;
 
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -21,6 +22,7 @@ import java.time.Instant;
 @Table(name = "remove_tokens")
 public class RemoveToken {
     @Id
+    @Column(length = 3000)
     String token;
 
     Instant removeAt;

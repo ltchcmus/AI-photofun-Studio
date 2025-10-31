@@ -44,7 +44,7 @@ public class Utils {
         StringJoiner scope = new StringJoiner(" ");
         Set<Role> roles = user.getRoles();
         for (Role role : roles){
-            String roleName = "ROLE_" + role.getDescription();
+            String roleName = "ROLE_" + role.getRoleName();
             scope.add(roleName);
             for(Authority authority : role.getAuthorities()){
                 scope.add(authority.getAuthorityName());
@@ -64,7 +64,7 @@ public class Utils {
                 .issueTime(Date.from(Instant.now()))
                 .jwtID(String.valueOf(UUID.randomUUID()))
                 .audience("NMCNPM-CLIENT")
-                .claim("SCOPE", generateScope(user))
+                .claim("scope", generateScope(user))
                 .build();
 
 
@@ -75,5 +75,7 @@ public class Utils {
 
         return jwtObject.serialize();
     }
+
+
 
 }

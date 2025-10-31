@@ -3,6 +3,8 @@ server:
   servlet:
     context-path: /api-gateway
 config:
+  http:
+    identity: ${IDENTITY_SERVICE_URL:http://localhost:8080/identity}
   prefix: /api/v1
   remove-prefix: 2
 

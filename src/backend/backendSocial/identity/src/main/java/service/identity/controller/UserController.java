@@ -32,7 +32,7 @@ public class UserController {
             .build();
     }
 
-    @GetMapping("/get/:id")
+    @GetMapping("/get/{id}")
     HttpResponse<GetUserResponse> getUserById(@PathVariable("id") String userId) {
         return HttpResponse.<GetUserResponse>builder()
             .result(userService.getUserById(userId))

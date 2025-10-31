@@ -10,6 +10,15 @@ import service.identity.DTOs.HttpResponse;
 @ControllerAdvice
 public class GlobalException {
 
+    @ExceptionHandler(value = RuntimeException.class)
+    ResponseEntity<HttpResponse<?>> handleRuntimeException(RuntimeException exception) {
+        HttpResponse<?> httpResponse = HttpResponse.builder()
+                .code(ErrorCode.INTERNAL_SERVER_ERROR.getCode())
+                .message(exception.getMessage())
+                .build();
+        return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getHttpStatus()).body(httpResponse);
+    }
+
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     ResponseEntity<HttpResponse<?>> handleValidationException(MethodArgumentNotValidException exception) {
         String errorMessage = exception.getBindingResult().getAllErrors().get(0).getDefaultMessage();

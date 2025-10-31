@@ -23,7 +23,9 @@ public enum ErrorCode {
     PASSWORDS_DO_NOT_MATCH(1017, "Passwords do not match", HttpStatus.BAD_REQUEST),
     CONFIRM_PASSWORD_REQUIRED(1018, "Confirm password is required", HttpStatus.BAD_REQUEST),
     USERNAME_OR_EMAIL_REQUIRED(1019, "Username or email is required", HttpStatus.BAD_REQUEST),
-    INCORRECT_ACCOUNT(1020, "Username/email or password incorrect", HttpStatus.BAD_REQUEST)
+    INCORRECT_ACCOUNT(1020, "Username/email or password incorrect", HttpStatus.BAD_REQUEST),
+    INTERNAL_SERVER_ERROR(1500, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
+    UNAUTHORIZED(1501, "Unauthorized access", HttpStatus.UNAUTHORIZED)
     ;
 
 

@@ -6,5 +6,5 @@ import service.identity.entity.RemoveToken;
 
 @Repository
 public interface RemoveTokenRepository extends JpaRepository<RemoveToken, String> {
-
+    boolean existsByToken(String token);
 }

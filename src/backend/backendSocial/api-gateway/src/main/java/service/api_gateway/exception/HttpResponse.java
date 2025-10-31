@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Response<T> {
+public class HttpResponse<T> {
     int code = 1000;
     String message = "Success";
     T result;
