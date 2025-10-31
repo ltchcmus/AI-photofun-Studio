@@ -23,17 +23,19 @@ public class RoleController {
     @PostMapping("/create")
     HttpResponse<CreateRoleResponse> create(@RequestBody CreateRoleRequest request){
         return HttpResponse.<CreateRoleResponse>builder()
-            .result(roleService.create(request))
-            .message("Role created successfully")
-            .build();
+                .code(1000)
+                .result(roleService.create(request))
+                .message("Role created successfully")
+                .build();
     }
 
     @GetMapping("/get-all")
     HttpResponse<List<RoleResponse>> getAll(){
         return HttpResponse.<List<RoleResponse>>builder()
-            .result(roleService.getAll())
-            .message("Roles fetched successfully")
-            .build();
+                .code(1000)
+                .result(roleService.getAll())
+                .message("Roles fetched successfully")
+                .build();
     }
 
 }

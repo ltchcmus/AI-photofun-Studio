@@ -3,6 +3,7 @@ package service.identity.service;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import service.identity.DTOs.request.CreateRoleRequest;
 import service.identity.DTOs.response.CreateRoleResponse;
@@ -25,6 +26,8 @@ public class RoleService {
     RoleMapper roleMapper;
     MapperHelper mapperHelper;
 
+
+    @PreAuthorize("hasRole('ADMIN')")
     public CreateRoleResponse create(CreateRoleRequest createRoleRequest){
 
         if(roleRepository.existsByRoleName(createRoleRequest.getRoleName())){
@@ -38,6 +41,7 @@ public class RoleService {
         return response;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<RoleResponse> getAll(){
         List<Role> roles = roleRepository.findAll();
         return roles.stream()

@@ -3,6 +3,9 @@ package service.identity.service;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import service.identity.DTOs.request.CreateAuthorityRequest;
 import service.identity.DTOs.response.AuthorityResponse;
@@ -23,6 +26,7 @@ public class AuthorityService {
     AuthorityRepository authorityRepository;
     AuthorityMapper authorityMapper;
 
+    @PreAuthorize("hasRole('ADMIN')")
     public CreateAuthorityResponse create(CreateAuthorityRequest createAuthorityRequest){
         if(authorityRepository.existsByAuthorityName(createAuthorityRequest.getAuthorityName())){
             throw new AppException(ErrorCode.AUTHORITY_ALREADY_EXISTS);
@@ -33,7 +37,9 @@ public class AuthorityService {
         );
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<AuthorityResponse> getAll(){
+
         List<Authority> authorities = authorityRepository.findAll();
         return authorities.stream()
             .map(authorityMapper::toAuthorityResponse)
