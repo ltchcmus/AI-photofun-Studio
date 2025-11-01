@@ -19,7 +19,7 @@ import java.time.Instant;
 @AllArgsConstructor
 public class Post {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    //@GeneratedValue(strategy = GenerationType.UUID)
     String postId;
 
     @Column(nullable = false)

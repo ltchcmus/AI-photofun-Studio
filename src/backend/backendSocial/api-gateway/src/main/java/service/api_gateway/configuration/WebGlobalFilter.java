@@ -25,8 +25,9 @@ class WebGlobalFilter implements GlobalFilter, Ordered {
     HttpClientIdentity httpClientIdentity;
 
     static final String[] PUBLIC_URLS = {
-            "identity/auth/login",
-            "identity/users/register",
+            "/identity/auth/login",
+            "/identity/users/register",
+            "/posts/download/**",
     };
 
     @NonFinal
@@ -55,8 +56,11 @@ class WebGlobalFilter implements GlobalFilter, Ordered {
 
         String path = exchange.getRequest().getPath().toString();
         for(String url : PUBLIC_URLS){
-            String realPath = prefix + "/" + url;
-            if(path.contains(realPath)) return chain.filter(exchange);
+            String realPath = prefix + url;
+            if(path.matches(realPath.replace("**", ".*"))){
+                log.info("Public URL accessed: {}", path);
+                return chain.filter(exchange);
+            }
         }
 
         if(token.isEmpty()){

@@ -42,15 +42,18 @@ public class PostService {
     public CreatePostResponse create(CreatePostRequest createPostRequest){
         MultipartFile image = createPostRequest.getImage();
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        String uuid = UUID.randomUUID().toString();
         CreatePostResponse createPostResponse;
         try{
-            HttpResponse<UploadFileResponse> uploadFileResponse = fileClient.uploadFile(userId, image);
+            HttpResponse<UploadFileResponse> uploadFileResponse = fileClient.uploadFile(uuid, image);
             if(uploadFileResponse.getCode() != 1000){
                 log.error("File service returned error code while uploading image: {}", uploadFileResponse.getCode());
                 throw new AppException(ErrorCode.DONT_CREATE_POST);
             }
             String imageUrl = uploadFileResponse.getResult().getImage();
             Post post = Post.builder()
+                    //a post match a file
+                    .postId(uuid)
                     .userId(userId)
                     .caption(createPostRequest.getCaption())
                     .imageUrl(imageUrl)
@@ -109,9 +112,9 @@ public class PostService {
                 .build();
     }
 
-    public ResponseEntity<Resource> downloadImage(String uuid) throws MalformedURLException {
-        Post post = postRepository.findById(uuid).orElseThrow(() -> {
-            log.error("Post not found with id: {}", uuid);
+    public ResponseEntity<Resource> downloadImage(String postId) throws MalformedURLException {
+        Post post = postRepository.findById(postId).orElseThrow(() -> {
+            log.error("Post not found with id: {}", postId);
             throw new AppException(ErrorCode.POST_NOT_FOUND);
         });
 
