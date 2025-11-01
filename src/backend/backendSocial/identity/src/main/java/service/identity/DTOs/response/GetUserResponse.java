@@ -15,5 +15,6 @@ public class GetUserResponse {
     String username;
     String email;
     String fullName;
+    String avatarUrl;
     Set<RoleResponse> roles;
 }

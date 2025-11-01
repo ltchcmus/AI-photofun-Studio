@@ -2,6 +2,10 @@ server:
   port: ${PORT:8888}
   servlet:
     context-path: /api-gateway
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
 config:
   http:
     identity: ${IDENTITY_SERVICE_URL:http://localhost:8080/identity}
@@ -20,9 +24,17 @@ spring:
                - Path=${config.prefix}/identity/**
           filters:
                 - StripPrefix=${config.remove-prefix}
+
         - id: profile-service
           uri: ${PROFILE_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=${config.prefix}/profiles/**
+          filters:
+            - StripPrefix=${config.remove-prefix}
+
+        - id: post-service
+          uri: ${POST_SERVICE_URL:http://localhost:8082}
+          predicates:
+            - Path=${config.prefix}/posts/**
           filters:
             - StripPrefix=${config.remove-prefix}

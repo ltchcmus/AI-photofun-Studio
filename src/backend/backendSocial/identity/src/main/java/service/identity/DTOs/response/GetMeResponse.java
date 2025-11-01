@@ -12,4 +12,5 @@ public class GetMeResponse {
     String userId;
     String username;
     String email;
+    String avatarUrl;
 }

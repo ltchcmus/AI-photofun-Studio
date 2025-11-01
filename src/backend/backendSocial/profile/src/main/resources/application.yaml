@@ -4,7 +4,8 @@ server:
         context-path: /profiles
 
 config:
-
+  http:
+    file: https://file-service-cdal.onrender.com
 
 spring:
   application:

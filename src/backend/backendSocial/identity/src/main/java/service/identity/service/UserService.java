@@ -8,19 +8,26 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import service.identity.DTOs.HttpResponse;
+import service.identity.DTOs.request.ChangePasswordRequest;
 import service.identity.DTOs.request.RegisterUserRequest;
 import service.identity.DTOs.request.profile.ProfileCreateRequest;
 import service.identity.DTOs.response.GetMeResponse;
 import service.identity.DTOs.response.GetUserResponse;
 import service.identity.DTOs.response.RegisterUserResponse;
+import service.identity.DTOs.response.UploadAvatarResponse;
+import service.identity.DTOs.response.file.UploadFileResponse;
 import service.identity.entity.User;
 import service.identity.exception.AppException;
 import service.identity.exception.ErrorCode;
 import service.identity.helper.MapperHelper;
 import service.identity.mapper.UserMapper;
 import service.identity.repository.UserRepository;
+import service.identity.repository.http.FileClient;
 import service.identity.repository.http.ProfileClient;
 
+import javax.print.attribute.standard.Media;
 import java.util.List;
 
 @Service
@@ -31,6 +38,7 @@ public class UserService {
     UserRepository userRepository;
     MapperHelper mapperHelper;
     UserMapper userMapper;
+    FileClient fileClient;
     PasswordEncoder passwordEncoder;
     ProfileClient profileClient;
 
@@ -106,4 +114,60 @@ public class UserService {
         return userMapper.toGetMeResponse(user);
     }
 
+    @PreAuthorize("isAuthenticated()")
+    public boolean changePassword(ChangePasswordRequest changePasswordRequest){
+        String oldPassword = changePasswordRequest.getOldPassword();
+        String newPassword = changePasswordRequest.getNewPassword();
+        String confirmPassword = changePasswordRequest.getConfirmNewPassword();
+
+        if(newPassword == null || newPassword.isEmpty() || confirmPassword == null
+                || confirmPassword.isEmpty() || oldPassword == null || oldPassword.isEmpty()){
+            throw new AppException(ErrorCode.CANT_BE_BLANK);
+        }
+
+        if(!newPassword.equals(confirmPassword)){
+            throw new AppException(ErrorCode.PASSWORDS_DO_NOT_MATCH);
+        }
+
+        if(newPassword.equals(oldPassword)){
+            throw new AppException(ErrorCode.NEW_PASSWORD_SAME_AS_OLD);
+        }
+
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        log.info("Changing password for user with userId = {}", user.getUserId());
+        log.info("Changing password for user with username = {}", user.getUsername());
+
+        // Verify old password matches current password in database
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new AppException(ErrorCode.OLD_PASSWORD_INCORRECT);
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        return true;
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    public UploadAvatarResponse uploadAvatar(MultipartFile file){
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        HttpResponse<UploadFileResponse> response = fileClient.uploadFile(userId, file);
+        if(response.getCode() != 1000){
+            throw new AppException(ErrorCode.FILE_UPLOAD_FAILED);
+        }
+        String avatarUrl = response.getResult().getImage();
+
+        UploadAvatarResponse avatarResponse = UploadAvatarResponse.builder()
+                .avatarUrl(avatarUrl)
+                .build();
+
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        user.setAvatarUrl(avatarUrl);
+        userRepository.save(user);
+        return avatarResponse;
+    }
 }

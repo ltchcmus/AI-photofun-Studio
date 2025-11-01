@@ -59,6 +59,12 @@ class WebGlobalFilter implements GlobalFilter, Ordered {
             if(path.contains(realPath)) return chain.filter(exchange);
         }
 
+        if(token.isEmpty()){
+            log.info("No token provided");
+            return unauthorized(exchange);
+        }
+
+
         log.info("Request Path: {}", path);
         ServerWebExchange finalExchange = exchange;
 
