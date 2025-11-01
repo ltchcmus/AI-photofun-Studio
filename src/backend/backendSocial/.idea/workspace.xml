@@ -4,7 +4,50 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="740a1931-dd5b-46a1-9947-5fe7d5aa7c77" name="Changes" comment="" />
+    <list default="true" id="740a1931-dd5b-46a1-9947-5fe7d5aa7c77" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/request/ChangePasswordRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/UploadAvatarResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/file/UploadFileResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/configuration/RequestPartConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/http/FileClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/DTOs/HttpResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/DTOs/request/CreatePostRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/DTOs/response/CreatePostResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/DTOs/response/PageResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/DTOs/response/file/UploadFileResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/configuration/CustomEntryPoint.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/configuration/CustomJwtDecoder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/configuration/RequestPartConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/configuration/SecurityGlobal.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/controller/PostController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/entity/Post.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/exception/AppException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/exception/ErrorCode.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/exception/GlobalException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/mapper/PostMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/repository/PostRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/repository/http/FileClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/service/PostService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/utils/Utils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/configuration/WebGlobalFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/configuration/WebGlobalFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/identity/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/GetMeResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/GetMeResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/GetUserResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/GetUserResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/RegisterUserResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/RegisterUserResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/entity/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/exception/ErrorCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/exception/ErrorCode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/exception/GlobalException.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/exception/GlobalException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity/test-db-connection.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/profile/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/profile/src/main/resources/application.yaml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -23,50 +66,53 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 7
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 7
+}</component>
   <component name="ProjectId" id="34nDTJc4ZGosOuS006BDKRLeMCx" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Profile.executor": "Run",
-    "Application.gateway.executor": "Run",
-    "Application.identity.executor": "Run",
-    "Maven.api-gateway [clean].executor": "Run",
-    "Maven.api-gateway [compile].executor": "Run",
-    "Maven.identity [clean].executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/ACER/Desktop/Project/NMCNPM/AI photofun Studio/src/backend/backendSocial/profile/src/main/java/service/profile/configuration",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "preferences.pluginManager"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Profile.executor&quot;: &quot;Run&quot;,
+    &quot;Application.gateway.executor&quot;: &quot;Run&quot;,
+    &quot;Application.identity.executor&quot;: &quot;Run&quot;,
+    &quot;Application.post.executor&quot;: &quot;Run&quot;,
+    &quot;Maven.api-gateway [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.api-gateway [compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.identity [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.post [clean].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;promote-services-and-create-post-service&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/ACER/Desktop/Project/NMCNPM/AI photofun Studio/src/backend/backendSocial/post/src/main/java/service/post/configuration&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\post\src\main\java\service\post\configuration" />
+      <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\post\src\main\java\service\post\exception" />
       <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\profile\src\main\java\service\profile\configuration" />
       <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\profile\src\main\java\service\profile\exception" />
       <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\profile\src\main\java\service\profile\DTOs" />
-      <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\profile\src\main\java\service\profile\DTOs\response" />
-      <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\profile\src\main\java\service\profile\DTOs\request" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="service.post.DTOs" />
       <recent name="service.api_gateway.DTOs.response" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.identity">
+  <component name="RunManager" selected="Application.post">
     <configuration name="Profile" type="Application" factoryName="Application">
       <option name="ALTERNATIVE_JRE_PATH" value="temurin-21" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
@@ -94,8 +140,18 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="post" type="Application" factoryName="Application">
+      <option name="ALTERNATIVE_JRE_PATH" value="temurin-21" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="service.post.PostApplication" />
+      <module name="post" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <list>
       <item itemvalue="Application.identity" />
+      <item itemvalue="Application.post" />
       <item itemvalue="Application.Profile" />
       <item itemvalue="Application.gateway" />
     </list>

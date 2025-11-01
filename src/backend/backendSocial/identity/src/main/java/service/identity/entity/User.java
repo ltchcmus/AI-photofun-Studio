@@ -32,6 +32,9 @@ public class User {
     @Column(unique = true, nullable = false)
     String email;
 
+    @Column(nullable = true, length = 300)
+    String avatarUrl;
+
     @ManyToMany
     Set<Role> roles;
 

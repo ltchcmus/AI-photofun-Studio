@@ -23,10 +23,15 @@ public enum ErrorCode {
     PASSWORDS_DO_NOT_MATCH(1017, "Passwords do not match", HttpStatus.BAD_REQUEST),
     CONFIRM_PASSWORD_REQUIRED(1018, "Confirm password is required", HttpStatus.BAD_REQUEST),
     USERNAME_OR_EMAIL_REQUIRED(1019, "Username or email is required", HttpStatus.BAD_REQUEST),
-    INCORRECT_ACCOUNT(1020, "Username/email or password incorrect", HttpStatus.BAD_REQUEST),
+    INCORRECT_ACCOUNT(1020, "Username/email or password are incorrect", HttpStatus.BAD_REQUEST),
     INTERNAL_SERVER_ERROR(1500, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
     UNAUTHORIZED(1501, "Unauthorized access", HttpStatus.UNAUTHORIZED),
-    FAILED_TO_CREATE_PROFILE(1502, "Failed to create profile", HttpStatus.INTERNAL_SERVER_ERROR)
+    FAILED_TO_CREATE_PROFILE(1502, "Failed to create profile", HttpStatus.INTERNAL_SERVER_ERROR),
+    OLD_PASSWORD_INCORRECT(1021, "Old password is incorrect", HttpStatus.BAD_REQUEST),
+    CANT_BE_BLANK(1022, "Field can't be blank", HttpStatus.BAD_REQUEST),
+    NEW_PASSWORD_SAME_AS_OLD(1023, "New password cannot be the same as the old password", HttpStatus.BAD_REQUEST),
+    FILE_UPLOAD_FAILED(1024, "File upload failed", HttpStatus.INTERNAL_SERVER_ERROR)
+
     ;
 
 
