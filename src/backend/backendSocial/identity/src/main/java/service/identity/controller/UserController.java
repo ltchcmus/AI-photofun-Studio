@@ -80,4 +80,15 @@ public class UserController {
                 .message("Avatar uploaded successfully")
                 .build();
     }
+
+
+    @PatchMapping("/click-like/{postId}")
+    HttpResponse<Boolean> likePost(@PathVariable("postId") String postId) {
+        userService.likePost(postId);
+        return HttpResponse.<Boolean>builder()
+                .code(1000)
+                .message("Post liked/unliked successfully")
+                .result(true)
+                .build();
+    }
 }

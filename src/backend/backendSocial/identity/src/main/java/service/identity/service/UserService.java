@@ -29,6 +29,7 @@ import service.identity.repository.http.ProfileClient;
 
 import javax.print.attribute.standard.Media;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -169,5 +170,25 @@ public class UserService {
         user.setAvatarUrl(avatarUrl);
         userRepository.save(user);
         return avatarResponse;
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    public boolean likePost(String postId){
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        Set<String> likedPosts = user.getLikedPosts();
+
+        if(likedPosts.contains(postId)){
+            likedPosts.remove(postId); // Unlike the post
+        }
+        else{
+            likedPosts.add(postId); // Like the post
+        }
+
+        user.setLikedPosts(likedPosts);
+        userRepository.save(user);
+        return true;
     }
 }

@@ -69,10 +69,10 @@ public class PostController {
                 .build();
     }
 
-    @GetMapping("/download/{uuid}")
-    ResponseEntity<Resource> downloadImage(@PathVariable String uuid) {
+    @GetMapping("/download/{postId}")
+    ResponseEntity<Resource> downloadImage(@PathVariable String postId) {
         try {
-            return postService.downloadImage(uuid);
+            return postService.downloadImage(postId);
         } catch (Exception e) {
             throw new AppException(ErrorCode.CANT_DOWNLOAD_IMAGE);
         }
