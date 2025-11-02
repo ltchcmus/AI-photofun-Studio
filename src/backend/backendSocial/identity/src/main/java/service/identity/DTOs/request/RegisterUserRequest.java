@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import service.identity.configuration.CustomValidatorUsername;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -32,5 +34,9 @@ public class RegisterUserRequest{
 
     String fullName = "User Default";
 
-    Set<String> roles;
+    @Builder.Default
+    Set<String> roles = new HashSet<>(List.of("USER"));
+
+    @Builder.Default
+    boolean loginByGoogle = false;
 }

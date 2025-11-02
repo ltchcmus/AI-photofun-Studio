@@ -16,5 +16,6 @@ public class GetUserResponse {
     String email;
     String fullName;
     String avatarUrl;
+    boolean loginByGoogle;
     Set<RoleResponse> roles;
 }

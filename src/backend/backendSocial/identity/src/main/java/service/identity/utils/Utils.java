@@ -9,11 +9,16 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import service.identity.DTOs.request.gg.ParamGgRequest;
 import service.identity.entity.Authority;
 import service.identity.entity.Role;
 import service.identity.entity.User;
+import service.identity.exception.AppException;
+import service.identity.exception.ErrorCode;
+import service.identity.repository.RoleRepository;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -27,6 +32,9 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Utils {
 
+    @Autowired
+    RoleRepository roleRepository;
+
     @NonFinal
     @Value("${config.jwt.secret}")
     private String jwtSecret;
@@ -39,6 +47,17 @@ public class Utils {
     @Value("${config.jwt.refresh-expires-in}")
     private long refreshExpiresIn;
 
+    @NonFinal
+    @Value("${config.http.redirect-uri}")
+    private String redirectUri;
+
+    @NonFinal
+    @Value("${config.gg.client-id}")
+    private String clientId;
+
+    @NonFinal
+    @Value("${config.gg.client-secret}")
+    private String clientSecret;
 
     public String generateScope(User user){
         StringJoiner scope = new StringJoiner(" ");
@@ -77,5 +96,20 @@ public class Utils {
     }
 
 
+    public ParamGgRequest generateParamGgRequest(String code) {
+        return ParamGgRequest.builder()
+                .code(code)
+                .client_secret(clientSecret)
+                .client_id(clientId)
+                .grant_type("authorization_code")
+                .redirect_uri(redirectUri)
+                .build();
+    }
+
+    public Role getRoleDefault(){
+        return roleRepository.findById("USER").orElseThrow(
+                ()-> new AppException(ErrorCode.ROLE_NOT_FOUND)
+        );
+    }
 
 }

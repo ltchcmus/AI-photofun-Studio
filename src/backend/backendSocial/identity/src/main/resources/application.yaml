@@ -14,6 +14,12 @@ config:
   http:
     profile: ${PROFILE_SERVICE_URL:http://localhost:8081/profiles}
     file: https://file-service-cdal.onrender.com
+    redirect-after-login-google-frontend-success: ${REDIRECT_AFTER_LOGIN_GOOGLE_FRONTEND:http://localhost:5173/google-loading}
+    redirect-after-login-google-frontend-failure: ${REDIRECT_AFTER_LOGIN_GOOGLE_FRONTEND_FAILURE:http://localhost:5173/failure}
+    redirect-uri: ${REDIRECT_URI:http://localhost:8080/identity/auth/authentication}
+  gg:
+    client-id: ${GOOGLE_CLIENT_ID:424511485278-d36bocf4e3avqsadguauellt3gn4l412.apps.googleusercontent.com}
+    client-secret: ${GOOGLE_CLIENT_SECRET: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}
 
   jwt:
     secret: ${JWT_SECRET:83dc48544aeb79bb92fb8f7271d4cbeb825e5ec19ce7f0b4c1be2048d1bd98671fc1e39e2a0a97c4d7d0a20a63b580e7c238f5ba880bcd2b6a091fd79f72e3e1}
@@ -49,3 +55,4 @@ spring:
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 5
+

@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -39,6 +38,8 @@ public class User {
 
     @ManyToMany
     Set<Role> roles;
+
+    boolean loginByGoogle;
 
     @Builder.Default
     Set<String> likedPosts = new HashSet<>();

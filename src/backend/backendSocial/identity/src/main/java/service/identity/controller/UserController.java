@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import service.identity.DTOs.HttpResponse;
 import service.identity.DTOs.request.ChangePasswordRequest;
 import service.identity.DTOs.request.RegisterUserRequest;
+import service.identity.DTOs.request.SetPasswordRequest;
 import service.identity.DTOs.response.GetUserResponse;
 import service.identity.DTOs.response.RegisterUserResponse;
 import service.identity.DTOs.response.UploadAvatarResponse;
@@ -91,4 +92,43 @@ public class UserController {
                 .result(true)
                 .build();
     }
+
+    @GetMapping("/check-login-by-google")
+    HttpResponse<Boolean> checkLoginByGoogle(){
+        return HttpResponse.<Boolean>builder()
+                .code(1000)
+                .message("Check login by google successfully")
+                .result(userService.checkLoginByGoogle())
+                .build();
+    }
+
+    @PostMapping("/set-password")
+    HttpResponse<Boolean> setPassword(@RequestBody @Valid SetPasswordRequest request) {
+        boolean result = userService.setPassword(request);
+        return HttpResponse.<Boolean>builder()
+                .code(1000)
+                .message(result ? "Password set successfully" : "Failed to set password")
+                .result(result)
+                .build();
+
+    }
+
+    @GetMapping("/me")
+    HttpResponse<GetUserResponse> getMyInfo() {
+        return HttpResponse.<GetUserResponse>builder()
+                .code(1000)
+                .result(userService.getMyInfo())
+                .message("User info fetched successfully")
+                .build();
+    }
+
+    @DeleteMapping("/delete/{userId}")
+    HttpResponse<Boolean> deleteUser(@PathVariable("userId") String userId) {
+        userService.deleteUserById(userId);
+        return HttpResponse.<Boolean>builder()
+                .code(1000)
+                .message("User deleted successfully")
+                .result(true)
+                .build();
+        }
 }

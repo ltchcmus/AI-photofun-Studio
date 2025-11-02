@@ -30,7 +30,9 @@ public enum ErrorCode {
     OLD_PASSWORD_INCORRECT(1021, "Old password is incorrect", HttpStatus.BAD_REQUEST),
     CANT_BE_BLANK(1022, "Field can't be blank", HttpStatus.BAD_REQUEST),
     NEW_PASSWORD_SAME_AS_OLD(1023, "New password cannot be the same as the old password", HttpStatus.BAD_REQUEST),
-    FILE_UPLOAD_FAILED(1024, "File upload failed", HttpStatus.INTERNAL_SERVER_ERROR)
+    FILE_UPLOAD_FAILED(1024, "File upload failed", HttpStatus.INTERNAL_SERVER_ERROR),
+    AUTHENTICATION_FAILED(1025, "Authentication failed", HttpStatus.UNAUTHORIZED),
+    USER_ALREADY_SET_PASSWORD(1026, "User has already set a password", HttpStatus.BAD_REQUEST),
 
     ;
 
