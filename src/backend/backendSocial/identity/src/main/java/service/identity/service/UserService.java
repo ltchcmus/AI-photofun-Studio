@@ -6,18 +6,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import service.identity.DTOs.HttpResponse;
 import service.identity.DTOs.request.ChangePasswordRequest;
 import service.identity.DTOs.request.RegisterUserRequest;
+import service.identity.DTOs.request.SetPasswordRequest;
 import service.identity.DTOs.request.profile.ProfileCreateRequest;
 import service.identity.DTOs.response.GetMeResponse;
 import service.identity.DTOs.response.GetUserResponse;
 import service.identity.DTOs.response.RegisterUserResponse;
 import service.identity.DTOs.response.UploadAvatarResponse;
 import service.identity.DTOs.response.file.UploadFileResponse;
+import service.identity.entity.Role;
 import service.identity.entity.User;
 import service.identity.exception.AppException;
 import service.identity.exception.ErrorCode;
@@ -26,8 +29,10 @@ import service.identity.mapper.UserMapper;
 import service.identity.repository.UserRepository;
 import service.identity.repository.http.FileClient;
 import service.identity.repository.http.ProfileClient;
+import service.identity.utils.Utils;
 
 import javax.print.attribute.standard.Media;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -42,6 +47,7 @@ public class UserService {
     FileClient fileClient;
     PasswordEncoder passwordEncoder;
     ProfileClient profileClient;
+    Utils utils;
 
 
     public RegisterUserResponse register(RegisterUserRequest registerUserRequest){
@@ -57,15 +63,19 @@ public class UserService {
             throw new AppException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
-        // Map request to entity
         User user = userMapper.toUser(registerUserRequest);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(mapperHelper.mapRoleFromStrings(registerUserRequest.getRoles()));
 
-        // Save user to database
+        Set<String> roleStrings = new HashSet<>(List.of("USER"));
+        if(registerUserRequest.getRoles() != null) {
+            roleStrings.addAll(registerUserRequest.getRoles());
+        }
+        Set<Role> roles = mapperHelper.mapRoleFromStrings(roleStrings);
+        //roles.add(utils.getRoleDefault());
+        user.setRoles(roles);
+
         User savedUser = userRepository.save(user);
 
-        // Map entity to response
         RegisterUserResponse response = userMapper.toRegisterUserResponse(savedUser);
         response.setRoles(mapperHelper.mapRoleResponseFromRole(savedUser.getRoles()));
 
@@ -73,6 +83,7 @@ public class UserService {
         ProfileCreateRequest profileCreateRequest = ProfileCreateRequest.builder()
                 .email(response.getEmail())
                 .userId(response.getUserId())
+                .fullName(registerUserRequest.getFullName())
                 .build();
 
         try{
@@ -190,5 +201,57 @@ public class UserService {
         user.setLikedPosts(likedPosts);
         userRepository.save(user);
         return true;
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    public boolean checkLoginByGoogle(){
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        return user.isLoginByGoogle();
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    public boolean setPassword(SetPasswordRequest request){
+        String newPassword = request.getNewPassword();
+        String confirmPassword = request.getConfirmPassword();
+        if(newPassword == null || newPassword.isEmpty() || confirmPassword == null
+                || confirmPassword.isEmpty()){
+            throw new AppException(ErrorCode.CANT_BE_BLANK);
+        }
+        if(!newPassword.equals(confirmPassword)){
+            throw new AppException(ErrorCode.PASSWORDS_DO_NOT_MATCH);
+        }
+
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        if(!user.isLoginByGoogle()){
+            throw new AppException(ErrorCode.USER_ALREADY_SET_PASSWORD);
+        }
+        user.setLoginByGoogle(false);
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+        return true;
+    }
+
+
+    @PreAuthorize("isAuthenticated()")
+    public GetUserResponse getMyInfo() {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        return userMapper.toGetUserResponse(user);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteUserById(String userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new AppException(ErrorCode.USER_NOT_FOUND);
+        }
+        User user = userRepository.findById(userId).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_FOUND));
+        user.getRoles().clear();
+        User saveUser = userRepository.save(user);
+        userRepository.delete(saveUser);
     }
 }

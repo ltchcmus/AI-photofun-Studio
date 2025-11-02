@@ -8,24 +8,44 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import service.identity.DTOs.HttpResponse;
 import service.identity.DTOs.request.LoginRequest;
+import service.identity.DTOs.request.gg.ParamGgRequest;
 import service.identity.DTOs.response.IntrospectIgnoreRefreshResponse;
 import service.identity.DTOs.response.IntrospectRefreshResponse;
 import service.identity.DTOs.response.LoginResponse;
+import service.identity.DTOs.response.gg.GetInfoResponse;
+import service.identity.DTOs.response.gg.GetTokenResponse;
+import service.identity.repository.http.GgClient;
+import service.identity.repository.http.OpenIdClient;
 import service.identity.service.AuthService;
 import service.identity.utils.CookieUtils;
 
+import java.net.URI;
 import java.text.ParseException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
     AuthService authService;
     CookieUtils cookieUtils;
+
+    @NonFinal
+    @Value("${config.http.redirect-after-login-google-frontend-success}")
+    String redirectAfterLoginGoogleFrontendSuccess;
+
+    @NonFinal
+    @Value("${config.http.redirect-after-login-google-frontend-failure}")
+    String redirectAfterLoginGoogleFrontendFailure;
 
     @PostMapping("/login")
     public HttpResponse<LoginResponse> login(@RequestBody LoginRequest loginRequest, HttpServletResponse httpServletResponse) throws JOSEException {
@@ -92,5 +112,19 @@ public class AuthController {
                 .message(null)
                 .result(accessToken)
                 .build();
+    }
+
+
+    @GetMapping("/authentication")
+    ResponseEntity<Void> authenticate(@RequestParam("code") String code, HttpServletResponse response){
+        boolean success = authService.authenticate(code, response);
+        URI redirectUri;
+        if(success){
+            redirectUri = URI.create(redirectAfterLoginGoogleFrontendSuccess);
+        }
+        else{
+            redirectUri = URI.create(redirectAfterLoginGoogleFrontendFailure);
+        }
+        return ResponseEntity.status(302).location(redirectUri).build();
     }
 }

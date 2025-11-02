@@ -38,3 +38,10 @@ spring:
             - Path=${config.prefix}/posts/**
           filters:
             - StripPrefix=${config.remove-prefix}
+
+        - id: comments-service
+          uri: ${COMMENT_SERVICE_URL:http://localhost:8083}
+          predicates:
+            - Path=${config.prefix}/comments/**
+          filters:
+            - StripPrefix=${config.remove-prefix}
