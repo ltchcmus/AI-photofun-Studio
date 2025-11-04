@@ -6,6 +6,15 @@ server:
       max-file-size: 10MB
       max-request-size: 10MB
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
 config:
   cookie:
     secure: ${COOKIE_SECURE:false}
