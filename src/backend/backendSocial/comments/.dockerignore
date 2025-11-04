@@ -1,0 +1,25 @@
+# Ignore examples directory (not needed for production)
+examples/
+
+# Ignore test files
+*_test.go
+
+# Ignore local .env (use Render environment variables instead)
+.env
+
+# Ignore development files
+*.log
+*.tmp
+.DS_Store
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore build artifacts
+bin/
+dist/
+*.exe
+main
