@@ -8,11 +8,14 @@ import service.profile.DTOs.request.ProfileUpdateRequest;
 import service.profile.DTOs.response.GetProfileResponse;
 import service.profile.DTOs.response.ProfileCreateResponse;
 import service.profile.DTOs.response.ProfileUpdateResponse;
+import service.profile.entity.Profile;
 import service.profile.service.ProfileService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -56,4 +59,31 @@ public class ProfileController {
         response.setResult(profileService.checkVerify());
         return response;
     }
+
+    @GetMapping("/verify-profile")
+    HttpResponse<Void> verifyProfile(String userId) throws IOException {
+        HttpResponse<Void> response = new HttpResponse<>(HttpCode.Success);
+        profileService.verifyProfile();
+        return response;
+    }
+
+    @GetMapping("/resend-verify-email")
+    HttpResponse<Void> resendVerifyEmail() throws IOException {
+        HttpResponse<Void> response = new HttpResponse<>(HttpCode.Success);
+        profileService.verifyProfile();
+        return response;
+    }
+
+    @PatchMapping("/activate-profile/{code}")
+    HttpResponse<Boolean> activateProfile(@PathVariable("code") int code) {
+        HttpResponse<Boolean> response = new HttpResponse<>(HttpCode.Success);
+        boolean result = profileService.activateProfile(code);
+        response.setResult(result);
+        if(!result){
+            response.setCode(HttpCode.InvalidActivationCode.getCode());
+            response.setMessage("Invalid activation code");
+        }
+        return response;
+    }
+
 }

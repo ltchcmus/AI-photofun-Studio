@@ -22,7 +22,8 @@ public class Profile {
     String fullName;
     String phone;
     String email;
-
+    int age;
+    int code;
     @Builder.Default
     boolean verified = false;
     String avatarUrl;

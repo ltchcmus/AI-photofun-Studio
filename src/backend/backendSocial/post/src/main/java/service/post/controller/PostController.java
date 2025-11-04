@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import service.post.DTOs.HttpResponse;
 import service.post.DTOs.request.CreatePostRequest;
 import service.post.DTOs.response.CreatePostResponse;
+import service.post.DTOs.response.GetPostResponse;
 import service.post.DTOs.response.PageResponse;
 import service.post.entity.Post;
 import service.post.exception.AppException;
@@ -48,10 +49,10 @@ public class PostController {
     }
 
     @GetMapping("/my-posts")
-    HttpResponse<PageResponse<Post>> getAllByUserId(
+    HttpResponse<PageResponse<GetPostResponse>> getAllByUserId(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return HttpResponse.<PageResponse<Post>>builder()
+        return HttpResponse.<PageResponse<GetPostResponse>>builder()
                 .code(1000)
                 .result(postService.getAllByUserId(page - 1, size))
                 .message("User posts retrieved successfully")
@@ -59,10 +60,10 @@ public class PostController {
     }
 
     @GetMapping("/get-all")
-    HttpResponse<PageResponse<Post>> getAll(
+    HttpResponse<PageResponse<GetPostResponse>> getAll(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return HttpResponse.<PageResponse<Post>>builder()
+        return HttpResponse.<PageResponse<GetPostResponse>>builder()
                 .code(1000)
                 .result(postService.getAll(page - 1, size))
                 .message("All posts retrieved successfully")
@@ -76,6 +77,15 @@ public class PostController {
         } catch (Exception e) {
             throw new AppException(ErrorCode.CANT_DOWNLOAD_IMAGE);
         }
+    }
+
+    @PatchMapping("/like")
+    HttpResponse<Void> likePost(@RequestParam("postId") String postId, @RequestParam("like") int numberLike) {
+        postService.likePost(postId, numberLike);
+        return HttpResponse.<Void>builder()
+                .code(1000)
+                .message("Post liked successfully")
+                .build();
     }
 
 }

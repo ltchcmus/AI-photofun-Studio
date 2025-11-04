@@ -33,7 +33,8 @@ public enum ErrorCode {
     FILE_UPLOAD_FAILED(1024, "File upload failed", HttpStatus.INTERNAL_SERVER_ERROR),
     DONT_CREATE_POST(2001, "Cannot create post at this time", HttpStatus.INTERNAL_SERVER_ERROR),
     POST_NOT_FOUND(2002, "Post not found", HttpStatus.NOT_FOUND),
-    CANT_DOWNLOAD_IMAGE(2003, "Cannot download image", HttpStatus.INTERNAL_SERVER_ERROR)
+    CANT_DOWNLOAD_IMAGE(2003, "Cannot download image", HttpStatus.INTERNAL_SERVER_ERROR),
+    CANT_LIKE_POST(2004, "Cannot like post at this time", HttpStatus.INTERNAL_SERVER_ERROR)
 
     ;
 

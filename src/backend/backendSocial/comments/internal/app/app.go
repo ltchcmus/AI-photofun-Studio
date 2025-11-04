@@ -1,11 +1,16 @@
 package app
 
 import (
+	"fmt"
+	"log"
 	"service/comments/internal/configuration"
-	"service/comments/internal/model"
+	"service/comments/internal/handler"
 	"service/comments/internal/mongodb"
 	"service/comments/internal/repositories"
+	"service/comments/internal/routes"
+	"service/comments/internal/services"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,18 +22,40 @@ func NewApplication() *Application {
 }
 
 func (app *Application) Run() {
-	r := gin.Default()
-
 	// Load configuration
 	configuration.LoadConfig()
+
 	// Connect to MongoDB
 	mongodb.ConnectMongoDB()
 
-	// Declare variables
+	// Initialize Gin router
+	r := gin.Default()
+
+	// Setup CORS
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
+
+	// Setup Socket.IO
+	socketServer := handler.SetupSocketIO()
+	defer socketServer.Close()
+
+	// Initialize layers
 	collection := mongodb.GetCollection("comments")
+	commentRepo := repositories.NewCommentRepository(collection)
+	commentService := services.NewCommentService(commentRepo, socketServer)
+	commentHandler := handler.NewCommentHandler(commentService)
 
-	commentRepo := repositories.NewCommentRepository()
+	// Setup routes with context path
+	api := r.Group("/comments")
+	routes.SetupRoutes(api, commentHandler, socketServer)
 
-	commentRepo.CreateComment(collection, model.User{ID: "1", Name: "John Doe", Age: 30})
-	r.Run(":" + configuration.GetPort())
+	// Start server
+	port := configuration.GetPort()
+	addr := fmt.Sprintf(":%s", port)
+	log.Fatal(r.Run(addr))
 }

@@ -12,6 +12,7 @@ public enum HttpCode {
     Created("1001", "Created"),
     Failed("2002", "Failed"),
     Unauthorized("3001", "Unauthorized"),
+    InvalidActivationCode("4001", "Invalid Activation Code"),
     ;
     HttpCode(String code, String message){
         this.code = code;

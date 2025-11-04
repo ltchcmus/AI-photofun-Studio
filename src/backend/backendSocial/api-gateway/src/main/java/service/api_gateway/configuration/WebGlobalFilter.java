@@ -27,7 +27,7 @@ class WebGlobalFilter implements GlobalFilter, Ordered {
     static final String[] PUBLIC_URLS = {
             "/identity/auth/login",
             "/identity/users/register",
-            "/posts/download/**",
+            //"/posts/download/**",
             "/identity/auth/authentication"
     };
 
