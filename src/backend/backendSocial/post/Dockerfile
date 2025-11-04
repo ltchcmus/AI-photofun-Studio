@@ -20,5 +20,12 @@ COPY --from=build /app/target/*.jar app.jar
 # Expose port
 EXPOSE 8082
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Run the application with optimized JVM settings for faster startup
+ENTRYPOINT ["java", \
+    "-Xms256m", \
+    "-Xmx512m", \
+    "-XX:+UseSerialGC", \
+    "-XX:MaxRAMPercentage=75.0", \
+    "-XX:TieredStopAtLevel=1", \
+    "-Dspring.jmx.enabled=false", \
+    "-jar", "app.jar"]
