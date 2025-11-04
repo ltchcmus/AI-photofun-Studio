@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: api-gateway
+    runtime: docker
+    region: singapore
+    plan: free
+    branch: master
+    dockerfilePath: ./api-gateway/Dockerfile
+    dockerContext: ./api-gateway
+    envVars:
+      - key: PORT
+        value: 8888
+      - key: IDENTITY_SERVICE_URL
+        value: http://identity-service:8080
+      - key: PROFILE_SERVICE_URL
+        value: http://profile-service:8081
+      - key: POST_SERVICE_URL
+        value: http://post-service:8082
+      - key: COMMENT_SERVICE_URL
+        sync: false
+    healthCheckPath: /api-gateway/actuator/health

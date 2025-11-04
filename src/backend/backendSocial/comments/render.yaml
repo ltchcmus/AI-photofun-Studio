@@ -1,0 +1,24 @@
+services:
+  # Comments Service
+  - type: web
+    name: comments-service
+    env: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    
+    # Environment variables
+    envVars:
+      - key: PORT
+        value: 8003
+      - key: MONGO_URI
+        sync: false
+      - key: GIN_MODE
+        value: release
+    
+    # Health check endpoint
+    healthCheckPath: /health
+    
+    # Auto deploy from git
+    autoDeploy: true
