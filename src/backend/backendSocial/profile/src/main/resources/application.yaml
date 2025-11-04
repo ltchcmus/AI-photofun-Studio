@@ -1,7 +1,7 @@
 server:
-    port: ${PORT:8081}
-    servlet:
-        context-path: /profiles
+  port: ${PORT:8081}
+  servlet:
+    context-path: /profiles
 
 management:
   endpoints:
