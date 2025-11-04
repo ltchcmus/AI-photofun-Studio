@@ -1,9 +1,10 @@
 package main
 
-import "service/comments/internal/app"
+import (
+	"service/comments/internal/app"
+)
 
 func main() {
-
-	app := app.NewApplication()
-	app.Run()
+	application := app.NewApplication()
+	application.Run()
 }

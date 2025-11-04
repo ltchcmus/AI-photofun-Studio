@@ -20,12 +20,17 @@ import service.identity.exception.AppException;
 import service.identity.exception.ErrorCode;
 import service.identity.repository.RoleRepository;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.UUID;
+import org.springframework.core.io.ClassPathResource;
 
 @Component
 @Slf4j
@@ -110,6 +115,17 @@ public class Utils {
         return roleRepository.findById("USER").orElseThrow(
                 ()-> new AppException(ErrorCode.ROLE_NOT_FOUND)
         );
+    }
+
+    public String Welcome(String username) {
+        try {
+            ClassPathResource resource = new ClassPathResource("templates/welcome.html");
+            String content = new String(Files.readAllBytes(Paths.get(resource.getURI())), StandardCharsets.UTF_8);
+            return content.replace("{{username}}", username);
+        } catch (IOException e) {
+            log.error("Error reading welcome.html template: {}", e.getMessage());
+            throw new AppException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }

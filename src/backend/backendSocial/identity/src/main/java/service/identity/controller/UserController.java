@@ -57,7 +57,7 @@ public class UserController {
 
     @PostMapping("/change-password")
     HttpResponse<Boolean> changePassword(@RequestBody @Valid ChangePasswordRequest request) {
-        if(userService.changePassword(request)){
+        if (userService.changePassword(request)) {
             return HttpResponse.<Boolean>builder()
                     .code(1000)
                     .message("Password changed successfully")
@@ -74,7 +74,7 @@ public class UserController {
 
 
     @PostMapping("/upload-avatar")
-    HttpResponse<UploadAvatarResponse> uploadAvatar(@RequestPart("file")MultipartFile file) {
+    HttpResponse<UploadAvatarResponse> uploadAvatar(@RequestPart("file") MultipartFile file) {
         return HttpResponse.<UploadAvatarResponse>builder()
                 .code(1000)
                 .result(userService.uploadAvatar(file))
@@ -94,7 +94,7 @@ public class UserController {
     }
 
     @GetMapping("/check-login-by-google")
-    HttpResponse<Boolean> checkLoginByGoogle(){
+    HttpResponse<Boolean> checkLoginByGoogle() {
         return HttpResponse.<Boolean>builder()
                 .code(1000)
                 .message("Check login by google successfully")
@@ -130,5 +130,6 @@ public class UserController {
                 .message("User deleted successfully")
                 .result(true)
                 .build();
-        }
+    }
+
 }

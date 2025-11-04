@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +13,7 @@ import service.identity.DTOs.HttpResponse;
 import service.identity.DTOs.request.ChangePasswordRequest;
 import service.identity.DTOs.request.RegisterUserRequest;
 import service.identity.DTOs.request.SetPasswordRequest;
+import service.identity.DTOs.request.mail.SendMailRequest;
 import service.identity.DTOs.request.profile.ProfileCreateRequest;
 import service.identity.DTOs.response.GetMeResponse;
 import service.identity.DTOs.response.GetUserResponse;
@@ -28,10 +28,11 @@ import service.identity.helper.MapperHelper;
 import service.identity.mapper.UserMapper;
 import service.identity.repository.UserRepository;
 import service.identity.repository.http.FileClient;
+import service.identity.repository.http.MailClient;
+import service.identity.repository.http.PostClient;
 import service.identity.repository.http.ProfileClient;
 import service.identity.utils.Utils;
 
-import javax.print.attribute.standard.Media;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,6 +49,8 @@ public class UserService {
     PasswordEncoder passwordEncoder;
     ProfileClient profileClient;
     Utils utils;
+    MailClient mailClient;
+    PostClient postClient;
 
 
     public RegisterUserResponse register(RegisterUserRequest registerUserRequest){
@@ -94,6 +97,15 @@ public class UserService {
             userRepository.delete(user);
             throw new AppException(ErrorCode.FAILED_TO_CREATE_PROFILE);
         }
+
+        String content = utils.Welcome(savedUser.getUsername());
+        mailClient.sendMail(SendMailRequest
+                    .builder()
+                        .toEmail(savedUser.getEmail())
+                        .content(content)
+                        .toName(savedUser.getUsername())
+                        .subject("Welcome to Our App AI PhotoFun Studio!")
+                    .build());
         return response;
     }
 
@@ -184,7 +196,7 @@ public class UserService {
     }
 
     @PreAuthorize("isAuthenticated()")
-    public boolean likePost(String postId){
+    public void likePost(String postId){
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -193,14 +205,16 @@ public class UserService {
 
         if(likedPosts.contains(postId)){
             likedPosts.remove(postId); // Unlike the post
+            postClient.likePost(postId, -1);
+
         }
         else{
             likedPosts.add(postId); // Like the post
+            postClient.likePost(postId, 1);
         }
 
         user.setLikedPosts(likedPosts);
         userRepository.save(user);
-        return true;
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -254,4 +268,6 @@ public class UserService {
         User saveUser = userRepository.save(user);
         userRepository.delete(saveUser);
     }
+
+
 }
