@@ -40,4 +40,13 @@ public class GlobalException {
         return ResponseEntity.status(errorCode.getHttpStatus()).body(httpResponse);
     }
 
+    @ExceptionHandler(value = Exception.class)
+    ResponseEntity<HttpResponse<?>> handleException(Exception exception) {
+        HttpResponse<?> httpResponse = HttpResponse.builder()
+                .code(ErrorCode.INTERNAL_SERVER_ERROR.getCode())
+                .message(exception.getMessage())
+                .build();
+        return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getHttpStatus()).body(httpResponse);
+    }
+
 }

@@ -2,13 +2,11 @@ package service.identity.entity;
 
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -17,6 +15,9 @@ import java.util.Set;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "users")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id
@@ -32,7 +33,15 @@ public class User {
     @Column(unique = true, nullable = false)
     String email;
 
+    @Column(nullable = true, length = 300)
+    String avatarUrl;
+
     @ManyToMany
     Set<Role> roles;
+
+    boolean loginByGoogle;
+
+    @Builder.Default
+    Set<String> likedPosts = new HashSet<>();
 
 }
