@@ -5,43 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="740a1931-dd5b-46a1-9947-5fe7d5aa7c77" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/request/mail/SendMailRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/http/MailClient.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/http/PostClient.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/src/main/resources/templates/welcome.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/DTOs/response/GetPostResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/DTOs/request/mail/SendMailRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/configuration/RequestPartConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/repository/http/MailClient.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/profile/src/main/resources/templates/VerifyCode.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/configuration/WebGlobalFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/configuration/WebGlobalFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/comments/.env" beforeDir="false" afterPath="$PROJECT_DIR$/comments/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/comments/cmd/api/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/comments/cmd/api/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/comments/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/comments/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/comments/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/comments/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/comments/internal/app/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/comments/internal/app/app.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/comments/internal/model/user.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/comments/internal/repositories/comments.go" beforeDir="false" afterPath="$PROJECT_DIR$/comments/internal/repositories/comments.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/utils/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/utils/Utils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/resources/application.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/configuration/SecurityGlobal.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/configuration/SecurityGlobal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/controller/PostController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/exception/ErrorCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/exception/ErrorCode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/mapper/PostMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/mapper/PostMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/repository/PostRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/repository/PostRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/service/PostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/service/PostService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/profile/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/profile/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/profile/src/main/java/service/profile/DTOs/HttpCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/DTOs/HttpCode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/profile/src/main/java/service/profile/ProfileApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/ProfileApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/profile/src/main/java/service/profile/controller/ProfileController.java" beforeDir="false" afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/controller/ProfileController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/profile/src/main/java/service/profile/entity/Profile.java" beforeDir="false" afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/entity/Profile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/profile/src/main/java/service/profile/exception/ErrorCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/exception/ErrorCode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/profile/src/main/java/service/profile/service/ProfileService.java" beforeDir="false" afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/service/ProfileService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/profile/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/profile/src/main/resources/application.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

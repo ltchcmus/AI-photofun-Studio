@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: profile-service
+    runtime: docker
+    region: singapore
+    plan: free
+    branch: master
+    dockerfilePath: ./profile/Dockerfile
+    dockerContext: ./profile
+    envVars:
+      - key: POST
+        value: 8081
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_USERNAME
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
+      - key: MAIL_SERVICE_URL
+        value: https://mail-service-80a4.onrender.com
