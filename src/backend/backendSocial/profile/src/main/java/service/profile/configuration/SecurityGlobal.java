@@ -20,6 +20,7 @@ import service.profile.configuration.CustomEntryPoint;
 public class SecurityGlobal {
     final String[] PUBLIC_URLS = {
            "/create",
+            "/check"
     };
 
 

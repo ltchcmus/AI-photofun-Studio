@@ -28,7 +28,8 @@ class WebGlobalFilter implements GlobalFilter, Ordered {
             "/identity/auth/login",
             "/identity/users/register",
             //"/posts/download/**",
-            "/identity/auth/authentication"
+            "/identity/auth/authentication",
+            "/check"
     };
 
     @NonFinal
@@ -42,7 +43,7 @@ class WebGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-
+        
         var cookies = exchange.getRequest().getCookies().getFirst("jwt");
         String token;
         if (cookies != null){

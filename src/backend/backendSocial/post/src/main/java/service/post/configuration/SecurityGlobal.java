@@ -20,6 +20,7 @@ import service.post.configuration.CustomEntryPoint;
 public class SecurityGlobal {
     final String[] PUBLIC_URLS = {
            // "/download/**"
+            "/check"
     };
 
 
