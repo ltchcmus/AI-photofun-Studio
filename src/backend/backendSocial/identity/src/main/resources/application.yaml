@@ -40,7 +40,6 @@ config:
   user-default: ${USER_DEFAULT:admin}
   pass-default: ${PASS_DEFAULT:admin}
 
-
 spring:
   application:
     name: identity
@@ -66,4 +65,3 @@ spring:
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 5
-
