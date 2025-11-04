@@ -9,23 +9,36 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import service.identity.DTOs.request.gg.ParamGgRequest;
 import service.identity.entity.Authority;
 import service.identity.entity.Role;
 import service.identity.entity.User;
+import service.identity.exception.AppException;
+import service.identity.exception.ErrorCode;
+import service.identity.repository.RoleRepository;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.UUID;
+import org.springframework.core.io.ClassPathResource;
 
 @Component
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Utils {
+
+    @Autowired
+    RoleRepository roleRepository;
 
     @NonFinal
     @Value("${config.jwt.secret}")
@@ -39,6 +52,17 @@ public class Utils {
     @Value("${config.jwt.refresh-expires-in}")
     private long refreshExpiresIn;
 
+    @NonFinal
+    @Value("${config.http.redirect-uri}")
+    private String redirectUri;
+
+    @NonFinal
+    @Value("${config.gg.client-id}")
+    private String clientId;
+
+    @NonFinal
+    @Value("${config.gg.client-secret}")
+    private String clientSecret;
 
     public String generateScope(User user){
         StringJoiner scope = new StringJoiner(" ");
@@ -77,5 +101,31 @@ public class Utils {
     }
 
 
+    public ParamGgRequest generateParamGgRequest(String code) {
+        return ParamGgRequest.builder()
+                .code(code)
+                .client_secret(clientSecret)
+                .client_id(clientId)
+                .grant_type("authorization_code")
+                .redirect_uri(redirectUri)
+                .build();
+    }
+
+    public Role getRoleDefault(){
+        return roleRepository.findById("USER").orElseThrow(
+                ()-> new AppException(ErrorCode.ROLE_NOT_FOUND)
+        );
+    }
+
+    public String Welcome(String username) {
+        try {
+            ClassPathResource resource = new ClassPathResource("templates/welcome.html");
+            String content = new String(Files.readAllBytes(Paths.get(resource.getURI())), StandardCharsets.UTF_8);
+            return content.replace("{{username}}", username);
+        } catch (IOException e) {
+            log.error("Error reading welcome.html template: {}", e.getMessage());
+            throw new AppException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }

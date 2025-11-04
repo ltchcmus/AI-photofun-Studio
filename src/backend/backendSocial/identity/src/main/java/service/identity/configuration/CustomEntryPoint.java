@@ -15,8 +15,27 @@ import java.io.IOException;
 
 @Component
 public class CustomEntryPoint implements AuthenticationEntryPoint {
+
+    private static final String[] PUBLIC_URLS = {
+            "/users/register",
+            "/introspect",
+            "/auth/login",
+            "/auth/introspect",
+            "/auth/refresh",
+            "/auth/authentication"
+    };
+
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+        String requestUri = request.getRequestURI();
+
+
+        for (String publicUrl : PUBLIC_URLS) {
+            if (requestUri.contains(publicUrl)) {
+                return;
+            }
+        }
+
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
         response.setStatus(errorCode.getHttpStatus().value());
         ObjectMapper objectMapper = new ObjectMapper();

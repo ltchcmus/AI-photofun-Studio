@@ -1,8 +1,6 @@
 package service.identity.configuration;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -25,7 +23,8 @@ public class SecurityGlobal {
             "/auth/login",
             "/auth/introspect/**",
             "/auth/refresh/**",
-            "/auth/introspect/ignore/**"
+            "/auth/introspect/ignore/**",
+            "/auth/authentication"
     };
 
 
@@ -34,12 +33,14 @@ public class SecurityGlobal {
 
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request ->
-                        request.requestMatchers(PUBLIC_URLS).permitAll().anyRequest().authenticated())
+                        request.requestMatchers(PUBLIC_URLS).permitAll()
+                                .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 ->
                         oauth2.jwt(jwtConfigurer ->
                                 jwtConfigurer.decoder(new CustomJwtDecoder())
                                         .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                                 .authenticationEntryPoint(new CustomEntryPoint()));
+
         return http.build();
     }
 

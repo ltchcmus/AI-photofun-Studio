@@ -19,7 +19,7 @@ import service.profile.configuration.CustomEntryPoint;
 @Slf4j
 public class SecurityGlobal {
     final String[] PUBLIC_URLS = {
-           "/profiles/create",
+           "/create",
     };
 
 

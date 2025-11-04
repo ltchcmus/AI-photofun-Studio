@@ -1,8 +1,11 @@
 package service.profile.service;
 
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import service.profile.DTOs.request.ProfileCreateRequest;
 import service.profile.DTOs.request.ProfileUpdateRequest;
+import service.profile.DTOs.request.mail.SendMailRequest;
 import service.profile.DTOs.response.GetProfileResponse;
 import service.profile.DTOs.response.ProfileCreateResponse;
 import service.profile.DTOs.response.ProfileUpdateResponse;
@@ -18,17 +21,22 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import service.profile.repository.http.MailClient;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
+@Slf4j
 public class ProfileService {
     ProfileRepository profileRepository;
     ProfileMapper profileMapper;
-
+    MailClient mailClient;
 
     public ProfileCreateResponse create(ProfileCreateRequest request){
         var profile = profileMapper.toProfile(request);
@@ -92,5 +100,56 @@ public class ProfileService {
                 () -> new AppException(ErrorCode.PROFILE_NOT_FOUND)
         ));
         return profile.isVerified();
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or isAuthenticated()")
+    public void verifyProfile() throws IOException {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        Profile profile = profileRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.PROFILE_NOT_FOUND));
+
+        ClassPathResource resource = new ClassPathResource("templates/VerifyCode.html");
+        String html = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+
+        int codeInt = (int) (Math.random() * 9000) + 1000;
+        String code = String.valueOf(codeInt);
+
+        String fullName = profile.getFullName() == null ? "" : profile.getFullName();
+        String name = fullName.isEmpty() ? profile.getUserId() : fullName;
+
+        String content = html.replace("{{CODE}}", code)
+                .replace("{{NAME}}", name);
+
+        log.info("content {}", content);
+
+        profile.setCode(codeInt);
+        profileRepository.save(profile);
+
+        try {
+            mailClient.sendMail(SendMailRequest.builder()
+                    .toEmail(profile.getEmail())
+                    .toName(name)
+                    .subject("Verify your profile")
+                    .content(content)
+                    .build());
+        } catch (Exception e) {
+            log.info("Mail service is not working properly: " + e.getMessage());
+            throw new AppException(ErrorCode.MAIL_SERVICE_ERROR);
+        }
+    }
+
+
+    @PreAuthorize("hasRole('ADMIN') or isAuthenticated()")
+    public boolean activateProfile(int code){
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        Profile profile = profileRepository.findById(userId).orElseThrow((
+                () -> new AppException(ErrorCode.PROFILE_NOT_FOUND)
+        ));
+        if(profile.getCode() != code){
+            throw new AppException(ErrorCode.CODE_INVALID);
+        }
+        profile.setVerified(true);
+        profileRepository.save(profile);
+        return true;
     }
 }

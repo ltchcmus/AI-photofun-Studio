@@ -4,7 +4,9 @@ server:
         context-path: /profiles
 
 config:
-
+  http:
+    file: https://file-service-cdal.onrender.com
+    mail: ${MAIL_SERVICE_URL:https://mail-service-80a4.onrender.com}
 
 spring:
   application:
