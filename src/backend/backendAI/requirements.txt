@@ -12,6 +12,7 @@ drf-yasg==1.21.8
 # ============================================================================
 psycopg2-binary==2.9.10  # PostgreSQL
 # mysqlclient==2.2.6  # Uncomment if using MySQL
+pymongo==4.10.1  # MongoDB for conversation service
 
 # ============================================================================
 # AUTHENTICATION & SECURITY

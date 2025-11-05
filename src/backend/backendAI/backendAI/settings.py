@@ -14,20 +14,56 @@ import os
 from pathlib import Path
 from datetime import timedelta
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Load environment variables from a .env file when present (development convenience)
+# `python-dotenv` is used and already listed in requirements.txt
+from dotenv import load_dotenv
+
+load_dotenv()
+MONGO_URI = os.getenv("MONGO_URI")
+
+# Load .env from project root (BASE_DIR) and current working directory
+# env_path = Path(__file__).resolve().parent.parent / '.env'
+# load_dotenv(dotenv_path=env_path)
+
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+
+
+
+
+
+
+
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-(x2q%0-9oh7r=0klrzt0#f4^kh2rhy_ajje#uow5racu$ju^3k"
+def env_bool(name, default=False):
+    val = os.environ.get(name)
+    if val is None:
+        return default
+    return str(val).lower() in ('1', 'true', 'yes', 'y')
+
+
+def env_int(name, default=0):
+    try:
+        return int(os.environ.get(name, default))
+    except Exception:
+        return default
+
+
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    "django-insecure-(x2q%0-9oh7r=0klrzt0#f4^kh2rhy_ajje#uow5racu$ju^3k",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env_bool('DJANGO_DEBUG', True)
 
-ALLOWED_HOSTS = ['*']  # Update in production
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',')
 
 
 # Application definition
@@ -48,7 +84,7 @@ INSTALLED_APPS = [
     
     # Local apps
     "apps.image_processing",
-    "apps.face_swap",
+    # "apps.face_swap",  # TODO: Create this app
     "apps.background_removal",
     "apps.object_removal",
     "apps.style_transfer",
@@ -57,6 +93,7 @@ INSTALLED_APPS = [
     "apps.image_generation",   # Standalone image generation service
     "apps.ai_gateway",          # Orchestration layer (no business logic)
     "apps.ai_tasks",            # Celery + Redis task management (NO DATABASE)
+    "apps.conversation",        # User-chatbot conversation management (MongoDB)
 ]
 
 MIDDLEWARE = [
@@ -94,25 +131,26 @@ WSGI_APPLICATION = "backendAI.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# Use SQLite by default for Django's internal tables (admin, auth, sessions)
+# MongoDB is used separately for the conversation app via pymongo
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("DB_NAME", "backendai_db"),
-        "USER": os.environ.get("DB_USER", "postgres"),
-        "PASSWORD": os.environ.get("DB_PASSWORD", "postgres"),
-        "HOST": os.environ.get("DB_HOST", "localhost"),
-        "PORT": os.environ.get("DB_PORT", "5432"),
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
-# Fallback to SQLite for development
-if os.environ.get("USE_SQLITE", "False") == "True":
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
+# If you need PostgreSQL in the future, uncomment and configure .env:
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": os.environ.get("DB_NAME", "backendai_db"),
+#         "USER": os.environ.get("DB_USER", "postgres"),
+#         "PASSWORD": os.environ.get("DB_PASSWORD", "postgres"),
+#         "HOST": os.environ.get("DB_HOST", "localhost"),
+#         "PORT": os.environ.get("DB_PORT", "5432"),
+#     }
+# }
 
 
 # Password validation
@@ -137,13 +175,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = os.environ.get('LANGUAGE_CODE', 'en-us')
 
-TIME_ZONE = "UTC"
+TIME_ZONE = os.environ.get('TIME_ZONE', 'UTC')
 
-USE_I18N = True
+USE_I18N = env_bool('USE_I18N', True)
 
-USE_TZ = True
+USE_TZ = env_bool('USE_TZ', True)
 
 
 # Static files (CSS, JavaScript, Images)
@@ -188,6 +226,9 @@ REST_FRAMEWORK = {
 # ============================================================================
 # CORS CONFIGURATION
 # ============================================================================
+
+# Allow all origins in development (for testing with file:// protocol)
+CORS_ALLOW_ALL_ORIGINS = DEBUG  # True in development, False in production
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
@@ -275,8 +316,8 @@ AI_MODEL_CONFIGS = {
 }
 
 # GPU Configuration
-USE_GPU = os.environ.get('USE_GPU', 'True') == 'True'
-GPU_DEVICE_ID = int(os.environ.get('GPU_DEVICE_ID', 0))
+USE_GPU = env_bool('USE_GPU', True)
+GPU_DEVICE_ID = env_int('GPU_DEVICE_ID', 0)
 
 
 # ============================================================================
@@ -418,3 +459,11 @@ CELERY_TASK_ROUTES = {
     'apps.ai_tasks.tasks.process_background_removal': {'queue': 'cpu'},
     'apps.ai_tasks.tasks.process_object_removal': {'queue': 'cpu'},
 }
+
+
+# ============================================================================
+# MONGODB CONFIGURATION (for conversation service)
+# ============================================================================
+
+MONGO_URI = os.environ.get('MONGO_URI', 'mongodb://localhost:27017')
+MONGO_DB_NAME = os.environ.get('MONGO_DB_NAME', 'ai_photofun_studio')

@@ -45,22 +45,26 @@ urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     
-    # API Routes - Standalone AI Services
-    path('api/v1/image-processing/', include('apps.image_processing.urls')),
-    path('api/v1/face-swap/', include('apps.face_swap.urls')),
-    path('api/v1/background-removal/', include('apps.background_removal.urls')),
-    path('api/v1/prompt-refinement/', include('apps.prompt_refinement.urls')),
-    path('api/v1/image-generation/', include('apps.image_generation.urls')),
+    # Conversation API (MongoDB-based chat service)
+    path('api/v1/conversation/', include('apps.conversation.urls')),
+    
+    # API Routes - Standalone AI Services (commented out until they're fixed)
+    # path('api/v1/image-processing/', include('apps.image_processing.urls')),
+    # path('api/v1/face-swap/', include('apps.face_swap.urls')),  # TODO: Create this app
+    # path('api/v1/background-removal/', include('apps.background_removal.urls')),
+    # path('api/v1/prompt-refinement/', include('apps.prompt_refinement.urls')),
+    # path('api/v1/image-generation/', include('apps.image_generation.urls')),
     
     # AI Gateway - Orchestration Layer
-    path('api/v1/ai-gateway/', include('apps.ai_gateway.urls')),
+    # path('api/v1/ai-gateway/', include('apps.ai_gateway.urls')),
     
     # AI Tasks - Celery + Redis (Async Task Management)
-    path('api/v1/tasks/', include('apps.ai_tasks.urls')),
+    # path('api/v1/tasks/', include('apps.ai_tasks.urls')),
     
+    # Other AI Services (commented out until they're fixed)
     # path('api/v1/object-removal/', include('apps.object_removal.urls')),
     # path('api/v1/style-transfer/', include('apps.style_transfer.urls')),
-    # path('api/v1/image-enhancement/', include('apps.image_enhancement.urls')),
+    # path('api/v1/image-enhancement/', include('apps.image_enhancement.urls'))
 ]
 
 # Serve media files in development
