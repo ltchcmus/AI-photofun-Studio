@@ -1,0 +1,67 @@
+server:
+  port: ${PORT:8080}
+  servlet:
+    context-path: /identity
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+config:
+  cookie:
+    secure: ${COOKIE_SECURE:false}
+    same-site: ${COOKIE_SAME_SITE:Lax}
+    domain: ${COOKIE_DOMAIN:}
+  http:
+    profile: ${PROFILE_SERVICE_URL:http://localhost:8081/profiles}
+    file: https://file-service-cdal.onrender.com
+    post: ${POST_SERVICE_URL:http://localhost:8082/posts}
+    mail: ${MAIL_SERVICE_URL:https://mail-service-80a4.onrender.com}
+    redirect-after-login-google-frontend-success: ${REDIRECT_AFTER_LOGIN_GOOGLE_FRONTEND:http://localhost:5173/google-loading}
+    redirect-after-login-google-frontend-failure: ${REDIRECT_AFTER_LOGIN_GOOGLE_FRONTEND_FAILURE:http://localhost:5173/failure}
+    redirect-uri: ${REDIRECT_URI:http://localhost:8080/identity/auth/authentication}
+  gg:
+    client-id: ${GOOGLE_CLIENT_ID:424511485278-d36bocf4e3avqsadguauellt3gn4l412.apps.googleusercontent.com}
+    client-secret: ${GOOGLE_CLIENT_SECRET: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}
+
+  jwt:
+    secret: ${JWT_SECRET:83dc48544aeb79bb92fb8f7271d4cbeb825e5ec19ce7f0b4c1be2048d1bd98671fc1e39e2a0a97c4d7d0a20a63b580e7c238f5ba880bcd2b6a091fd79f72e3e1}
+    loop-hash: ${LOOP_HASH:10}
+    expires-in: ${EXPIRES_IN:70}
+    refresh-expires-in: ${REFRESH_EXPIRES_IN:86400}
+  user-default: ${USER_DEFAULT:admin}
+  pass-default: ${PASS_DEFAULT:admin}
+
+spring:
+  application:
+    name: identity
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    validate-on-migrate: true
+    out-of-order: true
+    dialect: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://dpg-d41p7um3cjmc738t8o6g-a.singapore-postgres.render.com:5432/database_pym9?sslmode=require}
+    username: ${DATABASE_USERNAME:lethanhcong}
+    password: ${DATABASE_PASSWORD:zMna2eG7LBmjIZvGvMqOibJMSou9ys23}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 5

@@ -1,0 +1,50 @@
+services:
+  - type: web
+    name: identity-service
+    runtime: docker
+    region: singapore
+    plan: free
+    branch: master
+    dockerfilePath: ./identity/Dockerfile
+    dockerContext: ./identity
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_USERNAME
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
+      - key: PROFILE_SERVICE_URL
+        sync: false
+      - key: POST_SERVICE_URL
+        sync: false
+      - key: MAIL_SERVICE_URL
+        value: https://mail-service-80a4.onrender.com
+      - key: JWT_SECRET
+        generateValue: true
+      - key: LOOP_HASH
+        value: 10
+      - key: EXPIRES_IN
+        value: 70
+      - key: REFRESH_EXPIRES_IN
+        value: 86400
+      - key: USER_DEFAULT
+        value: admin
+      - key: PASS_DEFAULT
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: COOKIE_SECURE
+        value: true
+      - key: COOKIE_SAME_SITE
+        value: None
+      - key: REDIRECT_AFTER_LOGIN_GOOGLE_FRONTEND
+        sync: false
+      - key: REDIRECT_AFTER_LOGIN_GOOGLE_FRONTEND_FAILURE
+        sync: false
+      - key: REDIRECT_URI
+        sync: false

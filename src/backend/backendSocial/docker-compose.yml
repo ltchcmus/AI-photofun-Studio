@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  identity-service:
+    build:
+      context: ./identity
+      dockerfile: Dockerfile
+    container_name: identity-service
+    ports:
+      - "8080:8080"
+    networks:
+      - backend-network-social
+
+  post-service:
+    build:
+      context: ./post
+      dockerfile: Dockerfile
+    container_name: post-service
+    ports:
+      - "8082:8082"
+    networks:
+      - backend-network-social
+
+  profile-service:
+    build:
+      context: ./profile
+      dockerfile: Dockerfile
+    container_name: profile-service
+    ports:
+      - "8081:8081"
+    networks:
+      - backend-network-social
+
+  comments-service:
+    build:
+      context: ./comments
+      dockerfile: Dockerfile
+    container_name: comments-service
+    ports:
+      - "8083:8083"
+    networks:
+      - backend-network-social
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8888:8888"
+    depends_on:
+      - identity-service
+      - profile-service
+      - post-service
+      - comments-service
+    networks:
+      - backend-network-social
+
+networks:
+  backend-network-social:
+    driver: bridge

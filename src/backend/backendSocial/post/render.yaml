@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: post-service
+    runtime: docker
+    region: singapore
+    plan: free
+    branch: master
+    dockerfilePath: ./post/Dockerfile
+    dockerContext: ./post
+    envVars:
+      - key: PORT
+        value: 8082
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_USERNAME
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
