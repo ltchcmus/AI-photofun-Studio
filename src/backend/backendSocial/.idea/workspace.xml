@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="740a1931-dd5b-46a1-9947-5fe7d5aa7c77" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/identity/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/identity/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/configuration/SecurityGlobal.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/configuration/SecurityGlobal.java" afterDir="false" />
@@ -26,7 +27,7 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/identity" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,

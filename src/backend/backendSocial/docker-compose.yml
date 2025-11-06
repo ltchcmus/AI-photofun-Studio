@@ -8,6 +8,9 @@ services:
     container_name: identity-service
     ports:
       - "8080:8080"
+    environment:
+      PROFILE_SERVICE_URL: http://profile-service:8081/profiles
+      POST_SERVICE_URL: http://post-service:8082/posts
     networks:
       - backend-network-social
 
@@ -48,6 +51,11 @@ services:
     container_name: api-gateway
     ports:
       - "8888:8888"
+    environment:
+      IDENTITY_SERVICE_URL: http://identity-service:8080
+      PROFILE_SERVICE_URL: http://profile-service:8081
+      POST_SERVICE_URL: http://post-service:8082
+      COMMENT_SERVICE_URL: http://comments-service:8003
     depends_on:
       - identity-service
       - profile-service
