@@ -27,8 +27,8 @@ WORKDIR /root/
 # Copy the binary from builder
 COPY --from=builder /app/main .
 
-# Copy .env file if exists (optional, better to use environment variables)
-COPY --from=builder /app/.env* ./
+# Set environment variable for port (can be overridden by docker-compose)
+ENV PORT=8003
 
 # Expose port
 EXPOSE 8003
