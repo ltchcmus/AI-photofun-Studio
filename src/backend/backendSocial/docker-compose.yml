@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   identity-service:
     build:
@@ -9,10 +7,15 @@ services:
     ports:
       - "8080:8080"
     environment:
+      PORT: 8080
       PROFILE_SERVICE_URL: http://profile-service:8081/profiles
       POST_SERVICE_URL: http://post-service:8082/posts
+    depends_on:
+      - profile-service
+      - post-service
     networks:
-      - backend-network-social
+      - backend-network
+    restart: unless-stopped
 
   post-service:
     build:
@@ -21,8 +24,11 @@ services:
     container_name: post-service
     ports:
       - "8082:8082"
+    environment:
+      PORT: 8082
     networks:
-      - backend-network-social
+      - backend-network
+    restart: unless-stopped
 
   profile-service:
     build:
@@ -31,8 +37,11 @@ services:
     container_name: profile-service
     ports:
       - "8081:8081"
+    environment:
+      PORT: 8081
     networks:
-      - backend-network-social
+      - backend-network
+    restart: unless-stopped
 
   comments-service:
     build:
@@ -40,9 +49,13 @@ services:
       dockerfile: Dockerfile
     container_name: comments-service
     ports:
-      - "8083:8083"
+      - "8003:8003"
+    environment:
+      PORT: 8003
+      MONGO_URI: "mongodb+srv://LeThanhCong:LeThanhCong@mywebv1.dbl7xj4.mongodb.net/?appName=MyWebv1"
     networks:
-      - backend-network-social
+      - backend-network
+    restart: unless-stopped
 
   api-gateway:
     build:
@@ -52,18 +65,21 @@ services:
     ports:
       - "8888:8888"
     environment:
+      PORT: 8888
       IDENTITY_SERVICE_URL: http://identity-service:8080
       PROFILE_SERVICE_URL: http://profile-service:8081
       POST_SERVICE_URL: http://post-service:8082
       COMMENT_SERVICE_URL: http://comments-service:8003
+      CONFIG_HTTP_IDENTITY: http://identity-service:8080/identity
     depends_on:
       - identity-service
       - profile-service
       - post-service
       - comments-service
     networks:
-      - backend-network-social
+      - backend-network
+    restart: unless-stopped
 
 networks:
-  backend-network-social:
+  backend-network:
     driver: bridge
