@@ -3,10 +3,12 @@ import { Link } from "react-router-dom";
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
-    username: "",
+    usernameOrEmail: "",
     password: "",
     remember: false,
   });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -16,9 +18,44 @@ const LoginForm = () => {
     }));
   };
 
-  const handleSubmit = () => {
-    console.log("Logging in:", formData);
-    alert("Login successful! (Demo)");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        "http://localhost:8888/api/v1/identity/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // Important for cookies
+          body: JSON.stringify({
+            usernameOrEmail: formData.usernameOrEmail,
+            password: formData.password,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Store the token if you need it later
+        if (data.result?.accessToken) {
+          localStorage.setItem("token", data.result.accessToken);
+        }
+        // Navigate to dashboard on success
+        window.location.href = "/dashboard";
+      } else {
+        throw new Error(data.message || "Login failed");
+      }
+    } catch (err) {
+      setError(err.message || "An error occurred during login");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const loginWithGoogle = () => {
@@ -28,8 +65,6 @@ const LoginForm = () => {
   const loginWithFacebook = () => {
     alert("Facebook login functionality (Demo)");
   };
-
- 
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 p-5 overflow-auto font-sans">
@@ -50,8 +85,8 @@ const LoginForm = () => {
               </label>
               <input
                 type="text"
-                name="username"
-                value={formData.username}
+                name="usernameOrEmail"
+                value={formData.usernameOrEmail}
                 onChange={handleChange}
                 placeholder="Enter your username or email"
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm transition-all outline-none focus:border-black focus:ring-4 focus:ring-black/10"
@@ -72,6 +107,13 @@ const LoginForm = () => {
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm transition-all outline-none focus:border-black focus:ring-4 focus:ring-black/10"
               />
             </div>
+
+            {/* Error message */}
+            {error && (
+              <div className="mb-4 text-red-500 text-sm text-center">
+                {error}
+              </div>
+            )}
 
             {/* Remember & Forgot */}
             <div className="flex justify-between items-center mb-6">
@@ -102,9 +144,12 @@ const LoginForm = () => {
             {/* Login Button */}
             <button
               onClick={handleSubmit}
-              className="w-full py-3 bg-black text-white rounded-xl text-base font-semibold cursor-pointer transition-all duration-300 hover:bg-gray-800 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:shadow-md"
+              disabled={loading}
+              className={`w-full py-3 bg-black text-white rounded-xl text-base font-semibold cursor-pointer transition-all duration-300 hover:bg-gray-800 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:shadow-md ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
-              Login
+              {loading ? "Logging in..." : "Login"}
             </button>
           </div>
 
@@ -158,7 +203,12 @@ const LoginForm = () => {
             <span className="text-sm text-gray-500">
               Don't have an account?{" "}
             </span>
-              <Link to="/register" className="text-sm font-semibold text-black transition-opacity hover:opacity-70">Sign up now</Link>
+            <Link
+              to="/register"
+              className="text-sm font-semibold text-black transition-opacity hover:opacity-70"
+            >
+              Sign up now
+            </Link>
           </div>
         </div>
       </div>
