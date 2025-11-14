@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Email Verification</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: #f4f6f8;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .container {
+        max-width: 680px;
+        margin: 24px auto;
+        padding: 0 16px;
+      }
+      .card {
+        background: #ffffff;
+        border: 1px solid #eceff1;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(16, 24, 40, 0.04);
+      }
+      .header {
+        background: linear-gradient(90deg, #0f172a, #1e3a8a);
+        color: #fff;
+        text-align: center;
+        padding: 22px;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+      }
+      .body {
+        padding: 24px;
+        color: #0f172a;
+      }
+      .body p {
+        margin: 0 0 12px 0;
+        line-height: 1.6;
+        color: #374151;
+        font-size: 15px;
+      }
+      .otp {
+        display: block;
+        width: 100%;
+        max-width: 320px;
+        margin: 18px auto;
+        padding: 16px;
+        text-align: center;
+        border-radius: 10px;
+        background: #f8fafc;
+        border: 1px dashed #e6edf3;
+        font-size: 20px;
+        letter-spacing: 4px;
+        font-weight: 700;
+        color: #0f172a;
+      }
+
+      .note {
+        font-size: 13px;
+        color: #6b7280;
+        margin-top: 12px;
+      }
+      .footer {
+        padding: 14px 24px;
+        text-align: center;
+        background: #fafafa;
+        color: #9ca3af;
+        font-size: 12px;
+      }
+      a.link {
+        color: #2563eb;
+        text-decoration: none;
+      }
+      hr {
+        border: none;
+        border-top: 1px solid #eef2f7;
+        margin: 18px 0;
+      }
+      @media (max-width: 600px) {
+        .body {
+          padding: 16px;
+        }
+        .header h1 {
+          font-size: 18px;
+        }
+        .otp {
+          font-size: 18px;
+          padding: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td align="center">
+          <div class="container">
+            <div class="card">
+              <div class="header">
+                <h1>AI Photofun Studio - Email Verification</h1>
+              </div>
+
+              <div class="body">
+                <p>Hello <strong>{{NAME}}</strong>,</p>
+
+                <p>
+                  Thanks for creating an account at
+                  <strong>AI Photofun Studio</strong>. Please verify your email
+                  address to complete the registration.
+                </p>
+
+                <div class="otp">
+                  Your verification code:
+                  <span style="display: block; margin-top: 8px">{{CODE}}</span>
+                </div>
+
+                <hr />
+
+                <p style="font-size: 13px; color: #6b7280">
+                  Didn't request this? If you did not sign up, please ignore
+                  this email or contact us at
+                  <a class="link" href="mailto:ltchcmus@gmail.com"
+                    >ltchcmus@gmail.com</a
+                  >.
+                </p>
+              </div>
+
+              <div class="footer">
+                © <span id="year">2025</span> AI Photofun Studio. All rights
+                reserved.
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <script>
+      try {
+        document.getElementById("year").textContent = new Date().getFullYear();
+      } catch (e) {}
+    </script>
+  </body>
+</html>

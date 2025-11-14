@@ -33,7 +33,7 @@ public enum ErrorCode {
     FILE_UPLOAD_FAILED(1024, "File upload failed", HttpStatus.INTERNAL_SERVER_ERROR),
     AUTHENTICATION_FAILED(1025, "Authentication failed", HttpStatus.UNAUTHORIZED),
     USER_ALREADY_SET_PASSWORD(1026, "User has already set a password", HttpStatus.BAD_REQUEST),
-
+    LIMIT_REGISTER_EXCEEDED(1027, "Limit register exceeded", HttpStatus.TOO_MANY_REQUESTS),
     ;
 
 
