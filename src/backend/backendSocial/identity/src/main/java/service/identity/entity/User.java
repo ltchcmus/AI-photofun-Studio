@@ -47,6 +47,12 @@ public class User {
     int premiumPoints = 0;
 
     @Builder.Default
+    boolean premiumOneMonth = false;
+
+    @Builder.Default
+    boolean premiumSixMonths = false;
+
+    @Builder.Default
     int tokens = 1000;
 
     @Builder.Default

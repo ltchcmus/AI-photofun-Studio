@@ -17,6 +17,8 @@ public class RegisterUserResponse {
     String username;
     String email;
     int tokens;
+    boolean premiumOneMonth;
+    boolean premiumSixMonth;
     String fullName;
     Set<RoleResponse> roles;
 }
