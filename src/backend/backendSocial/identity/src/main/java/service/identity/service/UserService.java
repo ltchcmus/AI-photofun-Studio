@@ -2,7 +2,10 @@ package service.identity.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,21 +14,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import service.identity.DTOs.HttpResponse;
 import service.identity.DTOs.request.ChangePasswordRequest;
+import service.identity.DTOs.request.ModifyUserTokenRequest;
 import service.identity.DTOs.request.RegisterUserRequest;
 import service.identity.DTOs.request.SetPasswordRequest;
 import service.identity.DTOs.request.mail.SendMailRequest;
 import service.identity.DTOs.request.profile.ProfileCreateRequest;
-import service.identity.DTOs.response.GetMeResponse;
-import service.identity.DTOs.response.GetUserResponse;
-import service.identity.DTOs.response.RegisterUserResponse;
-import service.identity.DTOs.response.UploadAvatarResponse;
+import service.identity.DTOs.response.*;
 import service.identity.DTOs.response.file.UploadFileResponse;
+import service.identity.entity.LimitRegister;
 import service.identity.entity.Role;
 import service.identity.entity.User;
 import service.identity.exception.AppException;
 import service.identity.exception.ErrorCode;
 import service.identity.helper.MapperHelper;
 import service.identity.mapper.UserMapper;
+import service.identity.repository.LimitRegisterRepository;
 import service.identity.repository.UserRepository;
 import service.identity.repository.http.FileClient;
 import service.identity.repository.http.MailClient;
@@ -51,9 +54,39 @@ public class UserService {
     Utils utils;
     MailClient mailClient;
     PostClient postClient;
+    LimitRegisterRepository limitRegisterRepository;
+
+    @NonFinal
+    @Value("${config.env.limit-account-per-ip}")
+    int limitAccountPerIp;
 
 
-    public RegisterUserResponse register(RegisterUserRequest registerUserRequest){
+
+    public RegisterUserResponse register(RegisterUserRequest registerUserRequest, String clientIp){
+
+        if(limitAccountPerIp <= 0) limitAccountPerIp = 5;
+
+        String finalClientIp = clientIp;
+        LimitRegister limitRegister = limitRegisterRepository.findById(clientIp).orElseGet(
+                () -> LimitRegister.builder()
+                        .clientIp(finalClientIp)
+                        .registerCount(0)
+                        .build()
+        );
+        if(limitRegister.getRegisterCount() >= limitAccountPerIp){
+            throw new AppException(ErrorCode.LIMIT_REGISTER_EXCEEDED);
+        }
+
+        limitRegister.setRegisterCount(limitRegister.getRegisterCount() + 1);
+        try{
+            limitRegisterRepository.save(limitRegister);
+        }
+        catch(DataIntegrityViolationException de){
+            throw new RuntimeException(de.getMessage());
+        }
+        catch (Exception e){
+            throw new AppException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
 
         if(!registerUserRequest.getConfirmPass().equals(registerUserRequest.getPassword())){
             throw new AppException(ErrorCode.PASSWORDS_DO_NOT_MATCH);
@@ -270,4 +303,18 @@ public class UserService {
     }
 
 
+    public GetUserTokensResponse getUserTokens(String userId){
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        return GetUserTokensResponse.builder()
+                .tokens(user.getTokens())
+                .build();
+    }
+
+    public void modifyUserTokens(ModifyUserTokenRequest request) {
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        user.setTokens(Math.max(0, user.getTokens()) - request.getTokens());
+        userRepository.save(user);
+    }
 }

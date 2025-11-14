@@ -25,7 +25,9 @@ public class SecurityGlobal {
             "/auth/refresh/**",
             "/auth/introspect/ignore/**",
             "/auth/authentication",
-            "/check"
+            "/check",
+            "/users/tokens/**",
+            "/users/modify-tokens"
     };
 
 

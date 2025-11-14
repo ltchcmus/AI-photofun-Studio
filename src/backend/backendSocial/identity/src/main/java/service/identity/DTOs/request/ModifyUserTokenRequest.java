@@ -1,4 +1,4 @@
-package service.identity.DTOs.response;
+package service.identity.DTOs.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,11 +8,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetMeResponse {
+public class ModifyUserTokenRequest {
     String userId;
-    String username;
-    String email;
     int tokens;
-    boolean loginByGoogle;
-    String avatarUrl;
 }
