@@ -21,15 +21,14 @@ func LoadConfig() {
 	_, pathCurrent, _, _ := runtime.Caller(0)
 	pathRoot := pathCurrent[:len(pathCurrent)-len("internal/configuration/config.go")]
 	pathEnv := pathRoot + ".env"
-	err := godotenv.Load(pathEnv)
 
-	if err != nil {
-		panic("Error loading .env file")
-	}
+	// Try to load .env file, but don't panic if it doesn't exist
+	// This allows environment variables to be set by Docker
+	_ = godotenv.Load(pathEnv)
 
 	config = &Config{
 		Port:     GetEnv("PORT", "8003"),
-		MongoURI: GetEnv("MONGO_URI", ""),
+		MongoURI: GetEnv("MONGO_URI", "mongodb://admin:admin123@mongodb:27017/comments_db?authSource=admin"),
 	}
 
 }
