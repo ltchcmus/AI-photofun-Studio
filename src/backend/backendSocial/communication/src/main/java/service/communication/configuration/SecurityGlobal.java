@@ -1,4 +1,4 @@
-package service.identity.configuration;
+package service.communication.configuration;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -11,27 +11,14 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @Slf4j
 public class SecurityGlobal {
     final String[] PUBLIC_URLS = {
-            "/users/register",
-            "/introspect/**",
-            "/auth/login",
-            "/auth/introspect/**",
-            "/auth/refresh/**",
-            "/auth/introspect/ignore/**",
-            "/auth/authentication",
-            "/check",
-            "/users/tokens/**",
-            "/users/modify-tokens",
-            "/users/request-join-group",
-            "/users/delete-request-join-group",
-            "/users/add-group",
-            "/users/get-group-joined-internal"
+           // "/download/**"
+            "/check"
     };
 
 
@@ -40,14 +27,12 @@ public class SecurityGlobal {
 
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request ->
-                        request.requestMatchers(PUBLIC_URLS).permitAll()
-                                .anyRequest().authenticated())
+                        request.requestMatchers(PUBLIC_URLS).permitAll().anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 ->
                         oauth2.jwt(jwtConfigurer ->
                                 jwtConfigurer.decoder(new CustomJwtDecoder())
                                         .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                                 .authenticationEntryPoint(new CustomEntryPoint()));
-
         return http.build();
     }
 

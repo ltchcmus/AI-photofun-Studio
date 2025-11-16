@@ -2,6 +2,7 @@ package service.identity.repository;
 
 
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import service.identity.entity.User;
@@ -16,4 +17,5 @@ public interface UserRepository extends JpaRepository<User, String> {
     User findByUsernameOrEmail(String username, String email);
 
     User findByUsername(String username);
+
 }

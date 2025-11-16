@@ -6,11 +6,16 @@ import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import service.identity.DTOs.HttpResponse;
 import service.identity.DTOs.request.ChangePasswordRequest;
@@ -39,6 +44,7 @@ import service.identity.utils.Utils;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 @Slf4j
@@ -55,6 +61,7 @@ public class UserService {
     MailClient mailClient;
     PostClient postClient;
     LimitRegisterRepository limitRegisterRepository;
+    ReentrantLock lock = new ReentrantLock();
 
     @NonFinal
     @Value("${config.env.limit-account-per-ip}")
@@ -312,9 +319,99 @@ public class UserService {
     }
 
     public void modifyUserTokens(ModifyUserTokenRequest request) {
+        lock.lock();
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         user.setTokens(Math.max(0, user.getTokens()) - request.getTokens());
         userRepository.save(user);
+        lock.unlock();
+    }
+
+    public void pleaseAddGroup(String requestId, String userId, String groupId){
+        lock.lock();
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        if(!userRepository.existsById(requestId)) {
+            throw new AppException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        List<String> memberRequests = user.getMemberRequests();
+        if(!memberRequests.contains(requestId + " " + groupId)) {
+            memberRequests.add(requestId + " " + groupId);
+            user.setMemberRequests(memberRequests);
+            userRepository.save(user);
+        }
+        lock.unlock();
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    public PageResponse<GetRequestMemberResponse> getMemberRequests(int page, int size) {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        int start = (page - 1) * size;
+        int end = Math.min(start + size, Integer.MAX_VALUE);
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        return PageResponse.<GetRequestMemberResponse>builder()
+                .currentPage(page)
+                .totalPages((user.getMemberRequests().size() + size - 1) / size)
+                .totalItems(user.getMemberRequests().size())
+                .items(user.getMemberRequests().subList(start,end).stream().map((req) -> {
+                    String[] parts = req.split(" ");
+                    return GetRequestMemberResponse.builder()
+                            .userId(parts[0])
+                            .groupId(parts[1])
+                            .build();
+                }).toList())
+                .build();
+
+    }
+
+    public void removeMemberRequest(String requestId, String userId, String groupId){
+        lock.lock();
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        List<String> memberRequests = user.getMemberRequests();
+        memberRequests.remove(requestId + " " + groupId);
+        user.setMemberRequests(memberRequests);
+        userRepository.save(user);
+        lock.unlock();
+    }
+
+
+    public void addGroup(String groupId, String userId){
+        lock.lock();
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        List<String> groupsJoined = user.getGroupsJoined();
+        if(!groupsJoined.contains(groupId)){
+            groupsJoined.add(groupId);
+            user.setGroupsJoined(groupsJoined);
+            userRepository.save(user);
+        }
+        lock.unlock();
+
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    public PageResponse<String> getGroupsJoined(int page, int size) {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        int start = (page - 1) * size;
+        int end = Math.min(start + size, Integer.MAX_VALUE);
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        return PageResponse.<String>builder()
+                .currentPage(page)
+                .totalPages((user.getGroupsJoined().size() + size - 1) / size)
+                .totalItems(user.getGroupsJoined().size())
+                .items(user.getGroupsJoined().subList(start,end))
+                .build();
+
+    }
+
+
+    public List<String> getGroupJoinedInternal(String userId){
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        return user.getGroupsJoined();
     }
 }
