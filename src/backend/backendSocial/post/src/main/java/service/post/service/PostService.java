@@ -129,7 +129,7 @@ public class PostService {
                 .build();
     }
 
-    @PreAuthorize("hasAuthority('DOWN')")
+    @PreAuthorize("hasAuthority('DOWN') or hasRole('ADMIN') or hasAuthority('ALL')")
     public ResponseEntity<Resource> downloadImage(String postId) throws MalformedURLException {
         Post post = postRepository.findById(postId).orElseThrow(() -> {
             log.error("Post not found with id: {}", postId);
@@ -153,5 +153,16 @@ public class PostService {
             log.error("Error while liking post: {}", e.getMessage());
             throw new AppException(ErrorCode.CANT_LIKE_POST);
         }
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    public GetPostResponse viewPost(String postId){
+        Post post = postRepository.findById(postId).orElseThrow(() -> {
+            log.error("Post not found with id: {}", postId);
+            throw new AppException(ErrorCode.POST_NOT_FOUND);
+        });
+        GetPostResponse getPostResponse = postMapper.toGetPostResponse(post);
+        getPostResponse.setCreatedAt(utils.convertInstantToString(post.getCreatedAt()));
+        return getPostResponse;
     }
 }

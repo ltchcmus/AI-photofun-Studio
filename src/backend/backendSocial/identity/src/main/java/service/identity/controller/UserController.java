@@ -19,10 +19,7 @@ import service.identity.DTOs.request.ChangePasswordRequest;
 import service.identity.DTOs.request.ModifyUserTokenRequest;
 import service.identity.DTOs.request.RegisterUserRequest;
 import service.identity.DTOs.request.SetPasswordRequest;
-import service.identity.DTOs.response.GetUserResponse;
-import service.identity.DTOs.response.GetUserTokensResponse;
-import service.identity.DTOs.response.RegisterUserResponse;
-import service.identity.DTOs.response.UploadAvatarResponse;
+import service.identity.DTOs.response.*;
 import service.identity.entity.LimitRegister;
 import service.identity.exception.AppException;
 import service.identity.exception.ErrorCode;
@@ -195,6 +192,73 @@ public class UserController {
                         .code(200)
                         .message("User tokens modified successfully")
                         .build());
+    }
+
+    //new api
+
+    @PatchMapping("/request-join-group")
+    HttpResponse<Boolean> requestJoinGroup(@RequestParam("userId") String userId,
+                                           @RequestParam("requestId") String requestId,
+                                           @RequestParam("groupId") String groupId) {
+        userService.pleaseAddGroup(requestId, userId, groupId);
+        return HttpResponse.<Boolean>builder()
+                .code(1000)
+                .message("Join group request sent successfully")
+                .result(true)
+                .build();
+    }
+
+    @PatchMapping("/get-request-join-group")
+    HttpResponse<PageResponse<GetRequestMemberResponse>> getRequestJoinGroup(@RequestParam(value = "size", defaultValue = "10") int size,
+                                                           @RequestParam(value = "page", defaultValue = "1") int page) {
+        return HttpResponse.<PageResponse<GetRequestMemberResponse>>builder()
+                .code(1000)
+                .message("Get join group requests successfully")
+                .result(userService.getMemberRequests(page, size))
+                .build();
+    }
+
+
+    @DeleteMapping("/delete-request-join-group")
+    HttpResponse<Boolean> deleteRequestJoinGroup(@RequestParam("userId") String userId,
+                                                 @RequestParam("requestId") String requestId,
+                                                 @RequestParam("groupId") String groupId) {
+        userService.removeMemberRequest(requestId, userId, groupId);
+        return HttpResponse.<Boolean>builder()
+                .code(1000)
+                .message("Delete join group request successfully")
+                .result(true)
+                .build();
+    }
+
+
+    @PatchMapping("/add-group")
+    HttpResponse<Void> addGroup(@RequestParam("userId") String userId,
+                                  @RequestParam("groupId") String groupId) {
+        userService.addGroup(groupId, userId);
+        return HttpResponse.<Void>builder()
+                .code(1000)
+                .message("Group added to user successfully")
+                .build();
+    }
+
+    @GetMapping("/get-group-joined")
+    HttpResponse<PageResponse<String>> getGroupsJoined(@RequestParam(value = "size", defaultValue = "10") int size,
+                                                    @RequestParam(value = "page", defaultValue = "1") int page) {
+        return HttpResponse.<PageResponse<String>>builder()
+                .code(1000)
+                .message("Get joined groups successfully")
+                .result(userService.getGroupsJoined(page, size))
+                .build();
+    }
+
+    @GetMapping("/get-group-joined-internal")
+    HttpResponse<List<String>> getGroupJoinedInternal(@RequestParam("userId") String userId){
+        return HttpResponse.<List<String>>builder()
+                .code(1000)
+                .message("Get joined groups successfully")
+                .result(userService.getGroupJoinedInternal(userId))
+                .build();
     }
 
 }

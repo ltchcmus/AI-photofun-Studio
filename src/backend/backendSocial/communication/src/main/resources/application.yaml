@@ -1,0 +1,23 @@
+server:
+  post: 8085
+
+config:
+  http:
+    identity: ${IDENTITY_SERVICE_URL:http://localhost:8080/identity}
+    file: https://file-service-cdal.onrender.com
+  socket:
+    port: ${SOCKET_SERVICE_PORT:8899}
+    host: ${SOCKET_SERVICE_HOST:localhost}
+
+spring:
+  application:
+    name: communication
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  data:
+    mongodb:
+      uri: mongodb+srv://LeThanhCong:LeThanhCong@mywebv1.dbl7xj4.mongodb.net/Communication?retryWrites=true&w=majority
+

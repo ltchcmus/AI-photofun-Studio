@@ -7,7 +7,9 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -30,6 +32,12 @@ public class User {
 
     @Column(nullable = false)
     String password;
+
+    @Builder.Default
+    List<String> memberRequests = new ArrayList<>();
+
+    @Builder.Default
+    List<String> groupsJoined = new ArrayList<>();
 
     @Column(unique = true, nullable = false)
     String email;
