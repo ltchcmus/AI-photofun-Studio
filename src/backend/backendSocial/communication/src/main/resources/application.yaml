@@ -1,5 +1,5 @@
 server:
-  post: 8085
+  port: 8085
 
 config:
   http:

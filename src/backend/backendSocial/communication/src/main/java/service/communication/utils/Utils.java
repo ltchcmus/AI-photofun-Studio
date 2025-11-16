@@ -9,9 +9,6 @@ import java.time.Instant;
 
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Slf4j
 @Data
 public class Utils {
