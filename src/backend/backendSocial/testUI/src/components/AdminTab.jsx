@@ -36,16 +36,16 @@ export default function AdminTab({ config, auth }) {
         <h3>🔑 View Roles & Authorities</h3>
         <div className="btn-group">
           <button className="btn btn-primary" onClick={() => apiCall('GET', '/api/v1/identity/roles/get-all')} disabled={loading}>
-            Get All Roles (API #52)
+            Get All Roles (API #29)
           </button>
           <button className="btn btn-primary" onClick={() => apiCall('GET', '/api/v1/identity/authorities/get-all')} disabled={loading}>
-            Get All Authorities (API #53)
+            Get All Authorities (API #27)
           </button>
         </div>
       </div>
 
       <div className="api-section">
-        <h3>➕ Create Authority (API #54 - Admin Only)</h3>
+        <h3>➕ Create Authority (API #26 - Admin Only)</h3>
         <div className="form-row">
           <input placeholder="Authority Name" value={authorityData.name}
             onChange={(e) => setAuthorityData({...authorityData, name: e.target.value})} />
@@ -59,7 +59,7 @@ export default function AdminTab({ config, auth }) {
       </div>
 
       <div className="api-section">
-        <h3>➕ Create Role (API #55 - Admin Only)</h3>
+        <h3>➕ Create Role (API #28 - Admin Only)</h3>
         <div className="form-row">
           <input placeholder="Role Name" value={roleData.name}
             onChange={(e) => setRoleData({...roleData, name: e.target.value})} />
@@ -79,7 +79,19 @@ export default function AdminTab({ config, auth }) {
       </div>
 
       <div className="api-section">
-        <h3>🗑️ Delete User (API #56 - Admin Only)</h3>
+        <h3>👥 User Management (Admin Only)</h3>
+        <div className="btn-group">
+          <button className="btn btn-primary" onClick={() => apiCall('GET', '/api/v1/identity/users/get-all')} disabled={loading}>
+            Get All Users (API #9)
+          </button>
+          <button className="btn btn-primary" onClick={() => apiCall('GET', '/api/v1/profiles/get-all')} disabled={loading}>
+            Get All Profiles (API #38)
+          </button>
+        </div>
+      </div>
+
+      <div className="api-section">
+        <h3>🗑️ Delete User (API #16 - Admin Only)</h3>
         <div className="form-row">
           <input placeholder="User ID" value={deleteUserId} onChange={(e) => setDeleteUserId(e.target.value)} />
           <button className="btn btn-danger" onClick={() => {
@@ -91,12 +103,21 @@ export default function AdminTab({ config, auth }) {
       </div>
 
       <div className="api-section">
-        <h3>🗑️ Delete All Posts (API #57 - Admin Only)</h3>
+        <h3>🗑️ Delete All Posts (API #45 - Admin Only)</h3>
         <button className="btn btn-danger" onClick={() => {
           if (confirm('⚠️ This will DELETE ALL POSTS! Are you absolutely sure?')) {
             apiCall('DELETE', '/api/v1/posts/delete-all')
           }
         }} disabled={loading}>Delete All Posts</button>
+      </div>
+
+      <div className="api-section">
+        <h3>🗑️ Delete All Communications (API #61 - Admin Only)</h3>
+        <button className="btn btn-danger" onClick={() => {
+          if (confirm('⚠️ This will DELETE ALL COMMUNICATIONS! Are you absolutely sure?')) {
+            apiCall('DELETE', '/communications/communications/delete-all')
+          }
+        }} disabled={loading}>Delete All Communications</button>
       </div>
 
       <div className="api-section">

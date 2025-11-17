@@ -459,11 +459,35 @@ Path Param:
 code: verification_code (4 digits)
 ```
 
+### 38. Get All Profiles (Admin)
+
+**Endpoint:** `GET /api/v1/profiles/get-all`
+**Headers:** `Authorization: Bearer {token}`
+**Role:** ADMIN
+
+```json
+Response:
+{
+  "code": 1000,
+  "message": "Success",
+  "result": [
+    {
+      "fullName": "Test User",
+      "phone": "1234567890",
+      "email": "test@example.com",
+      "verified": false,
+      "avatarUrl": "url"
+    },
+    ...
+  ]
+}
+```
+
 ---
 
 ## 📝 POST SERVICE
 
-### 38. Create Post
+### 39. Create Post
 
 **Endpoint:** `POST /api/v1/posts/create`
 **Headers:** `Authorization: Bearer {token}`
@@ -476,7 +500,7 @@ prompt: "AI prompt used"
 image: [image file]
 ```
 
-### 39. Get All Posts
+### 40. Get All Posts
 
 **Endpoint:** `GET /api/v1/posts/get-all`
 **Headers:** `Authorization: Bearer {token}`
@@ -487,7 +511,7 @@ page: 1 (default)
 size: 10 (default)
 ```
 
-### 40. Get My Posts
+### 41. Get My Posts
 
 **Endpoint:** `GET /api/v1/posts/my-posts`
 **Headers:** `Authorization: Bearer {token}`
@@ -498,18 +522,18 @@ page: 1 (default)
 size: 10 (default)
 ```
 
-### 41. View Post
+### 42. View Post
 
 **Endpoint:** `GET /api/v1/posts/view/{postId}`
 **Headers:** `Authorization: Bearer {token}`
 
-### 42. Download Post Image
+### 43. Download Post Image
 
 **Endpoint:** `GET /api/v1/posts/download/{postId}`
 **Headers:** `Authorization: Bearer {token}`
 **Returns:** Image file
 
-### 43. Like Post
+### 44. Like Post
 
 **Endpoint:** `PATCH /api/v1/posts/like`
 **Headers:** `Authorization: Bearer {token}`
@@ -520,7 +544,7 @@ postId: post_id
 like: 1 (like) or -1 (unlike)
 ```
 
-### 44. Delete All Posts (Admin)
+### 45. Delete All Posts (Admin)
 
 **Endpoint:** `DELETE /api/v1/posts/delete-all`
 **Headers:** `Authorization: Bearer {token}`
@@ -532,7 +556,7 @@ like: 1 (like) or -1 (unlike)
 
 **Base URL:** `http://localhost:8003/comments`
 
-### 45. Create Comment
+### 46. Create Comment
 
 **Endpoint:** `POST /comments`
 
@@ -560,7 +584,7 @@ Response:
 }
 ```
 
-### 46. Get Comments by Post ID
+### 47. Get Comments by Post ID
 
 **Endpoint:** `GET /comments/post/{postId}`
 
@@ -583,7 +607,7 @@ Response:
 }
 ```
 
-### 47. Get Comment by ID
+### 48. Get Comment by ID
 
 **Endpoint:** `GET /comments/{id}`
 
@@ -602,7 +626,7 @@ Response:
 }
 ```
 
-### 48. Update Comment
+### 49. Update Comment
 
 **Endpoint:** `PUT /comments/{id}`
 
@@ -620,7 +644,7 @@ Response:
 }
 ```
 
-### 49. Delete Comment
+### 50. Delete Comment
 
 **Endpoint:** `DELETE /comments/{id}`
 
@@ -681,7 +705,7 @@ socket.on("disconnect", (reason) => {
 
 ## 💬 COMMUNICATION SERVICE (Chat)
 
-### 50. Get All Groups
+### 51. Get All Groups
 
 **Endpoint:** `GET /communications/groups/all`
 **Headers:** `Authorization: Bearer {token}`
@@ -704,7 +728,7 @@ Response:
 }
 ```
 
-### 51. Create Group (Premium Only)
+### 52. Create Group (Premium Only)
 
 **Endpoint:** `POST /communications/groups/create`
 **Headers:** `Authorization: Bearer {token}`
@@ -727,7 +751,7 @@ Response:
 }
 ```
 
-### 52. Get Group Detail
+### 53. Get Group Detail
 
 **Endpoint:** `GET /communications/groups/{groupId}`
 **Headers:** `Authorization: Bearer {token}`
@@ -750,7 +774,7 @@ Response:
 }
 ```
 
-### 53. Update Group (Admin Only)
+### 54. Update Group (Admin Only)
 
 **Endpoint:** `PATCH /communications/groups/{groupId}`
 **Headers:** `Authorization: Bearer {token}`
@@ -770,7 +794,7 @@ Response:
 }
 ```
 
-### 54. Upload Group Avatar (Admin Only)
+### 55. Upload Group Avatar (Admin Only)
 
 **Endpoint:** `POST /communications/groups/{groupId}/avatar`
 **Headers:** `Authorization: Bearer {token}`
@@ -788,7 +812,7 @@ Response:
 }
 ```
 
-### 55. Request Join Group
+### 56. Request Join Group
 
 **Endpoint:** `POST /communications/groups/request-join-group`
 **Headers:** `Authorization: Bearer {token}`
@@ -804,7 +828,7 @@ Response:
 }
 ```
 
-### 56. Modify Request Status (Admin Only)
+### 57. Modify Request Status (Admin Only)
 
 **Endpoint:** `PATCH /communications/groups/modify-request-status`
 **Headers:** `Authorization: Bearer {token}`
@@ -822,12 +846,12 @@ Response:
 }
 ```
 
-### 57. Get Group Image
+### 58. Get Group Image
 
 **Endpoint:** `GET /communications/groups/get-image/{groupId}`
 **Headers:** `Authorization: Bearer {token}`
 
-### 58. Get Group Messages
+### 59. Get Group Messages
 
 **Endpoint:** `GET /communications/groups/{groupId}/messages`
 **Headers:** `Authorization: Bearer {token}`
@@ -859,7 +883,7 @@ Response:
 }
 ```
 
-### 59. Get Messages (1-1 Chat)
+### 60. Get Messages (1-1 Chat)
 
 **Endpoint:** `GET /communications/communications/get-messages`
 **Headers:** `Authorization: Bearer {token}`
@@ -1126,8 +1150,22 @@ socket.on('connect', () => {
 });
 ```
 
+### 61. Delete All Communications (Admin)
+
+**Endpoint:** `DELETE /communications/communications/delete-all`
+**Headers:** `Authorization: Bearer {token}`
+**Role:** ADMIN
+
+```json
+Response:
+{
+  "code": 1000,
+  "message": "All communications deleted successfully"
+}
+```
+
 ---
 
 **Last Updated:** November 17, 2025
 **API Version:** 1.0
-**Total Endpoints:** 59 REST APIs + 2 Socket.IO Servers
+**Total Endpoints:** 61 REST APIs + 2 Socket.IO Servers

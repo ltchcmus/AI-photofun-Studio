@@ -21,10 +21,6 @@ import service.identity.DTOs.request.ModifyUserTokenRequest;
 import service.identity.DTOs.request.RegisterUserRequest;
 import service.identity.DTOs.request.SetPasswordRequest;
 import service.identity.DTOs.response.*;
-import service.identity.entity.LimitRegister;
-import service.identity.exception.AppException;
-import service.identity.exception.ErrorCode;
-import service.identity.repository.LimitRegisterRepository;
 import service.identity.service.UserService;
 
 
@@ -121,7 +117,6 @@ public class UserController {
         .result(userService.checkLoginByGoogle())
         .build();
   }
-
   @PostMapping("/set-password")
   HttpResponse<Boolean>
   setPassword(@RequestBody @Valid SetPasswordRequest request) {
@@ -135,8 +130,8 @@ public class UserController {
   }
 
   @GetMapping("/me")
-  HttpResponse<GetUserResponse> getMyInfo() {
-    return HttpResponse.<GetUserResponse>builder()
+  HttpResponse<GetMeResponse> getMyInfo() {
+    return HttpResponse.<GetMeResponse>builder()
         .code(1000)
         .result(userService.getMyInfo())
         .message("User info fetched successfully")

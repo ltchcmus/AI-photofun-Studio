@@ -35,12 +35,12 @@ export default function ProfileTab({ config, auth }) {
       <div className="api-section">
         <h3>📋 View Profile</h3>
         <button className="btn btn-primary" onClick={() => apiCall('GET', '/api/v1/profiles/my-profile')} disabled={loading}>
-          Get My Profile (API #24)
+          Get My Profile (API #31)
         </button>
       </div>
 
       <div className="api-section">
-        <h3>✏️ Update Profile (API #25)</h3>
+        <h3>✏️ Update Profile (API #32)</h3>
         <div className="form-row">
           <input placeholder="Full Name" value={updateData.fullName}
             onChange={(e) => setUpdateData({...updateData, fullName: e.target.value})} />
@@ -61,16 +61,19 @@ export default function ProfileTab({ config, auth }) {
         <h3>✅ Email Verification</h3>
         <div className="btn-group">
           <button className="btn btn-primary" onClick={() => apiCall('GET', '/api/v1/profiles/check-verify')} disabled={loading}>
-            Check Verify Status (API #26)
+            Check Verify Status (API #34)
           </button>
           <button className="btn btn-primary" onClick={() => apiCall('GET', '/api/v1/profiles/verify-profile')} disabled={loading}>
-            Send Verification Email (API #27)
+            Send Verification Email (API #35)
+          </button>
+          <button className="btn btn-primary" onClick={() => apiCall('GET', '/api/v1/profiles/resend-verify-email')} disabled={loading}>
+            Resend Verification Email (API #36)
           </button>
         </div>
       </div>
 
       <div className="api-section">
-        <h3>🔐 Activate Profile (API #28)</h3>
+        <h3>🔐 Activate Profile (API #37)</h3>
         <div className="form-row">
           <input placeholder="Verification Code" value={code} onChange={(e) => setCode(e.target.value)} />
           <button className="btn btn-success" onClick={() => apiCall('PATCH', `/api/v1/profiles/activate-profile/${code}`)} disabled={loading}>
