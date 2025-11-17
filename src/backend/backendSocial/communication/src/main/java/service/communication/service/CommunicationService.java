@@ -2,10 +2,9 @@ package service.communication.service;
 
 import java.util.concurrent.locks.ReentrantLock;
 import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,18 +20,16 @@ import service.communication.mapper.CommunicationMapper;
 import service.communication.repository.CommunicationRepository;
 import service.communication.utils.Utils;
 
-
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@Data
-@Builder
 @Slf4j
 public class CommunicationService {
   Utils utils;
   CommunicationRepository communicationRepository;
   CommunicationMapper communicationMapper;
-  ReentrantLock lock = new ReentrantLock();
+
+  @NonFinal ReentrantLock lock = new ReentrantLock();
 
   @PreAuthorize("isAuthenticated()")
   public PageResponse<GetMessageCoupleResponse>

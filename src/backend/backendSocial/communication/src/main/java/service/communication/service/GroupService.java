@@ -3,8 +3,6 @@ package service.communication.service;
 import java.time.Instant;
 import java.util.concurrent.locks.ReentrantLock;
 import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
@@ -37,8 +35,6 @@ import service.communication.utils.Utils;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@Data
-@Builder
 @Slf4j
 public class GroupService {
   GroupRepository groupRepository;
