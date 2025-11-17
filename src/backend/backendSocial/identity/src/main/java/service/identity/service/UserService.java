@@ -1,5 +1,7 @@
 package service.identity.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,7 +47,6 @@ import service.identity.repository.http.PostClient;
 import service.identity.repository.http.ProfileClient;
 import service.identity.utils.Utils;
 
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -61,7 +62,10 @@ public class UserService {
   MailClient mailClient;
   PostClient postClient;
   LimitRegisterRepository limitRegisterRepository;
-  ReentrantLock lock = new ReentrantLock();
+
+  @NonFinal @PersistenceContext EntityManager entityManager;
+
+  @NonFinal ReentrantLock lock = new ReentrantLock();
 
   @NonFinal @Value("${config.env.limit-account-per-ip}") int limitAccountPerIp;
 
@@ -152,6 +156,8 @@ public class UserService {
       "returnObject.userId == authentication.name or hasRole('ADMIN')")
   public GetUserResponse
   getUserById(String userId) {
+    // Clear cache to ensure fresh data from DB
+    entityManager.clear();
     User user = userRepository.findById(userId).orElseThrow(
         () -> new AppException(ErrorCode.USER_NOT_FOUND));
 
@@ -162,6 +168,8 @@ public class UserService {
 
   @PreAuthorize("hasRole('ADMIN')")
   public List<GetUserResponse> getAllUsers() {
+    // Clear cache to ensure fresh data from DB
+    entityManager.clear();
     List<User> users = userRepository.findAll();
     return users.stream()
         .map(user -> {
@@ -207,21 +215,26 @@ public class UserService {
     String userId =
         SecurityContextHolder.getContext().getAuthentication().getName();
 
-    User user = userRepository.findById(userId).orElseThrow(
-        () -> new AppException(ErrorCode.USER_NOT_FOUND));
+    lock.lock();
+    try {
+      User user = userRepository.findById(userId).orElseThrow(
+          () -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-    log.info("Changing password for user with userId = {}", user.getUserId());
-    log.info("Changing password for user with username = {}",
-             user.getUsername());
+      log.info("Changing password for user with userId = {}", user.getUserId());
+      log.info("Changing password for user with username = {}",
+               user.getUsername());
 
-    // Verify old password matches current password in database
-    if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-      throw new AppException(ErrorCode.OLD_PASSWORD_INCORRECT);
+      // Verify old password matches current password in database
+      if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+        throw new AppException(ErrorCode.OLD_PASSWORD_INCORRECT);
+      }
+
+      user.setPassword(passwordEncoder.encode(newPassword));
+      userRepository.save(user);
+      return true;
+    } finally {
+      lock.unlock();
     }
-
-    user.setPassword(passwordEncoder.encode(newPassword));
-    userRepository.save(user);
-    return true;
   }
 
   @PreAuthorize("isAuthenticated()")
@@ -238,33 +251,44 @@ public class UserService {
     UploadAvatarResponse avatarResponse =
         UploadAvatarResponse.builder().avatarUrl(avatarUrl).build();
 
-    User user = userRepository.findById(userId).orElseThrow(
-        () -> new AppException(ErrorCode.USER_NOT_FOUND));
-    user.setAvatarUrl(avatarUrl);
-    userRepository.save(user);
-    return avatarResponse;
+    lock.lock();
+    try {
+      User user = userRepository.findById(userId).orElseThrow(
+          () -> new AppException(ErrorCode.USER_NOT_FOUND));
+      user.setAvatarUrl(avatarUrl);
+      userRepository.save(user);
+      return avatarResponse;
+    } finally {
+      lock.unlock();
+    }
   }
 
   @PreAuthorize("isAuthenticated()")
   public void likePost(String postId) {
     String userId =
         SecurityContextHolder.getContext().getAuthentication().getName();
-    User user = userRepository.findById(userId).orElseThrow(
-        () -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-    Set<String> likedPosts = user.getLikedPosts();
+    lock.lock();
+    try {
+      User user = userRepository.findById(userId).orElseThrow(
+          () -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-    if (likedPosts.contains(postId)) {
-      likedPosts.remove(postId); // Unlike the post
-      postClient.likePost(postId, -1);
+      Set<String> likedPosts = user.getLikedPosts();
 
-    } else {
-      likedPosts.add(postId); // Like the post
-      postClient.likePost(postId, 1);
+      if (likedPosts.contains(postId)) {
+        likedPosts.remove(postId); // Unlike the post
+        postClient.likePost(postId, -1);
+
+      } else {
+        likedPosts.add(postId); // Like the post
+        postClient.likePost(postId, 1);
+      }
+
+      user.setLikedPosts(likedPosts);
+      userRepository.save(user);
+    } finally {
+      lock.unlock();
     }
-
-    user.setLikedPosts(likedPosts);
-    userRepository.save(user);
   }
 
   @PreAuthorize("isAuthenticated()")
@@ -290,36 +314,49 @@ public class UserService {
 
     String userId =
         SecurityContextHolder.getContext().getAuthentication().getName();
-    User user = userRepository.findById(userId).orElseThrow(
-        () -> new AppException(ErrorCode.USER_NOT_FOUND));
-    if (!user.isLoginByGoogle()) {
-      throw new AppException(ErrorCode.USER_ALREADY_SET_PASSWORD);
+
+    lock.lock();
+    try {
+      User user = userRepository.findById(userId).orElseThrow(
+          () -> new AppException(ErrorCode.USER_NOT_FOUND));
+      if (!user.isLoginByGoogle()) {
+        throw new AppException(ErrorCode.USER_ALREADY_SET_PASSWORD);
+      }
+      user.setLoginByGoogle(false);
+      user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+      userRepository.save(user);
+      return true;
+    } finally {
+      lock.unlock();
     }
-    user.setLoginByGoogle(false);
-    user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-    userRepository.save(user);
-    return true;
   }
 
   @PreAuthorize("isAuthenticated()")
-  public GetUserResponse getMyInfo() {
+  public GetMeResponse getMyInfo() {
     String userId =
         SecurityContextHolder.getContext().getAuthentication().getName();
+    // Clear cache to ensure fresh data from DB (important for premium updates)
+    entityManager.clear();
     User user = userRepository.findById(userId).orElseThrow(
         () -> new AppException(ErrorCode.USER_NOT_FOUND));
-    return userMapper.toGetUserResponse(user);
+    return userMapper.toGetMeResponse(user);
   }
 
   @PreAuthorize("hasRole('ADMIN')")
   public void deleteUserById(String userId) {
-    if (!userRepository.existsById(userId)) {
-      throw new AppException(ErrorCode.USER_NOT_FOUND);
+    lock.lock();
+    try {
+      if (!userRepository.existsById(userId)) {
+        throw new AppException(ErrorCode.USER_NOT_FOUND);
+      }
+      User user = userRepository.findById(userId).orElseThrow(
+          () -> new AppException(ErrorCode.USER_NOT_FOUND));
+      user.getRoles().clear();
+      User saveUser = userRepository.save(user);
+      userRepository.delete(saveUser);
+    } finally {
+      lock.unlock();
     }
-    User user = userRepository.findById(userId).orElseThrow(
-        () -> new AppException(ErrorCode.USER_NOT_FOUND));
-    user.getRoles().clear();
-    User saveUser = userRepository.save(user);
-    userRepository.delete(saveUser);
   }
 
   public GetUserTokensResponse getUserTokens(String userId) {
@@ -330,29 +367,35 @@ public class UserService {
 
   public void modifyUserTokens(ModifyUserTokenRequest request) {
     lock.lock();
-    User user =
-        userRepository.findById(request.getUserId())
-            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-    user.setTokens(Math.max(0, user.getTokens()) - request.getTokens());
-    userRepository.save(user);
-    lock.unlock();
+    try {
+      User user =
+          userRepository.findById(request.getUserId())
+              .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+      user.setTokens(Math.max(0, user.getTokens()) - request.getTokens());
+      userRepository.save(user);
+    } finally {
+      lock.unlock();
+    }
   }
 
   public void pleaseAddGroup(String requestId, String userId, String groupId) {
     lock.lock();
-    User user = userRepository.findById(userId).orElseThrow(
-        () -> new AppException(ErrorCode.USER_NOT_FOUND));
-    if (!userRepository.existsById(requestId)) {
-      throw new AppException(ErrorCode.USER_NOT_FOUND);
-    }
+    try {
+      User user = userRepository.findById(userId).orElseThrow(
+          () -> new AppException(ErrorCode.USER_NOT_FOUND));
+      if (!userRepository.existsById(requestId)) {
+        throw new AppException(ErrorCode.USER_NOT_FOUND);
+      }
 
-    List<String> memberRequests = user.getMemberRequests();
-    if (!memberRequests.contains(requestId + " " + groupId)) {
-      memberRequests.add(requestId + " " + groupId);
-      user.setMemberRequests(memberRequests);
-      userRepository.save(user);
+      List<String> memberRequests = user.getMemberRequests();
+      if (!memberRequests.contains(requestId + " " + groupId)) {
+        memberRequests.add(requestId + " " + groupId);
+        user.setMemberRequests(memberRequests);
+        userRepository.save(user);
+      }
+    } finally {
+      lock.unlock();
     }
-    lock.unlock();
   }
 
   @PreAuthorize("isAuthenticated()")
@@ -385,26 +428,32 @@ public class UserService {
   public void removeMemberRequest(String requestId, String userId,
                                   String groupId) {
     lock.lock();
-    User user = userRepository.findById(userId).orElseThrow(
-        () -> new AppException(ErrorCode.USER_NOT_FOUND));
-    List<String> memberRequests = user.getMemberRequests();
-    memberRequests.remove(requestId + " " + groupId);
-    user.setMemberRequests(memberRequests);
-    userRepository.save(user);
-    lock.unlock();
+    try {
+      User user = userRepository.findById(userId).orElseThrow(
+          () -> new AppException(ErrorCode.USER_NOT_FOUND));
+      List<String> memberRequests = user.getMemberRequests();
+      memberRequests.remove(requestId + " " + groupId);
+      user.setMemberRequests(memberRequests);
+      userRepository.save(user);
+    } finally {
+      lock.unlock();
+    }
   }
 
   public void addGroup(String groupId, String userId) {
     lock.lock();
-    User user = userRepository.findById(userId).orElseThrow(
-        () -> new AppException(ErrorCode.USER_NOT_FOUND));
-    List<String> groupsJoined = user.getGroupsJoined();
-    if (!groupsJoined.contains(groupId)) {
-      groupsJoined.add(groupId);
-      user.setGroupsJoined(groupsJoined);
-      userRepository.save(user);
+    try {
+      User user = userRepository.findById(userId).orElseThrow(
+          () -> new AppException(ErrorCode.USER_NOT_FOUND));
+      List<String> groupsJoined = user.getGroupsJoined();
+      if (!groupsJoined.contains(groupId)) {
+        groupsJoined.add(groupId);
+        user.setGroupsJoined(groupsJoined);
+        userRepository.save(user);
+      }
+    } finally {
+      lock.unlock();
     }
-    lock.unlock();
   }
 
   @PreAuthorize("isAuthenticated()")
@@ -430,6 +479,8 @@ public class UserService {
   }
 
   public boolean isPremium(String userId) {
+    // Clear cache to ensure fresh premium status (critical for payment updates)
+    entityManager.clear();
     User user = userRepository.findById(userId).orElseThrow(
         () -> new AppException(ErrorCode.USER_NOT_FOUND));
     return user.isPremiumOneMonth() || user.isPremiumSixMonths();

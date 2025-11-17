@@ -16,5 +16,6 @@ public class GetMeResponse {
     boolean premiumSixMonth;
     int tokens;
     boolean loginByGoogle;
+    int premiumPoints;
     String avatarUrl;
 }

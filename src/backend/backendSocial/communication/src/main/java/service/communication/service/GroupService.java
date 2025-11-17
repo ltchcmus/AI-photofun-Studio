@@ -1,11 +1,13 @@
 package service.communication.service;
 
 import java.time.Instant;
+import java.util.concurrent.locks.ReentrantLock;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,7 +34,6 @@ import service.communication.repository.http.FileClient;
 import service.communication.repository.http.IdentityClient;
 import service.communication.utils.Utils;
 
-
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -47,6 +48,8 @@ public class GroupService {
   IdentityClient identityClient;
   FileClient fileClient;
   Utils utils;
+
+  @NonFinal ReentrantLock lock = new ReentrantLock();
 
   @PreAuthorize("isAuthenticated()")
   public PageResponse<GetInforGroupResponse> getItemsGroup(int page, int size) {
@@ -91,18 +94,24 @@ public class GroupService {
     if (!group.getAdminId().equals(userId)) {
       throw new AppException(ErrorCode.UNAUTHORIZED);
     }
-    if (accept > 0) {
-      group.getMemberIds().add(requestId);
-      var response = identityClient.addGroup(requestId, groupId);
-      if (response.getCode() != 1000) {
-        throw new AppException(ErrorCode.FAILED_TO_ADD_GROUP);
+
+    lock.lock();
+    try {
+      if (accept > 0) {
+        group.getMemberIds().add(requestId);
+        var response = identityClient.addGroup(requestId, groupId);
+        if (response.getCode() != 1000) {
+          throw new AppException(ErrorCode.FAILED_TO_ADD_GROUP);
+        }
+        groupRepository.save(group);
       }
-      groupRepository.save(group);
-    }
-    var response =
-        identityClient.deleteRequestJoinGroup(userId, requestId, groupId);
-    if (response.getCode() != 1000) {
-      throw new AppException(ErrorCode.FAILED_TO_DELETE_REQUEST_JOIN_GROUP);
+      var response =
+          identityClient.deleteRequestJoinGroup(userId, requestId, groupId);
+      if (response.getCode() != 1000) {
+        throw new AppException(ErrorCode.FAILED_TO_DELETE_REQUEST_JOIN_GROUP);
+      }
+    } finally {
+      lock.unlock();
     }
   }
 
@@ -117,27 +126,32 @@ public class GroupService {
       throw new AppException(ErrorCode.USER_NOT_PREMIUM);
     }
 
-    Group group = Group.builder()
-                      .name(groupName)
-                      .image(imageUrl)
-                      .adminId(userId)
-                      .memberIds(new java.util.ArrayList<>())
-                      .build();
+    lock.lock();
+    try {
+      Group group = Group.builder()
+                        .name(groupName)
+                        .image(imageUrl)
+                        .adminId(userId)
+                        .memberIds(new java.util.ArrayList<>())
+                        .build();
 
-    // Auto add admin to memberIds
-    group.getMemberIds().add(userId);
+      // Auto add admin to memberIds
+      group.getMemberIds().add(userId);
 
-    Group savedGroup = groupRepository.save(group);
+      Group savedGroup = groupRepository.save(group);
 
-    // Add group to user's groupsJoined
-    var response = identityClient.addGroup(userId, savedGroup.getGroupId());
-    if (response.getCode() != 1000) {
-      // Rollback: delete group if failed to add to user
-      groupRepository.delete(savedGroup);
-      throw new AppException(ErrorCode.FAILED_TO_ADD_GROUP);
+      // Add group to user's groupsJoined
+      var response = identityClient.addGroup(userId, savedGroup.getGroupId());
+      if (response.getCode() != 1000) {
+        // Rollback: delete group if failed to add to user
+        groupRepository.delete(savedGroup);
+        throw new AppException(ErrorCode.FAILED_TO_ADD_GROUP);
+      }
+
+      return groupMapper.toGetInforGroupResponse(savedGroup);
+    } finally {
+      lock.unlock();
     }
-
-    return groupMapper.toGetInforGroupResponse(savedGroup);
   }
 
   @PreAuthorize("isAuthenticated()")
@@ -153,26 +167,31 @@ public class GroupService {
       throw new AppException(ErrorCode.UNAUTHORIZED);
     }
 
-    if (request.getName() != null && !request.getName().trim().isEmpty()) {
-      group.setName(request.getName());
-    }
-    if (request.getDescription() != null) {
-      group.setDescription(request.getDescription());
-    }
+    lock.lock();
+    try {
+      if (request.getName() != null && !request.getName().trim().isEmpty()) {
+        group.setName(request.getName());
+      }
+      if (request.getDescription() != null) {
+        group.setDescription(request.getDescription());
+      }
 
-    group.setUpdatedAt(Instant.now());
-    Group updatedGroup = groupRepository.save(group);
+      group.setUpdatedAt(Instant.now());
+      Group updatedGroup = groupRepository.save(group);
 
-    return GroupDetailResponse.builder()
-        .groupId(updatedGroup.getGroupId())
-        .name(updatedGroup.getName())
-        .image(updatedGroup.getImage())
-        .description(updatedGroup.getDescription())
-        .adminId(updatedGroup.getAdminId())
-        .memberCount(updatedGroup.getMemberIds().size())
-        .createdAt(updatedGroup.getCreatedAt())
-        .updatedAt(updatedGroup.getUpdatedAt())
-        .build();
+      return GroupDetailResponse.builder()
+          .groupId(updatedGroup.getGroupId())
+          .name(updatedGroup.getName())
+          .image(updatedGroup.getImage())
+          .description(updatedGroup.getDescription())
+          .adminId(updatedGroup.getAdminId())
+          .memberCount(updatedGroup.getMemberIds().size())
+          .createdAt(updatedGroup.getCreatedAt())
+          .updatedAt(updatedGroup.getUpdatedAt())
+          .build();
+    } finally {
+      lock.unlock();
+    }
   }
 
   @PreAuthorize("isAuthenticated()")
@@ -193,12 +212,17 @@ public class GroupService {
       throw new AppException(ErrorCode.FILE_UPLOAD_FAILED);
     }
 
-    String imageUrl = uploadResponse.getResult().getUrl();
-    group.setImage(imageUrl);
-    group.setUpdatedAt(Instant.now());
-    groupRepository.save(group);
+    lock.lock();
+    try {
+      String imageUrl = uploadResponse.getResult().getUrl();
+      group.setImage(imageUrl);
+      group.setUpdatedAt(Instant.now());
+      groupRepository.save(group);
 
-    return imageUrl;
+      return imageUrl;
+    } finally {
+      lock.unlock();
+    }
   }
 
   @PreAuthorize("isAuthenticated()")

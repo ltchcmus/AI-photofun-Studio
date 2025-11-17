@@ -20,5 +20,6 @@ public class GetUserResponse {
     boolean premiumOneMonth;
     boolean premiumSixMonth;
     boolean loginByGoogle;
+    int premiumPoints;
     Set<RoleResponse> roles;
 }
