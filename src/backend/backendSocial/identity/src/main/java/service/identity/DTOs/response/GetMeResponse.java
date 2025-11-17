@@ -13,7 +13,7 @@ public class GetMeResponse {
     String username;
     String email;
     boolean premiumOneMonth;
-    boolean premiumSixMonth;
+    boolean premiumSixMonths;
     int tokens;
     boolean loginByGoogle;
     int premiumPoints;

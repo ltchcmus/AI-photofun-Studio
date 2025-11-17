@@ -12,7 +12,6 @@
       <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/entity/LimitRegister.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/LimitRegisterRepository.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/http/CommunicationClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/service/CommunicationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/service/CommunicationService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/service/GroupService.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/service/GroupService.java" afterDir="false" />
@@ -32,11 +31,6 @@
       <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/UserService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/resources/application.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/src/main/resources/templates/welcome.html" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/resources/templates/welcome.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/service/PostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/service/PostService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/profile/src/main/java/service/profile/service/ProfileService.java" beforeDir="false" afterPath="$PROJECT_DIR$/profile/src/main/java/service/profile/service/ProfileService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testUI/API_DOCUMENTATION.md" beforeDir="false" afterPath="$PROJECT_DIR$/testUI/API_DOCUMENTATION.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testUI/src/components/AdminTab.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/testUI/src/components/AdminTab.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testUI/src/components/ProfileTab.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/testUI/src/components/ProfileTab.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
