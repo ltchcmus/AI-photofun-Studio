@@ -116,8 +116,12 @@ public class AuthController {
 
 
     @GetMapping("/authentication")
-    ResponseEntity<Void> authenticate(@RequestParam("code") String code, HttpServletResponse response){
-        boolean success = authService.authenticate(code, response);
+    ResponseEntity<Void> authenticate(@RequestParam("code") String code, HttpServletResponse response, HttpServletRequest request) {
+        String clientIp = request.getHeader("X-Forwarded-For");
+        if(clientIp == null || clientIp.isEmpty()) {
+            clientIp = request.getRemoteAddr();
+        }
+        boolean success = authService.authenticate(code, response, clientIp);
         URI redirectUri;
         if(success){
             redirectUri = URI.create(redirectAfterLoginGoogleFrontendSuccess);

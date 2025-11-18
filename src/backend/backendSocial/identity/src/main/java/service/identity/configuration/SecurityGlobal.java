@@ -25,7 +25,13 @@ public class SecurityGlobal {
             "/auth/refresh/**",
             "/auth/introspect/ignore/**",
             "/auth/authentication",
-            "/check"
+            "/check",
+            "/users/tokens/**",
+            "/users/modify-tokens",
+            "/users/request-join-group",
+            "/users/delete-request-join-group",
+            "/users/add-group",
+            "/users/get-group-joined-internal"
     };
 
 
