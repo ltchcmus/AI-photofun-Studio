@@ -88,4 +88,13 @@ public class PostController {
                 .build();
     }
 
+    @GetMapping("/view/{postId}")
+    HttpResponse<GetPostResponse> viewPost(@PathVariable String postId) {
+        return HttpResponse.<GetPostResponse>builder()
+                .code(1000)
+                .result(postService.viewPost(postId))
+                .message("Post retrieved successfully")
+                .build();
+    }
+
 }

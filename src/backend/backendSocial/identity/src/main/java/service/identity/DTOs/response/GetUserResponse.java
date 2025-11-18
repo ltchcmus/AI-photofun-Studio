@@ -16,6 +16,10 @@ public class GetUserResponse {
     String email;
     String fullName;
     String avatarUrl;
+    int tokens;
+    boolean premiumOneMonth;
+    boolean premiumSixMonths;
     boolean loginByGoogle;
+    int premiumPoints;
     Set<RoleResponse> roles;
 }

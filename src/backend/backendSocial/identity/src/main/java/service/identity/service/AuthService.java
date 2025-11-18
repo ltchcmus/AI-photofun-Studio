@@ -129,7 +129,7 @@ public class AuthService {
     }
 
 
-    public boolean authenticate(String code, HttpServletResponse response) {
+    public boolean authenticate(String code, HttpServletResponse response, String clientIp) {
         if (code == null || code.isEmpty()) {
             return false;
         }
@@ -182,7 +182,8 @@ public class AuthService {
 
             try {
                 log.info("Calling userService.register...");
-                RegisterUserResponse userResponse = userService.register(registerUserRequest);
+
+                RegisterUserResponse userResponse = userService.register(registerUserRequest,clientIp );
                 log.info("Registered user response: {}", userResponse.toString());
 
                 User saveUser = userRepository.findById(userResponse.getUserId())
