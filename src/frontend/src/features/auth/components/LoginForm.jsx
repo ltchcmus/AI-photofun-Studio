@@ -47,7 +47,7 @@ const LoginForm = () => {
           localStorage.setItem("token", data.result.accessToken);
         }
         // Navigate to dashboard on success
-        window.location.href = "/dashboard";
+        window.location.href = "/home";
       } else {
         throw new Error(data.message || "Login failed");
       }
