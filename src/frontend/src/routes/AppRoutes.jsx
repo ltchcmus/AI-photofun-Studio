@@ -8,6 +8,11 @@ import HomePage from "../pages/HomePage";
 import NotFoundPage from "../pages/NotFoundPage";
 import AppLayout from "../layouts/AppLayout";
 import BackgroundTools from "../pages/BackgroundTools";
+import TextToImage from "../pages/TextToImage";
+import FaceSwap from "../pages/FaceSwap";
+import ImageEnhance from "../pages/ImageEnhance";
+import PhotoRestore from "../pages/PhotoRestore";
+import StyleTransfer from "../pages/StyleTransfer";
 
 function AppRoutes() {
   return (
@@ -22,6 +27,11 @@ function AppRoutes() {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/ai-tools" element={<AITools />} />
         <Route path="/background-tools" element={<BackgroundTools />} />
+        <Route path="/text-to-image" element={<TextToImage />} />
+        <Route path="/face-swap" element={<FaceSwap />} />
+        <Route path="/image-enhance" element={<ImageEnhance />} />
+        <Route path="/photo-restore" element={<PhotoRestore />} />
+        <Route path="/style-transfer" element={<StyleTransfer />} />
       </Route>
 
       <Route path="*" element={<NotFoundPage />} />

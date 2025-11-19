@@ -59,8 +59,28 @@ const CreateWithAI = () => {
   ];
 
   const handleSelectTool = (tool) => {
+    if (tool.id === "generate") {
+      navigate("/text-to-image");
+      return;
+    }
+    if (tool.id === "enhance") {
+      navigate("/image-enhance");
+      return;
+    }
     if (tool.id === "background") {
       navigate("/background-tools");
+      return;
+    }
+    if (tool.id === "face-swap") {
+      navigate("/face-swap");
+      return;
+    }
+    if (tool.id === "restore") {
+      navigate("/photo-restore");
+      return;
+    }
+    if (tool.id === "style-transfer") {
+      navigate("/style-transfer");
       return;
     }
     setSelectedTool(tool);
