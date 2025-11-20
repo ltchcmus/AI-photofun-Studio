@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Home,
@@ -12,12 +12,33 @@ import {
   MessageCircle,
   MoreHorizontal,
   X,
+  Settings,
+  Moon,
+  Globe,
+  Gem,
+  HelpCircle,
+  LogOut,
 } from "lucide-react";
 const CreateWithAI = () => {
   const [currentView, setCurrentView] = useState("tool-selection");
   const [selectedTool, setSelectedTool] = useState(null);
   const [activeNav, setActiveNav] = useState("ai-tools");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const menuRef = useRef(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleClickOutside = (event) => {
+      if (!menuRef.current) return;
+      if (!menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuOpen]);
 
   const tools = [
     {
@@ -98,6 +119,7 @@ const CreateWithAI = () => {
 
   const handleNavClick = (nav) => {
     setActiveNav(nav);
+    setMenuOpen(false);
     if (nav === "create") {
       setCurrentView("tool-selection");
       return;
@@ -178,21 +200,68 @@ const CreateWithAI = () => {
           ))}
         </nav>
 
-        <button className="p-3 hover:bg-gray-50 rounded-xl transition-colors">
-          <svg
-            className="w-6 h-6 text-gray-600"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+        <div className="relative" ref={menuRef}>
+          <button
+            type="button"
+            className="p-3 hover:bg-gray-50 rounded-xl transition-colors"
+            onClick={() => setMenuOpen((prev) => !prev)}
+            aria-label="Sidebar menu"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </button>
+            <Menu className="w-6 h-6 text-gray-600" />
+          </button>
+          {menuOpen && (
+            <div className="absolute left-14 bottom-0 w-60 bg-white border border-gray-200 rounded-2xl shadow-2xl p-3 text-sm space-y-2">
+              <button
+                type="button"
+                className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-gray-50 font-semibold text-gray-900"
+              >
+                <Settings className="w-4 h-4" /> Settings
+              </button>
+              <button
+                type="button"
+                onClick={() => setDarkMode((prev) => !prev)}
+                className="flex items-center justify-between w-full px-2 py-2 rounded-lg hover:bg-gray-50"
+              >
+                <span className="flex items-center gap-2 font-semibold text-gray-900">
+                  <Moon className="w-4 h-4" /> Dark Mode
+                </span>
+                <span className="text-xs text-gray-500">
+                  {darkMode ? "On" : "Off"}
+                </span>
+              </button>
+              <button
+                type="button"
+                className="flex items-center justify-between w-full px-2 py-2 rounded-lg hover:bg-gray-50"
+              >
+                <span className="flex items-center gap-2 font-semibold text-gray-900">
+                  <Globe className="w-4 h-4" /> Language
+                </span>
+                <span className="text-xs text-gray-500">English</span>
+              </button>
+              <hr className="border-gray-200" />
+              <button
+                type="button"
+                className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-gray-50 font-semibold text-gray-900"
+              >
+                <Gem className="w-4 h-4 text-yellow-500" /> Upgrade to Premium
+              </button>
+              <button
+                type="button"
+                className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-gray-50 font-semibold text-gray-900"
+              >
+                <HelpCircle className="w-4 h-4" /> Help & Support
+              </button>
+              <hr className="border-gray-200" />
+              <button
+                type="button"
+                onClick={() => alert("Logging out (demo)")}
+                className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-red-50 text-red-600 font-semibold"
+              >
+                <LogOut className="w-4 h-4" /> Log Out
+              </button>
+            </div>
+          )}
+        </div>
       </aside>
 
       {/* Main Content */}

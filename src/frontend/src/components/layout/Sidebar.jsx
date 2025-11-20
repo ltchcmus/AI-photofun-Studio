@@ -1,11 +1,35 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import {
+  Gem,
+  Globe,
+  HelpCircle,
+  LogOut,
+  Menu,
+  Moon,
+  Settings,
+} from "lucide-react";
 import { navItems } from "../../config/navConfig";
 
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const activePath = location.pathname;
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleClickOutside = (event) => {
+      if (!menuRef.current) return;
+      if (!menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuOpen]);
 
   return (
     <aside className="hidden md:flex fixed left-0 top-0 h-screen w-20 flex-col items-center py-6 border-r border-gray-200 bg-white">
@@ -39,21 +63,71 @@ const Sidebar = () => {
         })}
       </nav>
 
-      <button className="p-3 hover:bg-gray-50 rounded-xl transition-colors">
-        <svg
-          className="w-6 h-6 text-gray-600"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+      <div className="relative" ref={menuRef}>
+        <button
+          type="button"
+          className="p-3 hover:bg-gray-50 rounded-xl transition-colors"
+          onClick={() => setMenuOpen((prev) => !prev)}
+          aria-label="Sidebar menu"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M4 6h16M4 12h16M4 18h16"
-          />
-        </svg>
-      </button>
+          <Menu className="w-6 h-6 text-gray-600" />
+        </button>
+        {menuOpen && (
+          <div className="absolute left-14 bottom-0 w-60 bg-white border border-gray-200 rounded-2xl shadow-2xl p-3 text-sm space-y-2">
+            <button
+              type="button"
+              className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-gray-50 font-semibold text-gray-900"
+            >
+              <Settings className="w-4 h-4" /> Settings
+            </button>
+            <button
+              type="button"
+              onClick={() => setDarkMode((prev) => !prev)}
+              className="flex items-center justify-between w-full px-2 py-2 rounded-lg hover:bg-gray-50"
+            >
+              <span className="flex items-center gap-2 font-semibold text-gray-900">
+                <Moon className="w-4 h-4" /> Dark Mode
+              </span>
+              <span className="text-xs text-gray-500">
+                {darkMode ? "Bật" : "Tắt"}
+              </span>
+            </button>
+            <button
+              type="button"
+              className="flex items-center justify-between w-full px-2 py-2 rounded-lg hover:bg-gray-50"
+            >
+              <span className="flex items-center gap-2 font-semibold text-gray-900">
+                <Globe className="w-4 h-4" /> Language
+              </span>
+              <span className="text-xs text-gray-500">Tiếng Việt</span>
+            </button>
+            <hr className="border-gray-200" />
+            <button
+              type="button"
+              className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-gray-50 font-semibold text-gray-900"
+            >
+              <Gem className="w-4 h-4 text-yellow-500" /> Upgrade to Premium
+            </button>
+            <button
+              type="button"
+              className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-gray-50 font-semibold text-gray-900"
+            >
+              <HelpCircle className="w-4 h-4" /> Help & Support
+            </button>
+            <hr className="border-gray-200" />
+            <button
+              type="button"
+              onClick={() => {
+                setMenuOpen(false);
+                navigate("/login");
+              }}
+              className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-red-50 text-red-600 font-semibold"
+            >
+              <LogOut className="w-4 h-4" /> Log out
+            </button>
+          </div>
+        )}
+      </div>
     </aside>
   );
 };
