@@ -111,6 +111,10 @@ const CreateWithAI = () => {
       navigate("/profile");
       return;
     }
+    if (nav === "activity") {
+      navigate("/activity");
+      return;
+    }
   };
 
   // mirror the Dashboard navItems so sidebar is consistent
