@@ -1,7 +1,6 @@
 import React from 'react';
 import AppRoutes from './routes/AppRoutes';
-import './App.css'; // Giữ lại CSS global nếu bạn cần
-
+import './App.css'; 
 function App() {
   return (
     <div className="App">
