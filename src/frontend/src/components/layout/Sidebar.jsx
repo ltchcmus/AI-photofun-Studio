@@ -123,6 +123,10 @@ const Sidebar = () => {
             <hr className="border-gray-200" />
             <button
               type="button"
+              onClick={() => {
+                setMenuOpen(false);
+                navigate("/pricing");
+              }}
               className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-gray-50 font-semibold text-gray-900"
             >
               <Gem className="w-4 h-4 text-yellow-500" /> Upgrade to Premium
