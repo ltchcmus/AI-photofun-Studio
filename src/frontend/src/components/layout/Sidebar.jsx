@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Gem,
@@ -18,6 +18,25 @@ const Sidebar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const menuRef = useRef(null);
+  const LOGOUT_ENDPOINT = "/api/v1/identity/auth/logout";
+
+  const handleLogout = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      await fetch(LOGOUT_ENDPOINT, {
+        method: "GET",
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+    } catch (error) {
+      console.error("Logout request failed", error);
+    } finally {
+      localStorage.removeItem("token");
+      setMenuOpen(false);
+      navigate("/login");
+    }
+  }, [LOGOUT_ENDPOINT, navigate]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -117,10 +136,7 @@ const Sidebar = () => {
             <hr className="border-gray-200" />
             <button
               type="button"
-              onClick={() => {
-                setMenuOpen(false);
-                navigate("/login");
-              }}
+              onClick={handleLogout}
               className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-red-50 text-red-600 font-semibold"
             >
               <LogOut className="w-4 h-4" /> Log out
