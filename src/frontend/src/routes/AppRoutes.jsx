@@ -15,11 +15,13 @@ import PhotoRestore from "../pages/PhotoRestore";
 import StyleTransfer from "../pages/StyleTransfer";
 import Notifications from "../pages/Notifications";
 import Profile from "../pages/Profile";
+import EditProfile from "../pages/EditProfile";
 import PremiumLayout from "../layouts/PremiumLayout";
 import PremiumDashboard from "../pages/PremiumDashboard";
 import PaymentSuccess from "../pages/PaymentSuccess";
 import PricingPage from "../pages/PricingPage";
 import PaymentFail from "../pages/PaymentFail";
+import Settings from "../pages/Settings";
 
 function AppRoutes() {
   return (
@@ -41,9 +43,11 @@ function AppRoutes() {
         <Route path="/style-transfer" element={<StyleTransfer />} />
         <Route path="/activity" element={<Notifications />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/edit" element={<EditProfile />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/payment-fail" element={<PaymentFail />} />
         <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/settings" element={<Settings />} />
       </Route>
 
       <Route element={<PremiumLayout />}>

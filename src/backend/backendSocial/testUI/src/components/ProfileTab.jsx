@@ -26,7 +26,7 @@ export default function ProfileTab({ config, auth }) {
     } catch (err) {
       setResponse(JSON.stringify(err.response?.data || { error: err.message }, null, 2))
     } finally {
-      setLoading(false)
+      setLoading(false)   
     }
   }
 

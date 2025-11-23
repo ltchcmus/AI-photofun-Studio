@@ -96,6 +96,10 @@ const Sidebar = () => {
             <button
               type="button"
               className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-gray-50 font-semibold text-gray-900"
+              onClick={() => {
+                setMenuOpen(false);
+                navigate("/settings");
+              }}
             >
               <Settings className="w-4 h-4" /> Settings
             </button>
