@@ -46,7 +46,7 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     
     # Conversation API (MongoDB-based chat service)
-    path('api/v1/conversation/', include('apps.conversation.urls')),
+    path('api/v1/chat/', include('apps.conversation.urls')),
     
     # API Routes - Standalone AI Services (commented out until they're fixed)
     # path('api/v1/image-processing/', include('apps.image_processing.urls')),
@@ -71,4 +71,3 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
