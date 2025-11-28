@@ -83,16 +83,16 @@ INSTALLED_APPS = [
     "drf_yasg",  # API documentation
     
     # Local apps
-    "apps.image_processing",
+    # "apps.image_processing",
     # "apps.face_swap",  # TODO: Create this app
-    "apps.background_removal",
-    "apps.object_removal",
-    "apps.style_transfer",
-    "apps.image_enhancement",
-    "apps.prompt_refinement",  # Standalone prompt refinement service
-    "apps.image_generation",   # Standalone image generation service
-    "apps.ai_gateway",          # Orchestration layer (no business logic)
-    "apps.ai_tasks",            # Celery + Redis task management (NO DATABASE)
+    # "apps.background_removal",
+    # "apps.object_removal",
+    # "apps.style_transfer",
+    # "apps.image_enhancement",
+    # "apps.prompt_refinement",  # Standalone prompt refinement service
+    # "apps.image_generation",   # Standalone image generation service
+    # "apps.ai_gateway",          # Orchestration layer (no business logic)
+    # "apps.ai_tasks",            # Celery + Redis task management (NO DATABASE)
     "apps.conversation",        # User-chatbot conversation management (MongoDB)
 ]
 
