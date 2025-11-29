@@ -1,143 +1,74 @@
-# ============================================================================
-# CORE DJANGO DEPENDENCIES
-# ============================================================================
+# Core Django
 Django==5.1.4
 djangorestframework==3.15.2
 django-cors-headers==4.6.0
 django-filter==24.3
 drf-yasg==1.21.8
 
-# ============================================================================
-# DATABASE DRIVERS
-# ============================================================================
-psycopg2-binary==2.9.10  # PostgreSQL
-# mysqlclient==2.2.6  # Uncomment if using MySQL
-pymongo==4.10.1  # MongoDB for conversation service
+# Database (MongoDB Only)
+pymongo==4.10.1
 
-# ============================================================================
-# AUTHENTICATION & SECURITY
-# ============================================================================
+# Authentication
 djangorestframework-simplejwt==5.4.0
 PyJWT==2.10.1
 python-decouple==3.8
 
-# ============================================================================
-# AI/ML LIBRARIES
-# ============================================================================
-
-# Deep Learning Frameworks
+# AI/ML
 torch==2.5.1
 torchvision==0.20.1
-# tensorflow==2.18.0  # Uncomment if needed
-# onnxruntime-gpu==1.20.1  # For ONNX model inference with GPU
-
-# Computer Vision
 opencv-python==4.10.0.84
 opencv-contrib-python==4.10.0.84
 Pillow==11.0.0
-
-# Image Processing
 numpy==2.1.3
 scipy==1.14.1
 scikit-image==0.24.0
 
-# Face Processing & Recognition
-# insightface==0.7.3  # For face swap
-# facenet-pytorch==2.6.0  # Alternative face recognition
-# dlib==19.24.6  # Face detection and landmarks
-
-# Background Removal
-# rembg==2.0.59  # Easy background removal
-# backgroundremover==0.2.0  # Alternative
-
-# Image Inpainting (Object Removal)
-# lama-cleaner==1.2.0  # LaMa inpainting model
-
-# Style Transfer
-# neural-style-pytorch==0.1.0
-
-# Super Resolution (Image Enhancement)
-# Real-ESRGAN==0.3.0
-# basicsr==1.4.2
-
-# ============================================================================
-# ASYNC TASK PROCESSING (CELERY + REDIS)
-# ============================================================================
+# Async Tasks
 celery==5.4.0
 redis==5.2.1
-flower==2.0.1  # Celery monitoring tool
-django-celery-beat==2.7.0  # Optional: for periodic tasks
-django-celery-results==2.5.1  # Optional: store results in DB (not using)
+flower==2.0.1
+django-celery-beat==2.7.0
 
-# ============================================================================
-# FILE STORAGE & CLOUD SERVICES
-# ============================================================================
-boto3==1.35.80  # AWS S3
-django-storages==1.14.4
-# google-cloud-storage==2.18.2  # Google Cloud Storage
-# azure-storage-blob==12.24.0  # Azure Blob Storage
-
-# ============================================================================
-# API & HTTP CLIENTS
-# ============================================================================
+# HTTP
 requests==2.32.3
 httpx==0.28.1
 urllib3==2.2.3
 
-# ============================================================================
-# DATA VALIDATION & SERIALIZATION
-# ============================================================================
+# Data Validation
 pydantic==2.10.4
 marshmallow==3.23.2
 
-# ============================================================================
-# IMAGE UTILITIES
-# ============================================================================
+# Image Utils
 imageio==2.36.1
-imageio-ffmpeg==0.5.1  # For video processing
-moviepy==2.1.1  # Video editing
 
-# ============================================================================
-# MONITORING & LOGGING
-# ============================================================================
+# Monitoring
 python-json-logger==3.2.1
-sentry-sdk==2.19.2  # Error tracking
+sentry-sdk==2.19.2
 
-# ============================================================================
-# UTILITIES
-# ============================================================================
+# Utilities
 python-dotenv==1.0.1
-tqdm==4.67.1  # Progress bars
-# huggingface-hub==0.27.0  # Download models from HuggingFace
+tqdm==4.67.1
 
-# ============================================================================
-# TESTING
-# ============================================================================
+# Testing
 pytest==8.3.4
 pytest-django==4.9.0
 pytest-cov==6.0.0
 factory-boy==3.3.1
 faker==33.2.0
 
-# ============================================================================
-# CODE QUALITY
-# ============================================================================
+# Code Quality
 black==24.10.0
 flake8==7.1.1
 isort==5.13.2
 pylint==3.3.2
 
-# ============================================================================
-# DEVELOPMENT TOOLS
-# ============================================================================
+# Development
 ipython==8.31.0
 jupyter==1.1.1
 django-debug-toolbar==4.4.6
 django-extensions==3.2.3
 
-# ============================================================================
-# PRODUCTION SERVER
-# ============================================================================
+# Production
 gunicorn==23.0.0
-uvicorn==0.34.0  # ASGI server
-whitenoise==6.8.2  # Static file serving
+uvicorn==0.34.0
+whitenoise==6.8.2
