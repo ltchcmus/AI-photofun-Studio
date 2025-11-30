@@ -28,25 +28,24 @@ Backend AI cung cấp RESTful API với **stateless microservices architecture**
 ### Features
 
 #### ✅ Implemented
-- **AI Gateway** - Orchestration layer cho tất cả AI services
-- **Prompt Refinement** - Tối ưu hóa text prompts cho AI generation
-- **Image Generation** - Generate ảnh từ text prompts (placeholder)
-- **Background Removal** - Xóa phông nền tự động
-- **Face Swap** - Hoán đổi khuôn mặt
-- **Image Processing** - Basic operations (resize, crop, rotate)
+- **Conversation Service** - MongoDB-based chat service with WebSocket support
+- **API Gateway** - FastAPI orchestration layer (moved to `services/`)
 
-#### 🚧 Planned
-- Object Removal
-- Style Transfer
-- Image Enhancement
+#### 🚧 Planned (in testing_apps/)
+- Image Generation - Generate images from text prompts
+- Background Removal - Automatic background removal
+- Face Swap - Face swapping functionality
+- Image Enhancement - Super resolution and quality improvement
+- Object Removal - AI-powered object removal
+- Style Transfer - Artistic style transfer
 
 ### Key Design Principles
 
-1. **🚀 Stateless** - No database persistence for AI services
-2. **⚡ Fast** - In-memory processing, 25x faster than DB approach
-3. **🎯 Validation** - Serializers for input/output validation
-4. **🏗️ Clean Architecture** - Separated concerns, easy to scale
-5. **🐳 Docker Ready** - Containerized deployment
+1. **🚀 Modular** - Separation of Django apps and external services
+2. **⚡ Fast** - Async processing with Celery + Redis (configured)
+3. **🎯 Clean Code** - Shared utilities in `core/` and `shared/`
+4. **🏗️ Scalable** - Microservices-ready architecture
+5. **🐳 Docker Ready** - Containerized deployment support
 
 ---
 
@@ -88,16 +87,29 @@ Backend AI cung cấp RESTful API với **stateless microservices architecture**
 
 ```
 apps/
-├── ai_gateway/              # 🎯 Orchestrator (no business logic)
-├── prompt_refinement/       # 📝 Stateless service
-├── image_generation/        # 🖼️ Stateless service
-├── background_removal/      # ✂️ Has database (for history)
-├── face_swap/              # 👤 Has database (for history)
-└── image_processing/        # 🔧 Has database (for history)
+├── conversation/            # 💬 Chat service (MongoDB)
+└── [future AI apps...]      # Will be added as needed
+
+services/
+└── api_gateway/             # 🎯 FastAPI Gateway (separate service)
+
+core/
+├── exceptions.py            # Custom exception handlers
+├── middleware.py            # Request logging middleware
+├── response_utils.py        # Standardized API responses
+└── file_handler.py          # File upload & validation
+
+shared/
+├── models/                  # Pydantic models (cross-service)
+├── utils/                   # Helper functions
+└── constants.py             # Application-wide constants
+
+testing_apps/                # � Backup of experimental apps
 ```
 
-**Why some have database?**
-- `prompt_refinement`, `image_generation`, `ai_gateway` → Pure processing, no history needed
+**Current Implementation:**
+- `conversation` → MongoDB-based chat service (active)
+- `api_gateway` → Moved to `services/` (FastAPI, not a Django app)
 - `background_removal`, `face_swap`, `image_processing` → May need user history tracking
 
 ---
@@ -155,103 +167,33 @@ Server runs at: **http://localhost:8000**
 
 ## 📡 API Endpoints
 
-### 🎯 AI Gateway (Orchestration)
+### 💬 Conversation Service (MongoDB)
 
-**POST** `/api/v1/ai-gateway/chat/`
+**POST** `/api/v1/chat/sessions/`
+Create a new chat session
 
+**GET** `/api/v1/chat/sessions/<session_id>/`
+Get session details
+
+**POST** `/api/v1/chat/sessions/<session_id>/messages/`
+Send a message
+
+**GET** `/api/v1/chat/sessions/<session_id>/messages/`
+Get conversation history
+
+**DELETE** `/api/v1/chat/sessions/<session_id>/`
+Delete a session
+
+See `apps/conversation/API_DOCUMENTATION.md` for detailed API docs.
+
+### 🚀 API Gateway (FastAPI)
+
+Located in `services/api_gateway/`
+
+Run separately:
 ```bash
-curl -X POST http://localhost:8000/api/v1/ai-gateway/chat/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "message": "Generate a beautiful sunset landscape",
-    "session_id": "test-001"
-  }'
-```
-
-### 📝 Prompt Refinement
-
-**POST** `/api/v1/prompt-refinement/refine/`
-
-```bash
-curl -X POST http://localhost:8000/api/v1/prompt-refinement/refine/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "prompt": "a cat",
-    "context": {"style": "realistic"},
-    "method": "auto"
-  }'
-```
-
-**Response:**
-```json
-{
-  "original_prompt": "a cat",
-  "refined_prompt": "a cat, highly detailed, photorealistic, 8k",
-  "negative_prompt": "blurry, low quality",
-  "confidence_score": 0.85,
-  "method_used": "rule_based",
-  "processing_time": 0.002
-}
-```
-
-**POST** `/api/v1/prompt-refinement/validate/`
-
-```bash
-curl -X POST http://localhost:8000/api/v1/prompt-refinement/validate/ \
-  -H "Content-Type: application/json" \
-  -d '{"prompt": "beautiful sunset"}'
-```
-
-**POST** `/api/v1/prompt-refinement/extract-negative/`
-
-```bash
-curl -X POST http://localhost:8000/api/v1/prompt-refinement/extract-negative/ \
-  -H "Content-Type: application/json" \
-  -d '{"prompt": "beautiful cat, NOT blurry"}'
-```
-
-### 🖼️ Image Generation
-
-**POST** `/api/v1/image-generation/generate/`
-
-```bash
-curl -X POST http://localhost:8000/api/v1/image-generation/generate/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "prompt": "beautiful sunset over mountains",
-    "negative_prompt": "blurry, low quality",
-    "width": 512,
-    "height": 512,
-    "num_inference_steps": 30,
-    "guidance_scale": 7.5
-  }'
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "request_id": "550e8400-e29b-41d4-a716-446655440000",
-  "image_bytes": "base64_encoded_image_data...",
-  "metadata": {
-    "model": "stable-diffusion-v1.5",
-    "steps": 30,
-    "seed": 42
-  }
-}
-```
-
-**POST** `/api/v1/image-generation/generate-variations/`
-
-```bash
-curl -X POST http://localhost:8000/api/v1/image-generation/generate-variations/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "prompt": "sunset",
-    "num_variations": 4,
-    "width": 512,
-    "height": 512
-  }'
+cd services/api_gateway
+uvicorn src.main:app --host 0.0.0.0 --port 9999
 ```
 
 ### API Documentation (Interactive)
@@ -266,56 +208,66 @@ curl -X POST http://localhost:8000/api/v1/image-generation/generate-variations/ 
 ```
 backendAI/
 ├── manage.py                    # Django CLI
-├── requirements.txt             # Dependencies
+├── requirements.txt             # Dependencies (cleaned up)
 ├── Dockerfile                   # Container image
-├── docker-compose.yml           # Multi-container setup
 ├── .env.example                 # Environment template
 │
 ├── backendAI/                   # 🔧 Django Config
 │   ├── settings.py              # Main settings
 │   ├── urls.py                  # URL routing
 │   ├── wsgi.py                  # WSGI server
-│   └── asgi.py                  # ASGI server
+│   ├── asgi.py                  # ASGI server
+│   └── celery.py                # Async task config
 │
-├── apps/                        # 📱 Applications
-│   ├── ai_gateway/              # Orchestrator
-│   │   ├── views.py
-│   │   ├── pipeline.py
-│   │   └── services/
-│   │       ├── intent_classification.py
-│   │       └── response_handler.py
-│   │
-│   ├── prompt_refinement/       # Stateless
-│   │   ├── service.py           # Business logic
-│   │   ├── views.py             # API endpoints
-│   │   ├── serializers.py       # Validation
-│   │   ├── urls.py
-│   │   ├── models.py            # Empty
-│   │   └── admin.py             # Empty
-│   │
-│   ├── image_generation/        # Stateless
-│   │   ├── service.py
-│   │   ├── views.py
-│   │   ├── serializers.py
-│   │   ├── urls.py
-│   │   ├── models.py            # Empty
-│   │   └── admin.py             # Empty
-│   │
-│   ├── background_removal/      # Has DB
-│   ├── face_swap/              # Has DB
-│   └── image_processing/        # Has DB
+├── apps/                        # 📱 Django Applications
+│   └── conversation/            # Chat service (MongoDB)
+│       ├── views.py
+│       ├── service.py
+│       ├── serializers.py
+│       ├── urls.py
+│       ├── models.py
+│       └── mongo_client.py
 │
-├── core/                        # 🛠️ Shared Utilities
-│   ├── exceptions.py            # Custom exceptions
-│   ├── response_utils.py        # Response helpers
-│   ├── model_manager.py         # AI model loading
-│   ├── file_handler.py          # File operations
+├── services/                    # 🚀 External Services (non-Django)
+│   └── api_gateway/             # FastAPI Gateway
+│       ├── src/
+│       │   ├── main.py
+│       │   ├── routes/
+│       │   ├── middleware/
+│       │   └── services/
+│       ├── requirements.txt
+│       └── Dockerfile
+│
+├── core/                        # 🛠️ Shared Django Utilities
+│   ├── exceptions.py            # Custom exception handlers
+│   ├── response_utils.py        # Standardized responses
+│   ├── file_handler.py          # File upload/validation
 │   └── middleware.py            # Request logging
 │
-├── media/                       # 📁 Uploaded files
+├── shared/                      # � Cross-Service Code
+│   ├── models/                  # Pydantic schemas
+│   ├── utils/                   # Helper functions
+│   └── constants.py             # App-wide constants
+│
+├── testing_apps/                # 🔄 Backup/Experimental Apps
+│   ├── ai_tasks/
+│   ├── background_removal/
+│   ├── image_generation/
+│   └── [...]                    # Future AI features
+│
+├── media/                       # 📁 Generated/uploaded files
 ├── ml_models/                   # 🤖 AI model weights
 └── logs/                        # 📝 Application logs
 ```
+
+### Key Directories Explained
+
+- **apps/**: Production Django apps (currently only `conversation`)
+- **services/**: Standalone services like FastAPI gateway (not Django apps)
+- **core/**: Django-specific shared utilities
+- **shared/**: Code usable by both Django and external services
+- **testing_apps/**: Backup folder with experimental features
+
 
 ---
 
