@@ -1,0 +1,7 @@
+class ResponseCode:
+    SUCCESS = 1000
+    ERROR = 9999
+    UNAUTHORIZED = 1001
+    FORBIDDEN = 1003
+    NOT_FOUND = 1004
+    SERVER_ERROR = 1005

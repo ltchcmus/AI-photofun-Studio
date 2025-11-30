@@ -1,72 +1,42 @@
-"""
-Standard API response utilities
-"""
+# core/response_utils.py
 from rest_framework.response import Response
 from rest_framework import status
-
+from .constants import ResponseCode
 
 class APIResponse:
     """Standardized API response wrapper"""
-    
+
     @staticmethod
-    def success(data=None, message="Success", status_code=status.HTTP_200_OK):
-        """
-        Create success response
-        
-        Args:
-            data: Response data
-            message: Success message
-            status_code: HTTP status code
-            
-        Returns:
-            Response: DRF Response object
-        """
+    def success(result=None, message="Success", code=ResponseCode.SUCCESS, status_code=status.HTTP_200_OK):
         response_data = {
-            'success': True,
+            'code': code,
             'message': message,
-            'data': data
+            'result': result
         }
         return Response(response_data, status=status_code)
-    
+
     @staticmethod
-    def error(message="Error", errors=None, status_code=status.HTTP_400_BAD_REQUEST):
-        """
-        Create error response
-        
-        Args:
-            message: Error message
-            errors: Detailed error information
-            status_code: HTTP status code
-            
-        Returns:
-            Response: DRF Response object
-        """
+    def error(message="Error", code=ResponseCode.ERROR, errors=None, status_code=status.HTTP_400_BAD_REQUEST):
         response_data = {
-            'success': False,
+            'code': code,
             'message': message,
         }
-        
         if errors:
             response_data['errors'] = errors
-        
         return Response(response_data, status=status_code)
-    
+
     @staticmethod
-    def not_found(message="Resource not found"):
-        """Create not found response"""
-        return APIResponse.error(message, status_code=status.HTTP_404_NOT_FOUND)
-    
+    def not_found(message="Resource not found", code=ResponseCode.NOT_FOUND):
+        return APIResponse.error(message, code=code, status_code=status.HTTP_404_NOT_FOUND)
+
     @staticmethod
-    def unauthorized(message="Unauthorized"):
-        """Create unauthorized response"""
-        return APIResponse.error(message, status_code=status.HTTP_401_UNAUTHORIZED)
-    
+    def unauthorized(message="Unauthorized", code=ResponseCode.UNAUTHORIZED):
+        return APIResponse.error(message, code=code, status_code=status.HTTP_401_UNAUTHORIZED)
+
     @staticmethod
-    def forbidden(message="Forbidden"):
-        """Create forbidden response"""
-        return APIResponse.error(message, status_code=status.HTTP_403_FORBIDDEN)
-    
+    def forbidden(message="Forbidden", code=ResponseCode.FORBIDDEN):
+        return APIResponse.error(message, code=code, status_code=status.HTTP_403_FORBIDDEN)
+
     @staticmethod
-    def server_error(message="Internal server error"):
-        """Create server error response"""
-        return APIResponse.error(message, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    def server_error(message="Internal server error", code=ResponseCode.SERVER_ERROR):
+        return APIResponse.error(message, code=code, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
