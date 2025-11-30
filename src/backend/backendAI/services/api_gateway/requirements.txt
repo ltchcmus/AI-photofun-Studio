@@ -1,0 +1,8 @@
+FastAPI
+uvicorn
+pydantic
+httpx
+python-dotenv
+loguru
+aiohttp
+starlette
