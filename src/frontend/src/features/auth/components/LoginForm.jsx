@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../hooks/useAuth";
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
@@ -8,7 +9,9 @@ const LoginForm = () => {
     remember: false,
   });
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -21,40 +24,19 @@ const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
+    setSubmitting(true);
 
     try {
-      const response = await fetch(
-        "http://localhost:8888/api/v1/identity/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include", // Important for cookies
-          body: JSON.stringify({
-            usernameOrEmail: formData.usernameOrEmail,
-            password: formData.password,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Store the token if you need it later
-        if (data.result?.accessToken) {
-          localStorage.setItem("token", data.result.accessToken);
-        }
-        // Navigate to dashboard on success
-        window.location.href = "/home";
-      } else {
-        throw new Error(data.message || "Login failed");
-      }
-    } catch (err) {
-      setError(err.message || "An error occurred during login");
+      await login(formData.usernameOrEmail, formData.password);
+      navigate("/home");
+    } catch (submitError) {
+      const message =
+        submitError?.response?.data?.message ||
+        submitError?.message ||
+        "An error occurred during login";
+      setError(message);
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -79,78 +61,80 @@ const LoginForm = () => {
           {/* Form */}
           <div className="mb-6">
             {/* Username */}
-            <div className="mb-5">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Username/Email
-              </label>
-              <input
-                type="text"
-                name="usernameOrEmail"
-                value={formData.usernameOrEmail}
-                onChange={handleChange}
-                placeholder="Enter your username or email"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm transition-all outline-none focus:border-black focus:ring-4 focus:ring-black/10"
-              />
-            </div>
-
-            {/* Password */}
-            <div className="mb-5">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm transition-all outline-none focus:border-black focus:ring-4 focus:ring-black/10"
-              />
-            </div>
-
-            {/* Error message */}
-            {error && (
-              <div className="mb-4 text-red-500 text-sm text-center">
-                {error}
-              </div>
-            )}
-
-            {/* Remember & Forgot */}
-            <div className="flex justify-between items-center mb-6">
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="remember"
-                  name="remember"
-                  checked={formData.remember}
-                  onChange={handleChange}
-                  className="h-4 w-4 cursor-pointer rounded border-gray-300 text-black focus:ring-black"
-                />
-                <label
-                  htmlFor="remember"
-                  className="text-sm text-gray-500 cursor-pointer"
-                >
-                  Remember me
+            <form className="mb-6" onSubmit={handleSubmit}>
+              <div className="mb-5">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Username/Email
                 </label>
+                <input
+                  type="text"
+                  name="usernameOrEmail"
+                  value={formData.usernameOrEmail}
+                  onChange={handleChange}
+                  placeholder="Enter your username or email"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm transition-all outline-none focus:border-black focus:ring-4 focus:ring-black/10"
+                />
               </div>
-              <button
-                type="button"
-                className="text-sm font-semibold text-black transition-opacity hover:opacity-70"
-              >
-                Forgot password?
-              </button>
-            </div>
 
-            {/* Login Button */}
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              className={`w-full py-3 bg-black text-white rounded-xl text-base font-semibold cursor-pointer transition-all duration-300 hover:bg-gray-800 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:shadow-md ${
-                loading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-            >
-              {loading ? "Logging in..." : "Login"}
-            </button>
+              {/* Password */}
+              <div className="mb-5">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Enter your password"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm transition-all outline-none focus:border-black focus:ring-4 focus:ring-black/10"
+                />
+              </div>
+
+              {/* Error message */}
+              {error && (
+                <div className="mb-4 text-red-500 text-sm text-center">
+                  {error}
+                </div>
+              )}
+
+              {/* Remember & Forgot */}
+              <div className="flex justify-between items-center mb-6">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="remember"
+                    name="remember"
+                    checked={formData.remember}
+                    onChange={handleChange}
+                    className="h-4 w-4 cursor-pointer rounded border-gray-300 text-black focus:ring-black"
+                  />
+                  <label
+                    htmlFor="remember"
+                    className="text-sm text-gray-500 cursor-pointer"
+                  >
+                    Remember me
+                  </label>
+                </div>
+                <button
+                  type="button"
+                  className="text-sm font-semibold text-black transition-opacity hover:opacity-70"
+                >
+                  Forgot password?
+                </button>
+              </div>
+
+              {/* Login Button */}
+              <button
+                type="submit"
+                disabled={submitting}
+                className={`w-full py-3 bg-black text-white rounded-xl text-base font-semibold cursor-pointer transition-all duration-300 hover:bg-gray-800 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:shadow-md ${
+                  submitting ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                {submitting ? "Logging in..." : "Login"}
+              </button>
+            </form>
           </div>
 
           {/* Divider */}

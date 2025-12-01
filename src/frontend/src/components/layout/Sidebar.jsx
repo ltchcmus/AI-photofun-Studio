@@ -10,6 +10,9 @@ import {
   Settings,
 } from "lucide-react";
 import { navItems } from "../../config/navConfig";
+import { useAuth } from "../../hooks/useAuth";
+
+const DEFAULT_AVATAR = "https://placehold.co/40x40/111/fff?text=U";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -18,25 +21,21 @@ const Sidebar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const menuRef = useRef(null);
-  const LOGOUT_ENDPOINT = "/api/v1/identity/auth/logout";
+  const { user, logout } = useAuth();
+
+  const displayName = user?.fullName || "Người dùng";
+  const avatarUrl = user?.avatar || DEFAULT_AVATAR;
 
   const handleLogout = useCallback(async () => {
     try {
-      const token = localStorage.getItem("token");
-      await fetch(LOGOUT_ENDPOINT, {
-        method: "GET",
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      });
-    } catch (error) {
-      console.error("Logout request failed", error);
-    } finally {
-      localStorage.removeItem("token");
-      setMenuOpen(false);
+      await logout();
       navigate("/login");
+    } catch (error) {
+      console.error("Failed to logout", error);
+    } finally {
+      setMenuOpen(false);
     }
-  }, [LOGOUT_ENDPOINT, navigate]);
+  }, [logout, navigate]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -52,10 +51,15 @@ const Sidebar = () => {
 
   return (
     <aside className="hidden md:flex fixed left-0 top-0 h-screen w-20 flex-col items-center py-6 border-r border-gray-200 bg-white">
-      <div className="mb-8">
-        <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center">
-          <span className="text-white font-bold text-xl">@</span>
-        </div>
+      <div className="mb-8 flex flex-col items-center text-center">
+        <img
+          src={avatarUrl}
+          alt={displayName}
+          className="w-12 h-12 rounded-2xl object-cover border border-gray-200"
+        />
+        <p className="mt-2 text-sm font-semibold text-gray-800 line-clamp-2">
+          {displayName}
+        </p>
       </div>
 
       <nav className="flex-1 flex flex-col items-center gap-6">

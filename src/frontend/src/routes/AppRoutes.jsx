@@ -22,15 +22,42 @@ import PaymentSuccess from "../pages/PaymentSuccess";
 import PricingPage from "../pages/PricingPage";
 import PaymentFail from "../pages/PaymentFail";
 import Settings from "../pages/Settings";
+import { useAuthContext } from "../context/AuthContext";
+import LoadingScreen from "../components/common/LoadingScreen";
+import { useAuth } from "../hooks/useAuth";
+import VerifyEmailPage from "../pages/VerifyEmailPage";
+
+const RequireAuth = ({ children }) => {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+};
 
 function AppRoutes() {
+  const { loading } = useAuthContext();
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/verify-email" element={<VerifyEmailPage />} />
 
       {/* routes using shared layout (sidebar + mobile nav) */}
-      <Route element={<AppLayout />}>
+      <Route
+        element={
+          <RequireAuth>
+            <AppLayout />
+          </RequireAuth>
+        }
+      >
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
@@ -50,7 +77,13 @@ function AppRoutes() {
         <Route path="/settings" element={<Settings />} />
       </Route>
 
-      <Route element={<PremiumLayout />}>
+      <Route
+        element={
+          <RequireAuth>
+            <PremiumLayout />
+          </RequireAuth>
+        }
+      >
         <Route path="/premium" element={<PremiumDashboard />} />
       </Route>
 
