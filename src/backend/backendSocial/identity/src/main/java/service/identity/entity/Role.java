@@ -1,15 +1,15 @@
 package service.identity.entity;
 
-
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import java.util.Set;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Set;
 
 @Entity
 @Getter
@@ -21,10 +21,8 @@ import java.util.Set;
 @AllArgsConstructor
 @Table(name = "roles")
 public class Role {
-    @Id
-    String roleName;
-    String description;
+  @Id String roleName;
+  String description;
 
-    @ManyToMany
-    Set<Authority> authorities;
+  @ManyToMany(fetch = FetchType.EAGER) Set<Authority> authorities;
 }

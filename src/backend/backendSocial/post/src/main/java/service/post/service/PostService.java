@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import service.post.DTOs.HttpResponse;
 import service.post.DTOs.request.CreatePostRequest;
@@ -34,7 +35,6 @@ import service.post.mapper.PostMapper;
 import service.post.repository.PostRepository;
 import service.post.repository.http.FileClient;
 import service.post.utils.Utils;
-
 
 @Service
 @Slf4j
@@ -158,6 +158,7 @@ public class PostService {
   }
 
   @PreAuthorize("isAuthenticated()")
+  @Transactional
   public void likePost(String postId, int number) {
     lock.lock();
     try {
