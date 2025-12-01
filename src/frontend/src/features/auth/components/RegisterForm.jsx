@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { authService } from "../services/authService";
+import { toast } from "react-hot-toast";
+import { useAuth } from "../../../hooks/useAuth";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -22,6 +23,7 @@ const RegisterPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { register: registerUser } = useAuth();
 
   const handleSubmit = async (e) => {
     if (e && e.preventDefault) e.preventDefault();
@@ -34,15 +36,17 @@ const RegisterPage = () => {
 
     setLoading(true);
     try {
-      await authService.register(
-        formData.username,
-        formData.password,
-        formData.confirmpass, // API expects confirmPass
-        formData.email
+      await registerUser({
+        username: formData.username,
+        password: formData.password,
+        confirmPass: formData.confirmpass,
+        email: formData.email,
+        fullName: formData.fullname,
+        roles: ["USER"],
+      });
+      toast.success(
+        "Đăng ký thành công! Vui lòng đăng nhập để kích hoạt tài khoản."
       );
-
-      // Show success and redirect to login
-      alert("Đăng ký thành công. Vui lòng đăng nhập.");
       navigate("/login");
     } catch (err) {
       // backend may return object or message

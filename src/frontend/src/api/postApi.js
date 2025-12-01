@@ -1,0 +1,23 @@
+import axiosClient from "./axiosClient";
+
+const FEED_ENDPOINT = "/api/v1/posts/get-all";
+const MY_POSTS_ENDPOINT = "/api/v1/posts/my-posts";
+const CREATE_POST_ENDPOINT = "/api/v1/posts/create";
+const LIKE_POST_ENDPOINT = "/api/v1/identity/users/click-like";
+
+export const postApi = {
+  getFeed: ({ page = 1, size = 20 } = {}) =>
+    axiosClient.get(`${FEED_ENDPOINT}?page=${page}&size=${size}`),
+
+  getMyPosts: ({ page = 1, size = 5 } = {}) =>
+    axiosClient.get(`${MY_POSTS_ENDPOINT}?page=${page}&size=${size}`),
+
+  createPost: (formData) =>
+    axiosClient.post(CREATE_POST_ENDPOINT, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }),
+
+  likePost: (postId) => axiosClient.patch(`${LIKE_POST_ENDPOINT}/${postId}`),
+};
