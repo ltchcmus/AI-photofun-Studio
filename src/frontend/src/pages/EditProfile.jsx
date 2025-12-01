@@ -5,13 +5,15 @@ import { Camera, ChevronLeft, Mail, Phone, Save, User, X } from "lucide-react";
 const API_GATEWAY = import.meta.env.VITE_API_GATEWAY || "http://localhost:8888";
 const PROFILE_ENDPOINT = "/api/v1/profiles/my-profile";
 const UPDATE_PROFILE_ENDPOINT = "/api/v1/profiles/update";
+const CURRENT_USER_ENDPOINT = "/api/v1/identity/users/me";
+const UPLOAD_AVATAR_ENDPOINT = "/api/v1/identity/users/upload-avatar";
+const DEFAULT_AVATAR = "https://placehold.co/128x128/111/fff?text=U";
 
 const DEFAULT_FORM = {
   fullName: "Cao Ty",
   email: "caoty113@gmail.com",
   phone: "+84 912 345 678",
-  avatarUrl:
-    "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=300&h=300&fit=crop",
+  avatarUrl: DEFAULT_AVATAR,
   avatarFile: null,
 };
 
@@ -82,10 +84,60 @@ const EditProfile = () => {
     fetchProfile();
   }, []);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchCurrentUser = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const headers = {
+          Authorization: `Bearer ${token}`,
+        };
+
+        const response = await fetch(`${API_GATEWAY}${CURRENT_USER_ENDPOINT}`, {
+          method: "GET",
+          headers,
+          credentials: "include",
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || "Không thể tải thông tin tài khoản");
+        }
+
+        const rawUser =
+          data.result?.data || data.result || data.data || data.user || data;
+
+        if (!isMounted) return;
+
+        const avatarUrl =
+          rawUser?.avatarUrl ||
+          rawUser?.avatar ||
+          rawUser?.profileImage ||
+          DEFAULT_AVATAR;
+
+        setFormData((prev) => ({ ...prev, avatarUrl }));
+      } catch (error) {
+        console.error("Failed to fetch identity profile", error);
+      }
+    };
+
+    fetchCurrentUser();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const handleAvatarChange = (event) => {
     const file = event.target.files?.[0];
 
     if (file) {
+      if (previewAvatar) {
+        URL.revokeObjectURL(previewAvatar);
+      }
       const nextPreview = URL.createObjectURL(file);
       setPreviewAvatar(nextPreview);
       setFormData((prev) => ({ ...prev, avatarFile: file }));
@@ -104,19 +156,54 @@ const EditProfile = () => {
 
     try {
       const token = localStorage.getItem("token");
+      const authHeaders = token
+        ? {
+            Authorization: `Bearer ${token}`,
+          }
+        : {};
+
+      let nextAvatarUrl = formData.avatarUrl || DEFAULT_AVATAR;
+      const hasNewAvatar = Boolean(formData.avatarFile);
+
+      if (hasNewAvatar) {
+        const avatarData = new FormData();
+        avatarData.append("file", formData.avatarFile);
+
+        const uploadResponse = await fetch(
+          `${API_GATEWAY}${UPLOAD_AVATAR_ENDPOINT}`,
+          {
+            method: "POST",
+            headers: authHeaders,
+            body: avatarData,
+            credentials: "include",
+          }
+        );
+
+        const uploadJson = await uploadResponse.json();
+        if (!uploadResponse.ok) {
+          throw new Error(
+            uploadJson.message || "Không thể cập nhật ảnh đại diện"
+          );
+        }
+
+        nextAvatarUrl =
+          uploadJson.result?.avatarUrl ||
+          uploadJson.result?.data?.avatarUrl ||
+          uploadJson.data?.avatarUrl ||
+          uploadJson.avatarUrl ||
+          nextAvatarUrl;
+      }
+
       const headers = {
         "Content-Type": "application/json",
+        ...authHeaders,
       };
-
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
 
       const payload = {
         fullName: formData.fullName,
         phone: formData.phone,
         email: formData.email,
-        avatarUrl: formData.avatarUrl,
+        avatarUrl: nextAvatarUrl,
         verified: false,
       };
 
@@ -131,6 +218,16 @@ const EditProfile = () => {
 
       if (!response.ok) {
         throw new Error(data.message || "Không thể cập nhật hồ sơ");
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        avatarUrl: nextAvatarUrl,
+        avatarFile: null,
+      }));
+      if (hasNewAvatar && previewAvatar) {
+        URL.revokeObjectURL(previewAvatar);
+        setPreviewAvatar(null);
       }
 
       setStatus({
@@ -195,7 +292,7 @@ const EditProfile = () => {
               <div className="relative group cursor-pointer">
                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg ring-2 ring-gray-100 group-hover:ring-blue-100 transition-all">
                   <img
-                    src={previewAvatar || formData.avatarUrl}
+                    src={previewAvatar || formData.avatarUrl || DEFAULT_AVATAR}
                     alt="Avatar"
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
