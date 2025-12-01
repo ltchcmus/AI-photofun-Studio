@@ -1,5 +1,6 @@
 package service.identity.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -21,13 +22,14 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
+@Transactional
 public class RoleService {
     RoleRepository roleRepository;
     RoleMapper roleMapper;
     MapperHelper mapperHelper;
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     public CreateRoleResponse create(CreateRoleRequest createRoleRequest){
 
         if(roleRepository.existsByRoleName(createRoleRequest.getRoleName())){

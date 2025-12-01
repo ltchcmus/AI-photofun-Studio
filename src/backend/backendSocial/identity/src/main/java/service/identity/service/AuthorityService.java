@@ -1,5 +1,6 @@
 package service.identity.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +23,12 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
+@Transactional
 public class AuthorityService {
     AuthorityRepository authorityRepository;
     AuthorityMapper authorityMapper;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasRole('ADMIN')")
     public CreateAuthorityResponse create(CreateAuthorityRequest createAuthorityRequest){
         if(authorityRepository.existsByAuthorityName(createAuthorityRequest.getAuthorityName())){
             throw new AppException(ErrorCode.AUTHORITY_ALREADY_EXISTS);

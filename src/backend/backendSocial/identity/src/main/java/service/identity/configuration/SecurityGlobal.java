@@ -31,7 +31,9 @@ public class SecurityGlobal {
             "/users/request-join-group",
             "/users/delete-request-join-group",
             "/users/add-group",
-            "/users/get-group-joined-internal"
+            "/users/get-group-joined-internal",
+            "/authorities/create",
+            "/roles/create"
     };
 
 
