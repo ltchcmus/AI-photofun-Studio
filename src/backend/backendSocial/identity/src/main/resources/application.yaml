@@ -70,9 +70,9 @@ spring:
     out-of-order: true
     dialect: org.hibernate.dialect.PostgreSQLDialect
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://dpg-d41p7um3cjmc738t8o6g-a.singapore-postgres.render.com:5432/database_pym9?sslmode=require}
-    username: ${DATABASE_USERNAME:lethanhcong}
-    password: ${DATABASE_PASSWORD:zMna2eG7LBmjIZvGvMqOibJMSou9ys23}
+    url: ${DATABASE_URL:jdbc:postgresql://aws-1-ap-south-1.pooler.supabase.com:6543/postgres?sslmode=require}
+    username: ${DATABASE_USERNAME:postgres.noyltxzqpksuzxmjonkm}
+    password: ${DATABASE_PASSWORD:Cong2642005@@}
     driver-class-name: org.postgresql.Driver
     hikari:
       connection-timeout: 30000
