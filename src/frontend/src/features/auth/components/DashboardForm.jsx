@@ -12,6 +12,8 @@ import {
 const API_GATEWAY = import.meta.env.VITE_API_GATEWAY || "http://localhost:8888";
 const FEED_ENDPOINT = "/api/v1/posts/get-all?page=1&size=20";
 const CREATE_ENDPOINT = "/api/v1/posts/create";
+const USER_ENDPOINT = "/api/v1/identity/users/get";
+const CURRENT_USER_ENDPOINT = "/api/v1/identity/users/me";
 const DEFAULT_AVATAR = "https://placehold.co/40x40/111/fff?text=U";
 const DEFAULT_IMAGE =
   "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=600&fit=crop";
@@ -25,6 +27,9 @@ const normalizePost = (post, index = 0) => {
   if (!post) return null;
 
   const author = post.author || post.user || post.owner || post.createdBy || {};
+  const promptValue = typeof post.prompt === "string" ? post.prompt.trim() : "";
+  const userId =
+    post.userId || post.userID || post.ownerId || post.authorId || author.id;
   const name =
     author.username ||
     author.fullName ||
@@ -51,8 +56,9 @@ const normalizePost = (post, index = 0) => {
     likes: post.totalLikes ?? post.likeCount ?? post.likes ?? 0,
     comments: post.totalComments ?? post.commentCount ?? post.comments ?? 0,
     liked: Boolean(post.liked ?? post.isLiked ?? false),
-    hasPrompt: Boolean(post.prompt),
-    prompt: post.prompt || "",
+    hasPrompt: Boolean(promptValue),
+    prompt: promptValue,
+    userId,
   };
 };
 
@@ -69,8 +75,11 @@ export default function DashboardForm() {
   const [feedError, setFeedError] = useState("");
   const [creatingPost, setCreatingPost] = useState(false);
   const [createError, setCreateError] = useState("");
+  const [userCache, setUserCache] = useState({});
+  const [currentUser, setCurrentUser] = useState(null);
   const fileInputRef = useRef(null);
   const isMountedRef = useRef(true);
+  const pendingUsersRef = useRef(new Set());
 
   const fetchFeed = useCallback(async () => {
     if (!isMountedRef.current) return;
@@ -130,6 +139,134 @@ export default function DashboardForm() {
       isMountedRef.current = false;
     };
   }, [fetchFeed]);
+
+  const fetchCurrentUser = useCallback(async () => {
+    if (!isMountedRef.current) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    try {
+      const response = await fetch(`${API_GATEWAY}${CURRENT_USER_ENDPOINT}`, {
+        method: "GET",
+        headers,
+        credentials: "include",
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch current user");
+      }
+
+      const rawUser =
+        data.result?.data || data.result || data.data || data.user || data;
+
+      const normalizedUser = {
+        id:
+          rawUser?.id || rawUser?.userId || rawUser?.userID || rawUser?.user_id,
+        name: rawUser?.fullName || rawUser?.username || rawUser?.email || "Bạn",
+        avatar:
+          rawUser?.avatarUrl ||
+          rawUser?.avatar ||
+          rawUser?.profileImage ||
+          DEFAULT_AVATAR,
+      };
+
+      if (!isMountedRef.current) return;
+
+      setCurrentUser(normalizedUser);
+      if (normalizedUser.id) {
+        setUserCache((prev) => {
+          if (prev[normalizedUser.id]) {
+            return prev;
+          }
+          return {
+            ...prev,
+            [normalizedUser.id]: {
+              name: normalizedUser.name,
+              avatar: normalizedUser.avatar,
+            },
+          };
+        });
+      }
+    } catch (error) {
+      console.error("Failed to fetch current user", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCurrentUser();
+  }, [fetchCurrentUser]);
+
+  const fetchUserProfile = useCallback(
+    async (userId) => {
+      if (!userId || pendingUsersRef.current.has(userId) || userCache[userId]) {
+        return;
+      }
+
+      pendingUsersRef.current.add(userId);
+      try {
+        const token = localStorage.getItem("token");
+        const headers = {};
+        if (token) {
+          headers.Authorization = `Bearer ${token}`;
+        }
+
+        const response = await fetch(
+          `${API_GATEWAY}${USER_ENDPOINT}/${userId}`,
+          {
+            method: "GET",
+            headers,
+            credentials: "include",
+          }
+        );
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to fetch user");
+        }
+
+        const rawUser =
+          data.result?.data || data.result || data.data || data.user || data;
+
+        const normalizedUser = {
+          name:
+            rawUser?.fullName ||
+            rawUser?.username ||
+            rawUser?.email ||
+            "Người dùng",
+          avatar:
+            rawUser?.avatarUrl ||
+            rawUser?.avatar ||
+            rawUser?.profileImage ||
+            DEFAULT_AVATAR,
+        };
+
+        if (isMountedRef.current) {
+          setUserCache((prev) => ({ ...prev, [userId]: normalizedUser }));
+        }
+      } catch (error) {
+        console.error("Failed to fetch user profile", error);
+      } finally {
+        pendingUsersRef.current.delete(userId);
+      }
+    },
+    [userCache]
+  );
+
+  useEffect(() => {
+    const idsToFetch = feedPosts
+      .map((post) => post.userId)
+      .filter((id) => id && !userCache[id] && !pendingUsersRef.current.has(id));
+
+    idsToFetch.forEach((id) => {
+      fetchUserProfile(id);
+    });
+  }, [feedPosts, userCache, fetchUserProfile]);
 
   function handleCreateClick() {
     setShowCreateModal(true);
@@ -198,7 +335,10 @@ export default function DashboardForm() {
 
       const formData = new FormData();
       formData.append("caption", postContent || "");
-      formData.append("prompt", promptText || "");
+      const trimmedPrompt = promptText.trim();
+      if (trimmedPrompt) {
+        formData.append("prompt", trimmedPrompt);
+      }
       if (postImageFile) {
         formData.append("image", postImageFile);
       }
@@ -226,6 +366,9 @@ export default function DashboardForm() {
       const normalized = normalizePost(createdPost, Date.now());
       if (normalized) {
         setFeedPosts((prev) => [normalized, ...prev]);
+        if (normalized.userId) {
+          fetchUserProfile(normalized.userId);
+        }
       }
 
       handleCloseModal();
@@ -258,8 +401,10 @@ export default function DashboardForm() {
         <section className="border-b border-gray-200 py-4">
           <div className="flex gap-3 items-center">
             <img
-              src="https://placehold.co/48x48/111/fff?text=U"
-              alt="Your avatar"
+              src={currentUser?.avatar || DEFAULT_AVATAR}
+              alt={
+                currentUser?.name ? `${currentUser.name} avatar` : "Your avatar"
+              }
               className="w-12 h-12 rounded-full bg-gray-200 shrink-0"
             />
             <button
@@ -295,105 +440,113 @@ export default function DashboardForm() {
               Chưa có bài viết nào. Hãy là người đầu tiên chia sẻ cảm hứng!
             </div>
           )}
-          {feedPosts.map((post) => (
-            <article key={post.id} className="border-b border-gray-200 py-6">
-              <div className="flex gap-3">
-                <img
-                  src={post.avatar}
-                  alt={`${post.user} avatar`}
-                  className="w-10 h-10 rounded-full shrink-0"
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-semibold text-sm text-gray-900">
-                        {post.user}
-                      </p>
-                      <p className="text-xs text-gray-500">{post.time}</p>
+          {feedPosts.map((post) => {
+            const authorInfo = post.userId ? userCache[post.userId] : null;
+            const displayName = authorInfo?.name || post.user;
+            const displayAvatar = authorInfo?.avatar || post.avatar;
+
+            return (
+              <article key={post.id} className="border-b border-gray-200 py-6">
+                <div className="flex gap-3">
+                  <img
+                    src={displayAvatar}
+                    alt={`${displayName} avatar`}
+                    className="w-10 h-10 rounded-full shrink-0"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-semibold text-sm text-gray-900">
+                          {displayName}
+                        </p>
+                        <p className="text-xs text-gray-500">{post.time}</p>
+                      </div>
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setActiveMenu(
+                              activeMenu === post.id ? null : post.id
+                            )
+                          }
+                          className="p-1.5 rounded-full hover:bg-gray-100 text-gray-500"
+                          title="Options"
+                        >
+                          <MoreHorizontal className="w-5 h-5" />
+                        </button>
+                        {activeMenu === post.id && (
+                          <div className="absolute right-0 mt-2 w-48 rounded-xl border border-gray-200 bg-white shadow-lg z-20">
+                            <button className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50">
+                              Save
+                            </button>
+                            <button className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50">
+                              Hide
+                            </button>
+                            <button className="w-full px-4 py-3 text-left text-sm text-red-600 hover:bg-gray-50">
+                              Report
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div className="relative">
+
+                    <p className="text-sm text-gray-800 mt-3">{post.content}</p>
+
+                    {post.image && (
+                      <div className="rounded-2xl overflow-hidden border border-gray-200 mt-4">
+                        <img
+                          src={post.image}
+                          alt={`Post by ${displayName}`}
+                          className="w-full h-auto object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                    )}
+
+                    {post.hasPrompt && (
+                      <div className="mt-4 bg-gray-50 border border-gray-200 rounded-xl p-3">
+                        <div className="flex items-center gap-2 text-xs font-semibold text-gray-700">
+                          <Sparkles className="w-4 h-4 text-purple-500" /> AI
+                          Prompt
+                        </div>
+                        <p className="mt-2 text-xs text-gray-600 font-mono leading-relaxed">
+                          {post.prompt}
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="flex items-center gap-6 mt-4">
                       <button
                         type="button"
-                        onClick={() =>
-                          setActiveMenu(activeMenu === post.id ? null : post.id)
-                        }
-                        className="p-1.5 rounded-full hover:bg-gray-100 text-gray-500"
-                        title="Options"
+                        className="flex items-center gap-2 text-sm text-gray-600 hover:text-red-500"
                       >
-                        <MoreHorizontal className="w-5 h-5" />
+                        <Heart
+                          className={`w-5 h-5 ${
+                            post.liked ? "fill-red-500 text-red-500" : ""
+                          }`}
+                        />
+                        {Number(post.likes || 0).toLocaleString()}
                       </button>
-                      {activeMenu === post.id && (
-                        <div className="absolute right-0 mt-2 w-48 rounded-xl border border-gray-200 bg-white shadow-lg z-20">
-                          <button className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50">
-                            Save
-                          </button>
-                          <button className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50">
-                            Hide
-                          </button>
-                          <button className="w-full px-4 py-3 text-left text-sm text-red-600 hover:bg-gray-50">
-                            Report
-                          </button>
-                        </div>
-                      )}
+                      <button
+                        type="button"
+                        className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-500"
+                      >
+                        <MessageCircle className="w-5 h-5" />
+                        {Number(post.comments || 0).toLocaleString()}
+                      </button>
+                      <button
+                        type="button"
+                        className="text-sm text-purple-600 hover:text-purple-700"
+                        onClick={() => navigate("/ai-tools")}
+                      >
+                        Use AI tools
+                      </button>
                     </div>
-                  </div>
-
-                  <p className="text-sm text-gray-800 mt-3">{post.content}</p>
-
-                  {post.image && (
-                    <div className="rounded-2xl overflow-hidden border border-gray-200 mt-4">
-                      <img
-                        src={post.image}
-                        alt={`Post by ${post.user}`}
-                        className="w-full h-auto object-cover"
-                        loading="lazy"
-                      />
-                    </div>
-                  )}
-
-                  {post.hasPrompt && (
-                    <div className="mt-4 bg-gray-50 border border-gray-200 rounded-xl p-3">
-                      <div className="flex items-center gap-2 text-xs font-semibold text-gray-700">
-                        <Sparkles className="w-4 h-4 text-purple-500" /> AI
-                        Prompt
-                      </div>
-                      <p className="mt-2 text-xs text-gray-600 font-mono leading-relaxed">
-                        {post.prompt}
-                      </p>
-                    </div>
-                  )}
-
-                  <div className="flex items-center gap-6 mt-4">
-                    <button
-                      type="button"
-                      className="flex items-center gap-2 text-sm text-gray-600 hover:text-red-500"
-                    >
-                      <Heart
-                        className={`w-5 h-5 ${
-                          post.liked ? "fill-red-500 text-red-500" : ""
-                        }`}
-                      />
-                      {Number(post.likes || 0).toLocaleString()}
-                    </button>
-                    <button
-                      type="button"
-                      className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-500"
-                    >
-                      <MessageCircle className="w-5 h-5" />
-                      {Number(post.comments || 0).toLocaleString()}
-                    </button>
-                    <button
-                      type="button"
-                      className="text-sm text-purple-600 hover:text-purple-700"
-                      onClick={() => navigate("/ai-tools")}
-                    >
-                      Use AI tools
-                    </button>
                   </div>
                 </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </section>
       </main>
 

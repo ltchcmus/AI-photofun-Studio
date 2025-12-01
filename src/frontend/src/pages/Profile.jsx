@@ -16,13 +16,15 @@ import {
 const API_GATEWAY = import.meta.env.VITE_API_GATEWAY || "http://localhost:8888";
 const PROFILE_ENDPOINT = "/api/v1/profiles/my-profile";
 const POSTS_ENDPOINT = "/api/v1/posts/my-posts?page=1&size=5";
+const CURRENT_USER_ENDPOINT = "/api/v1/identity/users/me";
+const DEFAULT_AVATAR = "https://placehold.co/128x128/111/fff?text=U";
 
 const PROFILE_DEFAULTS = {
   fullName: "",
   bio: "Digital artist · AI creative explorer",
   email: "",
   phone: "",
-  avatarUrl: "",
+  avatarUrl: DEFAULT_AVATAR,
   address: "123 Nguyễn Huệ Street, District 1, Ho Chi Minh City",
   country: "Vietnam",
   dob: "May 01, 2005",
@@ -53,6 +55,7 @@ const Profile = () => {
   const [posts, setPosts] = useState([]);
   const [postsLoading, setPostsLoading] = useState(true);
   const [postsError, setPostsError] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -145,12 +148,69 @@ const Profile = () => {
     fetchPosts();
   }, []);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchCurrentUser = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const headers = {
+          Authorization: `Bearer ${token}`,
+        };
+
+        const response = await fetch(`${API_GATEWAY}${CURRENT_USER_ENDPOINT}`, {
+          method: "GET",
+          headers,
+          credentials: "include",
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to fetch user profile");
+        }
+
+        const rawUser =
+          data.result?.data || data.result || data.data || data.user || data;
+
+        if (!isMounted) return;
+
+        setCurrentUser({
+          id: rawUser?.id || rawUser?.userId || rawUser?.userID,
+          fullName:
+            rawUser?.fullName || rawUser?.username || rawUser?.email || "",
+          avatar:
+            rawUser?.avatarUrl ||
+            rawUser?.avatar ||
+            rawUser?.profileImage ||
+            DEFAULT_AVATAR,
+        });
+      } catch (userError) {
+        console.error("Failed to fetch current user", userError);
+      }
+    };
+
+    fetchCurrentUser();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const displayProfile = {
-    fullName: profileData?.fullName ?? PROFILE_DEFAULTS.fullName,
+    fullName:
+      profileData?.fullName ||
+      currentUser?.fullName ||
+      PROFILE_DEFAULTS.fullName,
     bio: profileData?.bio ?? PROFILE_DEFAULTS.bio,
     email: profileData?.email ?? PROFILE_DEFAULTS.email,
     phone: profileData?.phone ?? PROFILE_DEFAULTS.phone,
-    avatarUrl: profileData?.avatarUrl ?? PROFILE_DEFAULTS.avatarUrl,
+    avatarUrl:
+      currentUser?.avatar ||
+      profileData?.avatarUrl ||
+      PROFILE_DEFAULTS.avatarUrl ||
+      DEFAULT_AVATAR,
     address: profileData?.address ?? PROFILE_DEFAULTS.address,
     country: profileData?.country ?? PROFILE_DEFAULTS.country,
     dob: profileData?.dob ?? PROFILE_DEFAULTS.dob,
