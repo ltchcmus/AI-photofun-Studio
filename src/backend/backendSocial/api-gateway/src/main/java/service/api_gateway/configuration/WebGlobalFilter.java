@@ -31,7 +31,9 @@ class WebGlobalFilter implements GlobalFilter, Ordered {
             "/identity/auth/authentication",
             "/check",
             "/identity/users/tokens/**",
-            "/identity/users/modify-tokens"
+            "/identity/users/modify-tokens",
+            "/identity/authorities/create",
+            "/identity/roles/create"
     };
 
     @NonFinal
