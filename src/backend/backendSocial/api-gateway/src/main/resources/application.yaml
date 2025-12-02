@@ -3,7 +3,6 @@ server:
   servlet:
     context-path: /api-gateway
 
-
 config:
   http:
     identity: ${IDENTITY_SERVICE_URL:http://localhost:8080/identity}
@@ -23,9 +22,9 @@ spring:
         - id: identity-service
           uri: ${IDENTITY_SERVICE_URL:http://localhost:8080}
           predicates:
-               - Path=${config.prefix}/identity/**
+            - Path=${config.prefix}/identity/**
           filters:
-                - StripPrefix=${config.remove-prefix}
+            - StripPrefix=${config.remove-prefix}
 
         - id: profile-service
           uri: ${PROFILE_SERVICE_URL:http://localhost:8081}
@@ -42,7 +41,7 @@ spring:
             - StripPrefix=${config.remove-prefix}
 
         - id: comments-service
-          uri: ${COMMENT_SERVICE_URL:http://localhost:8083}
+          uri: ${COMMENT_SERVICE_URL:http://localhost:8003}
           predicates:
             - Path=${config.prefix}/comments/**
           filters:

@@ -6,7 +6,6 @@ export default function PostTab({ config, auth }) {
   const [loading, setLoading] = useState(false)
   const [postId, setPostId] = useState('')
   const [createData, setCreateData] = useState({ caption: '', prompt: '' })
-  const [likeData, setLikeData] = useState({ postId: '', like: 'true' })
 
   const apiCall = async (method, endpoint, data = null, isFile = false) => {
     setLoading(true)
@@ -77,21 +76,6 @@ export default function PostTab({ config, auth }) {
       </div>
 
       <div className="api-section">
-        <h3>❤️ Like/Unlike Post (API #33)</h3>
-        <div className="form-row">
-          <input placeholder="Post ID" value={likeData.postId}
-            onChange={(e) => setLikeData({...likeData, postId: e.target.value})} />
-          <select value={likeData.like} onChange={(e) => setLikeData({...likeData, like: e.target.value})}>
-            <option value="true">Like</option>
-            <option value="false">Unlike</option>
-          </select>
-          <button className="btn btn-primary" onClick={() => {
-            apiCall('PATCH', `/api/v1/posts/like?postId=${likeData.postId}&like=${likeData.like}`)
-          }} disabled={loading}>Toggle Like</button>
-        </div>
-      </div>
-
-      <div className="api-section">
         <h3>💾 Download Post (API #34)</h3>
         <div className="form-row">
           <input placeholder="Post ID" value={postId} onChange={(e) => setPostId(e.target.value)} />
@@ -99,6 +83,12 @@ export default function PostTab({ config, auth }) {
             window.open(`${config.apiGateway}/api/v1/posts/download/${postId}`, '_blank')
           }} disabled={loading}>Download</button>
         </div>
+      </div>
+
+      <div className="api-section">
+        <h3>ℹ️ Note</h3>
+        <p>To like/unlike posts, use the <strong>User Tab</strong> → "Like Post" feature (API #11)</p>
+        <p>It uses <code>/api/v1/identity/users/click-like/:postId</code></p>
       </div>
 
       <div className="response-box">

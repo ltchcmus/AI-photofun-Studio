@@ -2,8 +2,10 @@ package service.identity.service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 import lombok.RequiredArgsConstructor;
@@ -289,6 +291,24 @@ public class UserService {
     } finally {
       lock.unlock();
     }
+  }
+
+  @PreAuthorize("isAuthenticated()")
+  public Map<String, Boolean> checkLikedPosts(String[] postIds) {
+    String userId =
+        SecurityContextHolder.getContext().getAuthentication().getName();
+
+    User user = userRepository.findById(userId).orElseThrow(
+        () -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+    Set<String> likedPosts = user.getLikedPosts();
+    Map<String, Boolean> result = new HashMap<>();
+
+    for (String postId : postIds) {
+      result.put(postId, likedPosts.contains(postId));
+    }
+
+    return result;
   }
 
   @PreAuthorize("isAuthenticated()")
