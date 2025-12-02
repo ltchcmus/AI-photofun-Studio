@@ -31,7 +31,15 @@ func (app *Application) Run() {
 	// Initialize Gin router
 	r := gin.Default()
 
-	// Setup CORS
+	// Setup Socket.IO FIRST (before any middleware)
+	socketServer := handler.SetupSocketIO()
+	defer socketServer.Close()
+
+	// Socket.IO endpoints - CORS handled by EngineIO CheckOrigin
+	r.GET("/socket.io/*any", gin.WrapH(socketServer))
+	r.POST("/socket.io/*any", gin.WrapH(socketServer))
+
+	// Setup CORS for other routes only
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -40,19 +48,15 @@ func (app *Application) Run() {
 		AllowCredentials: true,
 	}))
 
-	// Setup Socket.IO
-	socketServer := handler.SetupSocketIO()
-	defer socketServer.Close()
-
 	// Initialize layers
 	collection := mongodb.GetCollection("comments")
 	commentRepo := repositories.NewCommentRepository(collection)
 	commentService := services.NewCommentService(commentRepo, socketServer)
 	commentHandler := handler.NewCommentHandler(commentService)
 
-	// Setup routes with context path
+	// Setup REST API routes with context path
 	api := r.Group("/comments")
-	routes.SetupRoutes(api, commentHandler, socketServer)
+	routes.SetupRoutes(api, commentHandler)
 
 	// Start server
 	port := configuration.GetPort()
