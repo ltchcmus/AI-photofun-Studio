@@ -87,8 +87,8 @@ spring:
     # HikariCP settings for Supabase transaction pooler
     hikari:
       # Keep connection pool small for transaction pooler
-      maximum-pool-size: 5
-      minimum-idle: 2
+      maximum-pool-size: 2
+      minimum-idle: 1
       # Short connection lifetime for transaction pooler
       max-lifetime: 300000
       connection-timeout: 20000

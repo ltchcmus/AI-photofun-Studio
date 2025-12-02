@@ -9,23 +9,27 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SocketConfig {
 
-    @Value("${config.socket.host}")
-    private String host;
-    @Value("${config.socket.port}")
-    private int port;
+  @Value("${config.socket.host}") private String host;
+  @Value("${config.socket.port}") private int port;
 
-    @Bean
-    SocketIOServer socketIOServer() {
-        com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
-        config.setHostname(host);
-        config.setPort(port);
-        return new SocketIOServer(config);
-    }
+  @Bean
+  SocketIOServer socketIOServer() {
+    com.corundumstudio.socketio.Configuration config =
+        new com.corundumstudio.socketio.Configuration();
+    config.setHostname(host);
+    config.setPort(port);
 
-    @Bean
-    public ApplicationRunner runner(SocketIOServer socketIOServer) {
-        return args -> {
-            socketIOServer.start();
-        };
-    }
+    // CORS configuration - Allow all origins for Socket.IO
+    config.setOrigin("*");
+    config.setAllowCustomRequests(true);
+    config.setMaxFramePayloadLength(1024 * 1024); // 1MB
+    config.setMaxHttpContentLength(1024 * 1024);  // 1MB
+
+    return new SocketIOServer(config);
+  }
+
+  @Bean
+  public ApplicationRunner runner(SocketIOServer socketIOServer) {
+    return args -> { socketIOServer.start(); };
+  }
 }

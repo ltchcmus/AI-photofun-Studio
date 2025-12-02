@@ -42,8 +42,8 @@ spring:
     password: ${DATABASE_PASSWORD:Cong2642005@@}
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 5
-      minimum-idle: 2
+      maximum-pool-size: 2
+      minimum-idle: 1
       max-lifetime: 300000
       connection-timeout: 20000
       connection-test-query: null
