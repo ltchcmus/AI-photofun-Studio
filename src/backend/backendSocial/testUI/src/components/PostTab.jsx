@@ -6,7 +6,6 @@ export default function PostTab({ config, auth }) {
   const [loading, setLoading] = useState(false)
   const [postId, setPostId] = useState('')
   const [createData, setCreateData] = useState({ caption: '', prompt: '' })
-  const [likeData, setLikeData] = useState({ postId: '', like: 'true' })
 
   const apiCall = async (method, endpoint, data = null, isFile = false) => {
     setLoading(true);
@@ -105,21 +104,6 @@ export default function PostTab({ config, auth }) {
             }
           />
           <input type="file" onChange={createPost} accept="image/*" />
-        </div>
-      </div>
-
-      <div className="api-section">
-        <h3>❤️ Like/Unlike Post (API #33)</h3>
-        <div className="form-row">
-          <input placeholder="Post ID" value={likeData.postId}
-            onChange={(e) => setLikeData({...likeData, postId: e.target.value})} />
-          <select value={likeData.like} onChange={(e) => setLikeData({...likeData, like: e.target.value})}>
-            <option value="true">Like</option>
-            <option value="false">Unlike</option>
-          </select>
-          <button className="btn btn-primary" onClick={() => {
-            apiCall('PATCH', `/api/v1/posts/like?postId=${likeData.postId}&like=${likeData.like}`)
-          }} disabled={loading}>Toggle Like</button>
         </div>
       </div>
 
