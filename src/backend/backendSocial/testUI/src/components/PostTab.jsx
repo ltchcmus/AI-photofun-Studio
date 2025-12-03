@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import axios from "axios";
 
 export default function PostTab({ config, auth }) {
-  const [response, setResponse] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [postId, setPostId] = useState("");
-  const [createData, setCreateData] = useState({ caption: "", prompt: "" });
-  const [likeData, setLikeData] = useState({ postId: "", like: "1" });
+  const [response, setResponse] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [postId, setPostId] = useState('')
+  const [createData, setCreateData] = useState({ caption: '', prompt: '' })
+  const [likeData, setLikeData] = useState({ postId: '', like: 'true' })
 
   const apiCall = async (method, endpoint, data = null, isFile = false) => {
     setLoading(true);
@@ -111,32 +111,15 @@ export default function PostTab({ config, auth }) {
       <div className="api-section">
         <h3>❤️ Like/Unlike Post (API #33)</h3>
         <div className="form-row">
-          <input
-            placeholder="Post ID"
-            value={likeData.postId}
-            onChange={(e) =>
-              setLikeData({ ...likeData, postId: e.target.value })
-            }
-          />
-          <select
-            value={likeData.like}
-            onChange={(e) => setLikeData({ ...likeData, like: e.target.value })}
-          >
-            <option value="1">Like</option>
-            <option value="0">Unlike</option>
+          <input placeholder="Post ID" value={likeData.postId}
+            onChange={(e) => setLikeData({...likeData, postId: e.target.value})} />
+          <select value={likeData.like} onChange={(e) => setLikeData({...likeData, like: e.target.value})}>
+            <option value="true">Like</option>
+            <option value="false">Unlike</option>
           </select>
-          <button
-            className="btn btn-primary"
-            onClick={() => {
-              apiCall(
-                "PATCH",
-                `/api/v1/posts/like?postId=${likeData.postId}&like=${likeData.like}`
-              );
-            }}
-            disabled={loading}
-          >
-            Toggle Like
-          </button>
+          <button className="btn btn-primary" onClick={() => {
+            apiCall('PATCH', `/api/v1/posts/like?postId=${likeData.postId}&like=${likeData.like}`)
+          }} disabled={loading}>Toggle Like</button>
         </div>
       </div>
 
@@ -161,6 +144,12 @@ export default function PostTab({ config, auth }) {
             Download
           </button>
         </div>
+      </div>
+
+      <div className="api-section">
+        <h3>ℹ️ Note</h3>
+        <p>To like/unlike posts, use the <strong>User Tab</strong> → "Like Post" feature (API #11)</p>
+        <p>It uses <code>/api/v1/identity/users/click-like/:postId</code></p>
       </div>
 
       <div className="response-box">

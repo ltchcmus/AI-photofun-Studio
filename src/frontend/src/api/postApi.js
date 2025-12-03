@@ -4,6 +4,7 @@ const FEED_ENDPOINT = "/api/v1/posts/get-all";
 const MY_POSTS_ENDPOINT = "/api/v1/posts/my-posts";
 const CREATE_POST_ENDPOINT = "/api/v1/posts/create";
 const LIKE_POST_ENDPOINT = "/api/v1/identity/users/click-like";
+const CHECK_LIKED_POSTS_ENDPOINT = "/api/v1/identity/users/check-liked-posts";
 
 export const postApi = {
   getFeed: ({ page = 1, size = 20 } = {}) =>
@@ -19,5 +20,8 @@ export const postApi = {
       },
     }),
 
-  likePost: (postId) => axiosClient.patch(`${LIKE_POST_ENDPOINT}/${postId}`),
+  likePost: (postId) => axiosClient.post(`${LIKE_POST_ENDPOINT}/${postId}`),
+
+  checkLikedPosts: (postIds = []) =>
+    axiosClient.post(CHECK_LIKED_POSTS_ENDPOINT, postIds),
 };

@@ -12,7 +12,6 @@ import service.post.DTOs.request.CreatePostRequest;
 import service.post.DTOs.response.CreatePostResponse;
 import service.post.DTOs.response.GetPostResponse;
 import service.post.DTOs.response.PageResponse;
-import service.post.entity.Post;
 import service.post.exception.AppException;
 import service.post.exception.ErrorCode;
 import service.post.service.PostService;
@@ -79,7 +78,7 @@ public class PostController {
         }
     }
 
-    @PatchMapping("/like")
+    @PostMapping("/like")
     HttpResponse<Void> likePost(@RequestParam("postId") String postId, @RequestParam("like") int numberLike) {
         postService.likePost(postId, numberLike);
         return HttpResponse.<Void>builder()

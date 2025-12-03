@@ -282,7 +282,8 @@ async function checkLoginByGoogle() {
   displayResponse("userResponse", result);
 }
 
-async function likePost() {
+// Toggle like/unlike post (Identity Service API)
+async function toggleLikePost() {
   const postId = document.getElementById("likePostId").value;
   const result = await makeRequest(
     `${getApiGateway()}/api/v1/identity/users/click-like/${postId}`,
@@ -496,6 +497,7 @@ async function createPost() {
   }
 }
 
+// Like/Unlike post with explicit action (Post Service API)
 async function likePostAction() {
   const postId = document.getElementById("postLikeId").value;
   const action = document.getElementById("postLikeAction").value;

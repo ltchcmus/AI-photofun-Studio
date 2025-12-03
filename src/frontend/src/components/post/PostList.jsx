@@ -18,7 +18,7 @@ export default function PostList({
           key={post.id}
           post={post}
           authorInfo={post.userId ? userCache[post.userId] : null}
-          onLike={onLikePost}
+          onLikePost={onLikePost}
           onNavigateAiTools={onNavigateAiTools}
         />
       ))}

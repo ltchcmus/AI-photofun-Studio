@@ -322,13 +322,34 @@ Query Params:
 userId: user_id
 ```
 
-### 25. Check Premium Status
+### 14. Check Premium Status
 
 **Endpoint:** `GET /api/v1/identity/users/check-premium`
 
 ```
 Query Params:
 userId: user_id
+```
+
+### 15. Check Liked Posts
+
+**Endpoint:** `POST /api/v1/identity/users/check-liked-posts`
+**Headers:** `Authorization: Bearer {token}`
+
+```json
+Request Body:
+["postId1", "postId2", "postId3"]
+
+Response:
+{
+  "code": 1000,
+  "message": "Checked liked posts successfully",
+  "result": {
+    "postId1": true,
+    "postId2": false,
+    "postId3": true
+  }
+}
 ```
 
 ---
@@ -555,41 +576,14 @@ like: 1 (like) or -1 (unlike)
 ## 💬 COMMENTS SERVICE (Go)
 
 **Base URL:** `http://localhost:8003/comments`
+**Socket.IO:** `http://localhost:8003`
 
-### 46. Create Comment
-
-**Endpoint:** `POST /comments`
-
-```json
-Request Body:
-{
-  "postId": "post_id",
-  "userId": "user_id",
-  "content": "Comment content",
-  "parentId": "" // optional, for replies
-}
-
-Response:
-{
-  "message": "Comment created successfully",
-  "data": {
-    "id": "comment_id",
-    "postId": "post_id",
-    "userId": "user_id",
-    "content": "Comment content",
-    "parentId": "",
-    "createdAt": "timestamp",
-    "updatedAt": "timestamp"
-  }
-}
-```
-
-### 47. Get Comments by Post ID
+### 46. Get Comments by Post ID
 
 **Endpoint:** `GET /comments/post/{postId}`
 
 ```json
-Response:
+Response: 
 {
   "code": 1000,
   "message": "Comments retrieved successfully",
@@ -598,16 +592,16 @@ Response:
       "id": "comment_id",
       "postId": "post_id",
       "userId": "user_id",
+      "userName": "John Doe",
       "content": "Comment content",
-      "parentId": "",
-      "createdAt": "timestamp",
-      "updatedAt": "timestamp"
+      "createdAt": "2025-12-01T10:00:00Z",
+      "updatedAt": "2025-12-01T10:00:00Z"
     }
   ]
 }
 ```
 
-### 48. Get Comment by ID
+### 47. Get Comment by ID
 
 **Endpoint:** `GET /comments/{id}`
 
@@ -620,11 +614,51 @@ Response:
     "id": "comment_id",
     "postId": "post_id",
     "userId": "user_id",
+    "userName": "John Doe",
     "content": "Comment content",
-    "createdAt": "timestamp"
+    "createdAt": "2025-12-01T10:00:00Z",
+    "updatedAt": "2025-12-01T10:00:00Z"
   }
 }
 ```
+
+### 48. Create Comment
+
+**Endpoint:** `POST /comments`
+
+```json
+Request Body:
+{
+  "postId": "post_id",
+  "userId": "user_id",
+  "userName": "John Doe",
+  "content": "Comment content"
+}
+
+Response:
+{
+  "message": "Comment created successfully",
+  "data": {
+    "id": "comment_id",
+    "postId": "post_id",
+    "userId": "user_id",
+    "userName": "John Doe",
+    "content": "Comment content",
+    "createdAt": "2025-12-01T10:00:00Z",
+    "updatedAt": "2025-12-01T10:00:00Z"
+  }
+}
+```
+
+**Note:** After creation, server automatically broadcasts to all clients in post's room via Socket.IO event `new_comment`
+
+**Real-time Update Flow:**
+
+1. Client creates comment via REST API (`POST /comments`)
+2. Server saves to MongoDB
+3. Server broadcasts to Socket.IO room (postId)
+4. All clients in that room receive `new_comment` event
+5. UI auto-updates with new comment
 
 ### 49. Update Comment
 
@@ -640,9 +674,19 @@ Response:
 {
   "code": 1000,
   "message": "Comment updated successfully",
-  "data": {...}
+  "data": {
+    "id": "comment_id",
+    "postId": "post_id",
+    "userId": "user_id",
+    "userName": "John Doe",
+    "content": "Updated comment content",
+    "createdAt": "2025-12-01T10:00:00Z",
+    "updatedAt": "2025-12-01T10:05:00Z"
+  }
 }
 ```
+
+**Note:** Broadcasts to room via Socket.IO event `update_comment`
 
 ### 50. Delete Comment
 
@@ -655,6 +699,8 @@ Response:
   "message": "Comment deleted successfully"
 }
 ```
+
+**Note:** Broadcasts to room via Socket.IO event `delete_comment`
 
 ---
 
@@ -671,14 +717,14 @@ Response:
 
 ```javascript
 socket.emit("join", postId);
-// Join a room for specific post
+// Join a room for specific post to receive real-time updates
 ```
 
 **2. leave**
 
 ```javascript
 socket.emit("leave", postId);
-// Leave a room
+// Leave a post's room
 ```
 
 #### Server → Client
@@ -691,7 +737,34 @@ socket.on("connect", () => {
 });
 ```
 
-**2. disconnect**
+**2. new_comment**
+
+```javascript
+socket.on("new_comment", (data) => {
+  console.log("New comment:", data);
+  // data: { id, postId, userId, userName, content, createdAt }
+});
+```
+
+**3. update_comment**
+
+```javascript
+socket.on("update_comment", (data) => {
+  console.log("Comment updated:", data);
+  // data: { id, content, updatedAt }
+});
+```
+
+**4. delete_comment**
+
+```javascript
+socket.on("delete_comment", (data) => {
+  console.log("Comment deleted:", data);
+  // data: { id }
+});
+```
+
+**5. disconnect**
 
 ```javascript
 socket.on("disconnect", (reason) => {
@@ -699,7 +772,7 @@ socket.on("disconnect", (reason) => {
 });
 ```
 
-**Note:** After creating a comment via REST API, the server broadcasts it to all clients in the post's room automatically.
+**Note:** Comments are automatically broadcast to all clients in a post's room after CREATE, UPDATE, or DELETE operations via REST API.
 
 ---
 
@@ -1124,31 +1197,503 @@ All services are accessible through API Gateway with context paths:
 6. **Comments Socket** auto-broadcasts after REST API calls
 7. **Communication Socket** auto-joins user's groups on connect
 8. **Token refresh** should be done before expiry (70 minutes default)
+9. **Socket.IO v2.x** - testUI uses v2.5.0 for compatibility with go-socket.io and netty-socketio
+
+---
+
+## 🎓 STEP-BY-STEP USAGE GUIDE
+
+### 📝 Complete Comments Workflow (Real-time)
+
+**1. Connect to Comments Socket**
+
+```javascript
+// In CommentTab - auto-connects on mount
+const socket = io("http://localhost:8003", {
+  transports: ["websocket", "polling"],
+  path: "/socket.io",
+});
+
+socket.on("connect", () => {
+  console.log("Connected!");
+});
+```
+
+**2. Join a Post's Room**
+
+```javascript
+// Join to receive real-time updates for this post
+socket.emit("join", "post-123");
+
+// Listen for confirmation
+socket.on("joined", (data) => {
+  console.log("Joined room:", data.postId);
+});
+```
+
+**3. Listen for New Comments**
+
+```javascript
+socket.on("new_comment", (data) => {
+  console.log("New comment:", data);
+  // Update UI: add comment to list
+  // data: { id, postId, userId, userName, content, createdAt }
+});
+```
+
+**4. Create a Comment (REST API)**
+
+```javascript
+POST http://localhost:8003/comments
+{
+  "postId": "post-123",
+  "userId": "user-456",
+  "userName": "John Doe",
+  "content": "Great post!"
+}
+// Server automatically broadcasts to room "post-123"
+// All connected clients receive new_comment event
+```
+
+**5. Get All Comments for a Post**
+
+```javascript
+GET http://localhost:8003/comments/post/post-123
+// Returns array of all comments
+```
+
+**6. Update/Delete Comments**
+
+```javascript
+// Update
+PUT http://localhost:8003/comments/comment-id
+{ "content": "Updated content" }
+// Broadcasts update_comment event
+
+// Delete
+DELETE http://localhost:8003/comments/comment-id
+// Broadcasts delete_comment event
+```
+
+**7. Leave Room (Optional)**
+
+```javascript
+socket.emit("leave", "post-123");
+```
+
+---
+
+### 💬 Complete Communication Workflow (Chat)
+
+**1. Connect to Communication Socket**
+
+```javascript
+// Auto-connects in CommunicationTab with userId
+const socket = io(`http://localhost:8899?userId=${userId}`, {
+  transports: ["websocket", "polling"],
+  path: "/socket.io",
+});
+
+socket.on("connect", () => {
+  console.log("Connected! Auto-joined all your groups");
+});
+```
+
+**2. Send 1-1 Direct Message**
+
+```javascript
+// Via Socket.IO (real-time)
+socket.emit("sendMessage", {
+  senderId: "user-123",
+  receiverId: "user-456",
+  message: "Hello!",
+  isImage: false,
+});
+
+// Receiver gets:
+socket.on("receiveMessage", (data) => {
+  console.log("New message:", data);
+  // data: { senderId, receiverId, message, isImage }
+});
+```
+
+**3. Retrieve Message History**
+
+```javascript
+// Get past 1-1 messages
+GET http://localhost:8085/communications/communications/get-messages?receiverId=user-456&page=1&size=15
+Headers: Authorization: Bearer {token}
+```
+
+**4. Create a Group (Premium Only)**
+
+```javascript
+POST http://localhost:8085/communications/groups/create?groupName=My Group
+Headers: Authorization: Bearer {token}
+
+// Response: { groupId, name, adminId, ... }
+```
+
+**5. Join Group Room**
+
+```javascript
+// Already auto-joined your groups on connect
+// To manually join a group:
+socket.emit("joinRoom", "group-789");
+```
+
+**6. Send Group Message**
+
+```javascript
+socket.emit("sendMessageToGroup", {
+  senderId: "user-123",
+  groupId: "group-789",
+  message: "Hello everyone!",
+  isImage: false,
+});
+
+// All group members receive:
+socket.on("receiveGroupMessage", (data) => {
+  console.log("Group message:", data);
+  // data: { senderId, groupId, message, isImage }
+});
+```
+
+**7. Get Group Message History**
+
+```javascript
+GET http://localhost:8085/communications/groups/group-789/messages?page=1&size=20
+Headers: Authorization: Bearer {token}
+```
+
+**8. Leave Group Room**
+
+```javascript
+socket.emit("leaveRoom", "group-789");
+```
+
+---
+
+### 🔐 Complete Authentication Flow
+
+**1. Register New User**
+
+```javascript
+POST http://localhost:8888/api-gateway/api/v1/identity/users/register
+{
+  "username": "johndoe",
+  "email": "john@example.com",
+  "password": "SecurePass123",
+  "confirmPass": "SecurePass123",
+  "fullName": "John Doe",
+  "roles": ["USER"]
+}
+// Response: { userId, username, tokens: 1000, ... }
+```
+
+**2. Login**
+
+```javascript
+POST http://localhost:8888/api-gateway/api/v1/identity/auth/login
+{
+  "usernameOrEmail": "johndoe",
+  "password": "SecurePass123"
+}
+// Response: { accessToken, refreshToken, userId }
+// Save tokens to localStorage
+```
+
+**3. Use Protected APIs**
+
+```javascript
+GET http://localhost:8888/api-gateway/api/v1/identity/users/me
+Headers: Authorization: Bearer {accessToken}
+// Returns your user info
+```
+
+**4. Refresh Token (Before Expiry)**
+
+```javascript
+GET http://localhost:8888/api-gateway/api/v1/identity/auth/refresh/{refreshToken}
+// Returns new accessToken
+```
+
+**5. Logout**
+
+```javascript
+GET http://localhost:8888/api-gateway/api/v1/identity/auth/logout
+Headers: Authorization: Bearer {accessToken}
+```
+
+---
+
+### 📸 Complete Post Workflow
+
+**1. Create Post**
+
+```javascript
+POST http://localhost:8888/api-gateway/api/v1/posts/create
+Headers: Authorization: Bearer {token}
+Content-Type: multipart/form-data
+
+Form Data:
+caption: "My amazing post"
+prompt: "AI prompt used"
+image: [file]
+
+// Response: { postId, imageUrl, caption, ... }
+```
+
+**2. Get All Posts**
+
+```javascript
+GET http://localhost:8888/api-gateway/api/v1/posts/get-all?page=1&size=10
+Headers: Authorization: Bearer {token}
+```
+
+**3. Like/Unlike Post**
+
+```javascript
+// Via Identity service (recommended)
+POST http://localhost:8888/api-gateway/api/v1/identity/users/click-like/post-id
+Headers: Authorization: Bearer {token}
+
+// Check if you liked specific posts (batch)
+POST http://localhost:8888/api-gateway/api/v1/identity/users/check-liked-posts
+Headers: Authorization: Bearer {token}
+Body: ["post-id-1", "post-id-2", "post-id-3"]
+// Response: { "post-id-1": true, "post-id-2": false, "post-id-3": true }
+```
+
+**4. View Post Details**
+
+```javascript
+GET http://localhost:8888/api-gateway/api/v1/posts/view/post-id
+Headers: Authorization: Bearer {token}
+```
+
+**5. Download Post Image**
+
+```javascript
+GET http://localhost:8888/api-gateway/api/v1/posts/download/post-id
+Headers: Authorization: Bearer {token}
+// Returns image file
+```
+
+---
+
+### 👤 Complete Profile Workflow
+
+**1. Get My Profile**
+
+```javascript
+GET http://localhost:8888/api-gateway/api/v1/profiles/my-profile
+Headers: Authorization: Bearer {token}
+```
+
+**2. Update Profile**
+
+```javascript
+PUT http://localhost:8888/api-gateway/api/v1/profiles/update
+Headers: Authorization: Bearer {token}
+{
+  "fullName": "Updated Name",
+  "phone": "0987654321",
+  "email": "newemail@example.com"
+}
+```
+
+**3. Verify Profile (Email Verification)**
+
+```javascript
+// Step 1: Request verification code
+GET http://localhost:8888/api-gateway/api/v1/profiles/verify-profile
+Headers: Authorization: Bearer {token}
+// Sends 4-digit code to your email
+
+// Step 2: Enter code to activate
+PATCH http://localhost:8888/api-gateway/api/v1/profiles/activate-profile/1234
+Headers: Authorization: Bearer {token}
+```
+
+**4. Upload Avatar**
+
+```javascript
+POST http://localhost:8888/api-gateway/api/v1/identity/users/upload-avatar
+Headers: Authorization: Bearer {token}
+Content-Type: multipart/form-data
+Form Data: file: [image]
+```
+
+---
+
+### 🚨 ERROR HANDLING
+
+**Common Errors:**
+
+```javascript
+// 1001 - User not found
+// 1002 - Invalid credentials
+// 1015 - Username already exists
+// 1016 - Email already exists
+// 1025 - Authentication failed (invalid token)
+// 1500 - Internal server error
+// 2008 - User not premium (cannot create group)
+```
+
+**Handle Token Expiry:**
+
+```javascript
+// If API returns 1025 (Unauthorized)
+if (error.response?.data?.code === 1025) {
+  // Try refresh token
+  const newToken = await refreshToken(refreshToken);
+  // Retry original request with new token
+}
+```
+
+**Socket Error Handling:**
+
+```javascript
+socket.on("error", (error) => {
+  console.error("Socket error:", error);
+  // Reconnect or show user message
+});
+
+socket.on("connect_error", (error) => {
+  console.error("Connection error:", error);
+  // Check if server is running
+});
+```
 
 ---
 
 ## 🚀 QUICK START
 
+### Option 1: Using testUI (Recommended)
+
+**Step 1: Start All Services**
+
+```powershell
+# Terminal 1: Identity Service
+cd identity
+.\mvnw spring-boot:run
+
+# Terminal 2: Profile Service
+cd profile
+.\mvnw spring-boot:run
+
+# Terminal 3: Post Service
+cd post
+.\mvnw spring-boot:run
+
+# Terminal 4: Comments Service (Go)
+cd comments
+go run cmd/api/main.go
+
+# Terminal 5: Communication Service
+cd communication
+.\mvnw spring-boot:run
+
+# Terminal 6: API Gateway
+cd api-gateway
+.\mvnw spring-boot:run
+
+# Terminal 7: testUI
+cd testUI
+npm run dev
+```
+
+**Step 2: Open testUI**
+
+```
+http://localhost:5173
+```
+
+**Step 3: Register & Login**
+
+1. Go to "🔐 Auth" tab
+2. Fill in registration form → Click "Register"
+3. Fill in login form → Click "Login"
+4. Save the tokens (auto-saved to localStorage)
+
+**Step 4: Test Comments with Real-time**
+
+1. Go to "📸 Posts" tab → Create a post
+2. Copy the postId from response
+3. Go to "💬 Comments" tab
+4. Wait for socket to connect (green "Connected")
+5. Enter postId → Click "Join Room"
+6. Create a comment → See it broadcast in real-time!
+
+**Step 5: Test Communication/Chat**
+
+1. Go to "💭 Chat" tab
+2. Socket auto-connects with your userId
+3. Enter receiver userId → Type message → Send
+4. OR: Enter groupId → Send group message
+
+---
+
+### Option 2: Using API Clients (Postman/Thunder Client)
+
+**Basic Flow:**
+
 ```javascript
 // 1. Register
-POST /api/v1/identity/users/register
-Body: { username, email, password, confirmPass, fullName }
+POST http://localhost:8888/api-gateway/api/v1/identity/users/register
+Body: { username, email, password, confirmPass, fullName, roles: ["USER"] }
 
 // 2. Login
-POST /api/v1/identity/auth/login
+POST http://localhost:8888/api-gateway/api/v1/identity/auth/login
 Body: { usernameOrEmail, password }
 → Save accessToken
 
 // 3. Use APIs with token
-GET /api/v1/identity/users/me
-Headers: { Authorization: Bearer {token} }
+GET http://localhost:8888/api-gateway/api/v1/identity/users/me
+Headers: { Authorization: "Bearer {token}" }
 
-// 4. Connect to sockets
-const socket = io('http://localhost:8899?userId=YOUR_USER_ID');
-socket.on('connect', () => {
-  console.log('Connected!');
-});
+// 4. Connect to sockets (use socket.io-client library)
+const socket = io('http://localhost:8899?userId=YOUR_USER_ID')
+socket.on('connect', () => console.log('Connected!'))
 ```
+
+---
+
+### Option 3: Direct Service Testing (Development)
+
+**Test Comments Service Directly:**
+
+```bash
+# REST API
+POST http://localhost:8003/comments
+{
+  "postId": "test-post",
+  "userId": "user-123",
+  "userName": "Test User",
+  "content": "Test comment"
+}
+
+# Socket.IO (using socket.io-client v2.x)
+const socket = io('http://localhost:8003')
+socket.emit('join', 'test-post')
+socket.on('new_comment', (data) => console.log(data))
+```
+
+**Test Communication Service Directly:**
+
+```bash
+# Socket.IO (using socket.io-client v2.x)
+const socket = io('http://localhost:8899?userId=user-123')
+socket.emit('sendMessage', {
+  senderId: 'user-123',
+  receiverId: 'user-456',
+  message: 'Hello!',
+  isImage: false
+})
+```
+
+---
 
 ### 61. Delete All Communications (Admin)
 
@@ -1166,6 +1711,78 @@ Response:
 
 ---
 
-**Last Updated:** November 17, 2025
+**Last Updated:** December 1, 2025
 **API Version:** 1.0
-**Total Endpoints:** 61 REST APIs + 2 Socket.IO Servers
+**Total Endpoints:** 62 REST APIs + 2 Socket.IO Servers
+**Socket.IO Version:** v2.5.0 (client) compatible with go-socket.io v1.7.0 and netty-socketio v1.7.19
+
+## 📝 CHANGELOG
+
+### December 1, 2025 - v1.0 (Latest)
+
+**Comments Service:**
+
+- ✅ Fixed Comments Service model (added `userName` field)
+- ✅ Added health check endpoint (`HEAD /check`)
+- ✅ Implemented Socket.IO real-time events (new_comment, update_comment, delete_comment)
+- ✅ Real-time broadcasting: Create/Update/Delete automatically broadcasts to room
+- ✅ Added CORS configuration with EngineIO CheckOrigin
+- ✅ Fixed Socket.IO version compatibility (downgraded client to v2.5.0)
+
+**Communication Service:**
+
+- ✅ Fixed Socket.IO CORS configuration in SocketConfig
+- ✅ Added CORS headers: `setOrigin("*")` for WebSocket compatibility
+- ✅ Verified auto-join groups on connect functionality
+- ✅ Tested 1-1 chat and group chat Socket.IO events
+
+**Identity Service:**
+
+- ✅ Added User API: Check Liked Posts (batch check) - API #15
+- ✅ Fixed Like Post API: Changed PATCH to POST method for better client support
+- ✅ Reduced Supabase connection pool: 5 → 2 (prevent max connections error)
+
+**Post Service:**
+
+- ✅ Fixed Post Service native query table name (`post` → `posts`)
+- ✅ Reduced Supabase connection pool: 5 → 2
+
+**Profile Service:**
+
+- ✅ Reduced Supabase connection pool: 5 → 2
+
+**testUI (React):**
+
+- ✅ Created CommentTab with Socket.IO integration
+- ✅ Created CommunicationTab with Socket.IO integration for chat
+- ✅ Fixed React StrictMode double mount issue (disabled for socket stability)
+- ✅ Implemented useRef pattern to prevent multiple socket connections
+- ✅ Downgraded socket.io-client to v2.5.0 for compatibility
+- ✅ Updated API documentation with complete usage guides
+
+**Documentation:**
+
+- ✅ Updated API_DOCUMENTATION.md with all endpoints
+- ✅ Added step-by-step usage guides for Comments, Communication, Auth, Posts, Profile
+- ✅ Added error handling examples
+- ✅ Added Socket.IO event documentation
+- ✅ Added quick start guide with 3 options (testUI, API Client, Direct Service)
+- ✅ Added troubleshooting section for common issues
+
+**Bug Fixes:**
+
+- ✅ Fixed Feign client annotation incompatibility (@RequestPart → @RequestParam)
+- ✅ Fixed Supabase max connections error (reduced pool sizes)
+- ✅ Fixed Socket.IO version mismatch (v4 → v2)
+- ✅ Fixed React component multiple socket instances
+- ✅ Fixed WebSocket upgrade CORS blocking
+
+**Known Issues:**
+
+- None currently
+
+---
+
+### Previous Versions
+
+See git history for previous changes.

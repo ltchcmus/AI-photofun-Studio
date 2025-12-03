@@ -6,6 +6,7 @@ export default function UserTab({ config, auth }) {
   const [loading, setLoading] = useState(false)
   const [userId, setUserId] = useState('')
   const [postId, setPostId] = useState('')
+  const [postIds, setPostIds] = useState('')
   const [passwords, setPasswords] = useState({ old: '', new: '', confirm: '' })
 
   const apiCall = async (method, endpoint, data = null, isFile = false) => {
@@ -87,8 +88,22 @@ export default function UserTab({ config, auth }) {
         <h3>❤️ Like Post (API #11)</h3>
         <div className="form-row">
           <input placeholder="Post ID" value={postId} onChange={(e) => setPostId(e.target.value)} />
-          <button className="btn btn-primary" onClick={() => apiCall('PATCH', `/api/v1/identity/users/click-like/${postId}`)} disabled={loading}>
+          <button className="btn btn-primary" onClick={() => apiCall('POST', `/api/v1/identity/users/click-like/${postId}`)} disabled={loading}>
             Like Post
+          </button>
+        </div>
+      </div>
+
+      <div className="api-section">
+        <h3>✅ Check Liked Posts (API #14)</h3>
+        <div className="form-row">
+          <input placeholder="Post IDs (comma separated)" value={postIds} 
+            onChange={(e) => setPostIds(e.target.value)} />
+          <button className="btn btn-primary" onClick={() => {
+            const ids = postIds.split(',').map(id => id.trim()).filter(id => id);
+            apiCall('POST', '/api/v1/identity/users/check-liked-posts', ids);
+          }} disabled={loading}>
+            Check Liked Status
           </button>
         </div>
       </div>
