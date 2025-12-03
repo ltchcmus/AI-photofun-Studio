@@ -3,6 +3,7 @@ package service.identity.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.jar.Attributes;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,7 +23,6 @@ import service.identity.DTOs.request.RegisterUserRequest;
 import service.identity.DTOs.request.SetPasswordRequest;
 import service.identity.DTOs.response.*;
 import service.identity.service.UserService;
-
 
 @RestController
 @RequestMapping("/users")
@@ -99,13 +99,24 @@ public class UserController {
         .build();
   }
 
-  @PatchMapping("/click-like/{postId}")
+  @PostMapping("/click-like/{postId}")
   HttpResponse<Boolean> likePost(@PathVariable("postId") String postId) {
     userService.likePost(postId);
     return HttpResponse.<Boolean>builder()
         .code(1000)
         .message("Post liked/unliked successfully")
         .result(true)
+        .build();
+  }
+
+  @PostMapping("/check-liked-posts")
+  HttpResponse<Map<String, Boolean>>
+  checkLikedPosts(@RequestBody String[] postIds) {
+    Map<String, Boolean> likedStatus = userService.checkLikedPosts(postIds);
+    return HttpResponse.<Map<String, Boolean>>builder()
+        .code(1000)
+        .message("Checked liked posts successfully")
+        .result(likedStatus)
         .build();
   }
 

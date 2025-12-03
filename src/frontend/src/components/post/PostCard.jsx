@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Heart, MessageCircle, MoreHorizontal, Sparkles } from "lucide-react";
+import CommentSection from "./CommentSection";
 
 export default function PostCard({
   post,
@@ -8,8 +9,10 @@ export default function PostCard({
   onNavigateAiTools,
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showComments, setShowComments] = useState(false);
   const displayName = authorInfo?.name || post.user;
   const displayAvatar = authorInfo?.avatar || post.avatar;
+  const backendPostId = post?.backendId || post?.id || post?._id;
 
   return (
     <article className="border-b border-gray-200 py-6">
@@ -92,6 +95,9 @@ export default function PostCard({
             <button
               type="button"
               className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-500"
+              onClick={() => setShowComments((prev) => !prev)}
+              aria-expanded={showComments}
+              aria-label="Xem bình luận"
             >
               <MessageCircle className="w-5 h-5" />
               {Number(post.comments || 0).toLocaleString()}
@@ -104,6 +110,7 @@ export default function PostCard({
               Use AI tools
             </button>
           </div>
+          {showComments && <CommentSection postId={backendPostId} />}
         </div>
       </div>
     </article>

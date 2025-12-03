@@ -9,7 +9,7 @@ import GroupTab from './components/GroupTab'
 import ProfileTab from './components/ProfileTab'
 import PostTab from './components/PostTab'
 import CommentTab from './components/CommentTab'
-import ChatTab from './components/ChatTab'
+import CommunicationTab from './components/CommunicationTab'
 import SocketTab from './components/SocketTab'
 import AdminTab from './components/AdminTab'
 
@@ -123,7 +123,7 @@ function App() {
         {activeTab === 'profile' && <ProfileTab config={config} auth={auth} />}
         {activeTab === 'post' && <PostTab config={config} auth={auth} />}
         {activeTab === 'comment' && <CommentTab config={config} auth={auth} />}
-        {activeTab === 'chat' && <ChatTab config={config} auth={auth} />}
+        {activeTab === 'chat' && <CommunicationTab config={config} auth={auth} />}
         {activeTab === 'socket' && <SocketTab config={config} auth={auth} sockets={sockets} setSockets={setSockets} />}
         {activeTab === 'admin' && <AdminTab config={config} auth={auth} />}
       </div>

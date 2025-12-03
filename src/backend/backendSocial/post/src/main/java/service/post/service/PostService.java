@@ -162,9 +162,18 @@ public class PostService {
   public void likePost(String postId, int number) {
     lock.lock();
     try {
-      postRepository.addNumberLikes(postId, number);
+      log.info("Attempting to like post {} with number {}", postId, number);
+      int rowsAffected = postRepository.addNumberLikes(postId, number);
+      log.info("Rows affected: {}", rowsAffected);
+
+      if (rowsAffected == 0) {
+        log.error("Post not found with id: {}", postId);
+        throw new AppException(ErrorCode.POST_NOT_FOUND);
+      }
+    } catch (AppException e) {
+      throw e;
     } catch (Exception e) {
-      log.error("Error while liking post: {}", e.getMessage());
+      log.error("Error while liking post: {}", e.getMessage(), e);
       throw new AppException(ErrorCode.CANT_LIKE_POST);
     } finally {
       lock.unlock();

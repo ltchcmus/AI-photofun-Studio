@@ -13,6 +13,15 @@ const formatTimestamp = (value) => {
   return Number.isNaN(parsed) ? value : new Date(parsed).toLocaleString();
 };
 
+const extractBackendId = (post) =>
+  post?.backendId ||
+  post?.postId ||
+  post?.postID ||
+  post?.id ||
+  post?.originalId ||
+  post?.contentId ||
+  null;
+
 const normalizePost = (post, index = 0) => {
   if (!post) return null;
 
@@ -27,9 +36,17 @@ const normalizePost = (post, index = 0) => {
     post.username ||
     post.ownerName ||
     "Unknown artist";
+  const backendId = extractBackendId(post);
+  const clientId =
+    post.clientId ||
+    post.localId ||
+    post.tempId ||
+    backendId ||
+    `post-${index}`;
 
   return {
-    id: post.id || post.postId || `post-${index}`,
+    id: clientId,
+    backendId,
     user: name,
     avatar:
       author.avatarUrl || author.avatar || post.avatarUrl || DEFAULT_AVATAR,
@@ -74,6 +91,73 @@ export const usePosts = (options = {}) => {
   const [userCache, setUserCache] = useState({});
   const pendingUsersRef = useRef(new Set());
   const { user: authUser } = useAuth();
+
+  const fetchLikedStatus = useCallback(
+    async (postList = []) => {
+      if (!authUser?.id) return {};
+
+      const backendIds = Array.from(
+        new Set(
+          postList
+            .map((post) => post.backendId || post.id)
+            .filter((id) => typeof id === "string" && id.trim())
+        )
+      );
+
+      if (!backendIds.length) return {};
+
+      try {
+        const response = await postApi.checkLikedPosts(backendIds);
+        const rawResult =
+          response.data?.result?.data ||
+          response.data?.result?.items ||
+          response.data?.result ||
+          response.data?.data ||
+          response.data ||
+          {};
+
+        if (Array.isArray(rawResult)) {
+          return rawResult.reduce((acc, entry) => {
+            if (!entry) return acc;
+            if (typeof entry === "string") {
+              acc[entry] = true;
+              return acc;
+            }
+
+            const key =
+              entry.postId ||
+              entry.postID ||
+              entry.id ||
+              entry.backendId ||
+              entry.contentId;
+            if (key) {
+              acc[key] = Boolean(
+                entry.liked ??
+                  entry.isLiked ??
+                  entry.value ??
+                  entry.status ??
+                  true
+              );
+            }
+            return acc;
+          }, {});
+        }
+
+        if (rawResult && typeof rawResult === "object") {
+          return Object.entries(rawResult).reduce((acc, [key, value]) => {
+            if (key) acc[key] = Boolean(value);
+            return acc;
+          }, {});
+        }
+
+        return {};
+      } catch (likedError) {
+        console.error("Failed to fetch liked status", likedError);
+        return {};
+      }
+    },
+    [authUser?.id]
+  );
 
   const fetchAuthors = useCallback(
     async (postList) => {
@@ -145,14 +229,24 @@ export const usePosts = (options = {}) => {
         .map((post, index) => normalizePost(post, index))
         .filter(Boolean);
 
-      setPosts(normalized);
-      fetchAuthors(normalized);
+      const likedMap = await fetchLikedStatus(normalized);
+      const enrichedPosts = normalized.map((post) => {
+        const likeKey = post.backendId || post.id;
+        if (!likeKey) return post;
+        if (Object.prototype.hasOwnProperty.call(likedMap, likeKey)) {
+          return { ...post, liked: Boolean(likedMap[likeKey]) };
+        }
+        return post;
+      });
+
+      setPosts(enrichedPosts);
+      fetchAuthors(enrichedPosts);
     } catch (fetchError) {
       setError(fetchError?.message || "Không thể tải danh sách bài viết");
     } finally {
       setLoading(false);
     }
-  }, [fetchAuthors, page, scope, size]);
+  }, [fetchAuthors, fetchLikedStatus, page, scope, size]);
 
   useEffect(() => {
     fetchPosts();
@@ -211,6 +305,12 @@ export const usePosts = (options = {}) => {
       const targetPost = posts.find((post) => post.id === postId);
       if (!targetPost) return;
 
+      const backendId = targetPost.backendId || targetPost.id;
+      if (!backendId) {
+        console.warn("Skipping like: missing backend id", targetPost);
+        return;
+      }
+
       const prevLiked = Boolean(targetPost.liked);
       const prevLikes = Number(targetPost.likes || 0);
       const nextLiked = !prevLiked;
@@ -230,7 +330,7 @@ export const usePosts = (options = {}) => {
       );
 
       try {
-        await postApi.likePost(postId);
+        await postApi.likePost(backendId);
       } catch (likeError) {
         console.error("Failed to toggle like", likeError);
         setPosts((prev) =>
