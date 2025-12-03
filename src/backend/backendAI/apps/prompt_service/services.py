@@ -44,10 +44,12 @@ def refine_prompt(payload: Dict[str, Any]) -> Dict[str, Any]:
     USER_PROMPT: \"\"\"{user_prompt}\"\"\"
     """
 
+    start = time.time()
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=system_prompt
     )
+    processing_time = time.time() - start
 
     if raw.startswith("```"):
         raw = raw.replace("```json", "").replace("```", "").strip()
@@ -55,11 +57,11 @@ def refine_prompt(payload: Dict[str, Any]) -> Dict[str, Any]:
     parsed_response = json.loads(raw)
 
     result = {
-        "refined_prompt": response.get("refined_prompt", "") or raw_prompt,
+        "prompt": response.get("refined_prompt", "") or raw_prompt,
         "intent": response.get("intent", ""),
-        "keywords": response.get("keywords", [])[:4],
         "metadata": {
             "model": DEFAULT_MODEL,
+            "processing_time": processing_time,
         },
     }
 
