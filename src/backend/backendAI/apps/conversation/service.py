@@ -2,13 +2,12 @@
 from .models import get_conversations_collection
 from datetime import datetime
 from pymongo import ReturnDocument
-import httpx
-import os
 import uuid
-
-PROMPT_SERVICE_URL = os.getenv("PROMPT_SERVICE_URL", "http://prompt:8002")
-FREEPIK_URL = os.getenv("FREEPIK_URL", "http://freepik:8003")
-MEDIA_SERVICE_URL = os.getenv("MEDIA_SERVICE_URL", "http://media:8004")
+from apps.prompt_service.celery_tasks import process_prompt_task
+from apps.image_service.celery_tasks import generate_image_pipeline_task
+from .celery_tasks import finalize_conversation_task
+from celery import chain
+from core import APIResponse
 
 
 def create_or_get_session(user_id):
@@ -28,7 +27,8 @@ def add_message(session_id, message):
     message = dict(message)
     if 'created_at' not in message:
         message['created_at'] = datetime.utcnow()
-    message["message_id"] = str(uuid.uuid4())
+    if 'message_id' not in message:
+        message["message_id"] = str(uuid.uuid4())
 
     conversations = get_conversations_collection()
     res = conversations.find_one_and_update(
@@ -39,67 +39,59 @@ def add_message(session_id, message):
     return message
 
 
+def update_message_by_message_id(session_id, message_id, fields: dict):
+    conversations = get_conversations_collection()
+    return conversations.find_one_and_update(
+        {
+            "session_id": session_id,
+            "messages.message_id": message_id
+        },
+        {
+            "$set": {f"messages.$.{k}": v for k, v in fields.items()}
+        },
+        return_document=ReturnDocument.AFTER,
+    )
+
+
 async def process_message(session_id, message):
+    """Process a user message by dispatching Celery tasks for prompt refine and image generation.
+    Returns minimal status and request IDs, while storing messages with status updates.
     """
-    Xử lý intent: generateImage
-    Gọi Prompt → Freepik → Media.
-    intent = message.get("intent")
-    user_id = message.get("user_id")
-    prompt_text = message.get("prompt")
-    image_id = message.get("imageId")
+    # Store user message
+    user_msg = dict(message)
+    user_msg["created_at"] = datetime.utcnow()
+    user_msg["role"] = "user"
+    add_message(session_id, user_msg)
 
-    # 1️⃣ Lưu message user
-    add_message(session_id, message)
+    sys_message_id = str(uuid.uuid4())
 
-    async with httpx.AsyncClient(timeout=60.0) as client:
-        # 2️⃣ Nếu chưa có prompt → gọi Prompt/random
-        if not prompt_text:
-            resp = await client.post(f"{PROMPT_SERVICE_URL}/v1/prompts/random", json={
-                "topic": message.get("topic"),
-                "style": message.get("style"),
-                "lang": message.get("lang"),
-                "imageId": image_id,
-            })
-            resp.raise_for_status()
-            prompt_text = resp.json().get("prompt")
-
-        # 3️⃣ Gọi Prompt/aggregate (giả định kết hợp nhiều prompt)
-        resp = await client.post(f"{PROMPT_SERVICE_URL}/v1/prompts/aggregate", json={"prompts": [prompt_text]})
-        resp.raise_for_status()
-        aggregated_prompt = resp.json().get("aggregatedPrompt")
-
-        # 4️⃣ Gọi Freepik generate/edit
-        resp = await client.post(f"{FREEPIK_URL}/v1/image/generate", json={
-            "aggregatedPrompt": aggregated_prompt,
-            "imageId": image_id,
-        })
-        resp.raise_for_status()
-        freepik_data = resp.json()
-        image_url = freepik_data.get("image_url")
-        prompt_used = freepik_data.get("prompt_used")
-
-        # 5️⃣ Gọi Media service để lưu ảnh
-        resp = await client.post(f"{MEDIA_SERVICE_URL}/v1/images", json={
-            "userId": user_id,
-            "promptUsed": prompt_used,
-            "image_url": image_url,
-        })
-        resp.raise_for_status()
-        media_data = resp.json()
-        image_id_out = media_data.get("imageId_out")
-
-    # 6️⃣ Ghi lại phản hồi vào conversation
-    """
-    response_message = {
-        "role": "system",
-        "intent": "generateImage",
-        "promptUsed": "prompt_used",
-        "imageId": "image_id_out",
-        "created_at": datetime.utcnow(),
+    # Dispatch prompt refine task
+    prompt_payload = {
+        "prompt": message.get("content"),
+        "style": (message.get("metadata") or {}).get("style"),
+        "lang": (message.get("metadata") or {}).get("lang"),
+        "topic": (message.get("metadata") or {}).get("topic"),
+        "image_url": message.get("image_url"),
     }
-    add_message(session_id, response_message)
+    # Build pipeline: refine prompt -> generate image + (optional) media upload -> persist result
+    workflow = chain(
+        process_prompt_task.s(prompt_payload),
+        generate_image_pipeline_task.s(),
+        finalize_conversation_task.s(session_id=session_id, message_id=sys_message_id),
+    )
+    async_result = workflow.apply_async()
 
-    return {"imageId": "image_id_out", "promptUsed": "prompt_used"}
+    # Store processing status with the pipeline id
+    add_message(session_id, {
+        "message_id": sys_message_id,
+        "role": "system",
+        "status": "PROCESSING",
+        "created_at": datetime.utcnow(),
+    })
+
+    # Return processing info to client
+    result = {"status": "PROCESSING", "request_id": sys_message_id}
+    return APIResponse.success(data=result)
 
 
 def get_conversation(session_id):

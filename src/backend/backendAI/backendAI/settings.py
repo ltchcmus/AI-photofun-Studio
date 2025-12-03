@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     "django_filters",
     "drf_yasg",
     "apps.conversation",
+    "apps.prompt_service",
+    "apps.image_service",
 ]
 
 MIDDLEWARE = [
@@ -198,6 +200,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # ============================================================================
 
 ML_MODELS_DIR = BASE_DIR / 'ml_models'
+
+# ==========================================================================
+# External Service URLs (configured via environment only; no extra .env files)
+# ==========================================================================
+# MEDIA_UPLOAD_URL: Endpoint to upload generated images (expects multipart/form-data)
+# Example expected response: { "file_url": "https://.../image.png" }
+# GEMINI_MODEL: Optional model name for prompt refinement metadata
+
 os.makedirs(MEDIA_ROOT, exist_ok=True)
 os.makedirs(ML_MODELS_DIR, exist_ok=True)
 

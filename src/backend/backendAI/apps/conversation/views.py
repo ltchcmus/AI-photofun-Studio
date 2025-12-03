@@ -12,7 +12,7 @@ from .service import (
     delete_session,
     process_message,
 )
-from .serializers import MessageSerializer
+from .serializers import MessageInputSerializer, MessageSerializer
 
 
 def clean_doc(doc: dict) -> dict:
@@ -54,7 +54,7 @@ class ChatMessageView(View):
         except Exception:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
-        serializer = MessageSerializer(data=data)
+        serializer = MessageInputSerializer(data=data)
         if not serializer.is_valid():
             return JsonResponse(serializer.errors, status=400)
 
