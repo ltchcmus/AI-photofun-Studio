@@ -57,6 +57,25 @@ services:
       - backend-network
     restart: unless-stopped
 
+  communication-service:
+    build:
+      context: ./communication
+      dockerfile: Dockerfile
+    container_name: communication-service
+    ports:
+      - "8085:8085"
+      - "8899:8899"
+    environment:
+      PORT: 8085
+      SOCKET_SERVICE_PORT: 8899
+      SOCKET_SERVICE_HOST: 0.0.0.0
+      IDENTITY_SERVICE_URL: http://identity-service:8080/identity
+    depends_on:
+      - identity-service
+    networks:
+      - backend-network
+    restart: unless-stopped
+
   api-gateway:
     build:
       context: ./api-gateway
@@ -70,12 +89,14 @@ services:
       PROFILE_SERVICE_URL: http://profile-service:8081
       POST_SERVICE_URL: http://post-service:8082
       COMMENT_SERVICE_URL: http://comments-service:8003
+      COMMUNICATION_SERVICE_URL: http://communication-service:8085
       CONFIG_HTTP_IDENTITY: http://identity-service:8080/identity
     depends_on:
       - identity-service
       - profile-service
       - post-service
       - comments-service
+      - communication-service
     networks:
       - backend-network
     restart: unless-stopped
