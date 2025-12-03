@@ -8,7 +8,7 @@ from core import APIResponse
 
 
 @shared_task(name="image_service.generate_image_task")
-def generate_image_task(refined_prompt: str, size: str = "1024x1024") -> dict:
+def generate_image_task(refined_prompt: str) -> dict:
     if refined_prompt.get("code") == ResponseCode.ERROR:
         return refined_prompt, APIResponse.error()
 
