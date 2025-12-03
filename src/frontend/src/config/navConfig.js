@@ -1,4 +1,12 @@
-import { Home, Search, Plus, Sparkles, Heart, User } from "lucide-react";
+import {
+  Home,
+  Search,
+  Plus,
+  Sparkles,
+  Heart,
+  User,
+  MessageCircle,
+} from "lucide-react";
 
 export const navItems = [
   { id: "home", icon: Home, label: "Home", path: "/dashboard" },
@@ -6,5 +14,6 @@ export const navItems = [
   { id: "create", icon: Plus, label: "Create", path: "/create" },
   { id: "ai-tools", icon: Sparkles, label: "AI Tools", path: "/ai-tools" },
   { id: "activity", icon: Heart, label: "Activity", path: "/activity" },
+  { id: "messages", icon: MessageCircle, label: "Messages", path: "/messages" },
   { id: "profile", icon: User, label: "Profile", path: "/profile" },
 ];

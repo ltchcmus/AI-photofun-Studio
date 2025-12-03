@@ -14,6 +14,7 @@ import ImageEnhance from "../pages/ImageEnhance";
 import PhotoRestore from "../pages/PhotoRestore";
 import StyleTransfer from "../pages/StyleTransfer";
 import Notifications from "../pages/Notifications";
+import MessagesPage from "../pages/MessagesPage";
 import Profile from "../pages/Profile";
 import EditProfile from "../pages/EditProfile";
 import PremiumLayout from "../layouts/PremiumLayout";
@@ -69,6 +70,7 @@ function AppRoutes() {
         <Route path="/photo-restore" element={<PhotoRestore />} />
         <Route path="/style-transfer" element={<StyleTransfer />} />
         <Route path="/activity" element={<Notifications />} />
+        <Route path="/messages" element={<MessagesPage />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/edit" element={<EditProfile />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
