@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Heart, Loader2, MoreHorizontal, Send, Smile } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { commentApi } from "../../api/commentApi";
 import { userApi } from "../../api/userApi";
+import io from "socket.io-client";
 
 const DEFAULT_AVATAR =
   "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=150&h=150&fit=crop";
@@ -63,6 +64,12 @@ const parseApiData = (response) =>
   response?.data ||
   [];
 
+const SOCKET_URL = "http://localhost:8003";
+const SOCKET_OPTIONS = {
+  transports: ["websocket", "polling"],
+  path: "/socket.io",
+};
+
 export default function CommentSection({ postId }) {
   const { user } = useAuth();
   const [comments, setComments] = useState([]);
@@ -70,6 +77,7 @@ export default function CommentSection({ postId }) {
   const [error, setError] = useState("");
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const socketRef = useRef(null);
 
   const currentUser = useMemo(() => buildCurrentUser(user), [user]);
 
@@ -155,6 +163,65 @@ export default function CommentSection({ postId }) {
     };
   }, [postId]);
 
+  useEffect(() => {
+    if (!postId) return undefined;
+
+    const socket = io(SOCKET_URL, SOCKET_OPTIONS);
+    socketRef.current = socket;
+
+    socket.on("connect", () => {
+      socket.emit("join", postId);
+    });
+
+    const handleNewComment = async (payload) => {
+      if (!payload || (payload.postId && payload.postId !== postId)) return;
+
+      let userInfo = {
+        name: payload?.userName || "Người dùng",
+        avatar: DEFAULT_AVATAR,
+        isPremium: false,
+      };
+
+      if (payload?.userId) {
+        try {
+          const userResponse = await userApi.getUserById(payload.userId);
+          userInfo = extractUserInfo(userResponse?.data?.result);
+        } catch (userError) {
+          console.error(
+            "Failed to fetch user info for socket comment",
+            userError
+          );
+        }
+      }
+
+      const normalized = {
+        id: payload?.id || payload?._id || String(Date.now()),
+        userId: payload?.userId,
+        user: userInfo,
+        content: payload?.content || "",
+        time: formatRelativeTime(payload?.createdAt || payload?.updatedAt),
+        likes: payload?.likes ?? 0,
+        isLiked: false,
+      };
+
+      setComments((prev) => {
+        const exists = prev.some(
+          (comment) => String(comment.id) === String(normalized.id)
+        );
+        if (exists) return prev;
+        return [...prev, normalized];
+      });
+    };
+
+    socket.on("new_comment", handleNewComment);
+
+    return () => {
+      socket.emit("leave", postId);
+      socket.off("new_comment", handleNewComment);
+      socket.disconnect();
+    };
+  }, [postId]);
+
   const handleSend = async () => {
     const content = newComment.trim();
     if (!content || !postId || !currentUser.id) return;
@@ -185,7 +252,13 @@ export default function CommentSection({ postId }) {
         isLiked: false,
       };
 
-      setComments((prev) => [...prev, normalized]);
+      setComments((prev) => {
+        const exists = prev.some(
+          (comment) => String(comment.id) === String(normalized.id)
+        );
+        if (exists) return prev;
+        return [...prev, normalized];
+      });
       setNewComment("");
     } catch (createError) {
       console.error("Failed to create comment", createError);

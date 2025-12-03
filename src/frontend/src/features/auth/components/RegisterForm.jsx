@@ -45,9 +45,9 @@ const RegisterPage = () => {
         roles: ["USER"],
       });
       toast.success(
-        "Đăng ký thành công! Vui lòng đăng nhập để kích hoạt tài khoản."
+        "Đăng ký thành công! Vui lòng kiểm tra email để lấy mã xác thực."
       );
-      navigate("/login");
+      navigate("/verify-email");
     } catch (err) {
       // backend may return object or message
       const msg =
