@@ -3,9 +3,9 @@ from rest_framework import serializers
 from uuid import uuid4
 
 
-class MessageSerializer(serializers.Serializer):
+class MessageInputSerializer(serializers.Serializer):
     message_id = serializers.CharField(read_only=True)
-    role = serializers.ChoiceField(choices=[('user', 'user'), ('assistant', 'assistant')])
+    role = serializers.ChoiceField(choices=[('user', 'user'), ('system', 'system')])
     content = serializers.CharField(required=False, allow_blank=True)
     image_url = serializers.URLField(required=False, allow_blank=True)
     selected_prompts = serializers.ListField(
@@ -21,6 +21,13 @@ class MessageSerializer(serializers.Serializer):
     def create(self, validated_data):
         validated_data['message_id'] = str(uuid4())
         return validated_data
+
+
+class MessageSerializer(MessageInputSerializer):
+    # Output-only fields populated by backend pipeline
+    intent = serializers.CharField(read_only=True)
+    request_id = serializers.CharField(read_only=True)
+    status = serializers.ChoiceField(choices=[('PROCESSING', 'PROCESSING'), ('DONE', 'DONE')], read_only=True)
 
 
 
