@@ -1,0 +1,78 @@
+version: "3.9"
+
+services:
+  backendAI:
+    build:
+      context: ./backendAI
+      target: development
+    ports:
+      - "9999:9999"
+    environment:
+      DJANGO_DEBUG: "1"
+      MONGO_URI: "mongodb://mongo:27017"
+      MONGO_DB_NAME: "ai_photofun_studio"
+      MEDIA_UPLOAD_URL: "" # set this to your media uploader endpoint when available
+    volumes:
+      - ./backendAI:/app
+    depends_on:
+      - mongo
+
+  prompt_service:
+    build:
+      context: ./backendAI
+      target: development
+    command: sh -c "python manage.py runserver 0.0.0.0:9001"
+    ports:
+      - "9001:9001"
+    environment:
+      DJANGO_DEBUG: "1"
+      MONGO_URI: "mongodb://mongo:27017"
+      MONGO_DB_NAME: "ai_photofun_studio"
+      GEMINI_MODEL: "Gemini 1.5 Flash"
+    volumes:
+      - ./backendAI:/app
+    depends_on:
+      - mongo
+
+  image_service:
+    build:
+      context: ./backendAI
+      target: development
+    command: sh -c "python manage.py runserver 0.0.0.0:9002"
+    ports:
+      - "9002:9002"
+    environment:
+      DJANGO_DEBUG: "1"
+      MONGO_URI: "mongodb://mongo:27017"
+      MONGO_DB_NAME: "ai_photofun_studio"
+      MEDIA_UPLOAD_URL: "" # set when available
+    volumes:
+      - ./backendAI:/app
+    depends_on:
+      - mongo
+
+  celery:
+    build:
+      context: ./backendAI
+      target: development
+    command: sh -c "celery -A backendAI worker -l info"
+    environment:
+      DJANGO_DEBUG: "1"
+      MONGO_URI: "mongodb://mongo:27017"
+      MONGO_DB_NAME: "ai_photofun_studio"
+      MEDIA_UPLOAD_URL: ""
+    volumes:
+      - ./backendAI:/app
+    depends_on:
+      - mongo
+      - backendAI
+
+  mongo:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:

@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/v1/chat/', include('apps.conversation.urls')),
    path('v1/prompt/', include('apps.prompt_service.urls')),
    path('v1/image/', include('apps.image_service.urls')),
+   path('', include('apps.conversation.urls')),
 ]
 
 if settings.DEBUG:

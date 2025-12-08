@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Conversation Test Client</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f6f7f9;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        .row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        input,
+        button,
+        select,
+        textarea {
+            padding: 8px;
+        }
+
+        input,
+        select,
+        textarea {
+            flex: 1;
+        }
+
+        textarea {
+            height: 100px;
+        }
+
+        .messages {
+            border: 1px solid #ddd;
+            background: #fff;
+            padding: 12px;
+            min-height: 220px;
+        }
+
+        .msg {
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .meta {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .img-box img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Conversation Test Client</h2>
+
+        <div class="row">
+            <label for="baseUrl">Backend URL</label>
+            <input id="baseUrl" value="http://localhost:9999" />
+        </div>
+
+        <div class="row">
+            <button id="createSession">Create Session</button>
+            <input id="sessionId" placeholder="Session ID" />
+        </div>
+
+        <div>
+            <h3>Send Message</h3>
+            <div class="row">
+                <select id="role">
+                    <option value="user">user</option>
+                    <option value="assistant">assistant</option>
+                </select>
+                <input id="imageUrl" placeholder="image_url (optional)" />
+            </div>
+            <textarea id="content" placeholder="Type your prompt or message..."></textarea>
+            <div class="row">
+                <input id="style" placeholder="style (optional)" />
+                <input id="lang" placeholder="lang (optional)" />
+                <input id="topic" placeholder="topic (optional)" />
+            </div>
+            <div class="row">
+                <button id="sendMsg">Send</button>
+                <button id="refresh">Refresh</button>
+                <label><input type="checkbox" id="autoRefresh" /> Auto-refresh</label>
+            </div>
+            <div class="row">
+                <input id="lastMessageId" placeholder="Last message_id" />
+                <button id="fetchById">Fetch by ID</button>
+            </div>
+        </div>
+
+        <div>
+            <h3>Messages</h3>
+            <div class="messages" id="messages"></div>
+        </div>
+
+        <div>
+            <h3>Generated Image</h3>
+            <div class="img-box" id="imgBox">
+                <p>No image yet.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const el = (id) => document.getElementById(id);
+        let timerAll = null; // auto-refresh toàn bộ session messages
+
+        function renderMessages(doc, append = false) {
+            const box = el('messages');
+            if (!append) box.innerHTML = '';
+            if (!doc || !doc.messages) return;
+            let latestImageUrl = null;
+            for (const m of doc.messages) {
+                const item = document.createElement('div');
+                item.className = 'msg';
+                item.innerHTML = `
+      <div class="meta">${m.role || 'system'} — ${m.created_at || ''}</div>
+      ${m.content ? `<div><strong>Content:</strong> ${m.content}</div>` : ''}
+      ${m.refined_prompt ? `<div><strong>Refined:</strong> ${m.refined_prompt}</div>` : ''}
+      ${m.intent ? `<div><strong>Intent:</strong> ${m.intent}</div>` : ''}
+      ${m.status ? `<div><strong>Status:</strong> ${m.status}</div>` : ''}
+      ${m.image_url ? `<div><strong>Image URL:</strong> ${m.image_url}</div>` : ''}
+    `;
+                box.appendChild(item);
+                if (m.image_url) latestImageUrl = m.image_url;
+            }
+            renderImage(latestImageUrl);
+        }
+
+        function renderImage(url) {
+            const imgBox = el('imgBox');
+            if (!url) {
+                imgBox.innerHTML = '<p>No image yet.</p>';
+                return;
+            }
+            imgBox.innerHTML = `<img src="${url}" alt="Generated Image" />`;
+        }
+
+        // ==================== Session ====================
+        async function createSession() {
+            const baseUrl = el('baseUrl').value;
+            const resp = await fetch(`${baseUrl}/api/v1/chat/sessions`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: 'demo-user' })
+            });
+
+            console.log('Create session response:', resp);
+            const data = await resp.json();
+            console.log('Create session response data:', data);
+            el('sessionId').value = data.result.session_id;
+        }
+
+        // ==================== Message ====================
+        async function sendMessage() {
+            const baseUrl = el('baseUrl').value;
+            const sessionId = el('sessionId').value;
+            if (!sessionId) { alert('Create a session first.'); return; }
+
+            const payload = {
+                user_id: 'demo-user',
+                role: el('role').value,
+                prompt: el('content').value,
+                image_url: el('imageUrl').value || undefined,
+                metadata: {
+                    style: el('style').value || undefined,
+                    lang: el('lang').value || undefined,
+                    topic: el('topic').value || undefined,
+                }
+            };
+
+            const resp = await fetch(`${baseUrl}/api/v1/chat/sessions/${sessionId}/messages`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            console.log('Raw Response:', resp);
+            // try {
+            //     const resp = await fetch(`${baseUrl}/api/v1/chat/sessions/${sessionId}/messages`, {
+            //         method: 'POST', headers: { 'Content-Type': 'application/json' },
+            //         body: JSON.stringify(payload)
+            //     });
+            //     const text = await resp.text();  // in text raw
+            //     console.log('Raw response text:', text);
+
+            //     const data = JSON.parse(text);   // parse sau
+            //     console.log('Parsed JSON:', data);
+            // } catch (err) {
+            //     console.error('Fetch error:', err);
+            // }
+
+
+            const data = await resp.json();
+            console.log('Send response:', data);
+
+            if (data.result.message_id) {
+                console.log('Start polling message ID:', data.result.message_id);
+                el('lastMessageId').value = data.result.message_id;
+                pollMessage(data.result.message_id); // bắt đầu polling message mới
+            }
+        }
+
+        // Poll 1 message riêng
+        async function pollMessage(messageId) {
+            const baseUrl = el('baseUrl').value;
+            const sessionId = el('sessionId').value;
+            if (!sessionId || !messageId) return;
+
+            try {
+                const resp = await fetch(`${baseUrl}/api/v1/chat/sessions/${sessionId}/messages/${messageId}`);
+                const data = await resp.json();
+                const msg = data && data.result ? data.result : data;
+
+                renderMessages({ messages: [msg] }, true);
+
+                if (msg.status !== 'DONE') {
+                    setTimeout(() => pollMessage(messageId), 1000); // poll tiếp
+                } else {
+                    if (msg.image_url) renderImage(msg.image_url);
+                }
+            } catch (e) {
+                console.error('Poll message error:', e);
+                setTimeout(() => pollMessage(messageId), 2000); // retry
+            }
+        }
+
+        // ==================== Session Refresh ====================
+        async function refresh() {
+            const baseUrl = el('baseUrl').value;
+            const sessionId = el('sessionId').value;
+            if (!sessionId) return;
+
+            try {
+                const resp = await fetch(`${baseUrl}/api/v1/chat/sessions/${sessionId}`);
+                const data = await resp.json();
+                renderMessages(data);
+            } catch (e) {
+                console.error('Refresh error:', e);
+            }
+        }
+
+        function startAutoRefresh() {
+            stopAutoRefresh();
+            timerAll = setInterval(refresh, 2000);
+        }
+
+        function stopAutoRefresh() {
+            if (timerAll) {
+                clearInterval(timerAll);
+                timerAll = null;
+            }
+        }
+
+        // ==================== Fetch by ID ====================
+        async function fetchById() {
+            const baseUrl = el('baseUrl').value;
+            const sessionId = el('sessionId').value;
+            const messageId = el('lastMessageId').value;
+            if (!sessionId || !messageId) return;
+
+            try {
+                const resp = await fetch(`${baseUrl}/api/v1/chat/sessions/${sessionId}/messages/${messageId}`);
+                const data = await resp.json();
+                const msg = data && data.result ? data.result : data;
+                alert(`Refined Prompt: ${msg.refined_prompt || '(none)'}\nImage URL: ${msg.image_url || '(none)'}`);
+                if (msg.image_url) renderImage(msg.image_url);
+            } catch (e) {
+                console.error('Fetch by ID error:', e);
+            }
+        }
+
+        // ==================== Event bindings ====================
+        el('createSession').onclick = createSession;
+        el('sendMsg').onclick = sendMessage;
+        el('refresh').onclick = refresh;
+        el('fetchById').onclick = fetchById;
+        el('autoRefresh').onchange = (e) => {
+            if (e.target.checked) startAutoRefresh(); else stopAutoRefresh();
+        };
+    </script>
+
+</body>
+
+</html>
