@@ -5,6 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="740a1931-dd5b-46a1-9947-5fe7d5aa7c77" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/comments/dbscript" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/communication/dbscript/communication.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/communication/dbscript/group-message.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/communication/dbscript/group.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/dbscript/ddl_Authority.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/dbscript/ddl_LimitRegister.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/dbscript/ddl_RemoveToken.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/dbscript/ddl_Role.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/identity/dbscript/ddl_User.sql" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/request/ModifyUserTokenRequest.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/GetRequestMemberResponse.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/GetUserTokensResponse.java" afterDir="false" />
@@ -12,7 +21,18 @@
       <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/entity/LimitRegister.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/LimitRegisterRepository.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/http/CommunicationClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/dbscript/ddl_Post.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/profile/dbscript/ddl_Profile.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jpa.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jpa.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/comments/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/comments/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/comments/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/comments/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/comments/internal/app/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/comments/internal/app/app.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/comments/internal/handler/socket_handler.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/comments/internal/services/comment_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/comments/internal/services/comment_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/controller/CommunicationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/controller/CommunicationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/communication/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/resources/application.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/identity/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/identity/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/identity/pom.xml" afterDir="false" />
@@ -63,34 +83,41 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Profile.executor&quot;: &quot;Run&quot;,
-    &quot;Application.communication.executor&quot;: &quot;Run&quot;,
-    &quot;Application.gateway.executor&quot;: &quot;Run&quot;,
-    &quot;Application.identity.executor&quot;: &quot;Run&quot;,
-    &quot;Application.post.executor&quot;: &quot;Run&quot;,
-    &quot;Maven.api-gateway [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.api-gateway [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.communication [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.identity [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.post [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.profile [clean].executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;add-communication-service&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/ACER/Desktop/Project/NMCNPM/AI photofun Studio/src/backend/backendSocial&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Profile.executor": "Run",
+    "Application.communication.executor": "Run",
+    "Application.gateway.executor": "Run",
+    "Application.identity.executor": "Run",
+    "Application.post.executor": "Run",
+    "Maven.api-gateway [clean].executor": "Run",
+    "Maven.api-gateway [compile].executor": "Run",
+    "Maven.communication [clean].executor": "Run",
+    "Maven.identity [clean].executor": "Run",
+    "Maven.post [clean].executor": "Run",
+    "Maven.profile [clean].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "add-communication-service",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/ACER/Desktop/Project/NMCNPM/AI photofun Studio/src/backend/backendSocial/identity/dbscript",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "run.configurations.included.in.services": "true",
+    "settings.editor.selected.configurable": "com.intellij.jpb.viewMode",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\communication\src\main\java\service\communication\configuration" />
@@ -100,6 +127,9 @@
       <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\post\src\main\java\service\post\configuration" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\profile\dbscript" />
+      <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\post\dbscript" />
+      <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\identity\dbscript" />
       <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\profile\src\main\resources\templates" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
@@ -110,7 +140,17 @@
       <recent name="service.post.DTOs" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.post">
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="KtorApplicationConfigurationType" />
+        <option value="MicronautRunConfigurationType" />
+        <option value="QuarkusRunConfigurationType" />
+        <option value="SpringBootApplicationConfigurationType" />
+      </set>
+    </option>
+  </component>
+  <component name="RunManager" selected="Application.communication">
     <configuration name="Profile" type="Application" factoryName="Application">
       <option name="ALTERNATIVE_JRE_PATH" value="temurin-21" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
@@ -156,13 +196,61 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="ApiGatewayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="api-gateway" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="service.api_gateway.ApiGatewayApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CommunicationApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="communication" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="service.communication.CommunicationApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="IdentityApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="identity" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="service.identity.IdentityApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PostApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="post" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="service.post.PostApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ProfileApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="profile" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="service.profile.ProfileApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <list>
       <item itemvalue="Application.Profile" />
       <item itemvalue="Application.communication" />
       <item itemvalue="Application.gateway" />
       <item itemvalue="Application.identity" />
       <item itemvalue="Application.post" />
+      <item itemvalue="Spring Boot.ApiGatewayApplication" />
+      <item itemvalue="Spring Boot.CommunicationApplication" />
+      <item itemvalue="Spring Boot.IdentityApplication" />
+      <item itemvalue="Spring Boot.PostApplication" />
+      <item itemvalue="Spring Boot.ProfileApplication" />
     </list>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.26830.84" />
+        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-IU-252.26830.84" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -171,8 +259,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1761840450618</updated>
+      <workItem from="1765160075518" duration="2082000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>

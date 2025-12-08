@@ -16,7 +16,6 @@ import service.communication.service.CommunicationService;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/communications")
 @Slf4j
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 @Builder
