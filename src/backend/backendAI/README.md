@@ -28,14 +28,15 @@ Backend AI cung cấp RESTful API với **stateless microservices architecture**
 ### Features
 
 #### ✅ Implemented
-- **Conversation Service** - MongoDB-based chat service with WebSocket support
-- **API Gateway** - FastAPI orchestration layer (moved to `services/`)
+- **Conversation Service** - MongoDB-based chat service with async Celery pipeline for prompt→image workflow
+- **Prompt Service** - AI prompt refinement and intent detection (Gemini API integration)
+- **Image Service** - AI image generation with Cloudinary integration
+- **Image Gallery** - PostgreSQL-based user image management with soft delete
+- **API Gateway** - Service orchestration on port 9999
 
 #### 🚧 Planned (in testing_apps/)
-- Image Generation - Generate images from text prompts
-- Background Removal - Automatic background removal
-- Face Swap - Face swapping functionality
 - Image Enhancement - Super resolution and quality improvement
+- Background Removal - Automatic background removal
 - Object Removal - AI-powered object removal
 - Style Transfer - Artistic style transfer
 
@@ -56,30 +57,37 @@ Backend AI cung cấp RESTful API với **stateless microservices architecture**
 ```
 ┌─────────────────────────────────────────────────────┐
 │                   HTTP REQUEST                      │
-│  POST /api/v1/image-generation/generate/            │
-│  { "prompt": "sunset", "width": 512 }               │
+│  POST /api/v1/chat/sessions/{id}/messages/          │
+│  { "content": "Create a sunset landscape" }         │
 └───────────────────┬─────────────────────────────────┘
                     │
                     ▼
 ┌─────────────────────────────────────────────────────┐
-│                 VIEWS (Validation)                  │
-│  • Validate input với Serializers                   │
-│  • Check types, ranges, formats                     │
-│  • Return 400 if invalid                            │
+│           CONVERSATION VIEW (Validation)            │
+│  • Validate message input                           │
+│  • Store PROCESSING message to MongoDB              │
+│  • Trigger Celery chain                             │
 └───────────────────┬─────────────────────────────────┘
                     │
                     ▼
 ┌─────────────────────────────────────────────────────┐
-│              SERVICE (Processing)                   │
-│  • Pure functions                                   │
-│  • In-memory processing                             │
-│  • NO database writes                               │
+│              CELERY CHAIN PIPELINE                  │
+│  1. process_prompt_task                             │
+│     → Refine prompt via Gemini API                  │
+│     → Detect intent (generate, edit, enhance)       │
+│  2. generate_image_pipeline_task                    │
+│     → Generate image (mock/real AI)                 │
+│     → Upload to Cloudinary                          │
+│  3. finalize_conversation_task                      │
+│     → Update MongoDB with results                   │
+│     → Save to PostgreSQL image_gallery              │
 └───────────────────┬─────────────────────────────────┘
                     │
                     ▼
 ┌─────────────────────────────────────────────────────┐
-│                HTTP RESPONSE                        │
-│  { "success": true, "image_bytes": "...", ... }     │
+│                CLIENT POLLING                       │
+│  GET /api/v1/chat/sessions/{id}/messages/{msg_id}   │
+│  { "status": "DONE", "image_url": "...", ... }      │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -87,7 +95,10 @@ Backend AI cung cấp RESTful API với **stateless microservices architecture**
 
 ```
 apps/
-├── conversation/            # 💬 Chat service (MongoDB)
+├── conversation/            # 💬 Chat service (MongoDB + Celery chains)
+├── prompt_service/          # 🤖 Prompt refinement + intent detection (Gemini)
+├── image_service/           # 🎨 Image generation + Cloudinary upload
+├── image_gallery/           # 🖼️ User image management (PostgreSQL/Supabase)
 └── [future AI apps...]      # Will be added as needed
 
 services/
@@ -96,7 +107,7 @@ services/
 core/
 ├── exceptions.py            # Custom exception handlers
 ├── middleware.py            # Request logging middleware
-├── response_utils.py        # Standardized API responses
+├── response_utils.py        # ResponseFormatter + APIResponse wrappers
 └── file_handler.py          # File upload & validation
 
 shared/
@@ -108,9 +119,11 @@ testing_apps/                # � Backup of experimental apps
 ```
 
 **Current Implementation:**
-- `conversation` → MongoDB-based chat service (active)
-- `api_gateway` → Moved to `services/` (FastAPI, not a Django app)
-- `background_removal`, `face_swap`, `image_processing` → May need user history tracking
+- `conversation` → MongoDB chat with Celery pipeline orchestration (active)
+- `prompt_service` → Gemini API integration for prompt refinement (active)
+- `image_service` → Image generation with Cloudinary upload (active)
+- `image_gallery` → PostgreSQL persistence for user images (active)
+- `api_gateway` → Port 9999 service orchestration (active)
 
 ---
 
@@ -141,33 +154,49 @@ pip install -r requirements.txt
 # Copy environment template
 cp .env.example .env
 
-# For local development (use SQLite)
-export USE_SQLITE=True
+# Required environment variables:
+# - MONGO_URI: MongoDB connection (for conversations)
+# - SUPABASE_DB_*: PostgreSQL connection (for image gallery)
+# - CELERY_BROKER_URL: Redis for async tasks
+
+# See .env.example for full configuration
 ```
 
-### 4. Run Migrations (Only for Django core + services with DB)
+### 4. Run Migrations
 
 ```bash
+# Create migration files for image_gallery
+python manage.py makemigrations image_gallery
+
+# Apply migrations to PostgreSQL
 python manage.py migrate
 ```
 
-### 5. Start Server
+### 5. Start Services
 
 ```bash
-# Development
-python manage.py runserver
+# Terminal 1: Django API server (port 9999)
+python manage.py runserver 9999
 
-# Production (with gunicorn)
-gunicorn backendAI.wsgi:application --bind 0.0.0.0:8000
+# Terminal 2: Celery worker (for async tasks)
+celery -A backendAI worker -l info
+
+# Terminal 3: Redis (if not running)
+redis-server
+
+# Terminal 4: MongoDB (if not running)
+mongod --dbpath /path/to/data
 ```
 
-Server runs at: **http://localhost:8000**
+Server runs at: **http://localhost:9999**
 
 ---
 
 ## 📡 API Endpoints
 
-### 💬 Conversation Service (MongoDB)
+### 💬 Conversation Service (MongoDB + Celery)
+
+**Base URL**: `http://localhost:9999/api/v1/chat/`
 
 **POST** `/api/v1/chat/sessions/`
 Create a new chat session
@@ -176,17 +205,48 @@ Create a new chat session
 Get session details
 
 **POST** `/api/v1/chat/sessions/<session_id>/messages/`
-Send a message
+Send a message (triggers Celery pipeline: prompt→image→storage)
 
 **GET** `/api/v1/chat/sessions/<session_id>/messages/`
 Get conversation history
+
+**GET** `/api/v1/chat/sessions/<session_id>/messages/<message_id>/`
+Poll message status (for async workflow tracking)
 
 **DELETE** `/api/v1/chat/sessions/<session_id>/`
 Delete a session
 
 See `apps/conversation/API_DOCUMENTATION.md` for detailed API docs.
 
-### 🚀 API Gateway (FastAPI)
+### 🤖 Prompt Service
+
+**Base URL**: `http://localhost:9999/v1/prompt/`
+
+**POST** `/v1/prompt/refine/`
+Refine user prompts using Gemini API and detect intent
+
+### 🎨 Image Service
+
+**Base URL**: `http://localhost:9999/v1/image/`
+
+**POST** `/v1/image/generate/`
+Generate images from refined prompts (mock or real AI)
+
+### 🖼️ Image Gallery (PostgreSQL)
+
+**Base URL**: `http://localhost:9999/v1/gallery/`
+
+**GET** `/v1/gallery/` - List user images
+**POST** `/v1/gallery/` - Create image record
+**GET** `/v1/gallery/<uuid>/` - Get image details
+**DELETE** `/v1/gallery/<uuid>/` - Soft delete image
+**GET** `/v1/gallery/deleted/` - List deleted images
+**POST** `/v1/gallery/<uuid>/restore/` - Restore deleted image
+**DELETE** `/v1/gallery/<uuid>/permanent/` - Permanently delete
+
+See `apps/image_gallery/README.md` for detailed setup and usage.
+
+### 🚀 API Gateway
 
 Located in `services/api_gateway/`
 

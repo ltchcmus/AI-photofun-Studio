@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "apps.conversation",
     "apps.prompt_service",
     "apps.image_service",
+    "apps.image_gallery",
 ]
 
 MIDDLEWARE = [
@@ -78,18 +79,27 @@ TEMPLATES = [
 WSGI_APPLICATION = "backendAI.wsgi.application"
 
 # ============================================================================
-# DATABASE (MongoDB Only - No SQL)
+# DATABASE CONFIGURATION
 # ============================================================================
 
+# PostgreSQL (Supabase) for image_gallery app
 # Django requires a database config even if not used
 # Using dummy database since we only use MongoDB
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.dummy",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get('SUPABASE_DB_NAME', 'postgres'),
+        "USER": os.environ.get('SUPABASE_DB_USER', 'postgres'),
+        "PASSWORD": os.environ.get('SUPABASE_DB_PASSWORD', ''),
+        "HOST": os.environ.get('SUPABASE_DB_HOST', 'localhost'),
+        "PORT": os.environ.get('SUPABASE_DB_PORT', '5432'),
+        "OPTIONS": {
+            "sslmode": os.environ.get('SUPABASE_DB_SSLMODE', 'require'),
+        },
     }
 }
 
-# MongoDB Configuration
+# MongoDB Configuration (for conversation app)
 MONGO_URI = os.environ.get('MONGO_URI', 'mongodb://localhost:27017')
 MONGO_DB_NAME = os.environ.get('MONGO_DB_NAME', 'ai_photofun_studio')
 
