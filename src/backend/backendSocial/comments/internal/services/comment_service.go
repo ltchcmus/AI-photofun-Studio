@@ -3,19 +3,16 @@ package services
 import (
 	"service/comments/internal/model"
 	"service/comments/internal/repositories"
-
-	socketio "github.com/googollee/go-socket.io"
+	"service/comments/internal/websocket"
 )
 
 type CommentService struct {
-	commentRepo  *repositories.CommentRepository
-	socketServer *socketio.Server
+	commentRepo *repositories.CommentRepository
 }
 
-func NewCommentService(commentRepo *repositories.CommentRepository, socketServer *socketio.Server) *CommentService {
+func NewCommentService(commentRepo *repositories.CommentRepository) *CommentService {
 	return &CommentService{
-		commentRepo:  commentRepo,
-		socketServer: socketServer,
+		commentRepo: commentRepo,
 	}
 }
 
@@ -32,8 +29,9 @@ func (s *CommentService) CreateComment(req *model.CommentRequest) (*model.Commen
 		return nil, err
 	}
 
-	// Broadcast comment to Socket.IO room
-	if s.socketServer != nil {
+	// Broadcast comment via WebSocket
+	hub := websocket.GetHub()
+	if hub != nil {
 		commentData := map[string]interface{}{
 			"id":        createdComment.ID.Hex(),
 			"postId":    createdComment.PostID,
@@ -42,7 +40,8 @@ func (s *CommentService) CreateComment(req *model.CommentRequest) (*model.Commen
 			"content":   createdComment.Content,
 			"createdAt": createdComment.CreatedAt,
 		}
-		s.socketServer.BroadcastToRoom("/", createdComment.PostID, "new_comment", commentData)
+
+		hub.BroadcastToRoom(createdComment.PostID, "new_comment", commentData)
 	}
 
 	return &model.CommentResponse{
@@ -101,14 +100,16 @@ func (s *CommentService) UpdateComment(id string, content string) (*model.Commen
 		return nil, err
 	}
 
-	// Broadcast update to Socket.IO room
-	if s.socketServer != nil {
+	// Broadcast update via WebSocket
+	hub := websocket.GetHub()
+	if hub != nil {
 		updateData := map[string]interface{}{
 			"id":        comment.ID.Hex(),
 			"content":   comment.Content,
 			"updatedAt": comment.UpdatedAt,
 		}
-		s.socketServer.BroadcastToRoom("/", comment.PostID, "update_comment", updateData)
+
+		hub.BroadcastToRoom(comment.PostID, "update_comment", updateData)
 	}
 
 	return &model.CommentResponse{
@@ -133,12 +134,14 @@ func (s *CommentService) DeleteComment(id string) error {
 		return err
 	}
 
-	// Broadcast delete to Socket.IO room
-	if s.socketServer != nil {
+	// Broadcast delete via WebSocket
+	hub := websocket.GetHub()
+	if hub != nil {
 		deleteData := map[string]interface{}{
 			"id": id,
 		}
-		s.socketServer.BroadcastToRoom("/", comment.PostID, "delete_comment", deleteData)
+
+		hub.BroadcastToRoom(comment.PostID, "delete_comment", deleteData)
 	}
 
 	return nil
