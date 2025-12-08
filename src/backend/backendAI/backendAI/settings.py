@@ -40,6 +40,7 @@ ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',')
 
 INSTALLED_APPS = [
     "django.contrib.contenttypes",
+    "django.contrib.auth",
     "django.contrib.staticfiles",
     "rest_framework",
     "corsheaders",
@@ -51,8 +52,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.security.SecurityMiddleware",
     "django.middleware.common.CommonMiddleware",
     "core.middleware.RequestLoggingMiddleware",
 ]
@@ -153,14 +154,15 @@ REST_FRAMEWORK = {
 # ============================================================================
 
 # Allow all origins in development (for testing with file:// protocol)
-CORS_ALLOW_ALL_ORIGINS = DEBUG  # True in development, False in production
+# CORS_ALLOW_ALL_ORIGINS = DEBUG  # True in development, False in production
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:5173",  # Vite default port
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:5173",
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+#     "http://localhost:5173",  # Vite default port
+#     "http://127.0.0.1:3000",
+#     "http://127.0.0.1:5173",
+# ]
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True
 

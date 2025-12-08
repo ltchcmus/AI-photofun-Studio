@@ -46,11 +46,11 @@ COPY . .
 # Create necessary directories
 RUN mkdir -p media logs ml_models staticfiles
 
-# Expose port
-EXPOSE 8000
+# Expose API Gateway port
+EXPOSE 9999
 
 # Run migrations and start development server
-CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:9999"]
 
 
 # ============================================================================
@@ -78,11 +78,11 @@ RUN useradd -m -u 1000 appuser && \
     chown -R appuser:appuser /app
 USER appuser
 
-# Expose port
-EXPOSE 8000
+# Expose API Gateway port
+EXPOSE 9999
 
 # Run gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "4", "--timeout", "300", "backendAI.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:9999", "--workers", "4", "--timeout", "300", "backendAI.wsgi:application"]
 
 
 # ============================================================================
@@ -146,8 +146,8 @@ RUN useradd -m -u 1000 appuser && \
     chown -R appuser:appuser /app
 USER appuser
 
-# Expose port
-EXPOSE 8000
+# Expose API Gateway port
+EXPOSE 9999
 
 # Run gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "--timeout", "600", "backendAI.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:9999", "--workers", "2", "--timeout", "600", "backendAI.wsgi:application"]
