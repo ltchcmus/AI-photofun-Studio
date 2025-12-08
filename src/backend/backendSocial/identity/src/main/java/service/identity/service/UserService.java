@@ -22,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,6 +35,7 @@ import service.identity.DTOs.request.mail.SendMailRequest;
 import service.identity.DTOs.request.profile.ProfileCreateRequest;
 import service.identity.DTOs.response.*;
 import service.identity.DTOs.response.file.UploadFileResponse;
+import service.identity.entity.Like;
 import service.identity.entity.LimitRegister;
 import service.identity.entity.Role;
 import service.identity.entity.User;
@@ -41,6 +43,7 @@ import service.identity.exception.AppException;
 import service.identity.exception.ErrorCode;
 import service.identity.helper.MapperHelper;
 import service.identity.mapper.UserMapper;
+import service.identity.repository.LikeRepository;
 import service.identity.repository.LimitRegisterRepository;
 import service.identity.repository.UserRepository;
 import service.identity.repository.http.FileClient;
@@ -55,6 +58,7 @@ import service.identity.utils.Utils;
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class UserService {
   UserRepository userRepository;
+  LikeRepository likeRepository;
   MapperHelper mapperHelper;
   UserMapper userMapper;
   FileClient fileClient;
@@ -265,31 +269,27 @@ public class UserService {
     }
   }
 
+  @Transactional
   @PreAuthorize("isAuthenticated()")
   public void likePost(String postId) {
     String userId =
         SecurityContextHolder.getContext().getAuthentication().getName();
 
-    lock.lock();
-    try {
-      User user = userRepository.findById(userId).orElseThrow(
-          () -> new AppException(ErrorCode.USER_NOT_FOUND));
+    // Check if user exists
+    if (!userRepository.existsById(userId)) {
+      throw new AppException(ErrorCode.USER_NOT_FOUND);
+    }
 
-      Set<String> likedPosts = user.getLikedPosts();
-
-      if (likedPosts.contains(postId)) {
-        likedPosts.remove(postId); // Unlike the post
-        postClient.likePost(postId, -1);
-
-      } else {
-        likedPosts.add(postId); // Like the post
-        postClient.likePost(postId, 1);
-      }
-
-      user.setLikedPosts(likedPosts);
-      userRepository.save(user);
-    } finally {
-      lock.unlock();
+    // Check if like already exists
+    if (likeRepository.existsByUserIdAndPostId(userId, postId)) {
+      // Unlike: delete the like
+      likeRepository.deleteByUserIdAndPostId(userId, postId);
+      postClient.likePost(postId, -1);
+    } else {
+      // Like: create new like
+      Like like = Like.builder().userId(userId).postId(postId).build();
+      likeRepository.save(like);
+      postClient.likePost(postId, 1);
     }
   }
 
@@ -298,14 +298,21 @@ public class UserService {
     String userId =
         SecurityContextHolder.getContext().getAuthentication().getName();
 
-    User user = userRepository.findById(userId).orElseThrow(
-        () -> new AppException(ErrorCode.USER_NOT_FOUND));
+    // Check if user exists
+    if (!userRepository.existsById(userId)) {
+      throw new AppException(ErrorCode.USER_NOT_FOUND);
+    }
 
-    Set<String> likedPosts = user.getLikedPosts();
+    // Get all liked post IDs in a single query
+    List<String> likedPostIdsList =
+        likeRepository.findLikedPostIdsByUserIdAndPostIds(userId,
+                                                          List.of(postIds));
+
+    Set<String> likedPostIdsSet = new HashSet<>(likedPostIdsList);
     Map<String, Boolean> result = new HashMap<>();
 
     for (String postId : postIds) {
-      result.put(postId, likedPosts.contains(postId));
+      result.put(postId, likedPostIdsSet.contains(postId));
     }
 
     return result;
