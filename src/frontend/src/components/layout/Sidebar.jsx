@@ -8,6 +8,7 @@ import {
   Menu,
   Moon,
   Settings,
+  Crown,
 } from "lucide-react";
 import { navItems } from "../../config/navConfig";
 import { useAuth } from "../../hooks/useAuth";
@@ -25,6 +26,12 @@ const Sidebar = () => {
 
   const displayName = user?.fullName || "Người dùng";
   const avatarUrl = user?.avatar || DEFAULT_AVATAR;
+  const isPremium = Boolean(
+    user?.isPremium ||
+      user?.premium ||
+      user?.premiumOneMonth ||
+      user?.premiumSixMonths
+  );
 
   const handleLogout = useCallback(async () => {
     try {
@@ -52,14 +59,51 @@ const Sidebar = () => {
   return (
     <aside className="hidden md:flex fixed left-0 top-0 h-screen w-20 flex-col items-center py-6 border-r border-gray-200 bg-white">
       <div className="mb-8 flex flex-col items-center text-center">
-        <img
-          src={avatarUrl}
-          alt={displayName}
-          className="w-12 h-12 rounded-2xl object-cover border border-gray-200"
-        />
-        <p className="mt-2 text-sm font-semibold text-gray-800 line-clamp-2">
+        {/* Premium Avatar with Frame */}
+        <div className="relative group">
+          {isPremium && (
+            <div
+              className="absolute -inset-1 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-2xl animate-spin-slow opacity-75 group-hover:opacity-100 transition-opacity"
+              style={{ animationDuration: "3s" }}
+            />
+          )}
+          <div
+            className={`relative ${
+              isPremium
+                ? "p-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-2xl"
+                : ""
+            }`}
+          >
+            <img
+              src={avatarUrl}
+              alt={displayName}
+              className={`w-12 h-12 rounded-2xl object-cover bg-white ${
+                isPremium ? "border-0" : "border border-gray-200"
+              }`}
+            />
+          </div>
+          {/* Premium Crown Badge */}
+          {isPremium && (
+            <div className="absolute -top-1 -right-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-0.5 shadow-lg">
+              <Crown className="w-2.5 h-2.5 text-white" />
+            </div>
+          )}
+        </div>
+        <p
+          className={`mt-2 text-sm font-semibold line-clamp-2 ${
+            isPremium
+              ? "bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text text-transparent"
+              : "text-gray-800"
+          }`}
+        >
           {displayName}
         </p>
+        {isPremium && (
+          <span className="mt-1 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[8px] font-bold bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 text-white">
+            <Crown className="w-2 h-2" />
+            PRO
+          </span>
+        )}
       </div>
 
       <nav className="flex-1 flex flex-col items-center gap-6">
