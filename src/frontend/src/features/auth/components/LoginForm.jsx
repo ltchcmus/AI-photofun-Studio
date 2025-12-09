@@ -49,7 +49,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 p-5 overflow-auto font-sans">
+    <div className="fixed inset-0 flex items-center justify-center bg-white p-5 overflow-auto font-sans">
       <div className="w-full max-w-md mx-auto">
         <div className="bg-white rounded-2xl p-10 shadow-2xl animate-fade-in-down">
           {/* Header */}

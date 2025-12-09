@@ -69,7 +69,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-tr from-gray-800 to-gray-900 p-5 overflow-auto">
+    <div className="fixed inset-0 flex items-center justify-center bg-white p-5 overflow-auto">
       <div className="w-full max-w-md mx-auto my-5">
         <div className="bg-white rounded-3xl px-10 py-12 shadow-2xl">
           {/* Header */}

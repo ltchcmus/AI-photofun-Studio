@@ -1,9 +1,18 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Heart, Loader2, MoreHorizontal, Send, Smile } from "lucide-react";
+import {
+  Heart,
+  Loader2,
+  MoreHorizontal,
+  Send,
+  Smile,
+  Edit2,
+  Trash2,
+  MessageCircle,
+  X,
+} from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { commentApi } from "../../api/commentApi";
 import { userApi } from "../../api/userApi";
-import io from "socket.io-client";
 
 const DEFAULT_AVATAR =
   "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=150&h=150&fit=crop";
@@ -64,11 +73,7 @@ const parseApiData = (response) =>
   response?.data ||
   [];
 
-const SOCKET_URL = "http://localhost:8003";
-const SOCKET_OPTIONS = {
-  transports: ["websocket", "polling"],
-  path: "/socket.io",
-};
+const SOCKET_URL = "ws://localhost:8003/ws";
 
 export default function CommentSection({ postId }) {
   const { user } = useAuth();
@@ -77,6 +82,11 @@ export default function CommentSection({ postId }) {
   const [error, setError] = useState("");
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editContent, setEditContent] = useState("");
+  const [replyingToId, setReplyingToId] = useState(null);
+  const [replyContent, setReplyContent] = useState("");
+  const [menuOpenId, setMenuOpenId] = useState(null);
   const socketRef = useRef(null);
 
   const currentUser = useMemo(() => buildCurrentUser(user), [user]);
@@ -164,61 +174,137 @@ export default function CommentSection({ postId }) {
   }, [postId]);
 
   useEffect(() => {
-    if (!postId) return undefined;
+    if (!postId || socketRef.current) return undefined;
 
-    const socket = io(SOCKET_URL, SOCKET_OPTIONS);
-    socketRef.current = socket;
+    let ws = null;
 
-    socket.on("connect", () => {
-      socket.emit("join", postId);
-    });
+    try {
+      ws = new WebSocket(SOCKET_URL);
+      socketRef.current = ws;
 
-    const handleNewComment = async (payload) => {
-      if (!payload || (payload.postId && payload.postId !== postId)) return;
-
-      let userInfo = {
-        name: payload?.userName || "Người dùng",
-        avatar: DEFAULT_AVATAR,
-        isPremium: false,
-      };
-
-      if (payload?.userId) {
+      ws.onopen = () => {
+        console.log("✅ WebSocket connected");
         try {
-          const userResponse = await userApi.getUserById(payload.userId);
-          userInfo = extractUserInfo(userResponse?.data?.result);
-        } catch (userError) {
-          console.error(
-            "Failed to fetch user info for socket comment",
-            userError
-          );
+          ws.send(JSON.stringify({ type: "join", room: postId }));
+        } catch (err) {
+          console.error("Failed to send join message:", err);
         }
-      }
-
-      const normalized = {
-        id: payload?.id || payload?._id || String(Date.now()),
-        userId: payload?.userId,
-        user: userInfo,
-        content: payload?.content || "",
-        time: formatRelativeTime(payload?.createdAt || payload?.updatedAt),
-        likes: payload?.likes ?? 0,
-        isLiked: false,
       };
 
-      setComments((prev) => {
-        const exists = prev.some(
-          (comment) => String(comment.id) === String(normalized.id)
-        );
-        if (exists) return prev;
-        return [...prev, normalized];
-      });
-    };
+      ws.onmessage = async (event) => {
+        try {
+          const message = JSON.parse(event.data);
 
-    socket.on("new_comment", handleNewComment);
+          switch (message.type) {
+            case "new_comment": {
+              const payload = message.data;
+              if (!payload || (payload.postId && payload.postId !== postId))
+                return;
+
+              let userInfo = {
+                name: payload?.userName || "Người dùng",
+                avatar: DEFAULT_AVATAR,
+                isPremium: false,
+              };
+
+              if (payload?.userId) {
+                try {
+                  const userResponse = await userApi.getUserById(
+                    payload.userId
+                  );
+                  userInfo = extractUserInfo(userResponse?.data?.result);
+                } catch (userError) {
+                  console.error("Failed to fetch user info", userError);
+                }
+              }
+
+              const normalized = {
+                id: payload?.id || payload?._id || String(Date.now()),
+                userId: payload?.userId,
+                user: userInfo,
+                content: payload?.content || "",
+                time: formatRelativeTime(
+                  payload?.createdAt || payload?.updatedAt
+                ),
+                likes: payload?.likes ?? 0,
+                isLiked: false,
+                isNew: true,
+              };
+
+              setComments((prev) => {
+                const exists = prev.some(
+                  (comment) => String(comment.id) === String(normalized.id)
+                );
+                if (exists) return prev;
+                return [...prev, normalized];
+              });
+
+              setTimeout(() => {
+                setComments((prev) =>
+                  prev.map((c) =>
+                    c.id === normalized.id ? { ...c, isNew: false } : c
+                  )
+                );
+              }, 3000);
+              break;
+            }
+
+            case "update_comment": {
+              const payload = message.data;
+              setComments((prev) =>
+                prev.map((c) =>
+                  c.id === payload.id
+                    ? {
+                        ...c,
+                        content: payload.content,
+                        time: formatRelativeTime(payload.updatedAt),
+                      }
+                    : c
+                )
+              );
+              break;
+            }
+
+            case "delete_comment": {
+              const payload = message.data;
+              setComments((prev) => prev.filter((c) => c.id !== payload.id));
+              break;
+            }
+
+            default:
+              break;
+          }
+        } catch (error) {
+          console.error("Error parsing WebSocket message:", error);
+        }
+      };
+
+      ws.onclose = () => {
+        console.log("❌ WebSocket closed");
+      };
+
+      ws.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
+    } catch (error) {
+      console.error("Failed to create WebSocket connection:", error);
+    }
 
     return () => {
-      socket.emit("leave", postId);
-      socket.off("new_comment", handleNewComment);
-      socket.disconnect();
+      if (
+        socketRef.current &&
+        socketRef.current.readyState === WebSocket.OPEN
+      ) {
+        try {
+          socketRef.current.send(
+            JSON.stringify({ type: "leave", room: postId })
+          );
+        } catch (err) {
+          console.error("Failed to send leave message:", err);
+        }
+        socketRef.current.close();
+      }
+      socketRef.current = null;
     };
   }, [postId]);
 
@@ -286,6 +372,99 @@ export default function CommentSection({ postId }) {
     );
   };
 
+  const handleEditComment = (comment) => {
+    setEditingCommentId(comment.id);
+    setEditContent(comment.content);
+    setMenuOpenId(null);
+  };
+
+  const handleSaveEdit = async (commentId) => {
+    if (!editContent.trim()) return;
+
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      await commentApi.updateComment(commentId, { content: editContent });
+      setComments((prev) =>
+        prev.map((c) =>
+          c.id === commentId
+            ? { ...c, content: editContent, time: "Vừa xong" }
+            : c
+        )
+      );
+      setEditingCommentId(null);
+      setEditContent("");
+    } catch (updateError) {
+      console.error("Failed to update comment", updateError);
+      setError("Không thể cập nhật bình luận");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (!window.confirm("Bạn có chắc muốn xóa bình luận này?")) return;
+
+    setError("");
+
+    try {
+      await commentApi.deleteComment(commentId);
+      setComments((prev) => prev.filter((c) => c.id !== commentId));
+      setMenuOpenId(null);
+    } catch (deleteError) {
+      console.error("Failed to delete comment", deleteError);
+      setError("Không thể xóa bình luận");
+    }
+  };
+
+  const handleReply = (commentId) => {
+    setReplyingToId(commentId);
+    setReplyContent("");
+    setMenuOpenId(null);
+  };
+
+  const handleSendReply = async (parentCommentId) => {
+    if (!replyContent.trim() || !postId || !currentUser.id) return;
+
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      const payload = {
+        postId,
+        userId: currentUser.id,
+        userName: currentUser.name,
+        content: replyContent,
+        parentId: parentCommentId,
+      };
+
+      const response = await commentApi.createComment(payload);
+      const created = parseApiData(response);
+
+      const normalized = {
+        id: created?.id || created?._id || String(Date.now()),
+        userId: currentUser.id,
+        user: currentUser,
+        content: created?.content || replyContent,
+        time: formatRelativeTime(
+          created?.createdAt || new Date().toISOString()
+        ),
+        likes: created?.likes ?? 0,
+        isLiked: false,
+      };
+
+      setComments((prev) => [...prev, normalized]);
+      setReplyingToId(null);
+      setReplyContent("");
+    } catch (replyError) {
+      console.error("Failed to send reply", replyError);
+      setError("Không thể gửi trả lời");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   if (!postId) {
     return (
       <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
@@ -326,7 +505,11 @@ export default function CommentSection({ postId }) {
           comments.map((comment) => (
             <div
               key={comment.id}
-              className="flex gap-3 rounded-xl bg-gray-50/70 p-3"
+              className={`flex gap-3 rounded-xl p-3 transition-all ${
+                comment.isNew
+                  ? "bg-green-50 border-2 border-green-200"
+                  : "bg-gray-50/70"
+              }`}
             >
               <img
                 src={comment.user.avatar}
@@ -347,9 +530,47 @@ export default function CommentSection({ postId }) {
                       PRO
                     </span>
                   )}
+                  {comment.isNew && (
+                    <span className="rounded-full bg-green-500 px-2 py-0.5 text-[10px] font-bold text-white">
+                      MỚI
+                    </span>
+                  )}
                   <span className="text-xs text-gray-500">{comment.time}</span>
                 </div>
-                <p className="mt-1 text-gray-700">{comment.content}</p>
+
+                {editingCommentId === comment.id ? (
+                  <div className="mt-2">
+                    <textarea
+                      value={editContent}
+                      onChange={(e) => setEditContent(e.target.value)}
+                      className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                      rows={2}
+                    />
+                    <div className="mt-2 flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleSaveEdit(comment.id)}
+                        disabled={isSubmitting}
+                        className="rounded-lg bg-blue-600 px-3 py-1 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+                      >
+                        Lưu
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingCommentId(null);
+                          setEditContent("");
+                        }}
+                        className="rounded-lg bg-gray-300 px-3 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-400"
+                      >
+                        Hủy
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="mt-1 text-gray-700">{comment.content}</p>
+                )}
+
                 <div className="mt-2 flex items-center gap-4 text-xs text-gray-500">
                   <button
                     type="button"
@@ -367,17 +588,91 @@ export default function CommentSection({ postId }) {
                   </button>
                   <button
                     type="button"
-                    className="text-gray-500 transition-colors hover:text-blue-500"
+                    onClick={() => handleReply(comment.id)}
+                    className="flex items-center gap-1 text-gray-500 transition-colors hover:text-blue-500"
                   >
+                    <MessageCircle className="h-4 w-4" />
                     Trả lời
                   </button>
-                  <button
-                    type="button"
-                    className="rounded-full p-1 text-gray-400 transition hover:bg-gray-200 hover:text-gray-600"
-                  >
-                    <MoreHorizontal className="h-4 w-4" />
-                  </button>
+                  {comment.userId === currentUser.id && (
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setMenuOpenId(
+                            menuOpenId === comment.id ? null : comment.id
+                          )
+                        }
+                        className="rounded-full p-1 text-gray-400 transition hover:bg-gray-200 hover:text-gray-600"
+                      >
+                        <MoreHorizontal className="h-4 w-4" />
+                      </button>
+                      {menuOpenId === comment.id && (
+                        <div className="absolute left-0 z-10 mt-1 w-32 rounded-lg border border-gray-200 bg-white shadow-lg">
+                          <button
+                            type="button"
+                            onClick={() => handleEditComment(comment)}
+                            className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-gray-50"
+                          >
+                            <Edit2 className="h-3 w-3" />
+                            Chỉnh sửa
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteComment(comment.id)}
+                            className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-red-600 hover:bg-gray-50"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                            Xóa
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
+
+                {replyingToId === comment.id && (
+                  <div className="mt-3 flex gap-2">
+                    <img
+                      src={currentUser.avatar}
+                      alt={currentUser.name}
+                      className="h-8 w-8 rounded-full object-cover"
+                    />
+                    <div className="flex-1">
+                      <textarea
+                        value={replyContent}
+                        onChange={(e) => setReplyContent(e.target.value)}
+                        placeholder="Viết trả lời..."
+                        className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                        rows={2}
+                      />
+                      <div className="mt-2 flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleSendReply(comment.id)}
+                          disabled={isSubmitting || !replyContent.trim()}
+                          className="rounded-lg bg-blue-600 px-3 py-1 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+                        >
+                          {isSubmitting ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            "Gửi"
+                          )}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setReplyingToId(null);
+                            setReplyContent("");
+                          }}
+                          className="rounded-lg bg-gray-300 px-3 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-400"
+                        >
+                          Hủy
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
               <button
                 type="button"

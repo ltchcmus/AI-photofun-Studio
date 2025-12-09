@@ -27,9 +27,7 @@ export default function DashboardForm() {
               For you
               <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-black rounded-full" />
             </button>
-            <button className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
-              Friends
-            </button>
+            
           </div>
         </div>
       </header>

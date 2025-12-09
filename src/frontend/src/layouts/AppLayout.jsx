@@ -15,12 +15,7 @@ const AppLayout = () => {
       <Sidebar />
 
       <main className="md:ml-20 flex-1 pb-16 md:pb-0">
-        <header className="sticky top-0 bg-white border-b border-gray-200 z-10">
-          <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4">
-            {/* global header content can go here */}
-          </div>
-        </header>
-
+        
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8">
           <Outlet />
         </div>

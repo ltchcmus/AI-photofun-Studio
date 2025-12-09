@@ -1,74 +1,6 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Download, Image, Share2, Sparkles } from "lucide-react";
-
-const quickPrompts = [
-  {
-    id: "city",
-    label: "🏙️ Futuristic City",
-    text: "A futuristic city at sunset",
-  },
-  {
-    id: "cyberpunk",
-    label: "👤 Cyberpunk Portrait",
-    text: "Portrait in cyberpunk style",
-  },
-  {
-    id: "mountain",
-    label: "🏔️ Mountain Landscape",
-    text: "Mountain landscape with crystal lake",
-  },
-  {
-    id: "geometric",
-    label: "🎨 Geometric Art",
-    text: "Abstract geometric patterns",
-  },
-  { id: "robot", label: "🤖 Anime Robot", text: "Cute robot in anime style" },
-  {
-    id: "temple",
-    label: "🏯 Ancient Temple",
-    text: "Ancient temple hidden in lush forest",
-  },
-];
-
-const stylePresets = [
-  {
-    id: "realistic",
-    label: "Realistic",
-    thumbnail:
-      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&h=300&fit=crop",
-  },
-  {
-    id: "anime",
-    label: "Anime",
-    thumbnail:
-      "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&h=300&fit=crop",
-  },
-  {
-    id: "oil",
-    label: "Oil Painting",
-    thumbnail:
-      "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=300&h=300&fit=crop",
-  },
-  {
-    id: "digital",
-    label: "Digital Art",
-    thumbnail:
-      "https://images.unsplash.com/photo-1618556450991-2f1af64e8191?w=300&h=300&fit=crop",
-  },
-  {
-    id: "render",
-    label: "3D Render",
-    thumbnail:
-      "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=300&h=300&fit=crop",
-  },
-  {
-    id: "sketch",
-    label: "Sketch",
-    thumbnail:
-      "https://images.unsplash.com/photo-1526318896980-cf78c088247c?w=300&h=300&fit=crop",
-  },
-];
 
 const readFileAsDataUrl = (file) =>
   new Promise((resolve, reject) => {
@@ -85,7 +17,7 @@ const TextToImage = () => {
   const [prompt, setPrompt] = useState("");
   const [uploadedImage, setUploadedImage] = useState(null);
   const [dragOver, setDragOver] = useState(false);
-  const [selectedStyle, setSelectedStyle] = useState(null);
+  const [selectedStyle] = useState(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
@@ -94,10 +26,6 @@ const TextToImage = () => {
 
   const handlePromptChange = (event) => {
     setPrompt(event.target.value.slice(0, 1000));
-  };
-
-  const handleQuickPrompt = (text) => {
-    setPrompt(text);
   };
 
   const handleClearPrompt = () => {
@@ -224,21 +152,6 @@ const TextToImage = () => {
                 Clear
               </button>
             </div>
-            <div className="mt-6">
-              <p className="text-sm font-semibold mb-3">Quick Prompts</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {quickPrompts.map((preset) => (
-                  <button
-                    key={preset.id}
-                    type="button"
-                    onClick={() => handleQuickPrompt(preset.text)}
-                    className="text-left px-3 py-2 text-xs bg-gray-100 hover:bg-gray-200 rounded-xl font-medium transition-colors"
-                  >
-                    {preset.label}
-                  </button>
-                ))}
-              </div>
-            </div>
           </div>
 
           <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
@@ -295,44 +208,6 @@ const TextToImage = () => {
               </div>
             )}
           </div>
-
-          <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-            <h2 className="text-lg font-bold mb-4">Style Presets</h2>
-            <div className="grid grid-cols-3 gap-3">
-              {stylePresets.map((style) => (
-                <button
-                  key={style.id}
-                  type="button"
-                  onClick={() => setSelectedStyle(style.id)}
-                  className={`relative overflow-hidden rounded-2xl border-2 h-24 transition-colors ${
-                    selectedStyle === style.id
-                      ? "border-black"
-                      : "border-gray-200 hover:border-gray-400"
-                  }`}
-                >
-                  <img
-                    src={style.thumbnail}
-                    alt={style.label}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                    <span className="text-white text-xs font-semibold">
-                      {style.label}
-                    </span>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={handleGenerate}
-            disabled={loading}
-            className="w-full py-4 rounded-2xl bg-black text-white font-semibold text-lg flex items-center justify-center gap-2 hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Sparkles className="w-5 h-5" /> Generate Image
-          </button>
           {error && (
             <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-2xl p-3">
               {error}
@@ -415,19 +290,31 @@ const TextToImage = () => {
           )}
 
           {!loading && !result && (
-            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-              <div className="aspect-square border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-center p-8">
-                <div>
-                  <Sparkles className="w-8 h-8 mx-auto text-gray-400 mb-3" />
-                  <p className="font-semibold text-gray-700 mb-1">
-                    No image yet
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Start by writing a detailed prompt and tap Generate Image.
-                  </p>
+            <>
+              <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                <div className="aspect-square border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-center p-8">
+                  <div>
+                    <Sparkles className="w-8 h-8 mx-auto text-gray-400 mb-3" />
+                    <p className="font-semibold text-gray-700 mb-1">
+                      No image yet
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Start by writing a detailed prompt and tap Generate Image.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  onClick={handleGenerate}
+                  disabled={loading}
+                  className="py-4 px-8 rounded-2xl bg-black text-white font-semibold text-lg flex items-center gap-2 hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Sparkles className="w-5 h-5" /> Generate Image
+                </button>
+              </div>
+            </>
           )}
         </section>
       </div>
