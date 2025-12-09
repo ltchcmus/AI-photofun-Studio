@@ -573,10 +573,10 @@ like: 1 (like) or -1 (unlike)
 
 ---
 
-## 💬 COMMENTS SERVICE (Go)
+## 💬 COMMENTS SERVICE (Go) - **UPDATED with Native WebSocket**
 
 **Base URL:** `http://localhost:8003/comments`
-**Socket.IO:** `http://localhost:8003`
+**WebSocket:** `ws://localhost:8003/ws`
 
 ### 46. Get Comments by Post ID
 
@@ -650,15 +650,7 @@ Response:
 }
 ```
 
-**Note:** After creation, server automatically broadcasts to all clients in post's room via Socket.IO event `new_comment`
-
-**Real-time Update Flow:**
-
-1. Client creates comment via REST API (`POST /comments`)
-2. Server saves to MongoDB
-3. Server broadcasts to Socket.IO room (postId)
-4. All clients in that room receive `new_comment` event
-5. UI auto-updates with new comment
+**⚡ Real-time Broadcast:** Server automatically broadcasts `new_comment` event to all connected clients in the room.
 
 ### 49. Update Comment
 
@@ -686,7 +678,7 @@ Response:
 }
 ```
 
-**Note:** Broadcasts to room via Socket.IO event `update_comment`
+**⚡ Real-time Broadcast:** Server automatically broadcasts `update_comment` event to all connected clients in the room.
 
 ### 50. Delete Comment
 
@@ -700,79 +692,347 @@ Response:
 }
 ```
 
-**Note:** Broadcasts to room via Socket.IO event `delete_comment`
+**⚡ Real-time Broadcast:** Server automatically broadcasts `delete_comment` event to all connected clients in the room.
 
 ---
 
-## 🔌 COMMENTS SOCKET.IO (Go)
+## 🔌 COMMENTS WEBSOCKET - **Native WebSocket (Gorilla)**
 
-**Server:** `http://localhost:8003`
-**Namespace:** `/`
+**Server:** `ws://localhost:8003/ws`
+**Protocol:** Native WebSocket (RFC 6455)
+**Library:** Gorilla WebSocket
 
-### Events
+### 🎯 Quick Start Guide
+
+**1. Connect to WebSocket**
+
+```javascript
+const ws = new WebSocket("ws://localhost:8003/ws");
+
+ws.onopen = () => {
+  console.log("✅ Connected");
+  // Join a room to receive updates for that post
+  ws.send(JSON.stringify({ type: "join", room: "your-post-id" }));
+};
+```
+
+**2. Listen for Messages**
+
+```javascript
+ws.onmessage = (event) => {
+  const message = JSON.parse(event.data);
+
+  switch (message.type) {
+    case "new_comment":
+      console.log("New comment:", message.data);
+      // Add to your UI
+      break;
+    case "update_comment":
+      console.log("Updated comment:", message.data);
+      // Update in your UI
+      break;
+    case "delete_comment":
+      console.log("Deleted comment:", message.data);
+      // Remove from your UI
+      break;
+  }
+};
+```
+
+**3. Send Messages**
+
+```javascript
+// Join a room (required to receive updates)
+ws.send(
+  JSON.stringify({
+    type: "join",
+    room: "post-123",
+  })
+);
+
+// Leave a room
+ws.send(
+  JSON.stringify({
+    type: "leave",
+    room: "post-123",
+  })
+);
+```
+
+### Message Types
 
 #### Client → Server
 
-**1. join**
+**1. join** (Join a post's room) ⭐ REQUIRED
 
 ```javascript
-socket.emit("join", postId);
-// Join a room for specific post to receive real-time updates
+ws.send(
+  JSON.stringify({
+    type: "join",
+    room: "post-id",
+  })
+);
+// Server responds with 'joined' confirmation
 ```
 
-**2. leave**
+**2. leave** (Leave a post's room)
 
 ```javascript
-socket.emit("leave", postId);
-// Leave a post's room
+ws.send(
+  JSON.stringify({
+    type: "leave",
+    room: "post-id",
+  })
+);
+// Server responds with 'left' confirmation
 ```
 
 #### Server → Client
 
-**1. connect**
+All server messages follow this format:
 
-```javascript
-socket.on("connect", () => {
-  console.log("Connected to comments socket");
-});
+```json
+{
+  "type": "event_type",
+  "data": {
+    /* event data */
+  }
+}
 ```
 
-**2. new_comment**
+**1. connect_ack** (Connection confirmed)
 
 ```javascript
-socket.on("new_comment", (data) => {
-  console.log("New comment:", data);
-  // data: { id, postId, userId, userName, content, createdAt }
-});
+{
+  "type": "connect_ack",
+  "data": {
+    "status": "connected",
+    "id": "client-uuid"
+  }
+}
 ```
 
-**3. update_comment**
+**2. joined** (Room join confirmed)
 
 ```javascript
-socket.on("update_comment", (data) => {
-  console.log("Comment updated:", data);
-  // data: { id, content, updatedAt }
-});
+{
+  "type": "joined",
+  "data": {
+    "postId": "post-id"
+  }
+}
 ```
 
-**4. delete_comment**
+**3. left** (Room leave confirmed)
 
 ```javascript
-socket.on("delete_comment", (data) => {
-  console.log("Comment deleted:", data);
-  // data: { id }
-});
+{
+  "type": "left",
+  "data": {
+    "postId": "post-id"
+  }
+}
 ```
 
-**5. disconnect**
+**4. new_comment** ⭐ AUTO-BROADCAST
 
 ```javascript
-socket.on("disconnect", (reason) => {
-  console.log("Disconnected:", reason);
-});
+{
+  "type": "new_comment",
+  "data": {
+    "id": "comment-id",
+    "postId": "post-id",
+    "userId": "user-id",
+    "userName": "John Doe",
+    "content": "Great post!",
+    "createdAt": "2025-12-03T10:00:00Z"
+  }
+}
 ```
 
-**Note:** Comments are automatically broadcast to all clients in a post's room after CREATE, UPDATE, or DELETE operations via REST API.
+**Broadcast Trigger:** Automatically sent when ANY client calls `POST /comments`
+
+**5. update_comment** ⭐ AUTO-BROADCAST
+
+```javascript
+{
+  "type": "update_comment",
+  "data": {
+    "id": "comment-id",
+    "content": "Updated content",
+    "updatedAt": "2025-12-03T10:05:00Z"
+  }
+}
+```
+
+**Broadcast Trigger:** Automatically sent when ANY client calls `PUT /comments/{id}`
+
+**6. delete_comment** ⭐ AUTO-BROADCAST
+
+```javascript
+{
+  "type": "delete_comment",
+  "data": {
+    "id": "comment-id"
+  }
+}
+```
+
+**Broadcast Trigger:** Automatically sent when ANY client calls `DELETE /comments/{id}`
+
+### Complete React Example
+
+```javascript
+import { useEffect, useRef, useState } from "react";
+
+function CommentSection({ postId }) {
+  const [comments, setComments] = useState([]);
+  const wsRef = useRef(null);
+
+  useEffect(() => {
+    // 1. Connect to WebSocket
+    const ws = new WebSocket("ws://localhost:8003/ws");
+
+    ws.onopen = () => {
+      console.log("✅ Connected");
+      // 2. Join room for this post
+      ws.send(JSON.stringify({ type: "join", room: postId }));
+    };
+
+    ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+
+      switch (message.type) {
+        case "joined":
+          console.log("✅ Joined room:", message.data.postId);
+          break;
+
+        case "new_comment":
+          // 3. Auto-update UI when someone comments
+          setComments((prev) => [...prev, message.data]);
+          break;
+
+        case "update_comment":
+          setComments((prev) =>
+            prev.map((c) =>
+              c.id === message.data.id
+                ? { ...c, content: message.data.content }
+                : c
+            )
+          );
+          break;
+
+        case "delete_comment":
+          setComments((prev) => prev.filter((c) => c.id !== message.data.id));
+          break;
+      }
+    };
+
+    ws.onclose = () => console.log("❌ Disconnected");
+
+    wsRef.current = ws;
+
+    return () => {
+      // 4. Leave room and close connection
+      if (wsRef.current) {
+        ws.send(JSON.stringify({ type: "leave", room: postId }));
+        ws.close();
+      }
+    };
+  }, [postId]);
+
+  const createComment = async (content) => {
+    // Call REST API - server will auto-broadcast to all clients in room
+    await fetch("http://localhost:8003/comments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        postId,
+        userId: "user-123",
+        userName: "John Doe",
+        content,
+      }),
+    });
+    // No need to update state - WebSocket will receive new_comment
+  };
+
+  return (
+    <div>
+      <h3>Comments for {postId}</h3>
+      {comments.map((c) => (
+        <div key={c.id}>
+          <strong>{c.userName}:</strong> {c.content}
+        </div>
+      ))}
+      <button onClick={() => createComment("Nice!")}>Add Comment</button>
+    </div>
+  );
+}
+```
+
+### Real-time Flow
+
+```
+┌─────────────┐         ┌──────────────┐         ┌─────────────┐
+│   Client A  │         │   Backend    │         │  Client B   │
+│  (Creator)  │         │   (Server)   │         │  (Viewer)   │
+└─────────────┘         └──────────────┘         └─────────────┘
+       │                       │                        │
+       │ 1. Connect WebSocket  │                        │
+       ├──────────────────────>│                        │
+       │ 2. join: "post-123"   │                        │
+       ├──────────────────────>│                        │
+       │                       │ 3. Connect WebSocket   │
+       │                       │<───────────────────────┤
+       │                       │ 4. join: "post-123"    │
+       │                       │<───────────────────────┤
+       │                       │                        │
+       │ 5. POST /comments     │                        │
+       │    (REST API)         │                        │
+       ├──────────────────────>│                        │
+       │                       │ 6. Save to MongoDB     │
+       │                       │ 7. Auto-broadcast      │
+       │                       │    new_comment         │
+       │<──────────────────────┤───────────────────────>│
+       │ 8. Receive & update UI│    8. Receive & update │
+       │                       │          UI            │
+```
+
+### Key Features
+
+✅ **Native WebSocket** - No library dependency on frontend  
+✅ **Auto-broadcast** - Server broadcasts after REST API calls  
+✅ **Room-based** - Only clients in same room receive updates  
+✅ **JSON messages** - Simple, readable message format  
+✅ **Gorilla WebSocket** - Production-ready Go library
+
+### Common Issues & Solutions
+
+**❌ Not receiving updates**  
+✅ Make sure you called `ws.send(JSON.stringify({ type: 'join', room: postId }))` first
+
+**❌ "WebSocket connection failed"**  
+✅ Check if server is running on port 8003  
+✅ Use `ws://` not `wss://` for local development
+
+**❌ Duplicate messages**  
+✅ Use `useRef` to prevent multiple WebSocket connections in React  
+✅ Close old connection before creating new one
+
+**❌ Connection closes immediately**  
+✅ Server expects valid JSON messages  
+✅ Check console for error messages
+
+### Testing Real-time
+
+**Test with 2 browser tabs:**
+
+1. **Tab 1:** Open post → Join room via WebSocket
+2. **Tab 2:** Open same post → Join room via WebSocket
+3. **Tab 1:** Create comment via REST API
+4. **Tab 2:** Should receive `new_comment` automatically! ✅
+
+**Note:** Backend automatically broadcasts after REST API calls. You DON'T need to manually send events via WebSocket!
 
 ---
 
@@ -1711,14 +1971,75 @@ Response:
 
 ---
 
-**Last Updated:** December 1, 2025
-**API Version:** 1.0
-**Total Endpoints:** 62 REST APIs + 2 Socket.IO Servers
-**Socket.IO Version:** v2.5.0 (client) compatible with go-socket.io v1.7.0 and netty-socketio v1.7.19
+**Last Updated:** December 3, 2025  
+**API Version:** 2.0  
+**Total Endpoints:** 62 REST APIs + 2 WebSocket Servers  
+**WebSocket Protocol:** Native WebSocket (RFC 6455) for Comments, Socket.IO v2.5.0 for Communication
 
 ## 📝 CHANGELOG
 
-### December 1, 2025 - v1.0 (Latest)
+### December 3, 2025 - v2.0 (Latest) 🎉
+
+**🚀 Major Update: Native WebSocket Implementation**
+
+**Comments Service:**
+
+- ✅ **Replaced go-socket.io with Gorilla WebSocket** (Native WebSocket)
+- ✅ Simplified architecture with singleton Hub pattern
+- ✅ Reduced logging - only essential logs for production
+- ✅ Message format: `{ type: "event_type", data: {...}, room?: "room-id" }`
+- ✅ Client → Server events: `join`, `leave`
+- ✅ Server → Client events: `connect_ack`, `joined`, `left`, `new_comment`, `update_comment`, `delete_comment`
+- ✅ Auto-broadcast: Server broadcasts to room after REST API calls (CREATE/UPDATE/DELETE)
+- ✅ Room-based broadcasting (1 post = 1 room)
+
+**testUI (React):**
+
+- ✅ **Migrated from socket.io-client to native WebSocket**
+- ✅ No external library dependencies for WebSocket
+- ✅ Cleaner code with native `WebSocket` API
+- ✅ Simplified message handling with JSON parsing
+- ✅ Reduced console logs - only important messages
+- ✅ Auto-join default room on connect
+- ✅ Real-time UI updates with NEW badges (3-second timeout)
+
+**Benefits:**
+
+- 🎯 **Simpler** - No version compatibility issues
+- 🚀 **Faster** - Native WebSocket protocol (RFC 6455)
+- 📦 **Lighter** - No heavy Socket.IO library
+- 🔧 **Maintainable** - Clean, readable code
+- 🌐 **Standard** - Works with any WebSocket client
+
+**Migration Guide:**
+
+**Before (Socket.IO):**
+
+```javascript
+import io from "socket.io-client";
+const socket = io("http://localhost:8003");
+socket.emit("join", postId);
+socket.on("new_comment", (data) => {
+  /* ... */
+});
+```
+
+**After (Native WebSocket):**
+
+```javascript
+const ws = new WebSocket("ws://localhost:8003/ws");
+ws.send(JSON.stringify({ type: "join", room: postId }));
+ws.onmessage = (event) => {
+  const message = JSON.parse(event.data);
+  if (message.type === "new_comment") {
+    /* ... */
+  }
+};
+```
+
+---
+
+### December 1, 2025 - v1.0
 
 **Comments Service:**
 
@@ -1777,12 +2098,4 @@ Response:
 - ✅ Fixed React component multiple socket instances
 - ✅ Fixed WebSocket upgrade CORS blocking
 
-**Known Issues:**
-
-- None currently
-
 ---
-
-### Previous Versions
-
-See git history for previous changes.
