@@ -16,6 +16,7 @@ import StyleTransfer from "../pages/StyleTransfer";
 import Notifications from "../pages/Notifications";
 import MessagesPage from "../pages/MessagesPage";
 import Profile from "../pages/Profile";
+import UserProfile from "../pages/UserProfile";
 import EditProfile from "../pages/EditProfile";
 import PremiumLayout from "../layouts/PremiumLayout";
 import PremiumDashboard from "../pages/PremiumDashboard";
@@ -73,6 +74,7 @@ function AppRoutes() {
         <Route path="/messages" element={<MessagesPage />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/edit" element={<EditProfile />} />
+        <Route path="/user/:userId" element={<UserProfile />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/payment-fail" element={<PaymentFail />} />
         <Route path="/pricing" element={<PricingPage />} />

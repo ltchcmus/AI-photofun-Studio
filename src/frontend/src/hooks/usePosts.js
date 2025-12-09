@@ -194,6 +194,15 @@ export const usePosts = (options = {}) => {
                   data?.avatar ||
                   data?.profileImage ||
                   DEFAULT_AVATAR,
+                // Premium status
+                isPremium: Boolean(
+                  data?.isPremium ||
+                    data?.premium ||
+                    data?.premiumOneMonth ||
+                    data?.premiumSixMonths
+                ),
+                premiumOneMonth: Boolean(data?.premiumOneMonth),
+                premiumSixMonths: Boolean(data?.premiumSixMonths),
               },
             }));
           } catch (authorError) {

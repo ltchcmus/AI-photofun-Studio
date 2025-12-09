@@ -27,11 +27,7 @@ const PROFILE_DEFAULTS = {
   created: "November 12, 2025",
 };
 
-const profileStats = [
-  { label: "Images Created", value: "128" },
-  { label: "Followers", value: "2.5K" },
-  { label: "Following", value: "428" },
-];
+const profileStats = [{ label: "Images Created", value: "128" }];
 
 const recentWorks = [
   "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&h=600&fit=crop",
@@ -91,36 +87,9 @@ const Profile = () => {
     },
   ];
 
-  const locationDetails = [
-    {
-      id: "address",
-      label: "Address",
-      value: displayProfile.address,
-      icon: MapPin,
-    },
-    {
-      id: "country",
-      label: "Country",
-      value: displayProfile.country,
-      icon: Globe,
-    },
-  ];
+  
 
-  const personalDetails = [
-    {
-      id: "dob",
-      label: "Date of Birth",
-      value: displayProfile.dob,
-      icon: Calendar,
-    },
-    {
-      id: "created",
-      label: "Account Created",
-      value: displayProfile.created,
-      icon: Clock,
-    },
-  ];
-
+  
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {profileLoading && (
@@ -183,56 +152,10 @@ const Profile = () => {
         </div>
       </section>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <section className="bg-white border border-gray-200 rounded-2xl p-6">
-          <h2 className="text-lg font-bold mb-4">Contact Information</h2>
-          <div className="space-y-4">
-            {contactDetails.map((item) => {
-              const Icon = item.icon;
-              return (
-                <div key={item.id}>
-                  <p className="text-xs uppercase text-gray-500 font-semibold mb-2">
-                    {item.label}
-                  </p>
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                    <Icon className="w-5 h-5 text-gray-600" />
-                    <span className="text-sm font-medium text-gray-800">
-                      {item.value}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        <section className="bg-white border border-gray-200 rounded-2xl p-6">
-          <h2 className="text-lg font-bold mb-4">Location</h2>
-          <div className="space-y-4">
-            {locationDetails.map((item) => {
-              const Icon = item.icon;
-              return (
-                <div key={item.id}>
-                  <p className="text-xs uppercase text-gray-500 font-semibold mb-2">
-                    {item.label}
-                  </p>
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                    <Icon className="w-5 h-5 text-gray-600 mt-0.5" />
-                    <span className="text-sm font-medium text-gray-800">
-                      {item.value}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      </div>
-
       <section className="bg-white border border-gray-200 rounded-2xl p-6">
-        <h2 className="text-lg font-bold mb-4">Personal Information</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {personalDetails.map((item) => {
+        <h2 className="text-lg font-bold mb-4">Contact Information</h2>
+        <div className="space-y-4">
+          {contactDetails.map((item) => {
             const Icon = item.icon;
             return (
               <div key={item.id}>
