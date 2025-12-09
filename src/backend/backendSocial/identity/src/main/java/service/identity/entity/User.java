@@ -51,5 +51,4 @@ public class User {
 
   @Builder.Default Instant lastRefillAt = Instant.now();
 
-  // Removed likedPosts - now using separate Like entity table
 }

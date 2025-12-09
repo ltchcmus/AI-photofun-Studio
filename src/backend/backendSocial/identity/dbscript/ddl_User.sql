@@ -14,7 +14,6 @@ CREATE TABLE users
     tokens             INT          NOT NULL,
     created_at         datetime     NULL,
     last_refill_at     datetime     NULL,
-    liked_posts UNKNOWN__JAVA.UTIL.SET<JAVA.LANG.STRING> NULL,
     CONSTRAINT pk_users PRIMARY KEY (user_id)
 );
 
