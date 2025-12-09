@@ -1,0 +1,26 @@
+CREATE TABLE comments (
+  id VARCHAR(24) PRIMARY KEY, -- store MongoDB ObjectID hex (24 chars) or replace with UUID
+  post_id VARCHAR(255) NOT NULL,
+  user_id VARCHAR(255) NOT NULL,
+  user_name VARCHAR(255) NOT NULL,
+  content TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_comments_post_id ON comments(post_id);
+CREATE INDEX idx_comments_user_id ON comments(user_id);
+
+-- trigger to update updated_at on row change
+CREATE OR REPLACE FUNCTION set_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_comments_updated_at
+BEFORE UPDATE ON comments
+FOR EACH ROW
+EXECUTE FUNCTION set_updated_at();

@@ -46,3 +46,10 @@ spring:
             - Path=${config.prefix}/comments/**
           filters:
             - StripPrefix=${config.remove-prefix}
+
+        - id: communication-service
+          uri: ${COMMUNICATION_SERVICE_URL:http://localhost:8085}
+          predicates:
+            - Path=${config.prefix}/communications/**
+          filters:
+            - StripPrefix=${config.remove-prefix}

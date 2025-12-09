@@ -10,7 +10,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
-
 @Entity
 @Getter
 @Setter
@@ -52,5 +51,5 @@ public class User {
 
   @Builder.Default Instant lastRefillAt = Instant.now();
 
-  @Builder.Default Set<String> likedPosts = new HashSet<>();
+  // Removed likedPosts - now using separate Like entity table
 }
