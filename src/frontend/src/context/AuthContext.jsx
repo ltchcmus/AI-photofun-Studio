@@ -25,6 +25,15 @@ const normalizeUser = (rawUser) => {
       rawUser?.avatar ||
       rawUser?.profileImage ||
       DEFAULT_AVATAR,
+    // Premium fields
+    isPremium: Boolean(
+      rawUser?.isPremium ||
+        rawUser?.premium ||
+        rawUser?.premiumOneMonth ||
+        rawUser?.premiumSixMonths
+    ),
+    premiumOneMonth: Boolean(rawUser?.premiumOneMonth),
+    premiumSixMonths: Boolean(rawUser?.premiumSixMonths),
   };
 };
 
