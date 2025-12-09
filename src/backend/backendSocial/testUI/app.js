@@ -296,7 +296,7 @@ async function toggleLikePost() {
 
 async function getAllGroups() {
   const result = await makeRequest(
-    `${getApiGateway()}/communications/groups/all?page=1&size=20`,
+    `${getApiGateway()}/api/v1/communications/groups/all?page=1&size=20`,
     { method: "GET" }
   );
   displayResponse("groupResponse", result);
@@ -313,7 +313,7 @@ async function getMyGroups() {
 async function getGroupDetail() {
   const groupId = document.getElementById("viewGroupId").value;
   const result = await makeRequest(
-    `${getApiGateway()}/communications/groups/${groupId}`,
+    `${getApiGateway()}/api/v1/communications/groups/${groupId}`,
     { method: "GET" }
   );
   displayResponse("groupResponse", result);
@@ -323,7 +323,7 @@ async function createGroup() {
   const name = document.getElementById("createGroupName").value;
   const image = document.getElementById("createGroupImage").value;
 
-  const url = `${getApiGateway()}/communications/groups/create?groupName=${encodeURIComponent(
+  const url = `${getApiGateway()}/api/v1/communications/groups/create?groupName=${encodeURIComponent(
     name
   )}${image ? "&imageUrl=" + encodeURIComponent(image) : ""}`;
 
@@ -339,7 +339,7 @@ async function updateGroup() {
   };
 
   const result = await makeRequest(
-    `${getApiGateway()}/communications/groups/${groupId}`,
+    `${getApiGateway()}/api/v1/communications/groups/${groupId}`,
     {
       method: "PATCH",
       body: JSON.stringify(data),
@@ -351,7 +351,7 @@ async function updateGroup() {
 async function uploadGroupAvatar() {
   const groupId = document.getElementById("uploadAvatarGroupId").value;
   const result = await uploadFile(
-    `${getApiGateway()}/communications/groups/${groupId}/avatar`,
+    `${getApiGateway()}/api/v1/communications/groups/${groupId}/avatar`,
     "groupAvatarFile"
   );
   displayResponse("groupResponse", result);
@@ -360,7 +360,7 @@ async function uploadGroupAvatar() {
 async function requestJoinGroup() {
   const groupId = document.getElementById("joinGroupId").value;
   const result = await makeRequest(
-    `${getApiGateway()}/communications/groups/request-join-group?groupId=${groupId}`,
+    `${getApiGateway()}/api/v1/communications/groups/request-join-group?groupId=${groupId}`,
     { method: "POST" }
   );
   displayResponse("groupResponse", result);
@@ -379,7 +379,7 @@ async function modifyRequestStatus() {
   const groupId = document.getElementById("acceptGroupId").value;
   const status = document.getElementById("acceptStatus").value;
 
-  const url = `${getApiGateway()}/communications/groups/modify-request-status?requestId=${requestId}&groupId=${groupId}&accept=${status}`;
+  const url = `${getApiGateway()}/api/v1/communications/groups/modify-request-status?requestId=${requestId}&groupId=${groupId}&accept=${status}`;
 
   const result = await makeRequest(url, { method: "PATCH" });
   displayResponse("groupResponse", result);

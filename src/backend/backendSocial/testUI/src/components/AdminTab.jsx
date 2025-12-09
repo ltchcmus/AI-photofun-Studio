@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import axios from 'axios'
 
-export default function AdminTab({ config, auth }) {
+export default function AdminTab({ config, auth, apiClient }) {
   const [response, setResponse] = useState('')
   const [loading, setLoading] = useState(false)
   
@@ -12,15 +11,13 @@ export default function AdminTab({ config, auth }) {
   const apiCall = async (method, endpoint, data = null) => {
     setLoading(true)
     try {
-      const res = await axios({
+      const res = await apiClient({
         method,
-        url: `${config.apiGateway}${endpoint}`,
+        url: endpoint,
         data,
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${auth.accessToken}`
-        },
-        withCredentials: true
+          'Content-Type': 'application/json'
+        }
       })
       setResponse(JSON.stringify(res.data, null, 2))
     } catch (err) {
@@ -115,7 +112,7 @@ export default function AdminTab({ config, auth }) {
         <h3>🗑️ Delete All Communications (API #61 - Admin Only)</h3>
         <button className="btn btn-danger" onClick={() => {
           if (confirm('⚠️ This will DELETE ALL COMMUNICATIONS! Are you absolutely sure?')) {
-            apiCall('DELETE', '/communications/communications/delete-all')
+            apiCall('DELETE', '/api/v1/communications/communications/delete-all')
           }
         }} disabled={loading}>Delete All Communications</button>
       </div>

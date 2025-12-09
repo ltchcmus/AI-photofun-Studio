@@ -12,6 +12,8 @@ import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import service.identity.DTOs.request.LoginRequest;
@@ -65,7 +67,11 @@ public class AuthService {
     @Value("${config.jwt.secret}")
     String jwtSecret;
 
-    public LoginResponse login(LoginRequest loginRequest) throws JOSEException {
+    @NonFinal
+    @Value("${config.jwt.secret-refresh}")
+    String jwtRefreshSecret;
+
+    public User login(LoginRequest loginRequest) throws JOSEException {
 
         String usernameOrEmail = loginRequest.getUsernameOrEmail();
         String password = loginRequest.getPassword();
@@ -79,13 +85,7 @@ public class AuthService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new AppException(ErrorCode.INCORRECT_ACCOUNT);
         }
-
-        String accessToken = utils.generateToken(user);
-
-        return LoginResponse.builder()
-                .accessToken(accessToken)
-                .expiresAt(Instant.now().plus(jwtExpiresIn, ChronoUnit.SECONDS))
-                .build();
+        return user;
     }
 
     public boolean introspect(String token, boolean isRefresh) throws ParseException, JOSEException {
@@ -100,11 +100,11 @@ public class AuthService {
 
         SignedJWT signedJWT = SignedJWT.parse(token);
         Instant expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime().toInstant();
-        Instant refreshTime = signedJWT.getJWTClaimsSet().getIssueTime().toInstant().plus(jwtRefreshExpiresIn, ChronoUnit.SECONDS);
+        boolean isValidAboutTime = Instant.now().isBefore(expirationTime);
 
-        boolean isValidAboutTime = isRefresh ? Instant.now().isBefore(refreshTime) : Instant.now().isBefore(expirationTime);
+        String secret = isRefresh ? jwtRefreshSecret : jwtSecret;
 
-        JWSVerifier verifier = new MACVerifier(jwtSecret.getBytes());
+        JWSVerifier verifier = new MACVerifier(secret.getBytes());
         boolean isValidSignature = signedJWT.verify(verifier);
 
         return isValidAboutTime && isValidSignature;
@@ -112,13 +112,20 @@ public class AuthService {
     }
 
     @PreAuthorize("isAuthenticated()")
-    public void logout(String token) throws ParseException {
-        SignedJWT signedJWT = SignedJWT.parse(token);
-        Instant refreshTime = signedJWT.getJWTClaimsSet().getIssueTime().toInstant().plus(jwtRefreshExpiresIn, ChronoUnit.SECONDS);
+    public void logout(String accessToken, String refreshToken) throws ParseException {
+        SignedJWT signedJWTAccess = SignedJWT.parse(accessToken);
+        Instant accessExpireTime = signedJWTAccess.getJWTClaimsSet().getExpirationTime().toInstant();
         removeTokenRepository.save(RemoveToken.builder()
-                        .removeAt(refreshTime)
-                        .token(token)
+                        .removeAt(accessExpireTime)
+                        .token(accessToken)
                 .build());
+        SignedJWT signedJWTRefresh = SignedJWT.parse(refreshToken);
+        Instant refreshExpireTime = signedJWTRefresh.getJWTClaimsSet().getExpirationTime().toInstant();
+        removeTokenRepository.save(RemoveToken.builder()
+                        .removeAt(refreshExpireTime)
+                        .token(refreshToken)
+                .build());
+
     }
 
     public String refreshToken(String token) throws ParseException, JOSEException {
@@ -203,5 +210,29 @@ public class AuthService {
             log.error("Error during authentication: {}", e.getMessage(), e);
             throw new AppException(ErrorCode.AUTHENTICATION_FAILED);
         }
+    }
+
+
+    public User refresh(String token) throws ParseException, JOSEException {
+        if(token == null || token.isEmpty()){
+            throw new AppException(ErrorCode.INVALID_TOKEN);
+        }
+        if(!introspect(token, true)){
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+        }
+        SignedJWT signedJWT = SignedJWT.parse(token);
+        String tokenUserId = signedJWT.getJWTClaimsSet().getSubject();
+
+        removeTokenRepository.save(RemoveToken.builder()
+                        .token(token)
+                        .removeAt(signedJWT.getJWTClaimsSet().getExpirationTime().toInstant())
+                .build());
+        User user = userRepository.findById(tokenUserId)
+                .orElseThrow(()-> new AppException(ErrorCode.USER_NOT_FOUND));
+        return user;
+    }
+
+    public void addRemoveToken(RemoveToken removeToken){
+        removeTokenRepository.save(removeToken);
     }
 }

@@ -33,7 +33,8 @@ class WebGlobalFilter implements GlobalFilter, Ordered {
             "/identity/users/tokens/**",
             "/identity/users/modify-tokens",
             "/identity/authorities/create",
-            "/identity/roles/create"
+            "/identity/roles/create",
+            "/identity/auth/refresh-token"
     };
 
     @NonFinal
@@ -47,19 +48,7 @@ class WebGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        
-        var cookies = exchange.getRequest().getCookies().getFirst("jwt");
-        String token;
-        if (cookies != null){
-            token = cookies.getValue();
-            var header = exchange.getRequest().mutate()
-                    .header("Authorization", "Bearer " + token)
-                    .build();
-            exchange = exchange.mutate().request(header).build();
-        } else {
-            token = "";
-        }
-
+        String accessToken = exchange.getRequest().getHeaders().getFirst("Authorization");
         String path = exchange.getRequest().getPath().toString();
         for(String url : PUBLIC_URLS){
             String realPath = prefix + url;
@@ -69,52 +58,12 @@ class WebGlobalFilter implements GlobalFilter, Ordered {
             }
         }
 
-        if(token.isEmpty()){
-            log.info("No token provided");
+        if(accessToken.isEmpty()){
+            log.info("No Authorization header found");
             return unauthorized(exchange);
         }
 
-
-        log.info("Request Path: {}", path);
-        ServerWebExchange finalExchange = exchange;
-
-        return httpClientIdentity.introspect(token)
-                .flatMap(isVerified -> {
-                    if (!isVerified.getResult().isActive()) {
-                        log.info("Token is not verified");
-                        return unauthorized(finalExchange);
-                    }
-
-                    return httpClientIdentity.introspectIgnoreRefresh(token)
-                            .flatMap(introspectResponse -> {
-                                if (!introspectResponse.getResult().isActive()) {
-                                    log.info("Token expired, trying refresh...");
-
-
-                                    return httpClientIdentity.refreshToken(token)
-                                            .flatMap(refreshResponse -> {
-                                                if (refreshResponse.getResult() != Strings.EMPTY) {
-                                                    String newToken = refreshResponse.getResult();
-                                                    var newHeader = finalExchange.getRequest().mutate()
-                                                            .header("Authorization", "Bearer " + newToken)
-                                                            .build();
-                                                    if (newToken == null) {
-                                                        log.info("Refresh returned null token");
-                                                        return unauthorized(finalExchange);
-                                                    }
-                                                    log.info("Refresh successful: {}", newToken);
-                                                    return chain.filter(finalExchange.mutate().request(newHeader).build());
-                                                } else {
-                                                    log.info("Refresh failed");
-                                                    return unauthorized(finalExchange);
-                                                }
-                                            });
-                                } else {
-                                    log.info("Token is verified");
-                                    return chain.filter(finalExchange);
-                                }
-                            });
-                });
+        return chain.filter(exchange);
     }
 
     public Mono<Void> unauthorized(ServerWebExchange exchange){

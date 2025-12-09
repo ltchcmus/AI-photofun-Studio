@@ -1,5 +1,6 @@
 package service.identity.controller;
 
+import feign.Body;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -17,10 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 import service.identity.DTOs.HttpResponse;
-import service.identity.DTOs.request.ChangePasswordRequest;
-import service.identity.DTOs.request.ModifyUserTokenRequest;
-import service.identity.DTOs.request.RegisterUserRequest;
-import service.identity.DTOs.request.SetPasswordRequest;
+import service.identity.DTOs.request.*;
 import service.identity.DTOs.response.*;
 import service.identity.service.UserService;
 
@@ -200,7 +198,7 @@ public class UserController {
 
   // new api
 
-  @PatchMapping("/request-join-group")
+  @PostMapping("/request-join-group")
   HttpResponse<Boolean>
   requestJoinGroup(@RequestParam("userId") String userId,
                    @RequestParam("requestId") String requestId,
@@ -237,13 +235,23 @@ public class UserController {
         .build();
   }
 
-  @PatchMapping("/add-group")
+  @PostMapping("/add-group")
   HttpResponse<Void> addGroup(@RequestParam("userId") String userId,
                               @RequestParam("groupId") String groupId) {
     userService.addGroup(groupId, userId);
     return HttpResponse.<Void>builder()
         .code(1000)
         .message("Group added to user successfully")
+        .build();
+  }
+
+  @PostMapping("/remove-group")
+  HttpResponse<Void> removeGroup(@RequestParam("userId") String userId,
+                                 @RequestParam("groupId") String groupId) {
+    userService.removeGroup(groupId, userId);
+    return HttpResponse.<Void>builder()
+        .code(1000)
+        .message("Group removed from user successfully")
         .build();
   }
 
@@ -274,6 +282,16 @@ public class UserController {
         .code(1000)
         .message("Check premium status successfully")
         .result(userService.isPremium(userId))
+        .build();
+  }
+
+  @PostMapping("/summaries")
+  HttpResponse<List<UserSummaryResponse>>
+  getUserStatistics(@RequestBody() GetUserSummaryRequest request) {
+    return HttpResponse.<List<UserSummaryResponse>>builder()
+        .code(1000)
+        .message("User statistics fetched successfully")
+        .result(userService.getUserSummaries(request.getUserIds()))
         .build();
   }
 }

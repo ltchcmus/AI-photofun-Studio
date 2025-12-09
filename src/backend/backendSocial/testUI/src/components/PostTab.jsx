@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import axios from 'axios'
 
-export default function PostTab({ config, auth }) {
+export default function PostTab({ config, auth, apiClient }) {
   const [response, setResponse] = useState('')
   const [loading, setLoading] = useState(false)
   const [postId, setPostId] = useState('')
@@ -10,16 +9,17 @@ export default function PostTab({ config, auth }) {
   const apiCall = async (method, endpoint, data = null, isFile = false) => {
     setLoading(true)
     try {
-      const headers = { Authorization: `Bearer ${auth.accessToken}` }
-      if (!isFile) headers['Content-Type'] = 'application/json'
-
-      const res = await axios({
+      const config = {
         method,
-        url: `${config.apiGateway}${endpoint}`,
-        data,
-        headers,
-        withCredentials: true
-      })
+        url: endpoint,
+        data
+      }
+      
+      if (!isFile) {
+        config.headers = { 'Content-Type': 'application/json' }
+      }
+
+      const res = await apiClient(config)
       setResponse(JSON.stringify(res.data, null, 2))
     } catch (err) {
       setResponse(JSON.stringify(err.response?.data || { error: err.message }, null, 2))
