@@ -36,6 +36,7 @@ config:
 
   jwt:
     secret: ${JWT_SECRET:83dc48544aeb79bb92fb8f7271d4cbeb825e5ec19ce7f0b4c1be2048d1bd98671fc1e39e2a0a97c4d7d0a20a63b580e7c238f5ba880bcd2b6a091fd79f72e3e1}
+    secret-refresh: ${JWT_SECRET_REFRESH:93f5e1d4c8e2b7a6c4d5e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0}
     loop-hash: ${LOOP_HASH:10}
     expires-in: ${EXPIRES_IN:70}
     refresh-expires-in: ${REFRESH_EXPIRES_IN:86400}

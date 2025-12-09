@@ -20,8 +20,6 @@ import service.communication.service.GroupService;
 @RequestMapping("/groups")
 @Slf4j
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
-@Builder
-@Data
 public class GroupController {
   GroupService groupService;
 
@@ -58,8 +56,8 @@ public class GroupController {
   HttpResponse<Void>
   modifyRequestStatus(@RequestParam("requestId") String requestId,
                       @RequestParam("groupId") String groupId,
-                      @RequestParam("accept") int status) {
-    groupService.modifyRequestJoin(requestId, groupId, status);
+                      @RequestParam("accept") boolean accept) {
+    groupService.modifyRequestJoin(requestId, groupId, accept);
     return HttpResponse.<Void>builder()
         .code(1000)
         .message("Modify request status successfully")
@@ -125,6 +123,25 @@ public class GroupController {
         .code(1000)
         .message("Get group messages successfully")
         .result(response)
+        .build();
+  }
+
+  @DeleteMapping("/{groupId}/leave")
+  HttpResponse<Void> leaveGroup(@PathVariable("groupId") String groupId) {
+    groupService.leaveGroup(groupId);
+    return HttpResponse.<Void>builder()
+        .code(1000)
+        .message("Left group successfully")
+        .build();
+  }
+
+  @DeleteMapping("/{groupId}/members/{memberId}")
+  HttpResponse<Void> removeMember(@PathVariable("groupId") String groupId,
+                                  @PathVariable("memberId") String memberId) {
+    groupService.removeMember(groupId, memberId);
+    return HttpResponse.<Void>builder()
+        .code(1000)
+        .message("Member removed successfully")
         .build();
   }
 }

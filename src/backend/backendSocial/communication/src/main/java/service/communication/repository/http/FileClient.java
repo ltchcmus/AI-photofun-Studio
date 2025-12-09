@@ -7,11 +7,14 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 import service.communication.DTOs.HttpResponse;
 import service.communication.DTOs.response.UploadFileResponse;
+import service.communication.configuration.RequestPartConfig;
 
-@FeignClient(name = "file-client", url = "${config.http.file}")
+@FeignClient(name = "file-client", url = "${config.http.file}",
+             configuration = {RequestPartConfig.class})
 public interface FileClient {
-  @PostMapping(value = "/api/v1/file/upload",
+  @PostMapping(value = "/api/v1/file/uploads",
                consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   HttpResponse<UploadFileResponse>
-  uploadFile(@RequestPart("file") MultipartFile file);
+  uploadFile(@RequestPart("id") String id,
+             @RequestPart("image") MultipartFile image);
 }

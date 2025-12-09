@@ -11,59 +11,63 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @Slf4j
 public class SecurityGlobal {
-    final String[] PUBLIC_URLS = {
-            "/users/register",
-            "/introspect/**",
-            "/auth/login",
-            "/auth/introspect/**",
-            "/auth/refresh/**",
-            "/auth/introspect/ignore/**",
-            "/auth/authentication",
-            "/check",
-            "/users/tokens/**",
-            "/users/modify-tokens",
-            "/users/request-join-group",
-            "/users/delete-request-join-group",
-            "/users/add-group",
-            "/users/get-group-joined-internal",
-            "/authorities/create",
-            "/roles/create"
-    };
+  final String[] PUBLIC_URLS = {"/users/register",
+                                "/introspect/**",
+                                "/auth/login",
+                                "/auth/introspect/**",
+                                "/auth/refresh/**",
+                                "/auth/introspect/ignore/**",
+                                "/auth/authentication",
+                                "/check",
+                                "/users/tokens/**",
+                                "/users/modify-tokens",
+                                "/users/request-join-group",
+                                "/users/delete-request-join-group",
+                                "/users/add-group",
+                                "/users/remove-group",
+                                "/users/get-group-joined-internal",
+                                "/users/check-premium",
+                                "/authorities/create",
+                                "/roles/create",
+                                "/auth/refresh-token",
+                                "/users/summaries"};
 
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http.csrf(AbstractHttpConfigurer::disable)
+        .authorizeHttpRequests(request
+                               -> request.requestMatchers(PUBLIC_URLS)
+                                      .permitAll()
+                                      .anyRequest()
+                                      .authenticated())
+        .oauth2ResourceServer(
+            oauth2
+            -> oauth2
+                   .jwt(jwtConfigurer
+                        -> jwtConfigurer.decoder(new CustomJwtDecoder())
+                               .jwtAuthenticationConverter(
+                                   jwtAuthenticationConverter()))
+                   .authenticationEntryPoint(new CustomEntryPoint()));
 
-        http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request ->
-                        request.requestMatchers(PUBLIC_URLS).permitAll()
-                                .anyRequest().authenticated())
-                .oauth2ResourceServer(oauth2 ->
-                        oauth2.jwt(jwtConfigurer ->
-                                jwtConfigurer.decoder(new CustomJwtDecoder())
-                                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                                .authenticationEntryPoint(new CustomEntryPoint()));
+    return http.build();
+  }
 
-        return http.build();
-    }
+  @Bean
+  public JwtAuthenticationConverter jwtAuthenticationConverter() {
+    JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+    JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter =
+        new JwtGrantedAuthoritiesConverter();
 
-    @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
-        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+    // Don't add any prefix - token already has "ROLE_" in the value
+    grantedAuthoritiesConverter.setAuthorityPrefix("");
 
-        // Don't add any prefix - token already has "ROLE_" in the value
-        grantedAuthoritiesConverter.setAuthorityPrefix("");
-
-        converter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
-        return converter;
-    }
-
-
+    converter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+    return converter;
+  }
 }

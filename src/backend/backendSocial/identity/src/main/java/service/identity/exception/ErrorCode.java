@@ -34,6 +34,7 @@ public enum ErrorCode {
     AUTHENTICATION_FAILED(1025, "Authentication failed", HttpStatus.UNAUTHORIZED),
     USER_ALREADY_SET_PASSWORD(1026, "User has already set a password", HttpStatus.BAD_REQUEST),
     LIMIT_REGISTER_EXCEEDED(1027, "Limit register exceeded", HttpStatus.TOO_MANY_REQUESTS),
+    INVALID_TOKEN(1028, "Invalid token", HttpStatus.UNAUTHORIZED)
     ;
 
 

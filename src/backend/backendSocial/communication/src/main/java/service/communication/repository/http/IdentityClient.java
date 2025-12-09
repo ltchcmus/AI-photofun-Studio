@@ -2,15 +2,14 @@ package service.communication.repository.http;
 
 import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import service.communication.DTOs.HttpResponse;
+import service.communication.DTOs.request.GetUserSummaryRequest;
+import service.communication.DTOs.response.UserSummaryResponse;
 
 @FeignClient(name = "identity-client", url = "${config.http.identity}")
 public interface IdentityClient {
-  @PatchMapping("/users/request-join-group")
+  @PostMapping("/users/request-join-group")
   HttpResponse<Boolean>
   requestJoinGroup(@RequestParam("userId") String userId,
                    @RequestParam("requestId") String requestId,
@@ -22,9 +21,13 @@ public interface IdentityClient {
                          @RequestParam("requestId") String requestId,
                          @RequestParam("groupId") String groupId);
 
-  @PatchMapping("/users/add-group")
+  @PostMapping("/users/add-group")
   HttpResponse<Void> addGroup(@RequestParam("userId") String userId,
                               @RequestParam("groupId") String groupId);
+
+  @PostMapping("/users/remove-group")
+  HttpResponse<Void> removeGroup(@RequestParam("userId") String userId,
+                                 @RequestParam("groupId") String groupId);
 
   @GetMapping("/users/get-group-joined-internal")
   HttpResponse<List<String>>
@@ -32,4 +35,8 @@ public interface IdentityClient {
 
   @GetMapping("/users/check-premium")
   HttpResponse<Boolean> checkPremium(@RequestParam("userId") String userId);
+
+  @PostMapping("/users/summaries")
+  HttpResponse<List<UserSummaryResponse>>
+  getUserStatistics(@RequestBody() GetUserSummaryRequest request);
 }
