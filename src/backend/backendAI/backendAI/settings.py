@@ -40,17 +40,21 @@ ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',')
 
 INSTALLED_APPS = [
     "django.contrib.contenttypes",
+    "django.contrib.auth",
     "django.contrib.staticfiles",
     "rest_framework",
     "corsheaders",
     "django_filters",
     "drf_yasg",
     "apps.conversation",
+    "apps.prompt_service",
+    "apps.image_service",
+    "apps.image_gallery",
 ]
 
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.security.SecurityMiddleware",
     "django.middleware.common.CommonMiddleware",
     "core.middleware.RequestLoggingMiddleware",
 ]
@@ -75,18 +79,27 @@ TEMPLATES = [
 WSGI_APPLICATION = "backendAI.wsgi.application"
 
 # ============================================================================
-# DATABASE (MongoDB Only - No SQL)
+# DATABASE CONFIGURATION
 # ============================================================================
 
+# PostgreSQL (Supabase) for image_gallery app
 # Django requires a database config even if not used
 # Using dummy database since we only use MongoDB
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.dummy",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get('SUPABASE_DB_NAME', 'postgres'),
+        "USER": os.environ.get('SUPABASE_DB_USER', 'postgres'),
+        "PASSWORD": os.environ.get('SUPABASE_DB_PASSWORD', ''),
+        "HOST": os.environ.get('SUPABASE_DB_HOST', 'localhost'),
+        "PORT": os.environ.get('SUPABASE_DB_PORT', '5432'),
+        "OPTIONS": {
+            "sslmode": os.environ.get('SUPABASE_DB_SSLMODE', 'require'),
+        },
     }
 }
 
-# MongoDB Configuration
+# MongoDB Configuration (for conversation app)
 MONGO_URI = os.environ.get('MONGO_URI', 'mongodb://localhost:27017')
 MONGO_DB_NAME = os.environ.get('MONGO_DB_NAME', 'ai_photofun_studio')
 
@@ -151,14 +164,15 @@ REST_FRAMEWORK = {
 # ============================================================================
 
 # Allow all origins in development (for testing with file:// protocol)
-CORS_ALLOW_ALL_ORIGINS = DEBUG  # True in development, False in production
+# CORS_ALLOW_ALL_ORIGINS = DEBUG  # True in development, False in production
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:5173",  # Vite default port
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:5173",
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+#     "http://localhost:5173",  # Vite default port
+#     "http://127.0.0.1:3000",
+#     "http://127.0.0.1:5173",
+# ]
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -198,6 +212,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # ============================================================================
 
 ML_MODELS_DIR = BASE_DIR / 'ml_models'
+
+# ==========================================================================
+# External Service URLs (configured via environment only; no extra .env files)
+# ==========================================================================
+# MEDIA_UPLOAD_URL: Endpoint to upload generated images (expects multipart/form-data)
+# Example expected response: { "file_url": "https://.../image.png" }
+# GEMINI_MODEL: Optional model name for prompt refinement metadata
+
 os.makedirs(MEDIA_ROOT, exist_ok=True)
 os.makedirs(ML_MODELS_DIR, exist_ok=True)
 
