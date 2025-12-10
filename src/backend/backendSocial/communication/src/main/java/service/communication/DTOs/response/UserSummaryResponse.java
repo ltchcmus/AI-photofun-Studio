@@ -5,9 +5,11 @@ import lombok.experimental.FieldDefaults;
 
 @Data
 @Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
-public class UploadFileResponse {
-  String image;
+public class UserSummaryResponse {
+    String userId;
+    String username;
+    String avatarUrl;
 }

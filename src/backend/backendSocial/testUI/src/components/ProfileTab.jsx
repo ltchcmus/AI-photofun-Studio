@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import axios from 'axios'
 
-export default function ProfileTab({ config, auth }) {
+export default function ProfileTab({ config, auth, apiClient }) {
   const [response, setResponse] = useState('')
   const [loading, setLoading] = useState(false)
   const [code, setCode] = useState('')
@@ -12,15 +11,13 @@ export default function ProfileTab({ config, auth }) {
   const apiCall = async (method, endpoint, data = null) => {
     setLoading(true)
     try {
-      const res = await axios({
+      const res = await apiClient({
         method,
-        url: `${config.apiGateway}${endpoint}`,
+        url: endpoint,
         data,
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${auth.accessToken}`
-        },
-        withCredentials: true
+          'Content-Type': 'application/json'
+        }
       })
       setResponse(JSON.stringify(res.data, null, 2))
     } catch (err) {

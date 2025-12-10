@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import axios from 'axios'
 import { io } from 'socket.io-client'
+import createAxiosInstance from './utils/axiosInstance'
 
 // Import components
 import AuthTab from './components/AuthTab'
@@ -50,6 +51,11 @@ function App() {
     if (sockets.communication) sockets.communication.disconnect()
     setSockets({ comments: null, communication: null })
   }
+
+  // Create axios instance with interceptor
+  const apiClient = useMemo(() => {
+    return createAxiosInstance(config, auth, setAuth, logout)
+  }, [config.apiGateway, auth.accessToken])
 
   const tabs = [
     { id: 'auth', label: '🔐 Auth' },
@@ -117,15 +123,15 @@ function App() {
       </div>
 
       <div className="tab-content">
-        {activeTab === 'auth' && <AuthTab config={config} auth={auth} setAuth={setAuth} />}
-        {activeTab === 'user' && <UserTab config={config} auth={auth} />}
-        {activeTab === 'group' && <GroupTab config={config} auth={auth} />}
-        {activeTab === 'profile' && <ProfileTab config={config} auth={auth} />}
-        {activeTab === 'post' && <PostTab config={config} auth={auth} />}
-        {activeTab === 'comment' && <CommentTab config={config} auth={auth} />}
-        {activeTab === 'chat' && <CommunicationTab config={config} auth={auth} />}
-        {activeTab === 'socket' && <SocketTab config={config} auth={auth} sockets={sockets} setSockets={setSockets} />}
-        {activeTab === 'admin' && <AdminTab config={config} auth={auth} />}
+        {activeTab === 'auth' && <AuthTab config={config} auth={auth} setAuth={setAuth} apiClient={apiClient} logout={logout} />}
+        {activeTab === 'user' && <UserTab config={config} auth={auth} apiClient={apiClient} />}
+        {activeTab === 'group' && <GroupTab config={config} auth={auth} apiClient={apiClient} />}
+        {activeTab === 'profile' && <ProfileTab config={config} auth={auth} apiClient={apiClient} />}
+        {activeTab === 'post' && <PostTab config={config} auth={auth} apiClient={apiClient} />}
+        {activeTab === 'comment' && <CommentTab config={config} auth={auth} apiClient={apiClient} />}
+        {activeTab === 'chat' && <CommunicationTab config={config} auth={auth} apiClient={apiClient} />}
+        {activeTab === 'socket' && <SocketTab config={config} auth={auth} sockets={sockets} setSockets={setSockets} apiClient={apiClient} />}
+        {activeTab === 'admin' && <AdminTab config={config} auth={auth} apiClient={apiClient} />}
       </div>
     </div>
   )

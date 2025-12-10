@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
-import axios from 'axios'
 import io from 'socket.io-client'
 
-export default function CommunicationTab({ config, auth }) {
+export default function CommunicationTab({ config, auth, apiClient }) {
   const [response, setResponse] = useState('')
   const [loading, setLoading] = useState(false)
   const [socket, setSocket] = useState(null)
@@ -95,14 +94,13 @@ export default function CommunicationTab({ config, auth }) {
   const apiCall = async (method, endpoint, data = null, params = {}) => {
     setLoading(true)
     try {
-      const res = await axios({
+      const res = await apiClient({
         method,
-        url: `http://localhost:8085${endpoint}`,
+        url: endpoint,
         data,
         params,
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${auth.accessToken}`
+          'Content-Type': 'application/json'
         }
       })
       setResponse(JSON.stringify(res.data, null, 2))
@@ -268,12 +266,40 @@ export default function CommunicationTab({ config, auth }) {
         </button>
       </div>
 
+      {/* Conversation Management */}
+      <div className="api-section">
+        <h3>👤 My Conversations</h3>
+        <button className="btn btn-primary" onClick={() => apiCall('GET', '/api/v1/communications/conversations/my-conversations')} disabled={loading}>
+          Get My Conversations
+        </button>
+      </div>
+
+      <div className="api-section">
+        <h3>➕ Add Conversation</h3>
+        <div className="form-row">
+          <input placeholder="Receiver User ID" value={receiverId} onChange={(e) => setReceiverId(e.target.value)} />
+          <button className="btn btn-success" onClick={() => apiCall('POST', `/api/v1/communications/conversations/add?receiverId=${receiverId}`)} disabled={loading || !receiverId}>
+            Add Conversation
+          </button>
+        </div>
+      </div>
+
+      <div className="api-section">
+        <h3>🗑️ Delete Conversation</h3>
+        <div className="form-row">
+          <input placeholder="Receiver User ID" value={receiverId} onChange={(e) => setReceiverId(e.target.value)} />
+          <button className="btn btn-danger" onClick={() => apiCall('DELETE', `/api/v1/communications/conversations/delete?receiverId=${receiverId}`)} disabled={loading || !receiverId}>
+            Delete Conversation
+          </button>
+        </div>
+      </div>
+
       {/* Group Management */}
       <div className="api-section">
         <h3>🏢 Create Group (Premium Only)</h3>
         <div className="form-row">
           <input placeholder="Group Name" value={groupName} onChange={(e) => setGroupName(e.target.value)} />
-          <button className="btn btn-primary" onClick={() => apiCall('POST', '/communications/groups/create', null, { groupName })} disabled={loading}>
+          <button className="btn btn-primary" onClick={() => apiCall('POST', '/api/v1/communications/groups/create', null, { groupName })} disabled={loading}>
             Create Group
           </button>
         </div>
@@ -281,7 +307,7 @@ export default function CommunicationTab({ config, auth }) {
 
       <div className="api-section">
         <h3>📜 Get All Groups</h3>
-        <button className="btn btn-primary" onClick={() => apiCall('GET', '/communications/groups/all', null, { page: 1, size: 10 })} disabled={loading}>
+        <button className="btn btn-primary" onClick={() => apiCall('GET', '/api/v1/communications/groups/all', null, { page: 1, size: 10 })} disabled={loading}>
           Get All Groups
         </button>
       </div>
@@ -290,7 +316,7 @@ export default function CommunicationTab({ config, auth }) {
         <h3>🔍 Get Group Messages</h3>
         <div className="form-row">
           <input placeholder="Group ID" value={groupId} onChange={(e) => setGroupId(e.target.value)} />
-          <button className="btn btn-primary" onClick={() => apiCall('GET', `/communications/groups/${groupId}/messages`, null, { page: 1, size: 20 })} disabled={loading || !groupId}>
+          <button className="btn btn-primary" onClick={() => apiCall('GET', `/api/v1/communications/groups/${groupId}/messages`, null, { page: 1, size: 20 })} disabled={loading || !groupId}>
             Get Messages
           </button>
         </div>
@@ -300,7 +326,7 @@ export default function CommunicationTab({ config, auth }) {
         <h3>📬 Get 1-1 Messages</h3>
         <div className="form-row">
           <input placeholder="Other User ID" value={receiverId} onChange={(e) => setReceiverId(e.target.value)} />
-          <button className="btn btn-primary" onClick={() => apiCall('GET', '/communications/communications/get-messages', null, { receiverId, page: 1, size: 15 })} disabled={loading || !receiverId}>
+          <button className="btn btn-primary" onClick={() => apiCall('GET', '/api/v1/communications/communications/get-messages', null, { receiverId, page: 1, size: 15 })} disabled={loading || !receiverId}>
             Get Messages
           </button>
         </div>
