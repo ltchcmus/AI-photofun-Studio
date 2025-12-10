@@ -13,6 +13,7 @@ import {
 import PostList from "../components/post/PostList";
 import { userApi } from "../api/userApi";
 import { postApi } from "../api/postApi";
+import { communicationApi } from "../api/communicationApi";
 
 const DEFAULT_AVATAR = "https://placehold.co/128x128/111/fff?text=U";
 
@@ -88,8 +89,20 @@ const UserProfile = () => {
     // TODO: Call API to follow/unfollow
   };
 
-  const handleMessage = () => {
-    navigate(`/messages?userId=${userId}`);
+  const handleMessage = async () => {
+    try {
+      // Add conversation first
+      await communicationApi.addConversation(userId);
+      console.log("✅ Conversation added successfully");
+
+      // Navigate to messages page with userId
+      navigate(`/messages?userId=${userId}`);
+    } catch (error) {
+      console.error("Failed to add conversation:", error);
+
+      // Still navigate to messages page even if conversation already exists
+      navigate(`/messages?userId=${userId}`);
+    }
   };
 
   if (loading) {
