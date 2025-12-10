@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 
-export default function CommentTab({ config, auth }) {
+export default function CommentTab({ config, auth, apiClient }) {
   const [response, setResponse] = useState('')
   const [loading, setLoading] = useState(false)
   const [postId, setPostId] = useState('test-post-123') // Default test post ID

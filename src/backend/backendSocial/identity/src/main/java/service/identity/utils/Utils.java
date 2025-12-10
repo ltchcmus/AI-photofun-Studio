@@ -64,6 +64,11 @@ public class Utils {
     @Value("${config.gg.client-secret}")
     private String clientSecret;
 
+    @NonFinal
+    @Value("${config.jwt.secret-refresh}")
+    private String jwtRefreshSecret;
+
+
     public String generateScope(User user){
         StringJoiner scope = new StringJoiner(" ");
         Set<Role> roles = user.getRoles();
@@ -89,6 +94,7 @@ public class Utils {
                 .jwtID(String.valueOf(UUID.randomUUID()))
                 .audience("NMCNPM-CLIENT")
                 .claim("scope", generateScope(user))
+                .claim("type", "access")
                 .build();
 
 
@@ -100,6 +106,24 @@ public class Utils {
         return jwtObject.serialize();
     }
 
+    public String generateRefreshToken(User user) throws JOSEException {
+        JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
+
+        JWTClaimsSet claimSet = new JWTClaimsSet.Builder()
+                .subject(user.getUserId())
+                .issuer("ThanhCong")
+                .expirationTime(Date.from(Instant.now().plus(refreshExpiresIn, ChronoUnit.SECONDS)))
+                .issueTime(Date.from(Instant.now()))
+                .jwtID(String.valueOf(UUID.randomUUID()))
+                .audience("NMCNPM-CLIENT")
+                .claim("type", "refresh")
+                .claim("scope", generateScope(user))
+                .build();
+        Payload payload = new Payload(claimSet.toJSONObject());
+        JWSObject jwtObject = new JWSObject(header, payload);
+        jwtObject.sign(new MACSigner(jwtRefreshSecret.getBytes()));
+        return jwtObject.serialize();
+    }
 
     public ParamGgRequest generateParamGgRequest(String code) {
         return ParamGgRequest.builder()

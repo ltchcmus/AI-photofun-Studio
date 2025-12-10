@@ -430,25 +430,33 @@ public class UserService {
                                                                   int size) {
     String userId =
         SecurityContextHolder.getContext().getAuthentication().getName();
-    int start = (page - 1) * size;
-    int end = Math.min(start + size, Integer.MAX_VALUE);
     User user = userRepository.findById(userId).orElseThrow(
         () -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+    List<String> allRequests = user.getMemberRequests();
+    int start = (page - 1) * size;
+    int end = Math.min(start + size, allRequests.size());
+
+    // Handle empty or out of bounds
+    List<GetRequestMemberResponse> pagedRequests =
+        (start >= allRequests.size())
+            ? new java.util.ArrayList<>()
+            : allRequests.subList(start, end)
+                  .stream()
+                  .map((req) -> {
+                    String[] parts = req.split(" ");
+                    return GetRequestMemberResponse.builder()
+                        .userId(parts[0])
+                        .groupId(parts[1])
+                        .build();
+                  })
+                  .toList();
+
     return PageResponse.<GetRequestMemberResponse>builder()
         .currentPage(page)
-        .totalPages((user.getMemberRequests().size() + size - 1) / size)
-        .totalItems(user.getMemberRequests().size())
-        .items(user.getMemberRequests()
-                   .subList(start, end)
-                   .stream()
-                   .map((req) -> {
-                     String[] parts = req.split(" ");
-                     return GetRequestMemberResponse.builder()
-                         .userId(parts[0])
-                         .groupId(parts[1])
-                         .build();
-                   })
-                   .toList())
+        .totalPages((allRequests.size() + size - 1) / size)
+        .totalItems(allRequests.size())
+        .items(pagedRequests)
         .build();
   }
 
@@ -483,19 +491,43 @@ public class UserService {
     }
   }
 
+  public void removeGroup(String groupId, String userId) {
+    lock.lock();
+    try {
+      User user = userRepository.findById(userId).orElseThrow(
+          () -> new AppException(ErrorCode.USER_NOT_FOUND));
+      List<String> groupsJoined = user.getGroupsJoined();
+      if (groupsJoined.contains(groupId)) {
+        groupsJoined.remove(groupId);
+        user.setGroupsJoined(groupsJoined);
+        userRepository.save(user);
+      }
+    } finally {
+      lock.unlock();
+    }
+  }
+
   @PreAuthorize("isAuthenticated()")
   public PageResponse<String> getGroupsJoined(int page, int size) {
     String userId =
         SecurityContextHolder.getContext().getAuthentication().getName();
-    int start = (page - 1) * size;
-    int end = Math.min(start + size, Integer.MAX_VALUE);
     User user = userRepository.findById(userId).orElseThrow(
         () -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+    List<String> allGroups = user.getGroupsJoined();
+    int start = (page - 1) * size;
+    int end = Math.min(start + size, allGroups.size());
+
+    // Handle empty or out of bounds
+    List<String> pagedGroups = (start >= allGroups.size())
+                                   ? new java.util.ArrayList<>()
+                                   : allGroups.subList(start, end);
+
     return PageResponse.<String>builder()
         .currentPage(page)
-        .totalPages((user.getGroupsJoined().size() + size - 1) / size)
-        .totalItems(user.getGroupsJoined().size())
-        .items(user.getGroupsJoined().subList(start, end))
+        .totalPages((allGroups.size() + size - 1) / size)
+        .totalItems(allGroups.size())
+        .items(pagedGroups)
         .build();
   }
 
@@ -511,5 +543,17 @@ public class UserService {
     User user = userRepository.findById(userId).orElseThrow(
         () -> new AppException(ErrorCode.USER_NOT_FOUND));
     return user.isPremiumOneMonth() || user.isPremiumSixMonths();
+  }
+
+  public List<UserSummaryResponse> getUserSummaries(List<String> userIds) {
+    // Clear cache to ensure fresh data from DB
+    entityManager.clear();
+    return userIds.stream()
+        .map(userId -> {
+          User user = userRepository.findById(userId).orElseThrow(
+              () -> new AppException(ErrorCode.USER_NOT_FOUND));
+          return userMapper.toUserSummaryResponse(user);
+        })
+        .toList();
   }
 }

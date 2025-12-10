@@ -5,6 +5,7 @@ import com.nimbusds.jose.JOSEException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jdk.jshell.execution.Util;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -19,15 +20,21 @@ import service.identity.DTOs.request.gg.ParamGgRequest;
 import service.identity.DTOs.response.IntrospectIgnoreRefreshResponse;
 import service.identity.DTOs.response.IntrospectRefreshResponse;
 import service.identity.DTOs.response.LoginResponse;
+import service.identity.DTOs.response.RefreshTokenResponse;
 import service.identity.DTOs.response.gg.GetInfoResponse;
 import service.identity.DTOs.response.gg.GetTokenResponse;
+import service.identity.entity.RemoveToken;
+import service.identity.entity.User;
 import service.identity.repository.http.GgClient;
 import service.identity.repository.http.OpenIdClient;
 import service.identity.service.AuthService;
 import service.identity.utils.CookieUtils;
+import service.identity.utils.Utils;
 
 import java.net.URI;
 import java.text.ParseException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 @RestController
@@ -38,7 +45,7 @@ import java.util.Map;
 public class AuthController {
     AuthService authService;
     CookieUtils cookieUtils;
-
+    Utils utils;
     @NonFinal
     @Value("${config.http.redirect-after-login-google-frontend-success}")
     String redirectAfterLoginGoogleFrontendSuccess;
@@ -47,22 +54,38 @@ public class AuthController {
     @Value("${config.http.redirect-after-login-google-frontend-failure}")
     String redirectAfterLoginGoogleFrontendFailure;
 
+
+    @NonFinal
+    @Value("${config.jwt.expires-in}")
+    Long jwtExpiresIn;
+
+    @NonFinal
+    @Value("${config.jwt.refresh-expires-in}")
+    Long jwtRefreshExpiresIn;
+
+
+
     @PostMapping("/login")
     public HttpResponse<LoginResponse> login(@RequestBody LoginRequest loginRequest, HttpServletResponse httpServletResponse) throws JOSEException {
 
-        LoginResponse loginResponse = authService.login(loginRequest);
-        String token = loginResponse.getAccessToken();
-        Cookie cookie = cookieUtils.createJwtCookie(token);
+        service.identity.entity.User user = authService.login(loginRequest);
+        String accessToken = utils.generateToken(user);
+        String refreshToken = utils.generateRefreshToken(user);
+        Cookie cookie = cookieUtils.createJwtCookie(refreshToken);
+
         httpServletResponse.addCookie(cookie);
         return HttpResponse.<LoginResponse>builder()
                 .code(1000)
                 .message("Login successful")
-                .result(loginResponse)
+                .result(LoginResponse.builder()
+                        .accessToken(accessToken)
+                        .expiresAt(Instant.now().plus(jwtExpiresIn, ChronoUnit.SECONDS))
+                        .build())
                 .build();
     }
 
-    @GetMapping("/introspect/ignore/{id}")
-    public HttpResponse<IntrospectIgnoreRefreshResponse> introspectIgnoreRefresh(@PathVariable("id") String token) throws ParseException, JOSEException {
+    @GetMapping("/introspect/access/{id}")
+    public HttpResponse<IntrospectIgnoreRefreshResponse> introspectAccessToken(@PathVariable("id") String token) throws ParseException, JOSEException {
         return HttpResponse.<IntrospectIgnoreRefreshResponse>builder()
                 .code(1000)
                 .message("Introspect successful")
@@ -72,8 +95,8 @@ public class AuthController {
                 .build();
     }
 
-    @GetMapping("/introspect/{id}")
-    public HttpResponse<IntrospectRefreshResponse> introspectRefresh(@PathVariable("id") String token) throws ParseException, JOSEException {
+    @GetMapping("/introspect/refresh/{id}")
+    public HttpResponse<IntrospectRefreshResponse> introspectRefreshToken(@PathVariable("id") String token) throws ParseException, JOSEException {
         return HttpResponse.<IntrospectRefreshResponse>builder()
                 .code(1000)
                 .message("Introspect successful")
@@ -86,8 +109,15 @@ public class AuthController {
 
     @GetMapping("/logout")
     HttpResponse<?> logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws JOSEException, ParseException {
-        String token = httpServletRequest.getHeader("Authorization").split(" ")[1];
-        authService.logout(token);
+        String accessToken = httpServletRequest.getHeader("Authorization").split(" ")[1];
+        String refreshToken = httpServletRequest.getCookies() == null ? null :
+                java.util.Arrays.stream(httpServletRequest.getCookies())
+                        .filter(cookie -> cookie.getName().equals("jwt"))
+                        .findFirst()
+                        .map(Cookie::getValue)
+                        .orElse(null);
+
+        authService.logout(accessToken, refreshToken);
         Cookie cookie = cookieUtils.createExpiredJwtCookie();
         httpServletResponse.addCookie(cookie);
         return HttpResponse.builder()
@@ -130,5 +160,21 @@ public class AuthController {
             redirectUri = URI.create(redirectAfterLoginGoogleFrontendFailure);
         }
         return ResponseEntity.status(302).location(redirectUri).build();
+    }
+
+    @GetMapping("/refresh-token")
+    HttpResponse<RefreshTokenResponse> refreshTokenFromCookie(@CookieValue(name = "jwt", defaultValue = "") String refreshToken, HttpServletResponse httpServletResponse) throws ParseException, JOSEException {
+        service.identity.entity.User user = authService.refresh(refreshToken);
+        String accessToken = utils.generateToken(user);
+        String refreshNewToken = utils.generateRefreshToken(user);
+        Cookie cookie = cookieUtils.createJwtCookie(refreshNewToken);
+        httpServletResponse.addCookie(cookie);
+        return HttpResponse.<RefreshTokenResponse>builder()
+                .code(1000)
+                .message("Refresh token successful")
+                .result(RefreshTokenResponse.builder()
+                        .accessToken(accessToken)
+                        .build())
+                .build();
     }
 }

@@ -18,9 +18,9 @@ import service.communication.entity.Communication;
 import service.communication.entity.GroupMessage;
 import service.communication.repository.http.IdentityClient;
 import service.communication.service.CommunicationService;
+import service.communication.service.ConversationService;
 import service.communication.service.GroupService;
 import service.communication.utils.Utils;
-
 
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -31,6 +31,7 @@ public class WebSocket {
 
   SocketIOServer server;
   CommunicationService communicationService;
+  ConversationService conversationService;
   GroupService groupService;
   Utils utils;
   Map<String, String> sessionToUserId = new HashMap<>();
@@ -39,10 +40,12 @@ public class WebSocket {
 
   public WebSocket(SocketIOServer server,
                    CommunicationService communicationService,
+                   ConversationService conversationService,
                    GroupService groupService, Utils utils,
                    IdentityClient identityClient) {
     this.server = server;
     this.communicationService = communicationService;
+    this.conversationService = conversationService;
     this.groupService = groupService;
     this.utils = utils;
     this.identityClient = identityClient;
@@ -94,6 +97,15 @@ public class WebSocket {
     SocketIOClient receiverClient = userIdToClient.get(data.getReceiverId());
     if (receiverClient != null) {
       receiverClient.sendEvent("receiveMessage", data);
+    }
+
+    // Auto-create conversation if not exists
+    try {
+      conversationService.autoAddConversation(data.getSenderId(),
+                                              data.getReceiverId());
+    } catch (Exception e) {
+      log.warn("Failed to auto-create conversation between {} and {}: {}",
+               data.getSenderId(), data.getReceiverId(), e.getMessage());
     }
 
     Communication communication = Communication.builder()

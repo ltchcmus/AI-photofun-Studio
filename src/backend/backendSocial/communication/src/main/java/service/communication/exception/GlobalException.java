@@ -6,8 +6,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import service.communication.DTOs.HttpResponse;
-import service.communication.exception.AppException;
-import service.communication.exception.ErrorCode;
+
 
 @ControllerAdvice
 public class GlobalException {

@@ -6,6 +6,7 @@ import service.identity.DTOs.request.RegisterUserRequest;
 import service.identity.DTOs.response.GetMeResponse;
 import service.identity.DTOs.response.GetUserResponse;
 import service.identity.DTOs.response.RegisterUserResponse;
+import service.identity.DTOs.response.UserSummaryResponse;
 import service.identity.entity.User;
 
 @Mapper(componentModel = "spring")
@@ -20,4 +21,5 @@ public interface UserMapper {
 
     GetMeResponse toGetMeResponse(User user);
 
+    UserSummaryResponse toUserSummaryResponse(User user);
 }

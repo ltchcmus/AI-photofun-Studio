@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 
-export default function AuthTab({ config, auth, setAuth }) {
+export default function AuthTab({ config, auth, setAuth, apiClient, logout }) {
   const [response, setResponse] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -13,16 +13,27 @@ export default function AuthTab({ config, auth, setAuth }) {
     usernameOrEmail: '', password: ''
   })
 
-  const apiCall = async (method, endpoint, data = null) => {
+  const apiCall = async (method, endpoint, data = null, useInterceptor = true) => {
     setLoading(true)
     try {
-      const res = await axios({
-        method,
-        url: `${config.apiGateway}${endpoint}`,
-        data,
-        headers: auth.accessToken ? { Authorization: `Bearer ${auth.accessToken}` } : {},
-        withCredentials: true  // Enable cookies
-      })
+      let res
+      if (useInterceptor && apiClient) {
+        // Use apiClient with interceptor
+        res = await apiClient({
+          method,
+          url: endpoint,
+          data
+        })
+      } else {
+        // Direct axios call without interceptor (for login/register)
+        res = await axios({
+          method,
+          url: `${config.apiGateway}${endpoint}`,
+          data,
+          headers: auth.accessToken ? { Authorization: `Bearer ${auth.accessToken}` } : {},
+          withCredentials: true
+        })
+      }
       setResponse(JSON.stringify(res.data, null, 2))
       return res.data
     } catch (err) {
@@ -36,11 +47,11 @@ export default function AuthTab({ config, auth, setAuth }) {
     const result = await apiCall('POST', '/api/v1/identity/users/register', {
       ...regData,
       roles: ['USER']
-    })
+    }, false) // Don't use interceptor for register
   }
 
   const login = async () => {
-    const result = await apiCall('POST', '/api/v1/identity/auth/login', loginData)
+    const result = await apiCall('POST', '/api/v1/identity/auth/login', loginData, false) // Don't use interceptor for login
     if (result?.code === 1000) {
       // Backend only returns accessToken and expiresAt
       // RefreshToken and userId not in response
@@ -78,6 +89,7 @@ export default function AuthTab({ config, auth, setAuth }) {
 
   const logoutApi = async () => {
     await apiCall('GET', '/api/v1/identity/auth/logout')
+    logout()
   }
 
   return (
