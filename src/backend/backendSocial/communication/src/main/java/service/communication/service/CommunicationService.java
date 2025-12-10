@@ -37,12 +37,12 @@ public class CommunicationService {
 
     String userId =
         SecurityContextHolder.getContext().getAuthentication().getName();
-    String mongoId = utils.generateMongoId(userId, receiverId);
+    String conversationId = utils.generateMongoId(userId, receiverId);
     Sort sort = Sort.by("timestamp").descending();
     Pageable pageable = PageRequest.of(page - 1, size, sort);
 
     Page<Communication> pageCommunication =
-        communicationRepository.findById(mongoId, pageable);
+        communicationRepository.findByConversationId(conversationId, pageable);
 
     if (pageCommunication.isEmpty()) {
       return PageResponse.<GetMessageCoupleResponse>builder()
