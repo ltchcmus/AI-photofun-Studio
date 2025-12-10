@@ -22,6 +22,10 @@ urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('api/v1/chat/', include('apps.conversation.urls')),
+   path('v1/prompt/', include('apps.prompt_service.urls')),
+   path('v1/image/', include('apps.image_service.urls')),
+   path('v1/gallery/', include('apps.image_gallery.urls')),
+   path('', include('apps.conversation.urls')),
 ]
 
 if settings.DEBUG:

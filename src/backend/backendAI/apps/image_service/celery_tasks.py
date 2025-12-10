@@ -1,0 +1,15 @@
+import os
+import base64
+import httpx
+from celery import shared_task
+from .services import mock_generate_base64
+from core import ResponseCode
+from core import ResponseFormatter
+
+
+@shared_task(name="image_service.generate_image_task")
+def generate_image_task(refined_prompt: str) -> dict:
+    if refined_prompt.get("code") == ResponseCode.ERROR:
+        return refined_prompt, ResponseFormatter.error()
+
+    return refined_prompt, mock_generate_base64(refined_prompt)
