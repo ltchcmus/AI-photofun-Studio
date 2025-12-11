@@ -17,7 +17,7 @@ export const communicationApi = {
 
   // 1-1 Messages
   getMessages: (receiverId, page = 1, size = 20) =>
-    axiosClient.get(`${BASE_URL}/communications/get-messages`, {
+    axiosClient.get(`${BASE_URL}/get-messages`, {
       params: { receiverId, page, size },
     }),
 

@@ -21,6 +21,7 @@ import {
   ChevronRight,
   Shield,
   Camera,
+  Trash2,
 } from "lucide-react";
 import io from "socket.io-client";
 import { useAuth } from "../hooks/useAuth";
@@ -224,13 +225,55 @@ const MessagesPage = () => {
       const groupRequests = allRequests.filter(
         (req) => req.groupId === groupId
       );
-      setPendingRequests(groupRequests);
-      console.log("✅ Fetched pending requests:", groupRequests);
+
+      // Fetch user info for each request
+      const requestsWithUserInfo = await Promise.all(
+        groupRequests.map(async (req) => {
+          // Check cache first
+          if (userCache[req.userId]) {
+            return {
+              ...req,
+              username: userCache[req.userId].username,
+              avatarUrl: userCache[req.userId].avatarUrl,
+            };
+          }
+
+          // Fetch user info
+          try {
+            const userRes = await userApi.getUserById(req.userId);
+            const userData = userRes?.data?.result;
+            const username = userData?.username || userData?.fullName || "User";
+            const avatarUrl = userData?.avatarUrl || `https://i.pravatar.cc/150?u=${req.userId}`;
+
+            // Update cache
+            setUserCache((prev) => ({
+              ...prev,
+              [req.userId]: { username, avatarUrl },
+            }));
+
+            return {
+              ...req,
+              username,
+              avatarUrl,
+            };
+          } catch (err) {
+            console.error(`Failed to fetch user ${req.userId}:`, err);
+            return {
+              ...req,
+              username: "User",
+              avatarUrl: `https://i.pravatar.cc/150?u=${req.userId}`,
+            };
+          }
+        })
+      );
+
+      setPendingRequests(requestsWithUserInfo);
+      console.log("✅ Fetched pending requests with user info:", requestsWithUserInfo);
     } catch (error) {
       console.error("Failed to fetch pending requests:", error);
       setPendingRequests([]);
     }
-  }, []);
+  }, [userCache]);
 
   // Fetch messages for active chat
   const fetchMessages = useCallback(async () => {
@@ -292,10 +335,12 @@ const MessagesPage = () => {
           setUserCache(newCache);
         }
       } else {
-        // Fetch 1-1 messages - response has result.data or result directly
+        // Fetch 1-1 messages
+        // Response format: { result: { items: [{ userId, message, timestamp, image }, ...] } }
         if (!activeChat.userId) return;
         response = await communicationApi.getMessages(activeChat.userId, 1, 50);
-        data = response?.data?.result?.data || response?.data?.result || [];
+        console.log("📨 1-1 messages response:", response?.data);
+        data = response?.data?.result?.items || response?.data?.result?.data || response?.data?.result || [];
       }
 
       // Helper function to detect if a message is an image URL
@@ -313,13 +358,16 @@ const MessagesPage = () => {
         // Check if it's an image: use msg.image flag OR detect from URL
         const msgIsImage = msg.image === true || isImageUrl(messageText);
 
+        // Support both senderId (group) and userId (1-1) fields
+        const messageSenderId = msg.senderId || msg.userId;
+
         return {
-          id: msg.id || Date.now(),
-          sender: msg.senderId === user?.id ? "me" : "other",
-          senderId: msg.senderId,
-          senderName: userCache[msg.senderId]?.username || msg.senderName || "User",
-          senderAvatar: userCache[msg.senderId]?.avatarUrl || `https://i.pravatar.cc/150?u=${msg.senderId}`,
-          senderIsPremium: userCache[msg.senderId]?.isPremium || false,
+          id: msg.id || Date.now() + Math.random(),
+          sender: messageSenderId === user?.id ? "me" : "other",
+          senderId: messageSenderId,
+          senderName: userCache[messageSenderId]?.username || msg.senderName || "User",
+          senderAvatar: userCache[messageSenderId]?.avatarUrl || `https://i.pravatar.cc/150?u=${messageSenderId}`,
+          senderIsPremium: userCache[messageSenderId]?.isPremium || false,
           text: messageText,
           // Use timestamp field if available (e.g., "16 hours ago"), otherwise format createdAt
           time: msg.timestamp || (msg.createdAt
@@ -375,13 +423,24 @@ const MessagesPage = () => {
     newSocket.on("receiveMessage", (data) => {
       console.log("📨 Received 1-1 message:", data);
 
+      // Helper function to detect if a message is an image URL
+      const isImageUrl = (text) => {
+        if (!text || typeof text !== 'string') return false;
+        const imageExtensions = /\.(jpg|jpeg|png|gif|webp|bmp|svg)(\?.*)?$/i;
+        const imageHosts = /(cloudinary\.com|imgur\.com|i\.pravatar\.cc|res\.cloudinary\.com|images\.unsplash\.com)/i;
+        return imageExtensions.test(text) || imageHosts.test(text);
+      };
+
+      // Check if it's an image: use isImage flag OR detect from URL
+      const msgIsImage = data.isImage === true || data.image === true || isImageUrl(data.message);
+
       // Add message to current chat if it matches
       if (activeChat?.userId === data.senderId) {
         const newMsg = {
           id: Date.now(),
           sender: "other",
           text: data.message,
-          isImage: data.isImage || false,
+          isImage: msgIsImage,
           time: new Date().toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
@@ -394,6 +453,17 @@ const MessagesPage = () => {
     // Receive group message
     newSocket.on("receiveGroupMessage", async (data) => {
       console.log("📨 Received group message:", data);
+
+      // Helper function to detect if a message is an image URL
+      const isImageUrl = (text) => {
+        if (!text || typeof text !== 'string') return false;
+        const imageExtensions = /\.(jpg|jpeg|png|gif|webp|bmp|svg)(\?.*)?$/i;
+        const imageHosts = /(cloudinary\.com|imgur\.com|i\.pravatar\.cc|res\.cloudinary\.com|images\.unsplash\.com)/i;
+        return imageExtensions.test(text) || imageHosts.test(text);
+      };
+
+      // Check if it's an image: use isImage flag OR detect from URL
+      const msgIsImage = data.isImage === true || data.image === true || isImageUrl(data.message);
 
       // Add message to current chat if it matches
       // Skip if sender is current user (already added locally when sending)
@@ -434,7 +504,7 @@ const MessagesPage = () => {
           senderAvatar: senderInfo.avatarUrl,
           senderIsPremium: senderInfo.isPremium || false,
           text: data.message,
-          isImage: data.isImage || false,
+          isImage: msgIsImage,
           time: new Date().toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
@@ -758,6 +828,36 @@ const MessagesPage = () => {
     setEditGroupDescription("");
   };
 
+  // Delete conversation (Direct messages)
+  const handleDeleteConversation = async (userId, username) => {
+    if (!window.confirm(`Bạn có chắc chắn muốn xóa cuộc hội thoại với "${username}"?\n\nHành động này sẽ xóa tất cả tin nhắn.`)) {
+      return;
+    }
+
+    setLoadingAction(true);
+    try {
+      await communicationApi.deleteConversation(userId);
+      alert("Đã xóa cuộc hội thoại!");
+
+      // Refresh conversations list
+      fetchConversations();
+
+      // Clear active chat if it's the deleted conversation
+      if (activeChat?.userId === userId) {
+        setActiveChat(null);
+        setMessages([]);
+      }
+    } catch (error) {
+      console.error("Failed to delete conversation:", error);
+      const errorMsg =
+        error.response?.data?.message ||
+        "Không thể xóa cuộc hội thoại. Vui lòng thử lại!";
+      alert(errorMsg);
+    } finally {
+      setLoadingAction(false);
+    }
+  };
+
   // Request to join a group
   const handleRequestJoinGroup = async (groupId) => {
     setLoadingAction(true);
@@ -868,13 +968,15 @@ const MessagesPage = () => {
   // No conversations state
   if (!activeChat && conversations.length === 0) {
     return (
-      <div className="flex h-[calc(100vh-4rem)] items-center justify-center bg-gray-50 rounded-3xl border border-gray-200">
-        <div className="flex flex-col items-center gap-3 text-gray-500">
-          <Users className="h-16 w-16 text-gray-300" />
-          <p className="text-lg font-medium">Chưa có cuộc trò chuyện</p>
-          <p className="text-sm text-gray-400">
-            Bắt đầu nhắn tin với bạn bè ngay!
-          </p>
+      <div className="flex items-center justify-center min-h-[calc(100vh-6rem)]">
+        <div className="flex h-[calc(100vh-8rem)] w-full items-center justify-center bg-gray-50 rounded-3xl border border-gray-200">
+          <div className="flex flex-col items-center gap-3 text-gray-500">
+            <Users className="h-16 w-16 text-gray-300" />
+            <p className="text-lg font-medium">Chưa có cuộc trò chuyện</p>
+            <p className="text-sm text-gray-400">
+              Bắt đầu nhắn tin với bạn bè ngay!
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -891,822 +993,853 @@ const MessagesPage = () => {
   const isCurrentUserMember = activeChat?.isGroup && activeChat?.isMember;
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] bg-gray-50 overflow-hidden rounded-3xl border border-gray-200 shadow-sm">
-      <div className="flex w-80 flex-col border-r border-gray-200 bg-white">
-        <div className="border-b border-gray-100 p-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold text-gray-800">Đoạn chat</h1>
-              <div
-                className={`h-2 w-2 rounded-full ${socketConnected ? "bg-green-500" : "bg-red-500"
-                  }`}
-                title={socketConnected ? "Đã kết nối" : "Mất kết nối"}
+    <div className="flex items-center justify-center min-h-[calc(100vh-6rem)]">
+      <div className="flex h-[calc(100vh-8rem)] w-full bg-gray-50 overflow-hidden rounded-3xl border border-gray-200 shadow-sm">
+        <div className="flex w-80 flex-col border-r border-gray-200 bg-white">
+          <div className="border-b border-gray-100 p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl font-bold text-gray-800">Đoạn chat</h1>
+                <div
+                  className={`h-2 w-2 rounded-full ${socketConnected ? "bg-green-500" : "bg-red-500"
+                    }`}
+                  title={socketConnected ? "Đã kết nối" : "Mất kết nối"}
+                />
+              </div>
+              {isPremium && (
+                <button
+                  type="button"
+                  onClick={() => setShowCreateGroup(true)}
+                  className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 px-3 py-1.5 text-xs font-bold text-white shadow-md hover:shadow-lg transition-all hover:scale-105"
+                  title="Tạo nhóm (Premium)"
+                >
+                  <Users className="h-4 w-4" />
+                  <span>Tạo nhóm</span>
+                  <Crown className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+            <div className="relative">
+              <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Tìm kiếm"
+                className="w-full rounded-full bg-gray-100 py-2 pl-10 pr-4 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
-            {isPremium && (
+
+            {/* Tabs */}
+            <div className="flex gap-1 mt-4">
               <button
                 type="button"
-                onClick={() => setShowCreateGroup(true)}
-                className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 px-3 py-1.5 text-xs font-bold text-white shadow-md hover:shadow-lg transition-all hover:scale-105"
-                title="Tạo nhóm (Premium)"
+                onClick={() => setActiveTab("direct")}
+                className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-colors ${activeTab === "direct"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
               >
-                <Users className="h-4 w-4" />
-                <span>Tạo nhóm</span>
-                <Crown className="h-3.5 w-3.5" />
+                Trực tiếp
               </button>
-            )}
-          </div>
-          <div className="relative">
-            <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Tìm kiếm"
-              className="w-full rounded-full bg-gray-100 py-2 pl-10 pr-4 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-            />
-          </div>
-
-          {/* Tabs */}
-          <div className="flex gap-1 mt-4">
-            <button
-              type="button"
-              onClick={() => setActiveTab("direct")}
-              className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-colors ${activeTab === "direct"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
-            >
-              Trực tiếp
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("groups")}
-              className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-colors ${activeTab === "groups"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
-            >
-              Nhóm
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("explore")}
-              className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-colors ${activeTab === "explore"
-                ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
-            >
-              🔍 Khám phá
-            </button>
-          </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto">
-          {activeTab === "direct" ? (
-            // Direct Messages Tab
-            conversations.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-                <Users className="h-12 w-12 mb-3 text-gray-300" />
-                <p className="text-sm">Chưa có cuộc trò chuyện</p>
-              </div>
-            ) : (
-              conversations.map((chat) => (
-                <button
-                  type="button"
-                  key={chat.id}
-                  onClick={() => setActiveChat(chat)}
-                  className={`mx-2 mb-2 flex items-center gap-3 rounded-xl p-3 text-left transition-colors ${activeChat.id === chat.id
-                    ? "bg-blue-50"
-                    : "hover:bg-gray-100"
-                    }`}
-                >
-                  <div className="relative">
-                    <img
-                      src={chat.avatar}
-                      alt={chat.name}
-                      className="h-12 w-12 rounded-full object-cover"
-                    />
-                    {chat.isOnline && (
-                      <span className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-green-500"></span>
-                    )}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-baseline justify-between">
-                      <h3
-                        className={`truncate text-sm font-semibold ${activeChat.id === chat.id
-                          ? "text-blue-700"
-                          : "text-gray-900"
-                          }`}
-                      >
-                        {chat.name}
-                      </h3>
-                      <span className="text-xs text-gray-400">{chat.time}</span>
-                    </div>
-                    <div className="mt-0.5 flex items-center justify-between">
-                      <p
-                        className={`max-w-[140px] truncate text-xs ${chat.unread
-                          ? "font-bold text-gray-900"
-                          : "text-gray-500"
-                          }`}
-                      >
-                        {chat.lastMessage}
-                      </p>
-                      {chat.unread > 0 && (
-                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold text-white">
-                          {chat.unread}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </button>
-              ))
-            )
-          ) : activeTab === "groups" ? (
-            // My Groups Tab (joined groups)
-            groups.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-                <Users className="h-12 w-12 mb-3 text-gray-300" />
-                <p className="text-sm">Chưa tham gia nhóm nào</p>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab("explore")}
-                  className="mt-3 text-sm text-purple-600 hover:underline"
-                >
-                  🔍 Khám phá nhóm
-                </button>
-                {isPremium && (
-                  <button
-                    type="button"
-                    onClick={() => setShowCreateGroup(true)}
-                    className="mt-2 text-sm text-blue-600 hover:underline"
-                  >
-                    Hoặc tạo nhóm mới
-                  </button>
-                )}
-              </div>
-            ) : (
-              groups.map((group) => (
-                <button
-                  type="button"
-                  key={group.id}
-                  onClick={() => {
-                    setActiveChat(group);
-                    setShowGroupInfo(false);
-                  }}
-                  className={`mx-2 mb-2 flex items-center gap-3 rounded-xl p-3 text-left transition-colors w-[calc(100%-1rem)] ${activeChat?.id === group.id
-                    ? "bg-blue-50"
-                    : "hover:bg-gray-100"
-                    }`}
-                >
-                  <div className="relative">
-                    <img
-                      src={group.avatar}
-                      alt={group.name}
-                      className="h-12 w-12 rounded-full object-cover"
-                    />
-                    <span className="absolute bottom-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-white border-2 border-white">
-                      <Users className="h-2.5 w-2.5" />
-                    </span>
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3
-                        className={`truncate text-sm font-semibold ${activeChat?.id === group.id
-                          ? "text-blue-700"
-                          : "text-gray-900"
-                          }`}
-                      >
-                        {group.name}
-                      </h3>
-                      {group.isAdmin && (
-                        <Crown className="h-3.5 w-3.5 text-yellow-500" />
-                      )}
-                    </div>
-                    <p className="text-xs text-gray-500 mt-0.5">
-                      {group.memberCount} thành viên
-                    </p>
-                  </div>
-                </button>
-              ))
-            )
-          ) : (
-            // Explore Tab (all groups - not joined)
-            exploreGroups.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-                <Users className="h-12 w-12 mb-3 text-gray-300" />
-                <p className="text-sm">Không có nhóm mới để khám phá</p>
-                <p className="text-xs text-gray-400 mt-1">Bạn đã tham gia tất cả nhóm!</p>
-              </div>
-            ) : (
-              exploreGroups.map((group) => (
-                <button
-                  type="button"
-                  key={group.id}
-                  onClick={() => {
-                    setActiveChat(group);
-                    setShowGroupInfo(false);
-                  }}
-                  className={`mx-2 mb-2 flex items-center gap-3 rounded-xl p-3 text-left transition-colors w-[calc(100%-1rem)] ${activeChat?.id === group.id
-                    ? "bg-purple-50"
-                    : "hover:bg-gray-100"
-                    }`}
-                >
-                  <div className="relative">
-                    <img
-                      src={group.avatar}
-                      alt={group.name}
-                      className="h-12 w-12 rounded-full object-cover"
-                    />
-                    <span className="absolute bottom-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-purple-500 text-white border-2 border-white">
-                      <Users className="h-2.5 w-2.5" />
-                    </span>
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3
-                        className={`truncate text-sm font-semibold ${activeChat?.id === group.id
-                          ? "text-purple-700"
-                          : "text-gray-900"
-                          }`}
-                      >
-                        {group.name}
-                      </h3>
-                    </div>
-                    <div className="mt-0.5 flex items-center justify-between">
-                      <p className="text-xs text-gray-500">
-                        {group.memberCount} thành viên
-                      </p>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRequestJoinGroup(group.groupId);
-                        }}
-                        disabled={loadingAction}
-                        className="flex items-center gap-1 px-2 py-1 rounded-full bg-purple-600 text-white text-xs font-medium hover:bg-purple-700 disabled:opacity-50"
-                      >
-                        <UserPlus className="h-3 w-3" />
-                        Tham gia
-                      </button>
-                    </div>
-                  </div>
-                </button>
-              ))
-            )
-          )}
-        </div>
-      </div>
-
-      <div className="flex flex-1 flex-col bg-white">
-        <div className="flex h-16 items-center justify-between border-b border-gray-200 px-6">
-          <button
-            type="button"
-            onClick={() => activeChat.isGroup && setShowGroupInfo(!showGroupInfo)}
-            className={`flex items-center gap-3 ${activeChat.isGroup ? "cursor-pointer hover:bg-gray-50 -ml-2 pl-2 pr-3 py-1 rounded-lg" : ""}`}
-          >
-            <div className="relative">
-              <img
-                src={activeChat.avatar}
-                alt={activeChat.name}
-                className="h-10 w-10 rounded-full object-cover"
-              />
-              {activeChat.isOnline && (
-                <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-green-500"></span>
-              )}
+              <button
+                type="button"
+                onClick={() => setActiveTab("groups")}
+                className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-colors ${activeTab === "groups"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+              >
+                Nhóm
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("explore")}
+                className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-colors ${activeTab === "explore"
+                  ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+              >
+                🔍 Khám phá
+              </button>
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-semibold text-gray-900">
-                  {activeChat.name}
-                </p>
-                {activeChat.isGroup && isCurrentUserAdmin && (
-                  <Shield className="h-4 w-4 text-yellow-500" />
-                )}
-              </div>
-              <p className="text-xs text-gray-500">
-                {activeChat.isGroup
-                  ? `${activeChat.memberCount} thành viên`
-                  : activeChat.isOnline
-                    ? "Đang hoạt động"
-                    : "Hoạt động gần đây"}
-              </p>
-            </div>
-            {activeChat.isGroup && (
-              <ChevronRight className={`h-4 w-4 text-gray-400 transition-transform ${showGroupInfo ? "rotate-90" : ""}`} />
-            )}
-          </button>
-          <div className="flex items-center gap-4 text-blue-600">
-            <button
-              type="button"
-              className="rounded-full p-2 transition-colors hover:bg-blue-50"
-            >
-              <Phone className="h-5 w-5" />
-            </button>
-            <button
-              type="button"
-              className="rounded-full p-2 transition-colors hover:bg-blue-50"
-            >
-              <Video className="h-5 w-5" />
-            </button>
-            <button
-              type="button"
-              className="rounded-full p-2 transition-colors hover:bg-blue-50"
-            >
-              <MoreVertical className="h-5 w-5" />
-            </button>
           </div>
-        </div>
 
-        <div className="flex flex-1 overflow-hidden">
-          {/* Messages Area */}
-          <div className={`flex-1 flex flex-col ${showGroupInfo ? "border-r border-gray-100" : ""}`}>
-            <div className="flex-1 space-y-4 overflow-y-auto bg-white p-4">
-              {messages.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-gray-400">
-                  <Send className="h-16 w-16 mb-3 text-gray-300" />
-                  <p className="text-sm">Chưa có tin nhắn</p>
-                  <p className="text-xs mt-1">Bắt đầu cuộc trò chuyện ngay!</p>
+          <div className="flex-1 overflow-y-auto">
+            {activeTab === "direct" ? (
+              // Direct Messages Tab
+              conversations.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+                  <Users className="h-12 w-12 mb-3 text-gray-300" />
+                  <p className="text-sm">Chưa có cuộc trò chuyện</p>
                 </div>
               ) : (
-                messages.map((message) => (
+                conversations.map((chat) => (
                   <div
-                    key={message.id}
-                    className={`flex ${message.sender === "me" ? "justify-end" : "justify-start"
+                    key={chat.id}
+                    className={`group/conv mx-2 mb-2 flex items-center gap-3 rounded-xl p-3 text-left transition-colors ${activeChat?.id === chat.id
+                      ? "bg-blue-50"
+                      : "hover:bg-gray-100"
                       }`}
                   >
-                    {message.sender === "other" && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const targetUserId = activeChat.isGroup ? message.senderId : activeChat.userId;
-                          if (targetUserId) navigate(`/user/${targetUserId}`);
-                        }}
-                        className="mr-2 self-end focus:outline-none rounded-full transition-transform hover:scale-110 relative group/avatar"
-                        title={`Xem profile ${activeChat.isGroup ? message.senderName : activeChat.name}`}
-                      >
-                        {/* Premium Avatar Frame */}
-                        {activeChat.isGroup && message.senderIsPremium && (
-                          <div
-                            className="absolute -inset-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-full animate-spin opacity-75 group-hover/avatar:opacity-100 transition-opacity"
-                            style={{ animationDuration: "3s" }}
-                          />
-                        )}
-                        <div
-                          className={`relative ${activeChat.isGroup && message.senderIsPremium
-                            ? "p-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-full"
-                            : ""
-                            }`}
-                        >
-                          <img
-                            src={activeChat.isGroup ? (message.senderAvatar || `https://i.pravatar.cc/150?u=${message.senderId}`) : activeChat.avatar}
-                            alt={activeChat.isGroup ? message.senderName : activeChat.name}
-                            className={`h-8 w-8 rounded-full object-cover cursor-pointer ${activeChat.isGroup && message.senderIsPremium ? "ring-1 ring-white" : ""
-                              }`}
-                          />
-                        </div>
-                        {/* Premium Crown Badge */}
-                        {activeChat.isGroup && message.senderIsPremium && (
-                          <div className="absolute -top-1 -right-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-0.5 shadow-lg">
-                            <Crown className="w-2.5 h-2.5 text-white" />
-                          </div>
-                        )}
-                      </button>
-                    )}
-                    <div
-                      className={`group relative max-w-[70%] rounded-2xl px-4 py-2 text-sm ${message.sender === "me"
-                        ? "rounded-br-none bg-blue-600 text-white"
-                        : "rounded-bl-none bg-gray-100 text-gray-800"
-                        }`}
+                    <button
+                      type="button"
+                      onClick={() => setActiveChat(chat)}
+                      className="flex items-center gap-3 flex-1 min-w-0"
                     >
-                      {activeChat.isGroup && message.sender === "other" && (
-                        <p className={`text-xs font-semibold mb-1 ${message.senderIsPremium
-                          ? "bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text text-transparent"
-                          : "text-blue-600"
-                          }`}>
-                          {message.senderName}
-                          {message.senderIsPremium && " ✨"}
-                        </p>
-                      )}
-                      {/* Display image or text */}
-                      {message.isImage ? (
+                      <div className="relative">
                         <img
-                          src={message.text}
-                          alt="Sent image"
-                          className="max-w-full max-h-64 rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
-                          onClick={() => window.open(message.text, "_blank")}
-                          loading="lazy"
+                          src={chat.avatar}
+                          alt={chat.name}
+                          className="h-12 w-12 rounded-full object-cover"
                         />
-                      ) : (
-                        message.text
-                      )}
-                      <span
-                        className={`pointer-events-none absolute bottom-full mb-1 text-[10px] text-gray-400 opacity-0 transition-opacity group-hover:opacity-100 ${message.sender === "me" ? "right-0" : "left-0"
-                          }`}
-                      >
-                        {message.time}
-                      </span>
-                    </div>
+                        {chat.isOnline && (
+                          <span className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-green-500"></span>
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-baseline justify-between">
+                          <h3
+                            className={`truncate text-sm font-semibold ${activeChat?.id === chat.id
+                              ? "text-blue-700"
+                              : "text-gray-900"
+                              }`}
+                          >
+                            {chat.name}
+                          </h3>
+                          <span className="text-xs text-gray-400">{chat.time}</span>
+                        </div>
+                        <div className="mt-0.5 flex items-center justify-between">
+                          <p
+                            className={`max-w-[120px] truncate text-xs ${chat.unread
+                              ? "font-bold text-gray-900"
+                              : "text-gray-500"
+                              }`}
+                          >
+                            {chat.lastMessage}
+                          </p>
+                          {chat.unread > 0 && (
+                            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold text-white">
+                              {chat.unread}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                    {/* Delete button */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteConversation(chat.userId, chat.name);
+                      }}
+                      disabled={loadingAction}
+                      className="p-1.5 rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover/conv:opacity-100 transition-all disabled:opacity-50"
+                      title="Xóa cuộc hội thoại"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                   </div>
                 ))
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-
-            <div className="border-t border-gray-100 p-4">
-              {/* Hidden file input for images */}
-              <input
-                ref={imageInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleSendImage}
-                className="hidden"
-                id="chat-image-upload"
-              />
-
-              <form
-                onSubmit={handleSendMessage}
-                className="flex items-center gap-2"
-              >
-                <button
-                  type="button"
-                  onClick={() => imageInputRef.current?.click()}
-                  disabled={uploadingImage || !socketConnected}
-                  className="rounded-full p-2 text-blue-600 transition-colors hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="Gửi ảnh"
-                >
-                  {uploadingImage ? (
-                    <Loader2 className="h-6 w-6 animate-spin" />
-                  ) : (
-                    <Image className="h-6 w-6" />
-                  )}
-                </button>
-                <button
-                  type="button"
-                  className="rounded-full p-2 text-blue-600 transition-colors hover:bg-blue-50"
-                >
-                  <Paperclip className="h-5 w-5" />
-                </button>
-                <div className="relative flex-1">
-                  <input
-                    type="text"
-                    value={inputMessage}
-                    onChange={(event) => setInputMessage(event.target.value)}
-                    placeholder={
-                      socketConnected ? "Nhập tin nhắn..." : "Đang kết nối..."
-                    }
-                    disabled={!socketConnected}
-                    className="w-full rounded-full bg-gray-100 py-2.5 pl-4 pr-10 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                  />
+              )
+            ) : activeTab === "groups" ? (
+              // My Groups Tab (joined groups)
+              groups.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+                  <Users className="h-12 w-12 mb-3 text-gray-300" />
+                  <p className="text-sm">Chưa tham gia nhóm nào</p>
                   <button
                     type="button"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition-colors hover:text-blue-600"
+                    onClick={() => setActiveTab("explore")}
+                    className="mt-3 text-sm text-purple-600 hover:underline"
                   >
-                    <Smile className="h-5 w-5" />
+                    🔍 Khám phá nhóm
                   </button>
+                  {isPremium && (
+                    <button
+                      type="button"
+                      onClick={() => setShowCreateGroup(true)}
+                      className="mt-2 text-sm text-blue-600 hover:underline"
+                    >
+                      Hoặc tạo nhóm mới
+                    </button>
+                  )}
                 </div>
-                <button
-                  type="submit"
-                  disabled={!inputMessage.trim() || !socketConnected}
-                  className="rounded-full bg-blue-600 p-3 text-white shadow-md transition-all hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <Send className="h-5 w-5" />
-                </button>
-              </form>
+              ) : (
+                groups.map((group) => (
+                  <button
+                    type="button"
+                    key={group.id}
+                    onClick={() => {
+                      setActiveChat(group);
+                      setShowGroupInfo(false);
+                    }}
+                    className={`mx-2 mb-2 flex items-center gap-3 rounded-xl p-3 text-left transition-colors w-[calc(100%-1rem)] ${activeChat?.id === group.id
+                      ? "bg-blue-50"
+                      : "hover:bg-gray-100"
+                      }`}
+                  >
+                    <div className="relative">
+                      <img
+                        src={group.avatar}
+                        alt={group.name}
+                        className="h-12 w-12 rounded-full object-cover"
+                      />
+                      <span className="absolute bottom-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-white border-2 border-white">
+                        <Users className="h-2.5 w-2.5" />
+                      </span>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <h3
+                          className={`truncate text-sm font-semibold ${activeChat?.id === group.id
+                            ? "text-blue-700"
+                            : "text-gray-900"
+                            }`}
+                        >
+                          {group.name}
+                        </h3>
+                        {group.isAdmin && (
+                          <Crown className="h-3.5 w-3.5 text-yellow-500" />
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        {group.memberCount} thành viên
+                      </p>
+                    </div>
+                  </button>
+                ))
+              )
+            ) : (
+              // Explore Tab (all groups - not joined)
+              exploreGroups.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+                  <Users className="h-12 w-12 mb-3 text-gray-300" />
+                  <p className="text-sm">Không có nhóm mới để khám phá</p>
+                  <p className="text-xs text-gray-400 mt-1">Bạn đã tham gia tất cả nhóm!</p>
+                </div>
+              ) : (
+                exploreGroups.map((group) => (
+                  <button
+                    type="button"
+                    key={group.id}
+                    onClick={() => {
+                      setActiveChat(group);
+                      setShowGroupInfo(false);
+                    }}
+                    className={`mx-2 mb-2 flex items-center gap-3 rounded-xl p-3 text-left transition-colors w-[calc(100%-1rem)] ${activeChat?.id === group.id
+                      ? "bg-purple-50"
+                      : "hover:bg-gray-100"
+                      }`}
+                  >
+                    <div className="relative">
+                      <img
+                        src={group.avatar}
+                        alt={group.name}
+                        className="h-12 w-12 rounded-full object-cover"
+                      />
+                      <span className="absolute bottom-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-purple-500 text-white border-2 border-white">
+                        <Users className="h-2.5 w-2.5" />
+                      </span>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <h3
+                          className={`truncate text-sm font-semibold ${activeChat?.id === group.id
+                            ? "text-purple-700"
+                            : "text-gray-900"
+                            }`}
+                        >
+                          {group.name}
+                        </h3>
+                      </div>
+                      <div className="mt-0.5 flex items-center justify-between">
+                        <p className="text-xs text-gray-500">
+                          {group.memberCount} thành viên
+                        </p>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRequestJoinGroup(group.groupId);
+                          }}
+                          disabled={loadingAction}
+                          className="flex items-center gap-1 px-2 py-1 rounded-full bg-purple-600 text-white text-xs font-medium hover:bg-purple-700 disabled:opacity-50"
+                        >
+                          <UserPlus className="h-3 w-3" />
+                          Tham gia
+                        </button>
+                      </div>
+                    </div>
+                  </button>
+                ))
+              )
+            )}
+          </div>
+        </div>
+
+        <div className="flex flex-1 flex-col bg-white">
+          <div className="flex h-16 items-center justify-between border-b border-gray-200 px-6">
+            <button
+              type="button"
+              onClick={() => activeChat.isGroup && setShowGroupInfo(!showGroupInfo)}
+              className={`flex items-center gap-3 ${activeChat.isGroup ? "cursor-pointer hover:bg-gray-50 -ml-2 pl-2 pr-3 py-1 rounded-lg" : ""}`}
+            >
+              <div className="relative">
+                <img
+                  src={activeChat.avatar}
+                  alt={activeChat.name}
+                  className="h-10 w-10 rounded-full object-cover"
+                />
+                {activeChat.isOnline && (
+                  <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-green-500"></span>
+                )}
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-semibold text-gray-900">
+                    {activeChat.name}
+                  </p>
+                  {activeChat.isGroup && isCurrentUserAdmin && (
+                    <Shield className="h-4 w-4 text-yellow-500" />
+                  )}
+                </div>
+                <p className="text-xs text-gray-500">
+                  {activeChat.isGroup
+                    ? `${activeChat.memberCount} thành viên`
+                    : activeChat.isOnline
+                      ? "Đang hoạt động"
+                      : "Hoạt động gần đây"}
+                </p>
+              </div>
+              {activeChat.isGroup && (
+                <ChevronRight className={`h-4 w-4 text-gray-400 transition-transform ${showGroupInfo ? "rotate-90" : ""}`} />
+              )}
+            </button>
+            <div className="flex items-center gap-4 text-blue-600">
+              <button
+                type="button"
+                className="rounded-full p-2 transition-colors hover:bg-blue-50"
+              >
+                <Phone className="h-5 w-5" />
+              </button>
+              <button
+                type="button"
+                className="rounded-full p-2 transition-colors hover:bg-blue-50"
+              >
+                <Video className="h-5 w-5" />
+              </button>
+              <button
+                type="button"
+                className="rounded-full p-2 transition-colors hover:bg-blue-50"
+              >
+                <MoreVertical className="h-5 w-5" />
+              </button>
             </div>
           </div>
 
-          {/* Group Info Panel */}
-          {showGroupInfo && activeChat.isGroup && (
-            <div className="w-72 bg-gray-50 p-4 overflow-y-auto">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-gray-800">Thông tin nhóm</h3>
-                <button
-                  type="button"
-                  onClick={() => setShowGroupInfo(false)}
-                  className="p-1 rounded-full hover:bg-gray-200"
-                >
-                  <X className="h-4 w-4 text-gray-500" />
-                </button>
+          <div className="flex flex-1 overflow-hidden">
+            {/* Messages Area */}
+            <div className={`flex-1 flex flex-col ${showGroupInfo ? "border-r border-gray-100" : ""}`}>
+              <div className="flex-1 space-y-4 overflow-y-auto bg-white p-4">
+                {messages.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full text-gray-400">
+                    <Send className="h-16 w-16 mb-3 text-gray-300" />
+                    <p className="text-sm">Chưa có tin nhắn</p>
+                    <p className="text-xs mt-1">Bắt đầu cuộc trò chuyện ngay!</p>
+                  </div>
+                ) : (
+                  messages.map((message) => (
+                    <div
+                      key={message.id}
+                      className={`flex ${message.sender === "me" ? "justify-end" : "justify-start"
+                        }`}
+                    >
+                      {message.sender === "other" && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const targetUserId = activeChat.isGroup ? message.senderId : activeChat.userId;
+                            if (targetUserId) navigate(`/user/${targetUserId}`);
+                          }}
+                          className="mr-2 self-end focus:outline-none rounded-full transition-transform hover:scale-110 relative group/avatar"
+                          title={`Xem profile ${activeChat.isGroup ? message.senderName : activeChat.name}`}
+                        >
+                          {/* Premium Avatar Frame */}
+                          {activeChat.isGroup && message.senderIsPremium && (
+                            <div
+                              className="absolute -inset-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-full animate-spin opacity-75 group-hover/avatar:opacity-100 transition-opacity"
+                              style={{ animationDuration: "3s" }}
+                            />
+                          )}
+                          <div
+                            className={`relative ${activeChat.isGroup && message.senderIsPremium
+                              ? "p-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-full"
+                              : ""
+                              }`}
+                          >
+                            <img
+                              src={activeChat.isGroup ? (message.senderAvatar || `https://i.pravatar.cc/150?u=${message.senderId}`) : activeChat.avatar}
+                              alt={activeChat.isGroup ? message.senderName : activeChat.name}
+                              className={`h-8 w-8 rounded-full object-cover cursor-pointer ${activeChat.isGroup && message.senderIsPremium ? "ring-1 ring-white" : ""
+                                }`}
+                            />
+                          </div>
+                          {/* Premium Crown Badge */}
+                          {activeChat.isGroup && message.senderIsPremium && (
+                            <div className="absolute -top-1 -right-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-0.5 shadow-lg">
+                              <Crown className="w-2.5 h-2.5 text-white" />
+                            </div>
+                          )}
+                        </button>
+                      )}
+                      <div
+                        className={`group relative max-w-[70%] rounded-2xl px-4 py-2 text-sm ${message.sender === "me"
+                          ? "rounded-br-none bg-blue-600 text-white"
+                          : "rounded-bl-none bg-gray-100 text-gray-800"
+                          }`}
+                      >
+                        {activeChat.isGroup && message.sender === "other" && (
+                          <p className={`text-xs font-semibold mb-1 ${message.senderIsPremium
+                            ? "bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text text-transparent"
+                            : "text-blue-600"
+                            }`}>
+                            {message.senderName}
+                            {message.senderIsPremium && " ✨"}
+                          </p>
+                        )}
+                        {/* Display image or text */}
+                        {message.isImage ? (
+                          <img
+                            src={message.text}
+                            alt="Sent image"
+                            className="max-w-full max-h-64 rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                            onClick={() => window.open(message.text, "_blank")}
+                            loading="lazy"
+                          />
+                        ) : (
+                          message.text
+                        )}
+                        <span
+                          className={`pointer-events-none absolute bottom-full mb-1 text-[10px] text-gray-400 opacity-0 transition-opacity group-hover:opacity-100 ${message.sender === "me" ? "right-0" : "left-0"
+                            }`}
+                        >
+                          {message.time}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                )}
+                <div ref={messagesEndRef} />
               </div>
 
-              {/* Group Avatar & Name */}
-              <div className="flex flex-col items-center mb-6">
-                {/* Hidden file input */}
+              <div className="border-t border-gray-100 p-4">
+                {/* Hidden file input for images */}
                 <input
-                  ref={avatarInputRef}
+                  ref={imageInputRef}
                   type="file"
                   accept="image/*"
-                  onChange={handleUploadGroupAvatar}
+                  onChange={handleSendImage}
                   className="hidden"
-                  id="group-avatar-upload"
+                  id="chat-image-upload"
                 />
 
-                {/* Avatar with upload overlay for admin */}
-                <div className="relative group/avatar mb-3">
-                  <img
-                    src={activeChat.avatar}
-                    alt={activeChat.name}
-                    className={`h-20 w-20 rounded-full object-cover ${isCurrentUserAdmin ? "cursor-pointer" : ""
-                      }`}
-                    onClick={() => {
-                      if (isCurrentUserAdmin && avatarInputRef.current) {
-                        avatarInputRef.current.click();
+                <form
+                  onSubmit={handleSendMessage}
+                  className="flex items-center gap-2"
+                >
+                  <button
+                    type="button"
+                    onClick={() => imageInputRef.current?.click()}
+                    disabled={uploadingImage || !socketConnected}
+                    className="rounded-full p-2 text-blue-600 transition-colors hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Gửi ảnh"
+                  >
+                    {uploadingImage ? (
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                    ) : (
+                      <Image className="h-6 w-6" />
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-full p-2 text-blue-600 transition-colors hover:bg-blue-50"
+                  >
+                    <Paperclip className="h-5 w-5" />
+                  </button>
+                  <div className="relative flex-1">
+                    <input
+                      type="text"
+                      value={inputMessage}
+                      onChange={(event) => setInputMessage(event.target.value)}
+                      placeholder={
+                        socketConnected ? "Nhập tin nhắn..." : "Đang kết nối..."
                       }
-                    }}
+                      disabled={!socketConnected}
+                      className="w-full rounded-full bg-gray-100 py-2.5 pl-4 pr-10 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition-colors hover:text-blue-600"
+                    >
+                      <Smile className="h-5 w-5" />
+                    </button>
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={!inputMessage.trim() || !socketConnected}
+                    className="rounded-full bg-blue-600 p-3 text-white shadow-md transition-all hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <Send className="h-5 w-5" />
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            {/* Group Info Panel */}
+            {showGroupInfo && activeChat.isGroup && (
+              <div className="w-72 bg-gray-50 p-4 overflow-y-auto">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold text-gray-800">Thông tin nhóm</h3>
+                  <button
+                    type="button"
+                    onClick={() => setShowGroupInfo(false)}
+                    className="p-1 rounded-full hover:bg-gray-200"
+                  >
+                    <X className="h-4 w-4 text-gray-500" />
+                  </button>
+                </div>
+
+                {/* Group Avatar & Name */}
+                <div className="flex flex-col items-center mb-6">
+                  {/* Hidden file input */}
+                  <input
+                    ref={avatarInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleUploadGroupAvatar}
+                    className="hidden"
+                    id="group-avatar-upload"
                   />
-                  {/* Upload overlay for admin */}
-                  {isCurrentUserAdmin && (
-                    <div
-                      className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover/avatar:opacity-100 transition-opacity cursor-pointer"
+
+                  {/* Avatar with upload overlay for admin */}
+                  <div className="relative group/avatar mb-3">
+                    <img
+                      src={activeChat.avatar}
+                      alt={activeChat.name}
+                      className={`h-20 w-20 rounded-full object-cover ${isCurrentUserAdmin ? "cursor-pointer" : ""
+                        }`}
                       onClick={() => {
-                        if (avatarInputRef.current) {
+                        if (isCurrentUserAdmin && avatarInputRef.current) {
                           avatarInputRef.current.click();
                         }
                       }}
-                    >
-                      {loadingAction ? (
-                        <Loader2 className="h-6 w-6 text-white animate-spin" />
-                      ) : (
-                        <Camera className="h-6 w-6 text-white" />
-                      )}
-                    </div>
-                  )}
-                </div>
-                <h4 className="font-bold text-gray-900 text-lg">{activeChat.name}</h4>
-                <p className="text-sm text-gray-500">{activeChat.memberCount} thành viên</p>
-                {activeChat.description && (
-                  <p className="text-xs text-gray-600 mt-2 px-2 py-1.5 bg-gray-100 rounded-lg text-center">
-                    📝 {activeChat.description}
-                  </p>
-                )}
-                {isCurrentUserAdmin && (
-                  <p className="text-xs text-blue-500 mt-1">Click vào ảnh để thay đổi</p>
-                )}
-              </div>
-
-              {/* Actions */}
-              <div className="space-y-2 mb-6">
-                {/* Edit Group (Admin Only) */}
-                {isCurrentUserAdmin && (
-                  <>
-                    {!isEditingGroup ? (
-                      <button
-                        type="button"
-                        onClick={startEditGroup}
-                        className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    />
+                    {/* Upload overlay for admin */}
+                    {isCurrentUserAdmin && (
+                      <div
+                        className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover/avatar:opacity-100 transition-opacity cursor-pointer"
+                        onClick={() => {
+                          if (avatarInputRef.current) {
+                            avatarInputRef.current.click();
+                          }
+                        }}
                       >
-                        <Settings className="h-4 w-4" />
-                        Chỉnh sửa nhóm
-                      </button>
-                    ) : (
-                      <div className="bg-white p-3 rounded-lg border border-gray-200 space-y-3">
-                        <p className="text-sm font-semibold text-gray-700">Chỉnh sửa nhóm</p>
-                        <input
-                          type="text"
-                          value={editGroupName}
-                          onChange={(e) => setEditGroupName(e.target.value)}
-                          placeholder="Tên nhóm"
-                          className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                        />
-                        <textarea
-                          value={editGroupDescription}
-                          onChange={(e) => setEditGroupDescription(e.target.value)}
-                          placeholder="Mô tả nhóm (tùy chọn)"
-                          rows={2}
-                          className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 resize-none"
-                        />
-                        <div className="flex gap-2">
-                          <button
-                            type="button"
-                            onClick={handleUpdateGroup}
-                            disabled={loadingAction || !editGroupName.trim()}
-                            className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
-                          >
-                            {loadingAction ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <Check className="h-4 w-4" />
-                            )}
-                            Lưu
-                          </button>
-                          <button
-                            type="button"
-                            onClick={cancelEditGroup}
-                            disabled={loadingAction}
-                            className="px-3 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 disabled:opacity-50"
-                          >
-                            Hủy
-                          </button>
-                        </div>
+                        {loadingAction ? (
+                          <Loader2 className="h-6 w-6 text-white animate-spin" />
+                        ) : (
+                          <Camera className="h-6 w-6 text-white" />
+                        )}
                       </div>
                     )}
-                  </>
-                )}
+                  </div>
+                  <h4 className="font-bold text-gray-900 text-lg">{activeChat.name}</h4>
+                  <p className="text-sm text-gray-500">{activeChat.memberCount} thành viên</p>
+                  {activeChat.description && (
+                    <p className="text-xs text-gray-600 mt-2 px-2 py-1.5 bg-gray-100 rounded-lg text-center">
+                      📝 {activeChat.description}
+                    </p>
+                  )}
+                  {isCurrentUserAdmin && (
+                    <p className="text-xs text-blue-500 mt-1">Click vào ảnh để thay đổi</p>
+                  )}
+                </div>
 
-                {isCurrentUserMember && !isCurrentUserAdmin && (
-                  <button
-                    type="button"
-                    onClick={handleLeaveGroup}
-                    disabled={loadingAction}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-red-50 border border-red-200 text-sm font-medium text-red-600 hover:bg-red-100 disabled:opacity-50"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    Rời nhóm
-                  </button>
-                )}
-
-                {isCurrentUserAdmin && (
-                  <p className="text-xs text-gray-400 text-center px-2">
-                    Admin không thể rời nhóm. Hãy xóa nhóm nếu cần.
-                  </p>
-                )}
-              </div>
-
-              {/* Members List */}
-              <div>
-                <h5 className="text-sm font-semibold text-gray-700 mb-3">
-                  Thành viên ({groupMembers.length || activeChat.memberCount})
-                </h5>
-                <div className="space-y-2">
-                  {groupMembers.length > 0 ? (
-                    groupMembers.map((member) => (
-                      <div
-                        key={member.userId || member.id}
-                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-white"
-                      >
-                        <img
-                          src={member.avatarUrl || `https://i.pravatar.cc/150?u=${member.userId}`}
-                          alt={member.username}
-                          className="h-9 w-9 rounded-full object-cover"
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1.5">
-                            <p className="text-sm font-medium text-gray-900 truncate">
-                              {member.username || "User"}
-                            </p>
-                            {(member.userId === activeChat.adminId || member.id === activeChat.adminId) && (
-                              <Crown className="h-3.5 w-3.5 text-yellow-500" />
-                            )}
-                          </div>
-                        </div>
-                        {isCurrentUserAdmin &&
-                          member.userId !== user.id &&
-                          member.userId !== activeChat.adminId && (
+                {/* Actions */}
+                <div className="space-y-2 mb-6">
+                  {/* Edit Group (Admin Only) */}
+                  {isCurrentUserAdmin && (
+                    <>
+                      {!isEditingGroup ? (
+                        <button
+                          type="button"
+                          onClick={startEditGroup}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                        >
+                          <Settings className="h-4 w-4" />
+                          Chỉnh sửa nhóm
+                        </button>
+                      ) : (
+                        <div className="bg-white p-3 rounded-lg border border-gray-200 space-y-3">
+                          <p className="text-sm font-semibold text-gray-700">Chỉnh sửa nhóm</p>
+                          <input
+                            type="text"
+                            value={editGroupName}
+                            onChange={(e) => setEditGroupName(e.target.value)}
+                            placeholder="Tên nhóm"
+                            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                          />
+                          <textarea
+                            value={editGroupDescription}
+                            onChange={(e) => setEditGroupDescription(e.target.value)}
+                            placeholder="Mô tả nhóm (tùy chọn)"
+                            rows={2}
+                            className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 resize-none"
+                          />
+                          <div className="flex gap-2">
                             <button
                               type="button"
-                              onClick={() =>
-                                handleRemoveMember(member.userId, member.username)
-                              }
-                              disabled={loadingAction}
-                              className="p-1.5 rounded-full text-red-500 hover:bg-red-50 disabled:opacity-50"
-                              title="Xóa thành viên"
+                              onClick={handleUpdateGroup}
+                              disabled={loadingAction || !editGroupName.trim()}
+                              className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
                             >
-                              <UserMinus className="h-4 w-4" />
+                              {loadingAction ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <Check className="h-4 w-4" />
+                              )}
+                              Lưu
                             </button>
-                          )}
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-sm text-gray-400 text-center py-2">
-                      Đang tải thành viên...
+                            <button
+                              type="button"
+                              onClick={cancelEditGroup}
+                              disabled={loadingAction}
+                              className="px-3 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 disabled:opacity-50"
+                            >
+                              Hủy
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
+
+                  {isCurrentUserMember && !isCurrentUserAdmin && (
+                    <button
+                      type="button"
+                      onClick={handleLeaveGroup}
+                      disabled={loadingAction}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-red-50 border border-red-200 text-sm font-medium text-red-600 hover:bg-red-100 disabled:opacity-50"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Rời nhóm
+                    </button>
+                  )}
+
+                  {isCurrentUserAdmin && (
+                    <p className="text-xs text-gray-400 text-center px-2">
+                      Admin không thể rời nhóm. Hãy xóa nhóm nếu cần.
                     </p>
                   )}
                 </div>
-              </div>
 
-              {/* Pending Requests (Admin Only) */}
-              {isCurrentUserAdmin && pendingRequests.length > 0 && (
-                <div className="mt-6">
+                {/* Members List */}
+                <div>
                   <h5 className="text-sm font-semibold text-gray-700 mb-3">
-                    Yêu cầu chờ duyệt ({pendingRequests.length})
+                    Thành viên ({groupMembers.length || activeChat.memberCount})
                   </h5>
                   <div className="space-y-2">
-                    {pendingRequests.map((request) => (
-                      <div
-                        key={request.userId}
-                        className="flex items-center gap-3 p-2 rounded-lg bg-yellow-50 border border-yellow-200"
-                      >
-                        <img
-                          src={request.avatarUrl || `https://i.pravatar.cc/150?u=${request.userId}`}
-                          alt={request.username}
-                          className="h-9 w-9 rounded-full object-cover"
-                        />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">
-                            {request.username}
-                          </p>
+                    {groupMembers.length > 0 ? (
+                      groupMembers.map((member) => (
+                        <div
+                          key={member.userId || member.id}
+                          className="flex items-center gap-3 p-2 rounded-lg hover:bg-white"
+                        >
+                          <img
+                            src={member.avatarUrl || `https://i.pravatar.cc/150?u=${member.userId}`}
+                            alt={member.username}
+                            className="h-9 w-9 rounded-full object-cover"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              <p className="text-sm font-medium text-gray-900 truncate">
+                                {member.username || "User"}
+                              </p>
+                              {(member.userId === activeChat.adminId || member.id === activeChat.adminId) && (
+                                <Crown className="h-3.5 w-3.5 text-yellow-500" />
+                              )}
+                            </div>
+                          </div>
+                          {isCurrentUserAdmin &&
+                            member.userId !== user.id &&
+                            member.userId !== activeChat.adminId && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleRemoveMember(member.userId, member.username)
+                                }
+                                disabled={loadingAction}
+                                className="p-1.5 rounded-full text-red-500 hover:bg-red-50 disabled:opacity-50"
+                                title="Xóa thành viên"
+                              >
+                                <UserMinus className="h-4 w-4" />
+                              </button>
+                            )}
                         </div>
-                        <div className="flex gap-1">
-                          <button
-                            type="button"
-                            onClick={() => handleModifyRequest(request.userId, true)}
-                            disabled={loadingAction}
-                            className="p-1.5 rounded-full text-green-600 hover:bg-green-100 disabled:opacity-50"
-                            title="Chấp nhận"
-                          >
-                            <Check className="h-4 w-4" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleModifyRequest(request.userId, false)}
-                            disabled={loadingAction}
-                            className="p-1.5 rounded-full text-red-500 hover:bg-red-100 disabled:opacity-50"
-                            title="Từ chối"
-                          >
-                            <XCircle className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+                      ))
+                    ) : (
+                      <p className="text-sm text-gray-400 text-center py-2">
+                        Đang tải thành viên...
+                      </p>
+                    )}
                   </div>
                 </div>
-              )}
-            </div>
-          )}
+
+                {/* Pending Requests (Admin Only) */}
+                {isCurrentUserAdmin && pendingRequests.length > 0 && (
+                  <div className="mt-6">
+                    <h5 className="text-sm font-semibold text-gray-700 mb-3">
+                      Yêu cầu chờ duyệt ({pendingRequests.length})
+                    </h5>
+                    <div className="space-y-2">
+                      {pendingRequests.map((request) => (
+                        <div
+                          key={request.userId}
+                          className="flex items-center gap-3 p-2 rounded-lg bg-yellow-50 border border-yellow-200"
+                        >
+                          <button
+                            type="button"
+                            onClick={() => navigate(`/user/${request.userId}`)}
+                            className="relative group/avatar"
+                            title="Xem trang cá nhân"
+                          >
+                            <img
+                              src={request.avatarUrl || `https://i.pravatar.cc/150?u=${request.userId}`}
+                              alt={request.username}
+                              className="h-9 w-9 rounded-full object-cover cursor-pointer ring-2 ring-transparent group-hover/avatar:ring-blue-400 transition-all"
+                            />
+                          </button>
+                          <div className="flex-1 min-w-0">
+                            <button
+                              type="button"
+                              onClick={() => navigate(`/user/${request.userId}`)}
+                              className="text-sm font-medium text-gray-900 truncate hover:text-blue-600 hover:underline"
+                              title="Xem trang cá nhân"
+                            >
+                              {request.username || "User"}
+                            </button>
+                          </div>
+                          <div className="flex gap-1">
+                            <button
+                              type="button"
+                              onClick={() => handleModifyRequest(request.userId, true)}
+                              disabled={loadingAction}
+                              className="p-1.5 rounded-full text-green-600 hover:bg-green-100 disabled:opacity-50"
+                              title="Chấp nhận"
+                            >
+                              <Check className="h-4 w-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleModifyRequest(request.userId, false)}
+                              disabled={loadingAction}
+                              className="p-1.5 rounded-full text-red-500 hover:bg-red-100 disabled:opacity-50"
+                              title="Từ chối"
+                            >
+                              <XCircle className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Create Group Modal */}
-      {showCreateGroup && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500">
-                  <Users className="h-5 w-5 text-white" />
+        {/* Create Group Modal */}
+        {showCreateGroup && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+            <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500">
+                    <Users className="h-5 w-5 text-white" />
+                  </div>
+                  <h2 className="text-lg font-bold text-gray-800">
+                    Tạo nhóm mới
+                  </h2>
                 </div>
-                <h2 className="text-lg font-bold text-gray-800">
-                  Tạo nhóm mới
-                </h2>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowCreateGroup(false);
-                  setNewGroupName("");
-                }}
-                className="rounded-full p-2 hover:bg-gray-100 transition-colors"
-              >
-                <X className="h-5 w-5 text-gray-500" />
-              </button>
-            </div>
-
-            <div className="mb-4 p-3 rounded-lg bg-gradient-to-r from-yellow-50 via-orange-50 to-pink-50 border border-yellow-200">
-              <div className="flex items-center gap-2 text-sm">
-                <Crown className="h-4 w-4 text-orange-500" />
-                <span className="text-gray-700">
-                  Tính năng dành cho thành viên{" "}
-                  <span className="font-bold text-transparent bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text">
-                    Premium
-                  </span>
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tên nhóm
-                </label>
-                <input
-                  type="text"
-                  value={newGroupName}
-                  onChange={(e) => setNewGroupName(e.target.value)}
-                  placeholder="Nhập tên nhóm..."
-                  className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
-                  autoFocus
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && newGroupName.trim()) {
-                      handleCreateGroup();
-                    }
-                  }}
-                />
-              </div>
-
-              <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={() => {
                     setShowCreateGroup(false);
                     setNewGroupName("");
                   }}
-                  className="flex-1 rounded-lg border border-gray-300 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="rounded-full p-2 hover:bg-gray-100 transition-colors"
                 >
-                  Hủy
+                  <X className="h-5 w-5 text-gray-500" />
                 </button>
-                <button
-                  type="button"
-                  onClick={handleCreateGroup}
-                  disabled={!newGroupName.trim()}
-                  className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 py-2.5 text-sm font-bold text-white shadow-md hover:shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                >
-                  <Users className="h-4 w-4" />
-                  Tạo nhóm
-                </button>
+              </div>
+
+              <div className="mb-4 p-3 rounded-lg bg-gradient-to-r from-yellow-50 via-orange-50 to-pink-50 border border-yellow-200">
+                <div className="flex items-center gap-2 text-sm">
+                  <Crown className="h-4 w-4 text-orange-500" />
+                  <span className="text-gray-700">
+                    Tính năng dành cho thành viên{" "}
+                    <span className="font-bold text-transparent bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text">
+                      Premium
+                    </span>
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Tên nhóm
+                  </label>
+                  <input
+                    type="text"
+                    value={newGroupName}
+                    onChange={(e) => setNewGroupName(e.target.value)}
+                    placeholder="Nhập tên nhóm..."
+                    className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                    autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && newGroupName.trim()) {
+                        handleCreateGroup();
+                      }
+                    }}
+                  />
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowCreateGroup(false);
+                      setNewGroupName("");
+                    }}
+                    className="flex-1 rounded-lg border border-gray-300 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    Hủy
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCreateGroup}
+                    disabled={!newGroupName.trim()}
+                    className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 py-2.5 text-sm font-bold text-white shadow-md hover:shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  >
+                    <Users className="h-4 w-4" />
+                    Tạo nhóm
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
