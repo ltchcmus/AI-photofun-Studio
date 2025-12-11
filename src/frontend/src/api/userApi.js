@@ -40,4 +40,10 @@ export const userApi = {
 
   activateProfile: (code) =>
     axiosClient.patch(`${ACTIVATE_PROFILE_ENDPOINT}/${code}`),
+
+  // Get pending join group requests (for group admins)
+  getMemberRequests: (page = 1, size = 20) =>
+    axiosClient.patch("/api/v1/identity/users/get-request-join-group", null, {
+      params: { page, size },
+    }),
 };

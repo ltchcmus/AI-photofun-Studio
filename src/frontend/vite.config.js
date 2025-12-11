@@ -7,6 +7,13 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
+      // Proxy for file-service (bypass CORS)
+      "/api/file-upload": {
+        target: "https://file-service-cdal.onrender.com",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/file-upload/, "/api/v1/file/uploads"),
+        secure: true,
+      },
       "/api/v1/comments": {
         target: "http://localhost:8003",
         changeOrigin: true,
