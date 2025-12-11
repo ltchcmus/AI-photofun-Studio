@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Sparkles } from "lucide-react";
+import { ArrowLeft, Sparkles, Wand2, Zap, SmilePlus, Image as ImageIcon, History } from "lucide-react";
 
 const CreateWithAI = () => {
   const [currentView, setCurrentView] = useState("tool-selection");
@@ -10,37 +10,37 @@ const CreateWithAI = () => {
   const tools = [
     {
       id: "generate",
-      icon: "✨",
+      icon: <Sparkles className="w-7 h-7 text-purple-500" />,
       title: "Text to Image",
       description: "Create visuals from your text prompts",
     },
     {
       id: "style-transfer",
-      icon: "🪄",
+      icon: <Wand2 className="w-7 h-7 text-pink-500" />,
       title: "Style Transfer",
       description: "Blend artworks into new aesthetics",
     },
     {
       id: "enhance",
-      icon: "⚡",
+      icon: <Zap className="w-7 h-7 text-yellow-500" />,
       title: "Image Enhance",
       description: "Improve clarity, lighting, and details",
     },
     {
       id: "face-swap",
-      icon: "😎",
+      icon: <SmilePlus className="w-7 h-7 text-blue-500" />,
       title: "Face Swap",
       description: "Swap faces across any portrait",
     },
     {
       id: "background",
-      icon: "🖼️",
+      icon: <ImageIcon className="w-7 h-7 text-green-500" />,
       title: "Background Tools",
       description: "Remove or replace any background",
     },
     {
       id: "restore",
-      icon: "🩶",
+      icon: <History className="w-7 h-7 text-gray-500" />,
       title: "Photo Restore",
       description: "Repair and colorize old photos",
     },
@@ -120,7 +120,7 @@ const CreateWithAI = () => {
                 onClick={() => handleSelectTool(tool)}
                 className="w-full bg-white border border-gray-200 rounded-2xl p-5 hover:bg-gray-50 transition-colors text-left flex items-center gap-4"
               >
-                <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center text-2xl shrink-0">
+                <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center shrink-0">
                   {tool.icon}
                 </div>
                 <div className="flex-1">
