@@ -92,7 +92,8 @@ public class WebSocket {
 
   private void sendMessage(SocketIOClient client, SendMessageRequest data,
                            AckRequest ackRequest) {
-    String id = utils.generateMongoId(data.getSenderId(), data.getReceiverId());
+    String conversationId =
+        utils.generateMongoId(data.getSenderId(), data.getReceiverId());
 
     SocketIOClient receiverClient = userIdToClient.get(data.getReceiverId());
     if (receiverClient != null) {
@@ -109,7 +110,7 @@ public class WebSocket {
     }
 
     Communication communication = Communication.builder()
-                                      .id(id)
+                                      .conversationId(conversationId)
                                       .senderId(data.getSenderId())
                                       .message(data.getMessage())
                                       .isImage(data.isImage())
