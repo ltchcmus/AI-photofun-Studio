@@ -8,6 +8,8 @@ import service.communication.entity.Communication;
 
 @Mapper(componentModel = "spring")
 public interface CommunicationMapper {
-    @Mapping(target = "timestamp", ignore = true)
-    GetMessageCoupleResponse toGetMessageCoupleResponse(Communication communication);
+  @Mapping(target = "timestamp", ignore = true)
+  @Mapping(source = "senderId", target = "userId")
+  GetMessageCoupleResponse
+  toGetMessageCoupleResponse(Communication communication);
 }

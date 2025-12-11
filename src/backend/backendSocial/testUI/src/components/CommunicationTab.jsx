@@ -326,7 +326,7 @@ export default function CommunicationTab({ config, auth, apiClient }) {
         <h3>📬 Get 1-1 Messages</h3>
         <div className="form-row">
           <input placeholder="Other User ID" value={receiverId} onChange={(e) => setReceiverId(e.target.value)} />
-          <button className="btn btn-primary" onClick={() => apiCall('GET', '/api/v1/communications/communications/get-messages', null, { receiverId, page: 1, size: 15 })} disabled={loading || !receiverId}>
+          <button className="btn btn-primary" onClick={() => apiCall('GET', '/api/v1/communications/get-messages', null, { receiverId, page: 1, size: 15 })} disabled={loading || !receiverId}>
             Get Messages
           </button>
         </div>

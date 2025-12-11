@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import service.communication.entity.Communication;
 
 @RequestMapping
-public interface CommunicationRepository extends MongoRepository<Communication,String> {
-    Page<Communication> findById(String id, Pageable pageable);
+public interface CommunicationRepository
+    extends MongoRepository<Communication, String> {
+  Page<Communication> findByConversationId(String conversationId,
+                                           Pageable pageable);
 }
