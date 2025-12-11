@@ -26,11 +26,11 @@ export default function PostCard({
   // Check premium status
   const isPremium = Boolean(
     authorInfo?.isPremium ||
-      authorInfo?.premiumOneMonth ||
-      authorInfo?.premiumSixMonths ||
-      post?.isPremium ||
-      post?.premiumOneMonth ||
-      post?.premiumSixMonths
+    authorInfo?.premiumOneMonth ||
+    authorInfo?.premiumSixMonths ||
+    post?.isPremium ||
+    post?.premiumOneMonth ||
+    post?.premiumSixMonths
   );
 
   const handleViewProfile = () => {
@@ -56,18 +56,16 @@ export default function PostCard({
             />
           )}
           <div
-            className={`relative ${
-              isPremium
+            className={`relative ${isPremium
                 ? "p-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-full"
                 : ""
-            }`}
+              }`}
           >
             <img
               src={displayAvatar}
               alt={`${displayName} avatar`}
-              className={`w-10 h-10 rounded-full object-cover hover:opacity-90 transition-all cursor-pointer ${
-                isPremium ? "ring-2 ring-white" : ""
-              }`}
+              className={`w-10 h-10 rounded-full object-cover hover:opacity-90 transition-all cursor-pointer ${isPremium ? "ring-2 ring-white" : ""
+                }`}
             />
           </div>
           {/* Premium Crown Badge */}
@@ -84,11 +82,10 @@ export default function PostCard({
                 <button
                   type="button"
                   onClick={handleViewProfile}
-                  className={`font-semibold text-sm transition-colors focus:outline-none text-left ${
-                    isPremium
+                  className={`font-semibold text-sm transition-colors focus:outline-none text-left ${isPremium
                       ? "bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text text-transparent hover:from-yellow-400 hover:via-orange-400 hover:to-pink-400"
                       : "text-gray-900 hover:text-blue-600 hover:underline"
-                  }`}
+                    }`}
                 >
                   {displayName}
                 </button>
@@ -129,11 +126,11 @@ export default function PostCard({
           <p className="text-sm text-gray-800 mt-3">{post.content}</p>
 
           {post.image && (
-            <div className="rounded-2xl overflow-hidden border border-gray-200 mt-4 max-w-md">
+            <div className="rounded-2xl overflow-hidden border border-gray-200 mt-4">
               <img
                 src={post.image}
                 alt={`Post by ${displayName}`}
-                className="w-full h-auto max-h-80 object-cover"
+                className="w-full h-auto object-cover"
                 loading="lazy"
               />
             </div>
@@ -157,9 +154,8 @@ export default function PostCard({
               onClick={() => onLikePost?.(post.id)}
             >
               <Heart
-                className={`w-5 h-5 ${
-                  post.liked ? "fill-red-500 text-red-500" : ""
-                }`}
+                className={`w-5 h-5 ${post.liked ? "fill-red-500 text-red-500" : ""
+                  }`}
               />
               {Number(post.likes || 0).toLocaleString()}
             </button>
