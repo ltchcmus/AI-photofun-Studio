@@ -21,17 +21,11 @@
       <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/LimitRegisterRepository.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/http/CommunicationClient.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/configuration/WebGlobalFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/configuration/WebGlobalFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/repository/http/HttpClientIdentity.java" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/java/service/api_gateway/repository/http/HttpClientIdentity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/response/UploadFileResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/response/UploadFileResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/controller/GroupController.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/controller/GroupController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/controller/WebSocket.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/controller/WebSocket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/exception/ErrorCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/exception/ErrorCode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/exception/GlobalException.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/exception/GlobalException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/repository/GroupRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/repository/GroupRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/repository/http/FileClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/repository/http/FileClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/repository/http/IdentityClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/repository/http/IdentityClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/service/GroupService.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/service/GroupService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/entity/Communication.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/entity/Communication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/mapper/CommunicationMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/mapper/CommunicationMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/repository/CommunicationRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/repository/CommunicationRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/service/CommunicationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/service/CommunicationService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/identity/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/identity/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/identity/pom.xml" afterDir="false" />
@@ -54,17 +48,7 @@
       <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/utils/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/utils/Utils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/resources/application.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/src/main/resources/templates/welcome.html" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/resources/templates/welcome.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testUI/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/testUI/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testUI/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/testUI/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testUI/src/components/AdminTab.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/testUI/src/components/AdminTab.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testUI/src/components/AuthTab.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/testUI/src/components/AuthTab.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testUI/src/components/ChatTab.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/testUI/src/components/ChatTab.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testUI/src/components/CommentTab.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/testUI/src/components/CommentTab.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/testUI/src/components/CommunicationTab.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/testUI/src/components/CommunicationTab.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testUI/src/components/GroupTab.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/testUI/src/components/GroupTab.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testUI/src/components/PostTab.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/testUI/src/components/PostTab.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testUI/src/components/ProfileTab.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/testUI/src/components/ProfileTab.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testUI/src/components/UserTab.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/testUI/src/components/UserTab.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
