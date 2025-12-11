@@ -46,4 +46,10 @@ export const userApi = {
     axiosClient.patch("/api/v1/identity/users/get-request-join-group", null, {
       params: { page, size },
     }),
+
+  // Get groups that user has joined
+  getMyGroups: (page = 1, size = 20) =>
+    axiosClient.get("/api/v1/identity/users/get-group-joined", {
+      params: { page, size },
+    }),
 };
