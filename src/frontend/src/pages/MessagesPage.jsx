@@ -29,6 +29,7 @@ import { userApi } from "../api/userApi";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
 const SOCKET_URL = "http://localhost:8899";
+const DEFAULT_GROUP_AVATAR = "https://res.cloudinary.com/derwtva4p/image/upload/v1765458810/file-service/fffsss.png";
 
 const MessagesPage = () => {
   const { user } = useAuth();
@@ -37,8 +38,9 @@ const MessagesPage = () => {
 
   // State
   const [conversations, setConversations] = useState([]);
-  const [groups, setGroups] = useState([]);
-  const [activeTab, setActiveTab] = useState("direct"); // "direct" or "groups"
+  const [groups, setGroups] = useState([]); // My groups (joined)
+  const [exploreGroups, setExploreGroups] = useState([]); // All groups (for explore)
+  const [activeTab, setActiveTab] = useState("direct"); // "direct", "groups", or "explore"
   const [activeChat, setActiveChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
@@ -54,6 +56,11 @@ const MessagesPage = () => {
   const [loadingAction, setLoadingAction] = useState(false);
   const [userCache, setUserCache] = useState({}); // Cache user info { odId: { username, avatarUrl } }
   const [uploadingImage, setUploadingImage] = useState(false);
+
+  // Edit Group State (Admin Only)
+  const [isEditingGroup, setIsEditingGroup] = useState(false);
+  const [editGroupName, setEditGroupName] = useState("");
+  const [editGroupDescription, setEditGroupDescription] = useState("");
 
   // Refs
   const messagesEndRef = useRef(null);
@@ -88,8 +95,8 @@ const MessagesPage = () => {
     }
   }, [user?.id]);
 
-  // Fetch groups from API
-  const fetchGroups = useCallback(async () => {
+  // Fetch all groups for Explore (filter out joined groups)
+  const fetchExploreGroups = useCallback(async () => {
     if (!user?.id) return;
 
     try {
@@ -99,13 +106,13 @@ const MessagesPage = () => {
       const formattedGroups = data.map((group) => {
         const memberIds = group.memberIds || [];
         const isMember = memberIds.includes(user.id) || group.adminId === user.id;
-        console.log(`📋 Group "${group.name}": memberIds=${JSON.stringify(memberIds)}, userId=${user.id}, adminId=${group.adminId}, isMember=${isMember}`);
 
         return {
           id: group.groupId,
           groupId: group.groupId,
           name: group.name || "Nhóm",
-          avatar: group.image || `https://i.pravatar.cc/150?u=${group.groupId}`,
+          description: group.description || "",
+          avatar: group.image || DEFAULT_GROUP_AVATAR,
           lastMessage: "",
           time: "",
           unread: 0,
@@ -116,12 +123,83 @@ const MessagesPage = () => {
           isMember: isMember,
           isAdmin: group.adminId === user.id,
         };
+      }).filter(group => !group.isMember); // Filter out groups user has joined
+
+      setExploreGroups(formattedGroups);
+      console.log("✅ Fetched explore groups:", formattedGroups);
+    } catch (error) {
+      console.error("Failed to fetch explore groups:", error);
+    }
+  }, [user?.id]);
+
+  // Fetch my groups (joined groups)
+  const fetchMyGroups = useCallback(async () => {
+    if (!user?.id) return;
+
+    try {
+      const response = await userApi.getMyGroups(1, 50);
+      console.log("📋 getMyGroups raw response:", response?.data);
+
+      // get-group-joined returns list of groupId strings or objects with groupId
+      let groupIds = [];
+      const result = response?.data?.result;
+
+      if (Array.isArray(result?.items)) {
+        // Format: { result: { items: [{groupId: "..."}, ...] } }
+        groupIds = result.items.map(item => typeof item === 'string' ? item : item.groupId);
+      } else if (Array.isArray(result)) {
+        // Format: { result: ["groupId1", "groupId2", ...] } or [{groupId: "..."}, ...]
+        groupIds = result.map(item => typeof item === 'string' ? item : item.groupId);
+      }
+
+      console.log("📋 Group IDs to fetch:", groupIds);
+
+      if (groupIds.length === 0) {
+        setGroups([]);
+        return;
+      }
+
+      // Fetch details for each group using getGroupDetail
+      const groupDetailsPromises = groupIds.map(async (groupId) => {
+        try {
+          const detailRes = await communicationApi.getGroupDetail(groupId);
+          return detailRes?.data?.result || null;
+        } catch (err) {
+          console.error(`Failed to fetch group ${groupId}:`, err);
+          return null;
+        }
       });
 
+      const groupDetails = await Promise.all(groupDetailsPromises);
+      console.log("📋 Group details:", groupDetails);
+
+      const formattedGroups = groupDetails
+        .filter(group => group !== null)
+        .map((group, index) => {
+          const memberIds = group.memberIds || [];
+
+          return {
+            id: group.groupId || group.id,
+            groupId: group.groupId || group.id,
+            name: group.name || `Nhóm ${index + 1}`,
+            description: group.description || "",
+            avatar: group.image || DEFAULT_GROUP_AVATAR,
+            lastMessage: "",
+            time: "",
+            unread: 0,
+            memberCount: memberIds.length || group.memberCount || 0,
+            isGroup: true,
+            adminId: group.adminId,
+            memberIds: memberIds,
+            isMember: true, // User has joined
+            isAdmin: group.adminId === user.id,
+          };
+        });
+
       setGroups(formattedGroups);
-      console.log("✅ Fetched groups:", formattedGroups);
+      console.log("✅ Fetched my groups:", formattedGroups);
     } catch (error) {
-      console.error("Failed to fetch groups:", error);
+      console.error("Failed to fetch my groups:", error);
     }
   }, [user?.id]);
 
@@ -396,12 +474,14 @@ const MessagesPage = () => {
     }
   }, [activeChat, fetchMessages, fetchGroupMembers, fetchPendingRequests, user?.id]);
 
-  // Fetch groups when switching to groups tab
+  // Fetch groups when switching to groups or explore tab
   useEffect(() => {
     if (activeTab === "groups") {
-      fetchGroups();
+      fetchMyGroups();
+    } else if (activeTab === "explore") {
+      fetchExploreGroups();
     }
-  }, [activeTab, fetchGroups]);
+  }, [activeTab, fetchMyGroups, fetchExploreGroups]);
 
   // Auto-select conversation based on URL param or first conversation
   useEffect(() => {
@@ -573,10 +653,9 @@ const MessagesPage = () => {
       setShowCreateGroup(false);
       setNewGroupName("");
 
-      // Refresh groups list if on groups tab
-      if (activeTab === "groups") {
-        fetchGroups();
-      }
+      // Refresh groups lists
+      fetchMyGroups();
+      fetchExploreGroups();
     } catch (error) {
       console.error("Failed to create group:", error);
       const errorMsg =
@@ -605,7 +684,7 @@ const MessagesPage = () => {
       alert("Đã cập nhật ảnh đại diện nhóm!");
 
       // Refresh groups to get new avatar
-      fetchGroups();
+      fetchMyGroups();
 
       // Update active chat avatar - refetch group detail
       const detailRes = await communicationApi.getGroupDetail(activeChat.groupId);
@@ -628,13 +707,65 @@ const MessagesPage = () => {
     }
   };
 
+  // Update group info (Admin Only)
+  const handleUpdateGroup = async () => {
+    if (!activeChat?.groupId || !editGroupName.trim()) return;
+
+    setLoadingAction(true);
+    try {
+      await communicationApi.updateGroup(activeChat.groupId, {
+        name: editGroupName.trim(),
+        description: editGroupDescription.trim(),
+      });
+
+      alert("Đã cập nhật thông tin nhóm!");
+
+      // Update local state
+      setActiveChat((prev) => ({
+        ...prev,
+        name: editGroupName.trim(),
+        description: editGroupDescription.trim(),
+      }));
+
+      // Refresh groups
+      fetchMyGroups();
+      fetchExploreGroups();
+
+      // Exit edit mode
+      setIsEditingGroup(false);
+    } catch (error) {
+      console.error("Failed to update group:", error);
+      const errorMsg =
+        error.response?.data?.message ||
+        "Không thể cập nhật nhóm. Vui lòng thử lại!";
+      alert(errorMsg);
+    } finally {
+      setLoadingAction(false);
+    }
+  };
+
+  // Start editing group
+  const startEditGroup = () => {
+    setEditGroupName(activeChat?.name || "");
+    setEditGroupDescription(activeChat?.description || "");
+    setIsEditingGroup(true);
+  };
+
+  // Cancel editing group
+  const cancelEditGroup = () => {
+    setIsEditingGroup(false);
+    setEditGroupName("");
+    setEditGroupDescription("");
+  };
+
   // Request to join a group
   const handleRequestJoinGroup = async (groupId) => {
     setLoadingAction(true);
     try {
       await communicationApi.requestJoinGroup(groupId);
       alert("Đã gửi yêu cầu tham gia nhóm!");
-      fetchGroups();
+      // Refresh both lists - group moves from explore to my groups after approval
+      fetchExploreGroups();
     } catch (error) {
       console.error("Failed to request join group:", error);
       const errorMsg =
@@ -658,7 +789,9 @@ const MessagesPage = () => {
       alert("Đã rời khỏi nhóm!");
       setShowGroupInfo(false);
       setActiveChat(null);
-      fetchGroups();
+      // Refresh both lists - group moves from my groups to explore
+      fetchMyGroups();
+      fetchExploreGroups();
     } catch (error) {
       console.error("Failed to leave group:", error);
       const errorMsg =
@@ -793,11 +926,11 @@ const MessagesPage = () => {
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-2 mt-4">
+          <div className="flex gap-1 mt-4">
             <button
               type="button"
               onClick={() => setActiveTab("direct")}
-              className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition-colors ${activeTab === "direct"
+              className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-colors ${activeTab === "direct"
                 ? "bg-blue-600 text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
@@ -807,18 +940,29 @@ const MessagesPage = () => {
             <button
               type="button"
               onClick={() => setActiveTab("groups")}
-              className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition-colors ${activeTab === "groups"
+              className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-colors ${activeTab === "groups"
                 ? "bg-blue-600 text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
             >
               Nhóm
             </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("explore")}
+              className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-colors ${activeTab === "explore"
+                ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+            >
+              🔍 Khám phá
+            </button>
           </div>
         </div>
 
         <div className="flex-1 overflow-y-auto">
           {activeTab === "direct" ? (
+            // Direct Messages Tab
             conversations.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-gray-500">
                 <Users className="h-12 w-12 mb-3 text-gray-300" />
@@ -876,18 +1020,26 @@ const MessagesPage = () => {
                 </button>
               ))
             )
-          ) : // Groups Tab
+          ) : activeTab === "groups" ? (
+            // My Groups Tab (joined groups)
             groups.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-gray-500">
                 <Users className="h-12 w-12 mb-3 text-gray-300" />
-                <p className="text-sm">Chưa có nhóm</p>
+                <p className="text-sm">Chưa tham gia nhóm nào</p>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("explore")}
+                  className="mt-3 text-sm text-purple-600 hover:underline"
+                >
+                  🔍 Khám phá nhóm
+                </button>
                 {isPremium && (
                   <button
                     type="button"
                     onClick={() => setShowCreateGroup(true)}
-                    className="mt-3 text-sm text-blue-600 hover:underline"
+                    className="mt-2 text-sm text-blue-600 hover:underline"
                   >
-                    Tạo nhóm mới
+                    Hoặc tạo nhóm mới
                   </button>
                 )}
               </div>
@@ -929,29 +1081,78 @@ const MessagesPage = () => {
                         <Crown className="h-3.5 w-3.5 text-yellow-500" />
                       )}
                     </div>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      {group.memberCount} thành viên
+                    </p>
+                  </div>
+                </button>
+              ))
+            )
+          ) : (
+            // Explore Tab (all groups - not joined)
+            exploreGroups.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+                <Users className="h-12 w-12 mb-3 text-gray-300" />
+                <p className="text-sm">Không có nhóm mới để khám phá</p>
+                <p className="text-xs text-gray-400 mt-1">Bạn đã tham gia tất cả nhóm!</p>
+              </div>
+            ) : (
+              exploreGroups.map((group) => (
+                <button
+                  type="button"
+                  key={group.id}
+                  onClick={() => {
+                    setActiveChat(group);
+                    setShowGroupInfo(false);
+                  }}
+                  className={`mx-2 mb-2 flex items-center gap-3 rounded-xl p-3 text-left transition-colors w-[calc(100%-1rem)] ${activeChat?.id === group.id
+                    ? "bg-purple-50"
+                    : "hover:bg-gray-100"
+                    }`}
+                >
+                  <div className="relative">
+                    <img
+                      src={group.avatar}
+                      alt={group.name}
+                      className="h-12 w-12 rounded-full object-cover"
+                    />
+                    <span className="absolute bottom-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-purple-500 text-white border-2 border-white">
+                      <Users className="h-2.5 w-2.5" />
+                    </span>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <h3
+                        className={`truncate text-sm font-semibold ${activeChat?.id === group.id
+                          ? "text-purple-700"
+                          : "text-gray-900"
+                          }`}
+                      >
+                        {group.name}
+                      </h3>
+                    </div>
                     <div className="mt-0.5 flex items-center justify-between">
                       <p className="text-xs text-gray-500">
                         {group.memberCount} thành viên
                       </p>
-                      {!group.isMember && (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRequestJoinGroup(group.groupId);
-                          }}
-                          disabled={loadingAction}
-                          className="flex items-center gap-1 px-2 py-1 rounded-full bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 disabled:opacity-50"
-                        >
-                          <UserPlus className="h-3 w-3" />
-                          Tham gia
-                        </button>
-                      )}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRequestJoinGroup(group.groupId);
+                        }}
+                        disabled={loadingAction}
+                        className="flex items-center gap-1 px-2 py-1 rounded-full bg-purple-600 text-white text-xs font-medium hover:bg-purple-700 disabled:opacity-50"
+                      >
+                        <UserPlus className="h-3 w-3" />
+                        Tham gia
+                      </button>
                     </div>
                   </div>
                 </button>
               ))
-            )}
+            )
+          )}
         </div>
       </div>
 
@@ -1232,6 +1433,11 @@ const MessagesPage = () => {
                 </div>
                 <h4 className="font-bold text-gray-900 text-lg">{activeChat.name}</h4>
                 <p className="text-sm text-gray-500">{activeChat.memberCount} thành viên</p>
+                {activeChat.description && (
+                  <p className="text-xs text-gray-600 mt-2 px-2 py-1.5 bg-gray-100 rounded-lg text-center">
+                    📝 {activeChat.description}
+                  </p>
+                )}
                 {isCurrentUserAdmin && (
                   <p className="text-xs text-blue-500 mt-1">Click vào ảnh để thay đổi</p>
                 )}
@@ -1239,14 +1445,61 @@ const MessagesPage = () => {
 
               {/* Actions */}
               <div className="space-y-2 mb-6">
+                {/* Edit Group (Admin Only) */}
                 {isCurrentUserAdmin && (
-                  <button
-                    type="button"
-                    className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                  >
-                    <Settings className="h-4 w-4" />
-                    Cài đặt nhóm
-                  </button>
+                  <>
+                    {!isEditingGroup ? (
+                      <button
+                        type="button"
+                        onClick={startEditGroup}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                      >
+                        <Settings className="h-4 w-4" />
+                        Chỉnh sửa nhóm
+                      </button>
+                    ) : (
+                      <div className="bg-white p-3 rounded-lg border border-gray-200 space-y-3">
+                        <p className="text-sm font-semibold text-gray-700">Chỉnh sửa nhóm</p>
+                        <input
+                          type="text"
+                          value={editGroupName}
+                          onChange={(e) => setEditGroupName(e.target.value)}
+                          placeholder="Tên nhóm"
+                          className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                        />
+                        <textarea
+                          value={editGroupDescription}
+                          onChange={(e) => setEditGroupDescription(e.target.value)}
+                          placeholder="Mô tả nhóm (tùy chọn)"
+                          rows={2}
+                          className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 resize-none"
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={handleUpdateGroup}
+                            disabled={loadingAction || !editGroupName.trim()}
+                            className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+                          >
+                            {loadingAction ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Check className="h-4 w-4" />
+                            )}
+                            Lưu
+                          </button>
+                          <button
+                            type="button"
+                            onClick={cancelEditGroup}
+                            disabled={loadingAction}
+                            className="px-3 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 disabled:opacity-50"
+                          >
+                            Hủy
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
 
                 {isCurrentUserMember && !isCurrentUserAdmin && (
