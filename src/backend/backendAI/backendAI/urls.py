@@ -21,11 +21,26 @@ urlpatterns = [
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    
+    # Conversation-based endpoints (chat with bot)
     path('api/v1/chat/', include('apps.conversation.urls')),
-   path('v1/prompt/', include('apps.prompt_service.urls')),
-   path('v1/image/', include('apps.image_service.urls')),
-   path('v1/gallery/', include('apps.image_gallery.urls')),
-   path('', include('apps.conversation.urls')),
+    path('', include('apps.conversation.urls')),
+    
+    # Internal services (used by conversation flow)
+    path('v1/prompt/', include('apps.prompt_service.urls')),
+    path('v1/image/', include('apps.image_service.urls')),
+    
+    # Direct feature endpoints (no conversation required)
+    path('v1/features/image-generation/', include('apps.image_generation.urls')),
+    path('v1/features/upscale/', include('apps.upscale.urls')),
+    # path('v1/features/remove-background/', include('apps.remove_background.urls')),
+    # path('v1/features/relight/', include('apps.relight.urls')),
+    # path('v1/features/style-transfer/', include('apps.style_transfer.urls')),
+    # path('v1/features/reimagine/', include('apps.reimagine.urls')),
+    # path('v1/features/image-expand/', include('apps.image_expand.urls')),
+    
+    # Shared gallery (used by both flows)
+    path('v1/gallery/', include('apps.image_gallery.urls')),
 ]
 
 if settings.DEBUG:
