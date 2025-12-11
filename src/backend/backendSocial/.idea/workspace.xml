@@ -21,11 +21,6 @@
       <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/LimitRegisterRepository.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/http/CommunicationClient.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/controller/WebSocket.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/controller/WebSocket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/entity/Communication.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/entity/Communication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/mapper/CommunicationMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/mapper/CommunicationMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/repository/CommunicationRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/repository/CommunicationRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/service/CommunicationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/service/CommunicationService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/identity/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/identity/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/identity/pom.xml" afterDir="false" />
@@ -48,7 +43,6 @@
       <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/utils/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/utils/Utils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/resources/application.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/src/main/resources/templates/welcome.html" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/resources/templates/welcome.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testUI/src/components/CommunicationTab.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/testUI/src/components/CommunicationTab.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
