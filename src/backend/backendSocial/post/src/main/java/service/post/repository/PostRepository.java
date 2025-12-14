@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import service.post.entity.Post;
 
-
 @Repository
 public interface PostRepository extends JpaRepository<Post, String> {
   Page<Post> findAllByUserId(String userId, Pageable pageable);
@@ -20,4 +19,11 @@ public interface PostRepository extends JpaRepository<Post, String> {
             nativeQuery = true
     )
     int addNumberLikes(@Param("postId") String postId, @Param("number") int number);
+
+  @Modifying
+    @Query(
+            value = "UPDATE posts SET comments = GREATEST(0, comments + :number) WHERE post_id = :postId",
+            nativeQuery = true
+    )
+    int addNumberComments(@Param("postId") String postId, @Param("number") int number);
 }
