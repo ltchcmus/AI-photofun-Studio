@@ -1,6 +1,6 @@
-# 🤖 Backend AI - AI Photo Studio
+# 🤖 Backend AI - AI PhotoFun Studio
 
-> Stateless microservices backend for AI-powered photo editing
+> AI-powered photo editing backend with conversational interface and direct feature access
 
 [![Django](https://img.shields.io/badge/Django-5.1.4-green.svg)](https://www.djangoproject.com/)
 [![DRF](https://img.shields.io/badge/DRF-3.15.2-red.svg)](https://www.django-rest-framework.org/)
@@ -11,42 +11,274 @@
 ## 📋 Table of Contents
 
 - [Overview](#-overview)
-- [Architecture](#-architecture)
 - [Quick Start](#-quick-start)
-- [API Endpoints](#-api-endpoints)
-- [Project Structure](#-project-structure)
-- [Testing](#-testing)
-- [Docker](#-docker)
+- [Features](#-features)
 - [Documentation](#-documentation)
+- [API Endpoints](#-api-endpoints)
+- [Testing](#-testing)
+- [Docker Deployment](#-docker-deployment)
+- [Project Structure](#-project-structure)
 
 ---
 
 ## 🎯 Overview
 
-Backend AI cung cấp RESTful API với **stateless microservices architecture** để xử lý ảnh bằng AI.
+AI PhotoFun Studio Backend provides RESTful APIs for AI-powered image processing through:
+- **Conversational Interface** - Natural language chat-based image processing
+- **Direct Feature Access** - Immediate API calls to specific AI features
+- **Image Gallery** - User image collection management
 
-### Features
+### Technology Stack
 
-#### ✅ Implemented
-- **Conversation Service** - MongoDB-based chat service with async Celery pipeline for prompt→image workflow
-- **Prompt Service** - AI prompt refinement and intent detection (Gemini API integration)
-- **Image Service** - AI image generation with Cloudinary integration
-- **Image Gallery** - PostgreSQL-based user image management with soft delete
-- **API Gateway** - Service orchestration on port 9999
+- **Framework:** Django 5.1.4 + Django REST Framework 3.15.2
+- **AI Integration:** Google Gemini 2.5-flash (prompts) + Freepik AI APIs (image processing)
+- **Databases:** MongoDB (conversations) + PostgreSQL (image gallery)
+- **Task Queue:** Celery + Redis (async processing)
+- **File Storage:** Cloudinary (via external file-service)
+- **Deployment:** Docker + Docker Compose
 
-#### 🚧 Planned (in testing_apps/)
-- Image Enhancement - Super resolution and quality improvement
-- Background Removal - Automatic background removal
-- Object Removal - AI-powered object removal
-- Style Transfer - Artistic style transfer
+---
 
-### Key Design Principles
+## ⚡ Quick Start
 
-1. **🚀 Modular** - Separation of Django apps and external services
-2. **⚡ Fast** - Async processing with Celery + Redis (configured)
-3. **🎯 Clean Code** - Shared utilities in `core/` and `shared/`
-4. **🏗️ Scalable** - Microservices-ready architecture
-5. **🐳 Docker Ready** - Containerized deployment support
+### Option 1: Docker (Recommended)
+
+```bash
+# 1. Configure environment
+cp .env.example .env
+nano .env  # Add your FREEPIK_API_KEY and GEMINI_API_KEY
+
+# 2. Start all services
+docker-compose up -d
+
+# 3. Run migrations
+docker-compose exec backendAI python manage.py migrate
+
+# 4. Test API
+curl http://localhost:9999/health/
+```
+
+### Option 2: Local Development
+
+```bash
+# 1. Setup virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Configure environment
+cp .env.example .env
+nano .env  # Add API keys
+
+# 4. Start databases (Docker)
+docker-compose up -d mongo postgres redis
+
+# 5. Run migrations
+python manage.py migrate
+
+# 6. Start server
+python manage.py runserver 0.0.0.0:9999
+
+# 7. Start Celery (in another terminal)
+celery -A backendAI worker --loglevel=info --concurrency=4
+```
+
+**Access:**
+- API: http://localhost:9999
+- Health Check: http://localhost:9999/health/
+
+---
+
+## ✨ Features
+
+### ✅ Implemented & Working
+
+#### 1. **Conversation Service** (MongoDB)
+- Create/get chat sessions per user
+- Send messages with AI routing
+- Automatic intent detection
+- Task status tracking
+- Session history & deletion
+
+#### 2. **Image Generation** (Freepik Mystic)
+- Text-to-image generation
+- Automatic prompt refinement (Gemini)
+- Async task processing with polling
+- Multiple aspect ratios (1:1, 16:9, 9:16, etc.)
+- Cloudinary upload & gallery save
+- Style options (photorealistic, digital-art, anime)
+
+#### 3. **Remove Background** (Freepik)
+- Synchronous background removal
+- PNG with transparency output
+- Multiple input formats (URL, base64, file upload)
+- Immediate Cloudinary upload
+
+#### 4. **Image Gallery** (PostgreSQL)
+- User-specific image collections
+- Automatic save after generation
+- Soft delete (keeps Cloudinary URLs)
+- Metadata storage (prompts, task IDs, settings)
+- RESTful CRUD operations
+
+### 🚧 In Development
+
+- **Upscale** - Image upscaling with precision enhancement
+- **Reimagine** - AI reimagination with Flux model
+- **Relight** - AI-powered image relighting
+- **Image Expand** - Border expansion with AI fill
+
+---
+
+## 📚 Documentation
+
+Comprehensive documentation available:
+
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** - Complete API reference with examples
+  - Conversation service endpoints
+  - Image generation flow
+  - Remove background usage
+  - Image gallery management
+  - All request/response formats
+  - JavaScript & Python examples
+  
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Deployment guide
+  - Prerequisites & setup
+  - Docker deployment
+  - Manual installation
+  - Production configuration
+  - Troubleshooting guide
+
+---
+
+## 🌐 API Endpoints
+
+Base URL: `http://localhost:9999/v1`
+
+### Conversation Service
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/chat/sessions` | Create/get user session |
+| GET | `/chat/sessions/{session_id}` | Get conversation history |
+| POST | `/chat/sessions/{session_id}/messages` | Send message |
+| DELETE | `/chat/sessions/{session_id}` | Delete session |
+
+### Image Generation
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/features/image-generate/` | Create generation task |
+| GET | `/features/image-generate/status/{task_id}/` | Poll task status |
+
+### Remove Background
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/features/remove-background/` | Remove background (sync) |
+
+### Image Gallery
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/gallery/?user_id={id}` | List user images |
+| POST | `/gallery/` | Create image entry |
+| GET | `/gallery/{image_id}/` | Get image details |
+| DELETE | `/gallery/{image_id}/` | Delete image |
+
+**See [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) for detailed usage examples.**
+
+---
+
+## 🧪 Testing
+
+### Automated Test Script
+
+```bash
+# Run comprehensive feature tests
+./test_direct_ai_features.sh
+```
+
+Tests:
+- ✅ Image generation (async with polling)
+- ✅ Remove background (synchronous)
+- ✅ Gallery verification
+
+### Manual Testing
+
+```bash
+# Image generation
+curl -X POST http://localhost:9999/v1/features/image-generate/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "A sunset over mountains",
+    "user_id": "test_user",
+    "aspect_ratio": "16:9"
+  }'
+
+# Remove background
+curl -X POST http://localhost:9999/v1/features/remove-background/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "image_url": "https://example.com/image.jpg",
+    "user_id": "test_user"
+  }'
+
+# Get gallery
+curl "http://localhost:9999/v1/gallery/?user_id=test_user"
+```
+
+---
+
+## 🐳 Docker Deployment
+
+### Services
+
+```yaml
+services:
+  backendAI      # Django API (port 9999)
+  celery_worker  # Background tasks
+  redis          # Task queue (port 6379)
+  mongo          # Conversations (port 27017)
+  postgres       # Image gallery (port 5432)
+  flower         # Celery monitoring (port 5555, optional)
+```
+
+### Commands
+
+```bash
+# Start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f backendAI
+
+# Restart service
+docker-compose restart backendAI
+
+# Stop all
+docker-compose down
+
+# Clean everything (⚠️ deletes data)
+docker-compose down -v
+```
+
+### Monitoring
+
+```bash
+# Enable Flower for Celery monitoring
+docker-compose --profile monitoring up -d
+
+# Access at http://localhost:5555
+```
+
+**Full deployment guide:** [DEPLOYMENT.md](./DEPLOYMENT.md)
+
+---
+
+## 📁 Project Structure
 
 ---
 
