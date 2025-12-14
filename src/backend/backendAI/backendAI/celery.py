@@ -1,7 +1,9 @@
 import os
 from celery import Celery
+import django
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backendAI.settings')
+django.setup()
 
 app = Celery('backendAI')
 
@@ -20,7 +22,20 @@ app.conf.update(
     worker_max_tasks_per_child=1000,
 )
 
-app.autodiscover_tasks()
+# Autodiscover tasks from all apps
+app.autodiscover_tasks([
+    'apps.conversation',
+    'apps.prompt_service',
+    'apps.image_service',
+    'apps.intent_router',
+    'apps.image_generation',
+    'apps.upscale',
+    'apps.remove_background',
+    'apps.relight',
+    'apps.style_transfer',
+    'apps.reimagine',
+    'apps.image_expand',
+])
 
 
 @app.task(bind=True, ignore_result=True)

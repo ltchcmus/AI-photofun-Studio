@@ -33,11 +33,11 @@ urlpatterns = [
     # Direct feature endpoints (no conversation required)
     path('v1/features/image-generation/', include('apps.image_generation.urls')),
     path('v1/features/upscale/', include('apps.upscale.urls')),
-    # path('v1/features/remove-background/', include('apps.remove_background.urls')),
-    # path('v1/features/relight/', include('apps.relight.urls')),
-    # path('v1/features/style-transfer/', include('apps.style_transfer.urls')),
-    # path('v1/features/reimagine/', include('apps.reimagine.urls')),
-    # path('v1/features/image-expand/', include('apps.image_expand.urls')),
+    path('v1/features/remove-background/', include('apps.remove_background.urls')),
+    path('v1/features/relight/', include('apps.relight.urls')),
+    path('v1/features/style-transfer/', include('apps.style_transfer.urls')),
+    path('v1/features/reimagine/', include('apps.reimagine.urls')),
+    path('v1/features/image-expand/', include('apps.image_expand.urls')),
     
     # Shared gallery (used by both flows)
     path('v1/gallery/', include('apps.image_gallery.urls')),
