@@ -9,6 +9,17 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+# Custom Exceptions
+class TokenServiceError(Exception):
+    """Raised when token service API fails"""
+    pass
+
+
+class InsufficientTokensError(Exception):
+    """Raised when user doesn't have enough tokens"""
+    pass
+
+
 def custom_exception_handler(exc, context):
     """Custom exception handler for DRF"""
     response = exception_handler(exc, context)
