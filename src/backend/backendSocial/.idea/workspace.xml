@@ -21,6 +21,8 @@
       <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/LimitRegisterRepository.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/http/CommunicationClient.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/comments/internal/configuration/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/comments/internal/configuration/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/comments/internal/services/comment_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/comments/internal/services/comment_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/identity/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/identity/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/identity/pom.xml" afterDir="false" />
@@ -43,6 +45,10 @@
       <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/utils/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/utils/Utils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/resources/application.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/src/main/resources/templates/welcome.html" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/resources/templates/welcome.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/configuration/SecurityGlobal.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/configuration/SecurityGlobal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/controller/PostController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/repository/PostRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/repository/PostRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/service/PostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/service/PostService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -140,7 +146,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Application.communication">
+  <component name="RunManager" selected="Application.post">
     <configuration name="Profile" type="Application" factoryName="Application">
       <option name="ALTERNATIVE_JRE_PATH" value="temurin-21" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
