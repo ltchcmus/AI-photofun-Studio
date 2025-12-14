@@ -50,6 +50,14 @@ INSTALLED_APPS = [
     "apps.prompt_service",
     "apps.image_service",
     "apps.image_gallery",
+    "apps.intent_router",
+    "apps.image_generation",
+    "apps.upscale",
+    "apps.remove_background",
+    "apps.relight",
+    "apps.style_transfer",
+    "apps.reimagine",
+    "apps.image_expand",
 ]
 
 MIDDLEWARE = [

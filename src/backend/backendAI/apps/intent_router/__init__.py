@@ -2,6 +2,7 @@
 Intent Router
 Centralized routing logic for dispatching requests to appropriate AI feature services
 """
+from . import celery_tasks  # noqa
 
 from .router import IntentRouter
 from .constants import IntentType, UpscaleFlavor

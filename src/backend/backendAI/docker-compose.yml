@@ -1,78 +1,169 @@
 version: "3.9"
 
 services:
+  # Main Django API Server
   backendAI:
     build:
-      context: ./backendAI
+      context: .
       target: development
+    container_name: backendai_api
+    command: python manage.py runserver 0.0.0.0:9999
     ports:
       - "9999:9999"
     environment:
+      # Django Settings
       DJANGO_DEBUG: "1"
+      DJANGO_SECRET_KEY: "${DJANGO_SECRET_KEY:-dev-secret-key-change-in-production}"
+      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,0.0.0.0"
+      
+      # MongoDB (Conversations)
       MONGO_URI: "mongodb://mongo:27017"
       MONGO_DB_NAME: "ai_photofun_studio"
-      MEDIA_UPLOAD_URL: "" # set this to your media uploader endpoint when available
+      
+      # PostgreSQL (Image Gallery)
+      POSTGRES_HOST: "postgres"
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: "ai_photofun_gallery"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-postgres}"
+      
+      # Redis (Celery)
+      REDIS_URL: "redis://redis:6379/0"
+      CELERY_BROKER_URL: "redis://redis:6379/0"
+      CELERY_RESULT_BACKEND: "redis://redis:6379/0"
+      
+      # External APIs
+      FREEPIK_API_KEY: "${FREEPIK_API_KEY}"
+      GEMINI_API_KEY: "${GEMINI_API_KEY}"
+      FILE_SERVICE_URL: "${FILE_SERVICE_URL:-https://file-service-cdal.onrender.com}"
+      
     volumes:
-      - ./backendAI:/app
+      - .:/app
+      - ./logs:/app/logs
+      - ./media:/app/media
     depends_on:
       - mongo
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:9999/health/', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
-  prompt_service:
+  # Celery Worker for Background Tasks
+  celery_worker:
     build:
-      context: ./backendAI
+      context: .
       target: development
-    command: sh -c "python manage.py runserver 0.0.0.0:9001"
-    ports:
-      - "9001:9001"
+    container_name: backendai_celery
+    command: celery -A backendAI worker --loglevel=info --concurrency=4
     environment:
+      # Django Settings
       DJANGO_DEBUG: "1"
+      DJANGO_SECRET_KEY: "${DJANGO_SECRET_KEY:-dev-secret-key-change-in-production}"
+      
+      # MongoDB
       MONGO_URI: "mongodb://mongo:27017"
       MONGO_DB_NAME: "ai_photofun_studio"
-      GEMINI_MODEL: "Gemini 1.5 Flash"
+      
+      # PostgreSQL
+      POSTGRES_HOST: "postgres"
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: "ai_photofun_gallery"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-postgres}"
+      
+      # Redis
+      REDIS_URL: "redis://redis:6379/0"
+      CELERY_BROKER_URL: "redis://redis:6379/0"
+      CELERY_RESULT_BACKEND: "redis://redis:6379/0"
+      
+      # External APIs
+      FREEPIK_API_KEY: "${FREEPIK_API_KEY}"
+      GEMINI_API_KEY: "${GEMINI_API_KEY}"
+      FILE_SERVICE_URL: "${FILE_SERVICE_URL:-https://file-service-cdal.onrender.com}"
+      
     volumes:
-      - ./backendAI:/app
+      - .:/app
+      - ./logs:/app/logs
+      - ./media:/app/media
     depends_on:
       - mongo
-
-  image_service:
-    build:
-      context: ./backendAI
-      target: development
-    command: sh -c "python manage.py runserver 0.0.0.0:9002"
-    ports:
-      - "9002:9002"
-    environment:
-      DJANGO_DEBUG: "1"
-      MONGO_URI: "mongodb://mongo:27017"
-      MONGO_DB_NAME: "ai_photofun_studio"
-      MEDIA_UPLOAD_URL: "" # set when available
-    volumes:
-      - ./backendAI:/app
-    depends_on:
-      - mongo
-
-  celery:
-    build:
-      context: ./backendAI
-      target: development
-    command: sh -c "celery -A backendAI worker -l info"
-    environment:
-      DJANGO_DEBUG: "1"
-      MONGO_URI: "mongodb://mongo:27017"
-      MONGO_DB_NAME: "ai_photofun_studio"
-      MEDIA_UPLOAD_URL: ""
-    volumes:
-      - ./backendAI:/app
-    depends_on:
-      - mongo
+      - postgres
+      - redis
       - backendAI
 
+  # Redis for Celery
+  redis:
+    image: redis:7-alpine
+    container_name: backendai_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MongoDB for Conversations
   mongo:
     image: mongo:6
+    container_name: backendai_mongo
     ports:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PostgreSQL for Image Gallery
+  postgres:
+    image: postgres:15-alpine
+    container_name: backendai_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: "ai_photofun_gallery"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-postgres}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Flower for Celery Monitoring (Optional)
+  flower:
+    build:
+      context: .
+      target: development
+    container_name: backendai_flower
+    command: celery -A backendAI flower --port=5555
+    ports:
+      - "5555:5555"
+    environment:
+      CELERY_BROKER_URL: "redis://redis:6379/0"
+      CELERY_RESULT_BACKEND: "redis://redis:6379/0"
+    depends_on:
+      - redis
+      - celery_worker
+    profiles:
+      - monitoring
 
 volumes:
   mongo_data:
+  postgres_data:
+  redis_data:
+
+networks:
+  default:
+    name: backendai_network
