@@ -1,1 +1,0 @@
-# AI Tasks Django App (NO DATABASE)

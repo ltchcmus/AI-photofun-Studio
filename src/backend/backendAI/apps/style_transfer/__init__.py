@@ -1,2 +1,5 @@
-# Style Transfer App - Neural style transfer for artistic effects
-default_app_config = 'apps.style_transfer.apps.StyleTransferConfig'
+"""
+Style Transfer Feature
+Transfer artistic style from reference image to target image
+"""
+from . import celery_tasks  # noqa

@@ -1,6 +1,6 @@
-# 🤖 Backend AI - AI Photo Studio
+# 🤖 Backend AI - AI PhotoFun Studio
 
-> Stateless microservices backend for AI-powered photo editing
+> AI-powered photo editing backend with conversational interface and direct feature access
 
 [![Django](https://img.shields.io/badge/Django-5.1.4-green.svg)](https://www.djangoproject.com/)
 [![DRF](https://img.shields.io/badge/DRF-3.15.2-red.svg)](https://www.django-rest-framework.org/)
@@ -11,42 +11,274 @@
 ## 📋 Table of Contents
 
 - [Overview](#-overview)
-- [Architecture](#-architecture)
 - [Quick Start](#-quick-start)
-- [API Endpoints](#-api-endpoints)
-- [Project Structure](#-project-structure)
-- [Testing](#-testing)
-- [Docker](#-docker)
+- [Features](#-features)
 - [Documentation](#-documentation)
+- [API Endpoints](#-api-endpoints)
+- [Testing](#-testing)
+- [Docker Deployment](#-docker-deployment)
+- [Project Structure](#-project-structure)
 
 ---
 
 ## 🎯 Overview
 
-Backend AI cung cấp RESTful API với **stateless microservices architecture** để xử lý ảnh bằng AI.
+AI PhotoFun Studio Backend provides RESTful APIs for AI-powered image processing through:
+- **Conversational Interface** - Natural language chat-based image processing
+- **Direct Feature Access** - Immediate API calls to specific AI features
+- **Image Gallery** - User image collection management
 
-### Features
+### Technology Stack
 
-#### ✅ Implemented
-- **AI Gateway** - Orchestration layer cho tất cả AI services
-- **Prompt Refinement** - Tối ưu hóa text prompts cho AI generation
-- **Image Generation** - Generate ảnh từ text prompts (placeholder)
-- **Background Removal** - Xóa phông nền tự động
-- **Face Swap** - Hoán đổi khuôn mặt
-- **Image Processing** - Basic operations (resize, crop, rotate)
+- **Framework:** Django 5.1.4 + Django REST Framework 3.15.2
+- **AI Integration:** Google Gemini 2.5-flash (prompts) + Freepik AI APIs (image processing)
+- **Databases:** MongoDB (conversations) + PostgreSQL (image gallery)
+- **Task Queue:** Celery + Redis (async processing)
+- **File Storage:** Cloudinary (via external file-service)
+- **Deployment:** Docker + Docker Compose
 
-#### 🚧 Planned
-- Object Removal
-- Style Transfer
-- Image Enhancement
+---
 
-### Key Design Principles
+## ⚡ Quick Start
 
-1. **🚀 Stateless** - No database persistence for AI services
-2. **⚡ Fast** - In-memory processing, 25x faster than DB approach
-3. **🎯 Validation** - Serializers for input/output validation
-4. **🏗️ Clean Architecture** - Separated concerns, easy to scale
-5. **🐳 Docker Ready** - Containerized deployment
+### Option 1: Docker (Recommended)
+
+```bash
+# 1. Configure environment
+cp .env.example .env
+nano .env  # Add your FREEPIK_API_KEY and GEMINI_API_KEY
+
+# 2. Start all services
+docker-compose up -d
+
+# 3. Run migrations
+docker-compose exec backendAI python manage.py migrate
+
+# 4. Test API
+curl http://localhost:9999/health/
+```
+
+### Option 2: Local Development
+
+```bash
+# 1. Setup virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Configure environment
+cp .env.example .env
+nano .env  # Add API keys
+
+# 4. Start databases (Docker)
+docker-compose up -d mongo postgres redis
+
+# 5. Run migrations
+python manage.py migrate
+
+# 6. Start server
+python manage.py runserver 0.0.0.0:9999
+
+# 7. Start Celery (in another terminal)
+celery -A backendAI worker --loglevel=info --concurrency=4
+```
+
+**Access:**
+- API: http://localhost:9999
+- Health Check: http://localhost:9999/health/
+
+---
+
+## ✨ Features
+
+### ✅ Implemented & Working
+
+#### 1. **Conversation Service** (MongoDB)
+- Create/get chat sessions per user
+- Send messages with AI routing
+- Automatic intent detection
+- Task status tracking
+- Session history & deletion
+
+#### 2. **Image Generation** (Freepik Mystic)
+- Text-to-image generation
+- Automatic prompt refinement (Gemini)
+- Async task processing with polling
+- Multiple aspect ratios (1:1, 16:9, 9:16, etc.)
+- Cloudinary upload & gallery save
+- Style options (photorealistic, digital-art, anime)
+
+#### 3. **Remove Background** (Freepik)
+- Synchronous background removal
+- PNG with transparency output
+- Multiple input formats (URL, base64, file upload)
+- Immediate Cloudinary upload
+
+#### 4. **Image Gallery** (PostgreSQL)
+- User-specific image collections
+- Automatic save after generation
+- Soft delete (keeps Cloudinary URLs)
+- Metadata storage (prompts, task IDs, settings)
+- RESTful CRUD operations
+
+### 🚧 In Development
+
+- **Upscale** - Image upscaling with precision enhancement
+- **Reimagine** - AI reimagination with Flux model
+- **Relight** - AI-powered image relighting
+- **Image Expand** - Border expansion with AI fill
+
+---
+
+## 📚 Documentation
+
+Comprehensive documentation available:
+
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** - Complete API reference with examples
+  - Conversation service endpoints
+  - Image generation flow
+  - Remove background usage
+  - Image gallery management
+  - All request/response formats
+  - JavaScript & Python examples
+  
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Deployment guide
+  - Prerequisites & setup
+  - Docker deployment
+  - Manual installation
+  - Production configuration
+  - Troubleshooting guide
+
+---
+
+## 🌐 API Endpoints
+
+Base URL: `http://localhost:9999/v1`
+
+### Conversation Service
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/chat/sessions` | Create/get user session |
+| GET | `/chat/sessions/{session_id}` | Get conversation history |
+| POST | `/chat/sessions/{session_id}/messages` | Send message |
+| DELETE | `/chat/sessions/{session_id}` | Delete session |
+
+### Image Generation
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/features/image-generate/` | Create generation task |
+| GET | `/features/image-generate/status/{task_id}/` | Poll task status |
+
+### Remove Background
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/features/remove-background/` | Remove background (sync) |
+
+### Image Gallery
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/gallery/?user_id={id}` | List user images |
+| POST | `/gallery/` | Create image entry |
+| GET | `/gallery/{image_id}/` | Get image details |
+| DELETE | `/gallery/{image_id}/` | Delete image |
+
+**See [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) for detailed usage examples.**
+
+---
+
+## 🧪 Testing
+
+### Automated Test Script
+
+```bash
+# Run comprehensive feature tests
+./test_direct_ai_features.sh
+```
+
+Tests:
+- ✅ Image generation (async with polling)
+- ✅ Remove background (synchronous)
+- ✅ Gallery verification
+
+### Manual Testing
+
+```bash
+# Image generation
+curl -X POST http://localhost:9999/v1/features/image-generate/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "A sunset over mountains",
+    "user_id": "test_user",
+    "aspect_ratio": "16:9"
+  }'
+
+# Remove background
+curl -X POST http://localhost:9999/v1/features/remove-background/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "image_url": "https://example.com/image.jpg",
+    "user_id": "test_user"
+  }'
+
+# Get gallery
+curl "http://localhost:9999/v1/gallery/?user_id=test_user"
+```
+
+---
+
+## 🐳 Docker Deployment
+
+### Services
+
+```yaml
+services:
+  backendAI      # Django API (port 9999)
+  celery_worker  # Background tasks
+  redis          # Task queue (port 6379)
+  mongo          # Conversations (port 27017)
+  postgres       # Image gallery (port 5432)
+  flower         # Celery monitoring (port 5555, optional)
+```
+
+### Commands
+
+```bash
+# Start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f backendAI
+
+# Restart service
+docker-compose restart backendAI
+
+# Stop all
+docker-compose down
+
+# Clean everything (⚠️ deletes data)
+docker-compose down -v
+```
+
+### Monitoring
+
+```bash
+# Enable Flower for Celery monitoring
+docker-compose --profile monitoring up -d
+
+# Access at http://localhost:5555
+```
+
+**Full deployment guide:** [DEPLOYMENT.md](./DEPLOYMENT.md)
+
+---
+
+## 📁 Project Structure
 
 ---
 
@@ -57,30 +289,37 @@ Backend AI cung cấp RESTful API với **stateless microservices architecture**
 ```
 ┌─────────────────────────────────────────────────────┐
 │                   HTTP REQUEST                      │
-│  POST /api/v1/image-generation/generate/            │
-│  { "prompt": "sunset", "width": 512 }               │
+│  POST /api/v1/chat/sessions/{id}/messages/          │
+│  { "content": "Create a sunset landscape" }         │
 └───────────────────┬─────────────────────────────────┘
                     │
                     ▼
 ┌─────────────────────────────────────────────────────┐
-│                 VIEWS (Validation)                  │
-│  • Validate input với Serializers                   │
-│  • Check types, ranges, formats                     │
-│  • Return 400 if invalid                            │
+│           CONVERSATION VIEW (Validation)            │
+│  • Validate message input                           │
+│  • Store PROCESSING message to MongoDB              │
+│  • Trigger Celery chain                             │
 └───────────────────┬─────────────────────────────────┘
                     │
                     ▼
 ┌─────────────────────────────────────────────────────┐
-│              SERVICE (Processing)                   │
-│  • Pure functions                                   │
-│  • In-memory processing                             │
-│  • NO database writes                               │
+│              CELERY CHAIN PIPELINE                  │
+│  1. process_prompt_task                             │
+│     → Refine prompt via Gemini API                  │
+│     → Detect intent (generate, edit, enhance)       │
+│  2. generate_image_pipeline_task                    │
+│     → Generate image (mock/real AI)                 │
+│     → Upload to Cloudinary                          │
+│  3. finalize_conversation_task                      │
+│     → Update MongoDB with results                   │
+│     → Save to PostgreSQL image_gallery              │
 └───────────────────┬─────────────────────────────────┘
                     │
                     ▼
 ┌─────────────────────────────────────────────────────┐
-│                HTTP RESPONSE                        │
-│  { "success": true, "image_bytes": "...", ... }     │
+│                CLIENT POLLING                       │
+│  GET /api/v1/chat/sessions/{id}/messages/{msg_id}   │
+│  { "status": "DONE", "image_url": "...", ... }      │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -88,17 +327,35 @@ Backend AI cung cấp RESTful API với **stateless microservices architecture**
 
 ```
 apps/
-├── ai_gateway/              # 🎯 Orchestrator (no business logic)
-├── prompt_refinement/       # 📝 Stateless service
-├── image_generation/        # 🖼️ Stateless service
-├── background_removal/      # ✂️ Has database (for history)
-├── face_swap/              # 👤 Has database (for history)
-└── image_processing/        # 🔧 Has database (for history)
+├── conversation/            # 💬 Chat service (MongoDB + Celery chains)
+├── prompt_service/          # 🤖 Prompt refinement + intent detection (Gemini)
+├── image_service/           # 🎨 Image generation + Cloudinary upload
+├── image_gallery/           # 🖼️ User image management (PostgreSQL/Supabase)
+└── [future AI apps...]      # Will be added as needed
+
+services/
+└── api_gateway/             # 🎯 FastAPI Gateway (separate service)
+
+core/
+├── exceptions.py            # Custom exception handlers
+├── middleware.py            # Request logging middleware
+├── response_utils.py        # ResponseFormatter + APIResponse wrappers
+└── file_handler.py          # File upload & validation
+
+shared/
+├── models/                  # Pydantic models (cross-service)
+├── utils/                   # Helper functions
+└── constants.py             # Application-wide constants
+
+testing_apps/                # � Backup of experimental apps
 ```
 
-**Why some have database?**
-- `prompt_refinement`, `image_generation`, `ai_gateway` → Pure processing, no history needed
-- `background_removal`, `face_swap`, `image_processing` → May need user history tracking
+**Current Implementation:**
+- `conversation` → MongoDB chat with Celery pipeline orchestration (active)
+- `prompt_service` → Gemini API integration for prompt refinement (active)
+- `image_service` → Image generation with Cloudinary upload (active)
+- `image_gallery` → PostgreSQL persistence for user images (active)
+- `api_gateway` → Port 9999 service orchestration (active)
 
 ---
 
@@ -129,129 +386,106 @@ pip install -r requirements.txt
 # Copy environment template
 cp .env.example .env
 
-# For local development (use SQLite)
-export USE_SQLITE=True
+# Required environment variables:
+# - MONGO_URI: MongoDB connection (for conversations)
+# - SUPABASE_DB_*: PostgreSQL connection (for image gallery)
+# - CELERY_BROKER_URL: Redis for async tasks
+
+# See .env.example for full configuration
 ```
 
-### 4. Run Migrations (Only for Django core + services with DB)
+### 4. Run Migrations
 
 ```bash
+# Create migration files for image_gallery
+python manage.py makemigrations image_gallery
+
+# Apply migrations to PostgreSQL
 python manage.py migrate
 ```
 
-### 5. Start Server
+### 5. Start Services
 
 ```bash
-# Development
-python manage.py runserver
+# Terminal 1: Django API server (port 9999)
+python manage.py runserver 9999
 
-# Production (with gunicorn)
-gunicorn backendAI.wsgi:application --bind 0.0.0.0:8000
+# Terminal 2: Celery worker (for async tasks)
+celery -A backendAI worker -l info
+
+# Terminal 3: Redis (if not running)
+redis-server
+
+# Terminal 4: MongoDB (if not running)
+mongod --dbpath /path/to/data
 ```
 
-Server runs at: **http://localhost:8000**
+Server runs at: **http://localhost:9999**
 
 ---
 
 ## 📡 API Endpoints
 
-### 🎯 AI Gateway (Orchestration)
+### 💬 Conversation Service (MongoDB + Celery)
 
-**POST** `/api/v1/ai-gateway/chat/`
+**Base URL**: `http://localhost:9999/api/v1/chat/`
 
+**POST** `/api/v1/chat/sessions/`
+Create a new chat session
+
+**GET** `/api/v1/chat/sessions/<session_id>/`
+Get session details
+
+**POST** `/api/v1/chat/sessions/<session_id>/messages/`
+Send a message (triggers Celery pipeline: prompt→image→storage)
+
+**GET** `/api/v1/chat/sessions/<session_id>/messages/`
+Get conversation history
+
+**GET** `/api/v1/chat/sessions/<session_id>/messages/<message_id>/`
+Poll message status (for async workflow tracking)
+
+**DELETE** `/api/v1/chat/sessions/<session_id>/`
+Delete a session
+
+See `apps/conversation/API_DOCUMENTATION.md` for detailed API docs.
+
+### 🤖 Prompt Service
+
+**Base URL**: `http://localhost:9999/v1/prompt/`
+
+**POST** `/v1/prompt/refine/`
+Refine user prompts using Gemini API and detect intent
+
+### 🎨 Image Service
+
+**Base URL**: `http://localhost:9999/v1/image/`
+
+**POST** `/v1/image/generate/`
+Generate images from refined prompts (mock or real AI)
+
+### 🖼️ Image Gallery (PostgreSQL)
+
+**Base URL**: `http://localhost:9999/v1/gallery/`
+
+**GET** `/v1/gallery/` - List user images
+**POST** `/v1/gallery/` - Create image record
+**GET** `/v1/gallery/<uuid>/` - Get image details
+**DELETE** `/v1/gallery/<uuid>/` - Soft delete image
+**GET** `/v1/gallery/deleted/` - List deleted images
+**POST** `/v1/gallery/<uuid>/restore/` - Restore deleted image
+**DELETE** `/v1/gallery/<uuid>/permanent/` - Permanently delete
+
+See `apps/image_gallery/README.md` for detailed setup and usage.
+
+### 🚀 API Gateway
+
+Located in `services/api_gateway/`
+
+Run separately:
 ```bash
-curl -X POST http://localhost:8000/api/v1/ai-gateway/chat/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "message": "Generate a beautiful sunset landscape",
-    "session_id": "test-001"
-  }'
-```
-
-### 📝 Prompt Refinement
-
-**POST** `/api/v1/prompt-refinement/refine/`
-
-```bash
-curl -X POST http://localhost:8000/api/v1/prompt-refinement/refine/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "prompt": "a cat",
-    "context": {"style": "realistic"},
-    "method": "auto"
-  }'
-```
-
-**Response:**
-```json
-{
-  "original_prompt": "a cat",
-  "refined_prompt": "a cat, highly detailed, photorealistic, 8k",
-  "negative_prompt": "blurry, low quality",
-  "confidence_score": 0.85,
-  "method_used": "rule_based",
-  "processing_time": 0.002
-}
-```
-
-**POST** `/api/v1/prompt-refinement/validate/`
-
-```bash
-curl -X POST http://localhost:8000/api/v1/prompt-refinement/validate/ \
-  -H "Content-Type: application/json" \
-  -d '{"prompt": "beautiful sunset"}'
-```
-
-**POST** `/api/v1/prompt-refinement/extract-negative/`
-
-```bash
-curl -X POST http://localhost:8000/api/v1/prompt-refinement/extract-negative/ \
-  -H "Content-Type: application/json" \
-  -d '{"prompt": "beautiful cat, NOT blurry"}'
-```
-
-### 🖼️ Image Generation
-
-**POST** `/api/v1/image-generation/generate/`
-
-```bash
-curl -X POST http://localhost:8000/api/v1/image-generation/generate/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "prompt": "beautiful sunset over mountains",
-    "negative_prompt": "blurry, low quality",
-    "width": 512,
-    "height": 512,
-    "num_inference_steps": 30,
-    "guidance_scale": 7.5
-  }'
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "request_id": "550e8400-e29b-41d4-a716-446655440000",
-  "image_bytes": "base64_encoded_image_data...",
-  "metadata": {
-    "model": "stable-diffusion-v1.5",
-    "steps": 30,
-    "seed": 42
-  }
-}
-```
-
-**POST** `/api/v1/image-generation/generate-variations/`
-
-```bash
-curl -X POST http://localhost:8000/api/v1/image-generation/generate-variations/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "prompt": "sunset",
-    "num_variations": 4,
-    "width": 512,
-    "height": 512
-  }'
+cd services/api_gateway
+uvicorn src.main:app --host 0.0.0.0 --port 9999
 ```
 
 ### API Documentation (Interactive)
@@ -266,56 +500,66 @@ curl -X POST http://localhost:8000/api/v1/image-generation/generate-variations/ 
 ```
 backendAI/
 ├── manage.py                    # Django CLI
-├── requirements.txt             # Dependencies
+├── requirements.txt             # Dependencies (cleaned up)
 ├── Dockerfile                   # Container image
-├── docker-compose.yml           # Multi-container setup
 ├── .env.example                 # Environment template
 │
 ├── backendAI/                   # 🔧 Django Config
 │   ├── settings.py              # Main settings
 │   ├── urls.py                  # URL routing
 │   ├── wsgi.py                  # WSGI server
-│   └── asgi.py                  # ASGI server
+│   ├── asgi.py                  # ASGI server
+│   └── celery.py                # Async task config
 │
-├── apps/                        # 📱 Applications
-│   ├── ai_gateway/              # Orchestrator
-│   │   ├── views.py
-│   │   ├── pipeline.py
-│   │   └── services/
-│   │       ├── intent_classification.py
-│   │       └── response_handler.py
-│   │
-│   ├── prompt_refinement/       # Stateless
-│   │   ├── service.py           # Business logic
-│   │   ├── views.py             # API endpoints
-│   │   ├── serializers.py       # Validation
-│   │   ├── urls.py
-│   │   ├── models.py            # Empty
-│   │   └── admin.py             # Empty
-│   │
-│   ├── image_generation/        # Stateless
-│   │   ├── service.py
-│   │   ├── views.py
-│   │   ├── serializers.py
-│   │   ├── urls.py
-│   │   ├── models.py            # Empty
-│   │   └── admin.py             # Empty
-│   │
-│   ├── background_removal/      # Has DB
-│   ├── face_swap/              # Has DB
-│   └── image_processing/        # Has DB
+├── apps/                        # 📱 Django Applications
+│   └── conversation/            # Chat service (MongoDB)
+│       ├── views.py
+│       ├── service.py
+│       ├── serializers.py
+│       ├── urls.py
+│       ├── models.py
+│       └── mongo_client.py
 │
-├── core/                        # 🛠️ Shared Utilities
-│   ├── exceptions.py            # Custom exceptions
-│   ├── response_utils.py        # Response helpers
-│   ├── model_manager.py         # AI model loading
-│   ├── file_handler.py          # File operations
+├── services/                    # 🚀 External Services (non-Django)
+│   └── api_gateway/             # FastAPI Gateway
+│       ├── src/
+│       │   ├── main.py
+│       │   ├── routes/
+│       │   ├── middleware/
+│       │   └── services/
+│       ├── requirements.txt
+│       └── Dockerfile
+│
+├── core/                        # 🛠️ Shared Django Utilities
+│   ├── exceptions.py            # Custom exception handlers
+│   ├── response_utils.py        # Standardized responses
+│   ├── file_handler.py          # File upload/validation
 │   └── middleware.py            # Request logging
 │
-├── media/                       # 📁 Uploaded files
+├── shared/                      # � Cross-Service Code
+│   ├── models/                  # Pydantic schemas
+│   ├── utils/                   # Helper functions
+│   └── constants.py             # App-wide constants
+│
+├── testing_apps/                # 🔄 Backup/Experimental Apps
+│   ├── ai_tasks/
+│   ├── background_removal/
+│   ├── image_generation/
+│   └── [...]                    # Future AI features
+│
+├── media/                       # 📁 Generated/uploaded files
 ├── ml_models/                   # 🤖 AI model weights
 └── logs/                        # 📝 Application logs
 ```
+
+### Key Directories Explained
+
+- **apps/**: Production Django apps (currently only `conversation`)
+- **services/**: Standalone services like FastAPI gateway (not Django apps)
+- **core/**: Django-specific shared utilities
+- **shared/**: Code usable by both Django and external services
+- **testing_apps/**: Backup folder with experimental features
+
 
 ---
 

@@ -1,107 +1,172 @@
 """
-Image Generation Views - NO DATABASE
-
-Stateless REST API endpoints with INPUT VALIDATION
+Direct API endpoints for Image Generation
+Support both conversation flow and direct feature access
 """
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .service import get_service
-from .serializers import ImageGenerationRequestSerializer
+from core import APIResponse
+from .serializers import ImageGenerationInputSerializer
+from .services import ImageGenerationService, ImageGenerationError
+from .celery_tasks import generate_image_task
+from core.token_decorators import require_tokens
+from core.token_costs import TOKEN_COSTS
+from core.image_input_handler import ImageInputHandler
+from apps.prompt_service.services import PromptService
+from apps.image_gallery.services import image_gallery_service
 import logging
 
 logger = logging.getLogger(__name__)
 
 
 class ImageGenerationView(APIView):
-    """Generate images from text prompts"""
+    """
+    Direct image generation endpoint
+    POST /v1/features/image-generation/
     
+    Use case: User clicks "Generate Image" button directly, không qua chat
+    """
+    
+    @require_tokens(cost=TOKEN_COSTS['image_generation'], feature='image_generation')
     def post(self, request):
         """
-        POST /api/v1/image-generation/generate/
+        Generate image từ prompt
         
-        Body:
+        Request body:
         {
-            "prompt": "beautiful sunset",
-            "negative_prompt": "blurry",
-            "width": 512,
-            "height": 512,
-            "num_inference_steps": 30,
-            "guidance_scale": 7.5
+            "prompt": "A sunset over mountains",
+            "aspect_ratio": "16:9",  # optional
+            "style_reference": "https://...",  # optional
+            "user_id": "user123"  # required for gallery save
         }
         """
+        serializer = ImageGenerationInputSerializer(data=request.data)
+        if not serializer.is_valid():
+            return APIResponse.error(message="Validation failed", errors=serializer.errors)
+        
+        validated_data = serializer.validated_data
+        user_id = validated_data['user_id']
+        original_prompt = validated_data['prompt']
+        
         try:
-            # Validate input using serializer
-            serializer = ImageGenerationRequestSerializer(data=request.data)
-            if not serializer.is_valid():
-                return Response(
-                    {'error': 'Invalid input', 'details': serializer.errors},
-                    status=status.HTTP_400_BAD_REQUEST
+            # Step 1: Refine prompt using PromptService
+            prompt_service = PromptService()
+            refined_result = prompt_service.refine_and_detect_intent(
+                prompt=original_prompt,
+                context={}
+            )
+            refined_prompt = refined_result['refined_prompt']
+            
+            logger.info(f"[DirectAPI] Refined prompt: {refined_prompt[:80]}...")
+            
+            # Process optional style reference if provided
+            style_reference_url = None
+            style_reference_source = None
+            if any([validated_data.get('style_reference_data'), 
+                    validated_data.get('style_reference_url'), 
+                    validated_data.get('style_reference_file')]):
+                style_reference_url, style_reference_source = ImageInputHandler.process_image_input(
+                    image_data=validated_data.get('style_reference_data'),
+                    image_url=validated_data.get('style_reference_url'),
+                    image_file=validated_data.get('style_reference_file')
                 )
             
-            validated_data = serializer.validated_data
-            
-            service = get_service()
+            # Generate image using service with refined prompt
+            service = ImageGenerationService()
             result = service.generate_image(
-                prompt=validated_data['prompt'],
-                negative_prompt=validated_data.get('negative_prompt', ''),
-                width=validated_data.get('width', 512),
-                height=validated_data.get('height', 512),
-                num_inference_steps=validated_data.get('num_inference_steps', 50),
-                guidance_scale=validated_data.get('guidance_scale', 7.5),
-                seed=validated_data.get('seed')
+                prompt=refined_prompt,
+                user_id=user_id,
+                aspect_ratio=validated_data.get('aspect_ratio', 'square_1_1'),
+                style_reference=style_reference_url
             )
             
-            return Response(result, status=status.HTTP_200_OK)
-            
-        except Exception as e:
-            logger.error(f"Generation error: {str(e)}", exc_info=True)
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            return APIResponse.success(
+                result={
+                    "task_id": result['task_id'],
+                    "status": result['status'],
+                    "refined_prompt": refined_prompt
+                },
+                message="Image generation started. Use task_id to poll status."
             )
-
-
-class ImageVariationsView(APIView):
-    """Generate multiple variations"""
-    
-    def post(self, request):
-        """
-        POST /api/v1/image-generation/generate-variations/
         
-        Body:
-        {
-            "prompt": "beautiful sunset",
-            "num_variations": 4,
-            "width": 512,
-            "height": 512
-        }
+        except ImageGenerationError as e:
+            logger.error(f"Image generation error: {str(e)}")
+            return APIResponse.error(
+                message="Image generation failed",
+                errors=str(e),
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+        except Exception as e:
+            logger.error(f"Unexpected error in image generation: {str(e)}")
+            return APIResponse.error(
+                message="Internal server error",
+                errors=str(e),
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class ImageGenerationStatusView(APIView):
+    """
+    Poll generation task status
+    GET /v1/features/image-generation/status/<task_id>/?user_id=xxx
+    """
+    
+    def get(self, request, task_id):
+        """
+        Get status of generation task and save to gallery if completed
+        
+        URL params:
+            task_id: Task UUID from Freepik
+        Query params:
+            user_id: User ID for gallery save (optional but recommended)
         """
         try:
-            # Validate input using serializer
-            serializer = ImageGenerationRequestSerializer(data=request.data)
-            if not serializer.is_valid():
-                return Response(
-                    {'error': 'Invalid input', 'details': serializer.errors},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+            service = ImageGenerationService()
+            result = service.poll_task_status(task_id)
             
-            validated_data = serializer.validated_data
+            # If completed and user_id provided, save to gallery
+            user_id = request.query_params.get('user_id')
+            if result.get('status') == 'COMPLETED' and result.get('uploaded_urls') and user_id:
+                try:
+                    # Save to gallery
+                    for image_url in result['uploaded_urls']:
+                        image_gallery_service.save_image(
+                            user_id=user_id,
+                            image_url=image_url,
+                            refined_prompt=result.get('prompt', 'Generated image'),
+                            intent='image_generate',
+                            metadata={
+                                'task_id': task_id,
+                                'model': result.get('model', 'realism'),
+                                'aspect_ratio': result.get('aspect_ratio', '1:1')
+                            }
+                        )
+                    logger.info(f"[DirectAPI] Saved {len(result['uploaded_urls'])} images to gallery for user {user_id}")
+                except Exception as e:
+                    logger.warning(f"[DirectAPI] Failed to save to gallery: {str(e)}")
             
-            service = get_service()
-            result = service.generate_variations(
-                prompt=validated_data['prompt'],
-                num_variations=validated_data.get('num_variations', 4),
-                width=validated_data.get('width', 512),
-                height=validated_data.get('height', 512),
-                num_inference_steps=validated_data.get('num_inference_steps', 30)
+            return APIResponse.success(
+                result={
+                    "task_id": result.get('task_id'),
+                    "status": result.get('status'),
+                    "image_url": result.get('uploaded_urls', [None])[0] if result.get('uploaded_urls') else None
+                },
+                message="Task status retrieved"
             )
-            
-            return Response(result, status=status.HTTP_200_OK)
-            
+        
+        except ImageGenerationError as e:
+            logger.error(f"Status polling error: {str(e)}")
+            return APIResponse.error(
+                message="Failed to get task status",
+                errors=str(e),
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
         except Exception as e:
-            logger.error(f"Variations error: {str(e)}")
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            logger.error(f"Unexpected error polling status: {str(e)}")
+            return APIResponse.error(
+                message="Internal server error",
+                errors=str(e),
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
