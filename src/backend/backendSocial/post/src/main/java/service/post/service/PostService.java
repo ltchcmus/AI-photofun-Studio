@@ -180,8 +180,7 @@ public class PostService {
     }
   }
 
-  // Method to increment/decrement comment count (for internal use from Comment
-  // service)
+
   @Transactional
   public void updateCommentCount(String postId, int number) {
     lock.lock();

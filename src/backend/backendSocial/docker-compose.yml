@@ -53,6 +53,9 @@ services:
     environment:
       PORT: 8003
       MONGO_URI: "mongodb+srv://LeThanhCong:LeThanhCong@mywebv1.dbl7xj4.mongodb.net/?appName=MyWebv1"
+      POST_SERVICE_URL: http://post-service:8082/posts
+    depends_on:
+      - post-service
     networks:
       - backend-network
     restart: unless-stopped
