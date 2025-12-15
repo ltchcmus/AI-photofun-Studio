@@ -180,6 +180,31 @@ public class PostService {
     }
   }
 
+  // Method to increment/decrement comment count (for internal use from Comment
+  // service)
+  @Transactional
+  public void updateCommentCount(String postId, int number) {
+    lock.lock();
+    try {
+      log.info("Updating comment count for post {} with number {}", postId,
+               number);
+      int rowsAffected = postRepository.addNumberComments(postId, number);
+      log.info("Rows affected: {}", rowsAffected);
+
+      if (rowsAffected == 0) {
+        log.error("Post not found with id: {}", postId);
+        throw new AppException(ErrorCode.POST_NOT_FOUND);
+      }
+    } catch (AppException e) {
+      throw e;
+    } catch (Exception e) {
+      log.error("Error while updating comment count: {}", e.getMessage(), e);
+      throw new AppException(ErrorCode.POST_NOT_FOUND);
+    } finally {
+      lock.unlock();
+    }
+  }
+
   @PreAuthorize("isAuthenticated()")
   public GetPostResponse viewPost(String postId) {
     Post post = postRepository.findById(postId).orElseThrow(() -> {
