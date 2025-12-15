@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosClient = axios.create({
-  baseURL: import.meta.env.VITE_API_GATEWAY || "http://localhost:8888",
+  baseURL: "", // Use relative URL to leverage Vite proxy
   headers: {
     "Content-Type": "application/json",
   },

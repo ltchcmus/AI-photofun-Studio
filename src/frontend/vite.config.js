@@ -6,13 +6,37 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
+    allowedHosts: [
+      ".ngrok-free.dev",
+      ".ngrok.io",
+      "localhost",
+      "https://tashia-rude-subcortically.ngrok-free.dev",
+    ],
+    host: true,
     proxy: {
-      // Proxy for file-service (bypass CORS)
       "/api/file-upload": {
         target: "https://file-service-cdal.onrender.com",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/file-upload/, "/api/v1/file/uploads"),
+        rewrite: (path) =>
+          path.replace(/^\/api\/file-upload/, "/api/v1/file/uploads"),
         secure: true,
+      },
+      "/socket.io": {
+        target: "http://localhost:8899",
+        changeOrigin: true,
+        ws: true,
+        secure: false,
+        // Gracefully handle backend offline
+        configure: (proxy, options) => {
+          proxy.on("error", (err, req, res) => {
+            console.log("Socket proxy error (backend may be offline)");
+          });
+        },
+      },
+      "/api/v1/identity": {
+        target: "http://localhost:8888",
+        changeOrigin: true,
+        secure: false,
       },
       "/api/v1/comments": {
         target: "http://localhost:8003",
@@ -20,8 +44,9 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api\/v1/, ""),
       },
       "/api/v1": {
-        target: "http://localhost:8080",
+        target: "http://localhost:8888",
         changeOrigin: true,
+        secure: false,
       },
     },
   },

@@ -28,8 +28,12 @@ import { useAuth } from "../hooks/useAuth";
 import { communicationApi } from "../api/communicationApi";
 import { userApi } from "../api/userApi";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import VideoCallModal from "../components/common/VideoCallModal";
+import IncomingCallModal from "../components/common/IncomingCallModal";
+import { stopCall } from "../api/call-video";
 
-const SOCKET_URL = "http://localhost:8899";
+// Use relative URL for socket to work with Vite proxy and ngrok
+const SOCKET_URL = window.location.origin;
 const DEFAULT_GROUP_AVATAR = "https://res.cloudinary.com/derwtva4p/image/upload/v1765458810/file-service/fffsss.png";
 
 const MessagesPage = () => {
@@ -62,6 +66,16 @@ const MessagesPage = () => {
   const [isEditingGroup, setIsEditingGroup] = useState(false);
   const [editGroupName, setEditGroupName] = useState("");
   const [editGroupDescription, setEditGroupDescription] = useState("");
+
+  // Video/Audio Call State
+  const [showVideoCall, setShowVideoCall] = useState(false);
+  const [isAudioOnlyCall, setIsAudioOnlyCall] = useState(false);
+  const [showIncomingCall, setShowIncomingCall] = useState(false);
+  const [incomingCallData, setIncomingCallData] = useState(null);
+  const [callStatus, setCallStatus] = useState(null); // 'waiting', 'connecting', 'connected'
+  const [currentCallId, setCurrentCallId] = useState(null);
+  const [isCaller, setIsCaller] = useState(false); // true if this user initiated the call
+  const [callRecipientId, setCallRecipientId] = useState(null); // ID of the other user in call
 
   // Refs
   const messagesEndRef = useRef(null);
@@ -396,9 +410,9 @@ const MessagesPage = () => {
 
     const newSocket = io(`${SOCKET_URL}?userId=${user.id}`, {
       transports: ["websocket", "polling"],
-      reconnectionDelay: 2000,
+      reconnectionDelay: 5000,
       reconnection: true,
-      reconnectionAttempts: 5,
+      reconnectionAttempts: 3,
       timeout: 10000,
       autoConnect: true,
       path: "/socket.io",
@@ -415,7 +429,16 @@ const MessagesPage = () => {
     });
 
     newSocket.on("connect_error", (error) => {
-      console.error("🔥 Connection error:", error);
+      console.warn("⚠️ Socket connection failed (backend may be offline):", error.message);
+      setSocketConnected(false);
+      // Don't spam reconnection attempts if backend is down
+      if (error.message.includes("ECONNREFUSED")) {
+        console.log("💡 Backend socket server not running. Chat features limited.");
+      }
+    });
+
+    newSocket.on("reconnect_failed", () => {
+      console.warn("⚠️ Failed to reconnect to socket after multiple attempts");
       setSocketConnected(false);
     });
 
@@ -448,6 +471,60 @@ const MessagesPage = () => {
         };
         setMessages((prev) => [...prev, newMsg]);
       }
+    });
+
+    // Receive incoming call
+    newSocket.on("incomingCall", async (data) => {
+      console.log("📞 Incoming call from:", data);
+      
+      // Get caller info
+      try {
+        const userRes = await userApi.getUserById(data.callerId);
+        const userData = userRes?.data?.result;
+        
+        setIncomingCallData({
+          callerId: data.callerId,
+          callerName: userData?.username || userData?.fullName || "Người dùng",
+          callerAvatar: userData?.avatarUrl || `https://i.pravatar.cc/150?u=${data.callerId}`,
+          isVideoCall: data.isVideoCall,
+          callId: data.callId,
+        });
+        setShowIncomingCall(true);
+      } catch (error) {
+        console.error("Failed to fetch caller info:", error);
+      }
+    });
+
+    // Call accepted by receiver
+    newSocket.on("callAccepted", (data) => {
+      console.log("✅ Call accepted:", data);
+      // Change status from 'waiting' to 'connecting' to trigger WebRTC setup
+      setCallStatus('connecting');
+    });
+
+    // Call rejected by receiver
+    newSocket.on("callRejected", (data) => {
+      console.log("❌ Call rejected:", data);
+      alert(`${data.receiverName || "Người dùng"} đã từ chối cuộc gọi`);
+      setShowVideoCall(false);
+      setCallStatus(null);
+      setCurrentCallId(null);
+      setIsCaller(false);
+      setCallRecipientId(null);
+      stopCall();
+    });
+
+    // Call ended by other user
+    newSocket.on("callEnded", (data) => {
+      console.log("📞 Call ended by other user:", data);
+      setShowVideoCall(false);
+      setShowIncomingCall(false);
+      setCallStatus(null);
+      setCurrentCallId(null);
+      setIsCaller(false);
+      setCallRecipientId(null);
+      // Stop WebRTC when call ended
+      stopCall();
     });
 
     // Receive group message
@@ -583,6 +660,136 @@ const MessagesPage = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Handle video call
+  const handleStartVideoCall = () => {
+    if (!activeChat || activeChat.isGroup) {
+      alert("Chỉ có thể gọi video trong chat 1-1!");
+      return;
+    }
+    
+    if (!socketRef.current || !socketConnected) {
+      alert("Không thể kết nối! Vui lòng thử lại sau.");
+      return;
+    }
+
+    // Emit call event to receiver
+    const callData = {
+      callerId: user.id,
+      receiverId: activeChat.userId,
+      isVideoCall: true,
+      callId: Date.now().toString(),
+    };
+
+    socketRef.current.emit("callUser", callData);
+    console.log("📞 Initiating video call:", callData);
+
+    setIsAudioOnlyCall(false);
+    setCallStatus('waiting'); // Set to waiting for receiver to accept
+    setCurrentCallId(callData.callId);
+    setIsCaller(true); // This user is the caller
+    setCallRecipientId(activeChat.userId);
+    setShowVideoCall(true);
+  };
+
+  // Handle audio call
+  const handleStartAudioCall = () => {
+    if (!activeChat || activeChat.isGroup) {
+      alert("Chỉ có thể gọi audio trong chat 1-1!");
+      return;
+    }
+
+    if (!socketRef.current || !socketConnected) {
+      alert("Không thể kết nối! Vui lòng thử lại sau.");
+      return;
+    }
+
+    // Emit call event to receiver
+    const callData = {
+      callerId: user.id,
+      receiverId: activeChat.userId,
+      isVideoCall: false,
+      callId: Date.now().toString(),
+    };
+
+    socketRef.current.emit("callUser", callData);
+    console.log("📞 Initiating audio call:", callData);
+
+    setIsAudioOnlyCall(true);
+    setCallStatus('waiting'); // Set to waiting for receiver to accept
+    setCurrentCallId(callData.callId);
+    setIsCaller(true); // This user is the caller
+    setCallRecipientId(activeChat.userId);
+    setShowVideoCall(true);
+  };
+
+  // Handle accept incoming call
+  const handleAcceptCall = () => {
+    if (!incomingCallData || !socketRef.current) return;
+
+    // Emit accept event
+    socketRef.current.emit("answerCall", {
+      callerId: incomingCallData.callerId,
+      receiverId: user.id,
+      callId: incomingCallData.callId,
+      isVideoCall: incomingCallData.isVideoCall,
+    });
+
+    console.log("✅ Accepting call from:", incomingCallData.callerId);
+
+    // Show call modal with connecting status (receiver starts WebRTC immediately)
+    setIsAudioOnlyCall(!incomingCallData.isVideoCall);
+    setCallStatus('connecting'); // Receiver goes directly to connecting
+    setCurrentCallId(incomingCallData.callId);
+    setIsCaller(false); // This user is the receiver, not the caller
+    setCallRecipientId(incomingCallData.callerId); // The other user in call is the caller
+    setShowVideoCall(true);
+    setShowIncomingCall(false);
+
+    // Set active chat to caller
+    const callerConversation = conversations.find(
+      (conv) => conv.userId === incomingCallData.callerId
+    );
+    if (callerConversation) {
+      setActiveChat(callerConversation);
+    }
+  };
+
+  // Handle reject incoming call
+  const handleRejectCall = () => {
+    if (!incomingCallData || !socketRef.current) return;
+
+    // Emit reject event
+    socketRef.current.emit("rejectCall", {
+      callerId: incomingCallData.callerId,
+      receiverId: user.id,
+      callId: incomingCallData.callId,
+    });
+
+    
+
+    setShowIncomingCall(false);
+    setIncomingCallData(null);
+  };
+
+  // Handle end call
+  const handleEndCall = () => {
+    // Emit end call event to notify other user
+    if (socketRef.current && callRecipientId) {
+      socketRef.current.emit("endCall", {
+        userId: user.id,
+        otherUserId: callRecipientId,
+      });
+      console.log("📞 Ending call, notifying:", callRecipientId);
+    }
+
+    // Reset all call state
+    setShowVideoCall(false);
+    setCallStatus(null);
+    setCurrentCallId(null);
+    setIsCaller(false);
+    setCallRecipientId(null);
+  };
+
   const handleSendMessage = (event) => {
     event.preventDefault();
     if (
@@ -615,7 +822,7 @@ const MessagesPage = () => {
       };
 
       socketRef.current.emit("sendMessage", messageData);
-      console.log("📤 Sent message:", messageData);
+  
     }
 
     // Add to local messages immediately
@@ -655,7 +862,6 @@ const MessagesPage = () => {
     try {
       // Upload image to external service
       const uploadResult = await communicationApi.uploadChatImage(file);
-      console.log("📤 Image uploaded:", uploadResult);
 
       // Get image URL from response
       // Response format: { code: 1000, message: "Upload successful", result: { image: "url" } }
@@ -675,7 +881,6 @@ const MessagesPage = () => {
           isImage: true,
         };
         socketRef.current.emit("sendMessageToGroup", messageData);
-        console.log("📤 Sent group image:", messageData);
       } else {
         const messageData = {
           senderId: user.id,
@@ -684,7 +889,6 @@ const MessagesPage = () => {
           isImage: true,
         };
         socketRef.current.emit("sendMessage", messageData);
-        console.log("📤 Sent image:", messageData);
       }
 
       // Add to local messages immediately
@@ -717,7 +921,6 @@ const MessagesPage = () => {
 
     try {
       const response = await communicationApi.createGroup(newGroupName);
-      console.log("✅ Group created:", response);
 
       alert(`Tạo nhóm "${newGroupName}" thành công!`);
       setShowCreateGroup(false);
@@ -914,7 +1117,7 @@ const MessagesPage = () => {
       await communicationApi.removeMember(activeChat.groupId, memberId);
       alert(`Đã xóa ${memberName} khỏi nhóm!`);
       fetchGroupMembers(activeChat.groupId);
-      fetchGroups();
+      fetchMyGroups();
     } catch (error) {
       console.error("Failed to remove member:", error);
       const errorMsg =
@@ -941,7 +1144,7 @@ const MessagesPage = () => {
       // Refresh pending requests and members
       fetchPendingRequests(activeChat.groupId);
       fetchGroupMembers(activeChat.groupId);
-      fetchGroups();
+      fetchMyGroups();
     } catch (error) {
       console.error("Failed to modify request:", error);
       const errorMsg =
@@ -995,6 +1198,13 @@ const MessagesPage = () => {
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-6rem)]">
       <div className="flex h-[calc(100vh-8rem)] w-full bg-gray-50 overflow-hidden rounded-3xl border border-gray-200 shadow-sm">
+        {/* Offline Warning Banner */}
+        {!socketConnected && (
+          <div className="absolute top-0 left-0 right-0 bg-yellow-500 text-white px-4 py-2 text-center text-sm font-medium z-10">
+            ⚠️ Chat server offline - Chỉ xem được tin nhắn cũ, không gửi được tin nhắn mới
+          </div>
+        )}
+
         <div className="flex w-80 flex-col border-r border-gray-200 bg-white">
           <div className="border-b border-gray-100 p-4">
             <div className="flex items-center justify-between mb-4">
@@ -1317,13 +1527,19 @@ const MessagesPage = () => {
             <div className="flex items-center gap-4 text-blue-600">
               <button
                 type="button"
-                className="rounded-full p-2 transition-colors hover:bg-blue-50"
+                onClick={handleStartAudioCall}
+                disabled={!activeChat || activeChat.isGroup}
+                className="rounded-full p-2 transition-colors hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                title={activeChat?.isGroup ? "Không hỗ trợ gọi nhóm" : "Gọi thoại"}
               >
                 <Phone className="h-5 w-5" />
               </button>
               <button
                 type="button"
-                className="rounded-full p-2 transition-colors hover:bg-blue-50"
+                onClick={handleStartVideoCall}
+                disabled={!activeChat || activeChat.isGroup}
+                className="rounded-full p-2 transition-colors hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                title={activeChat?.isGroup ? "Không hỗ trợ gọi nhóm" : "Gọi video"}
               >
                 <Video className="h-5 w-5" />
               </button>
@@ -1839,6 +2055,29 @@ const MessagesPage = () => {
             </div>
           </div>
         )}
+
+        {/* Incoming Call Modal */}
+        <IncomingCallModal
+          isOpen={showIncomingCall}
+          onAccept={handleAcceptCall}
+          onReject={handleRejectCall}
+          callerName={incomingCallData?.callerName || "Người dùng"}
+          callerAvatar={incomingCallData?.callerAvatar || ""}
+          isVideoCall={incomingCallData?.isVideoCall || false}
+        />
+
+        {/* Video/Audio Call Modal */}
+        <VideoCallModal
+          isOpen={showVideoCall}
+          onClose={handleEndCall}
+          recipientId={callRecipientId}
+          recipientName={activeChat?.name || ""}
+          recipientAvatar={activeChat?.avatar || ""}
+          isAudioOnly={isAudioOnlyCall}
+          callStatus={callStatus}
+          socket={socketRef.current}
+          isCaller={isCaller}
+        />
       </div>
     </div>
   );

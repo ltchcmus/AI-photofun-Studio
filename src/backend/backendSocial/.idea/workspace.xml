@@ -20,6 +20,8 @@
       <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/entity/LimitRegister.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/LimitRegisterRepository.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/http/CommunicationClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/controller/WebSocket.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/controller/WebSocket.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/identity/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/identity/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/identity/pom.xml" afterDir="false" />
@@ -60,7 +62,7 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/identity" />
     <option name="ROOT_SYNC" value="DONT_SYNC" />
   </component>
   <component name="ProjectColorInfo">{
@@ -90,7 +92,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "fix-comment",
+    "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/ACER/Desktop/Project/NMCNPM/AI photofun Studio/src/backend/backendSocial/communication/src/main/java/service/communication/DTOs/request",
@@ -139,7 +141,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Application.post">
+  <component name="RunManager" selected="Application.identity">
     <configuration name="Profile" type="Application" factoryName="Application">
       <option name="ALTERNATIVE_JRE_PATH" value="temurin-21" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
