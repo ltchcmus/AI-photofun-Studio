@@ -1,6 +1,10 @@
 package services
 
 import (
+	"bytes"
+	"fmt"
+	"net/http"
+	"service/comments/internal/configuration"
 	"service/comments/internal/model"
 	"service/comments/internal/repositories"
 	"service/comments/internal/websocket"
@@ -16,6 +20,23 @@ func NewCommentService(commentRepo *repositories.CommentRepository) *CommentServ
 	}
 }
 
+func (s *CommentService) updatePostCommentCount(postID string, number int) error {
+	postServiceURL := configuration.GetPostServiceURL()
+	url := fmt.Sprintf("%s/update-comment-count?postId=%s&number=%d", postServiceURL, postID, number)
+
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer([]byte{}))
+	if err != nil {
+		return fmt.Errorf("failed to update post comment count: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("post service returned status %d", resp.StatusCode)
+	}
+
+	return nil
+}
+
 func (s *CommentService) CreateComment(req *model.CommentRequest) (*model.CommentResponse, error) {
 	comment := &model.Comment{
 		PostID:   req.PostID,
@@ -27,6 +48,12 @@ func (s *CommentService) CreateComment(req *model.CommentRequest) (*model.Commen
 	createdComment, err := s.commentRepo.CreateComment(comment)
 	if err != nil {
 		return nil, err
+	}
+
+	// Update post comment count (+1)
+	if err := s.updatePostCommentCount(createdComment.PostID, 1); err != nil {
+		// Log error but don't fail the request
+		fmt.Printf("Warning: Failed to update post comment count: %v\n", err)
 	}
 
 	// Broadcast comment via WebSocket
@@ -132,6 +159,12 @@ func (s *CommentService) DeleteComment(id string) error {
 	err = s.commentRepo.DeleteComment(id)
 	if err != nil {
 		return err
+	}
+
+	// Update post comment count (-1)
+	if err := s.updatePostCommentCount(comment.PostID, -1); err != nil {
+		// Log error but don't fail the request
+		fmt.Printf("Warning: Failed to update post comment count: %v\n", err)
 	}
 
 	// Broadcast delete via WebSocket
