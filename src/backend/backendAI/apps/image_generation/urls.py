@@ -1,15 +1,12 @@
 """
-URL Configuration for Image Generation Service
+URL routing for Image Generation feature
 """
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import ImageGenerationViewSet
-
-app_name = 'image_generation'
-
-router = DefaultRouter()
-router.register(r'', ImageGenerationViewSet, basename='image-generation')
+from django.urls import path
+from .views import ImageGenerationView, ImageGenerationStatusView
 
 urlpatterns = [
-    path('', include(router.urls)),
+    # Direct feature access (không qua conversation)
+    path('', ImageGenerationView.as_view(), name='image-generation'),
+    # Poll task status
+    path('status/<str:task_id>/', ImageGenerationStatusView.as_view(), name='image-generation-status'),
 ]

@@ -1,6 +1,5 @@
 """
-Image Generation Service
-
-Standalone service for generating images from text prompts using AI models
-(Stable Diffusion, DALL-E, etc.)
+Image Generation Feature
+Generate images from text prompts with optional style reference
 """
+from . import celery_tasks  # noqa
