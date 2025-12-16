@@ -12,6 +12,10 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import service.communication.DTOs.request.AnswerCallRequest;
+import service.communication.DTOs.request.CallUserRequest;
+import service.communication.DTOs.request.EndCallRequest;
+import service.communication.DTOs.request.RejectCallRequest;
 import service.communication.DTOs.request.SendMessageGroupRequest;
 import service.communication.DTOs.request.SendMessageRequest;
 import service.communication.entity.Communication;
@@ -59,6 +63,24 @@ public class WebSocket {
     this.server.addEventListener("sendMessageToGroup",
                                  SendMessageGroupRequest.class,
                                  this::sendMessageToGroup);
+
+    // Call events
+    this.server.addEventListener("callUser", CallUserRequest.class,
+                                 this::handleCallUser);
+    this.server.addEventListener("answerCall", AnswerCallRequest.class,
+                                 this::handleAnswerCall);
+    this.server.addEventListener("rejectCall", RejectCallRequest.class,
+                                 this::handleRejectCall);
+    this.server.addEventListener("endCall", EndCallRequest.class,
+                                 this::handleEndCall);
+
+    // WebRTC Signaling events
+    this.server.addEventListener("webrtc-offer", Map.class,
+                                 this::handleWebRTCOffer);
+    this.server.addEventListener("webrtc-answer", Map.class,
+                                 this::handleWebRTCAnswer);
+    this.server.addEventListener("webrtc-ice-candidate", Map.class,
+                                 this::handleWebRTCIceCandidate);
   }
 
   private void onConnect(SocketIOClient client) {
@@ -150,5 +172,152 @@ public class WebSocket {
         .sendEvent("receiveGroupMessage", data);
 
     log.info("Message broadcasted to room {}", data.getGroupId());
+  }
+
+  // WebRTC Call Handlers
+  private void handleCallUser(SocketIOClient client, CallUserRequest data,
+                              AckRequest ackRequest) {
+    log.info("Call request from {} to {}", data.getCallerId(),
+             data.getReceiverId());
+
+    SocketIOClient receiverClient = userIdToClient.get(data.getReceiverId());
+
+    if (receiverClient != null && receiverClient.isChannelOpen()) {
+      // Send incoming call event to receiver
+      receiverClient.sendEvent("incomingCall",
+                               Map.of("callerId", data.getCallerId(),
+                                      "receiverId", data.getReceiverId(),
+                                      "isVideoCall", data.isVideoCall(),
+                                      "callId", data.getCallId()));
+      log.info("Incoming call sent to {}", data.getReceiverId());
+    } else {
+      // Receiver is offline
+      client.sendEvent("callFailed",
+                       Map.of("message", "Người dùng không online",
+                              "receiverId", data.getReceiverId()));
+      log.info("Call failed - receiver {} is offline", data.getReceiverId());
+    }
+  }
+
+  private void handleAnswerCall(SocketIOClient client, AnswerCallRequest data,
+                                AckRequest ackRequest) {
+    log.info("Call answered by {} to {}", data.getReceiverId(),
+             data.getCallerId());
+
+    SocketIOClient callerClient = userIdToClient.get(data.getCallerId());
+
+    if (callerClient != null && callerClient.isChannelOpen()) {
+      // Send call accepted event to caller
+      callerClient.sendEvent("callAccepted",
+                             Map.of("callerId", data.getCallerId(),
+                                    "receiverId", data.getReceiverId(),
+                                    "callId", data.getCallId(), "isVideoCall",
+                                    data.isVideoCall()));
+      log.info("Call accepted event sent to caller {}", data.getCallerId());
+    } else {
+      log.warn("Caller {} not found or offline", data.getCallerId());
+    }
+  }
+
+  private void handleRejectCall(SocketIOClient client, RejectCallRequest data,
+                                AckRequest ackRequest) {
+    log.info("Call rejected by {} from {}", data.getReceiverId(),
+             data.getCallerId());
+
+    SocketIOClient callerClient = userIdToClient.get(data.getCallerId());
+
+    if (callerClient != null && callerClient.isChannelOpen()) {
+      // Send call rejected event to caller
+      callerClient.sendEvent("callRejected",
+                             Map.of("callerId", data.getCallerId(),
+                                    "receiverId", data.getReceiverId(),
+                                    "callId", data.getCallId()));
+      log.info("Call rejected event sent to caller {}", data.getCallerId());
+    } else {
+      log.warn("Caller {} not found or offline", data.getCallerId());
+    }
+  }
+
+  private void handleEndCall(SocketIOClient client, EndCallRequest data,
+                             AckRequest ackRequest) {
+    log.info("Call ended by {} with {}", data.getUserId(),
+             data.getOtherUserId());
+
+    SocketIOClient otherClient = userIdToClient.get(data.getOtherUserId());
+
+    if (otherClient != null && otherClient.isChannelOpen()) {
+      // Send call ended event to other user
+      otherClient.sendEvent("callEnded",
+                            Map.of("userId", data.getUserId(), "otherUserId",
+                                   data.getOtherUserId()));
+      log.info("Call ended event sent to {}", data.getOtherUserId());
+    } else {
+      log.warn("Other user {} not found or offline", data.getOtherUserId());
+    }
+  }
+
+  // WebRTC Signaling Handlers
+  private void handleWebRTCOffer(SocketIOClient client,
+                                 Map<String, Object> data,
+                                 AckRequest ackRequest) {
+    String targetUserId = (String)data.get("targetUserId");
+    Object offer = data.get("offer");
+    String fromUserId =
+        sessionToUserId.get(String.valueOf(client.getSessionId()));
+
+    log.info("WebRTC offer from {} to {}", fromUserId, targetUserId);
+
+    SocketIOClient targetClient = userIdToClient.get(targetUserId);
+    if (targetClient != null && targetClient.isChannelOpen()) {
+      targetClient.sendEvent("webrtc-offer",
+                             Map.of("fromUserId", fromUserId, "offer", offer));
+      log.info("WebRTC offer forwarded to {}", targetUserId);
+    } else {
+      log.warn("Target user {} not found or offline for WebRTC offer",
+               targetUserId);
+    }
+  }
+
+  private void handleWebRTCAnswer(SocketIOClient client,
+                                  Map<String, Object> data,
+                                  AckRequest ackRequest) {
+    String targetUserId = (String)data.get("targetUserId");
+    Object answer = data.get("answer");
+    String fromUserId =
+        sessionToUserId.get(String.valueOf(client.getSessionId()));
+
+    log.info("WebRTC answer from {} to {}", fromUserId, targetUserId);
+
+    SocketIOClient targetClient = userIdToClient.get(targetUserId);
+    if (targetClient != null && targetClient.isChannelOpen()) {
+      targetClient.sendEvent(
+          "webrtc-answer", Map.of("fromUserId", fromUserId, "answer", answer));
+      log.info("WebRTC answer forwarded to {}", targetUserId);
+    } else {
+      log.warn("Target user {} not found or offline for WebRTC answer",
+               targetUserId);
+    }
+  }
+
+  private void handleWebRTCIceCandidate(SocketIOClient client,
+                                        Map<String, Object> data,
+                                        AckRequest ackRequest) {
+    String targetUserId = (String)data.get("targetUserId");
+    Object candidate = data.get("candidate");
+    String fromUserId =
+        sessionToUserId.get(String.valueOf(client.getSessionId()));
+
+    log.info("WebRTC ICE candidate from {} to {}", fromUserId, targetUserId);
+
+    SocketIOClient targetClient = userIdToClient.get(targetUserId);
+    if (targetClient != null && targetClient.isChannelOpen()) {
+      targetClient.sendEvent(
+          "webrtc-ice-candidate",
+          Map.of("fromUserId", fromUserId, "candidate", candidate));
+      log.info("WebRTC ICE candidate forwarded to {}", targetUserId);
+    } else {
+      log.warn("Target user {} not found or offline for ICE candidate",
+               targetUserId);
+    }
   }
 }

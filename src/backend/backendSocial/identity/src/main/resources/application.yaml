@@ -2,6 +2,7 @@ server:
   port: ${PORT:8080}
   servlet:
     context-path: /identity
+  forward-headers-strategy: framework
 
 management:
   endpoints:
