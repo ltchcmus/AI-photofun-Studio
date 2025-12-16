@@ -25,32 +25,44 @@ Complete guide for setting up and deploying the AI PhotoFun Studio backend.
 
 - **Python 3.12+**
 - **Docker & Docker Compose** (for containerized deployment)
-- **MongoDB 6+** (for conversation storage)
-- **PostgreSQL 15+** (for image gallery)
-- **Redis 7+** (for Celery task queue)
+- **MongoDB 6+** (for conversation storage) OR use Docker
+- **Redis 7+** (for Celery task queue) OR use Docker
 
-### Required API Keys
+### Required Cloud Services
 
-1. **Freepik API Key** - Get from: https://www.freepik.com/api/sign-up
-2. **Google Gemini API Key** - Get from: https://ai.google.dev/
+1. **Supabase Account** (Free tier) - PostgreSQL database for image gallery
+   - Create account: https://supabase.com
+   - Free: 500MB storage, unlimited API requests
+   - See detailed setup: [SUPABASE_SETUP.md](./SUPABASE_SETUP.md)
+
+2. **Freepik API Key** - Get from: https://www.freepik.com/api/sign-up
+3. **Google Gemini API Key** - Get from: https://ai.google.dev/
 
 ---
 
 ## Quick Start (Local Development)
 
-### 1. Clone and Setup
+### 1. Setup Supabase Database (5 minutes)
+
+**🎯 Recommended approach - No local PostgreSQL needed!**
+
+1. Go to https://supabase.com and create account
+2. Create new project: `ai-photofun-studio`
+3. Copy database credentials from Settings → Database
+4. See detailed guide: **[SUPABASE_SETUP.md](./SUPABASE_SETUP.md)**
+
+### 2. Clone and Setup
 
 ```bash
 cd src/backend/backendAI
 
-# Copy environment template
-cp .env.example .env
-
-# Edit .env and add your API keys
+# Edit .env file (already included in repo for private project)
 nano .env  # or use your preferred editor
+
+# Update with your local settings if needed
 ```
 
-### 2. Install Dependencies
+### 3. Install Dependencies
 
 ```bash
 # Create virtual environment
@@ -61,37 +73,48 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 3. Configure Environment
+### 4. Configure Environment
 
 Edit `.env` file:
 ```bash
-# Add your API keys
+# Supabase PostgreSQL (from Supabase dashboard)
+SUPABASE_DB_HOST=db.xxxxxxxxxxxxx.supabase.co
+SUPABASE_DB_USER=postgres.xxxxxxxxxxxxx
+SUPABASE_DB_PASSWORD=your-supabase-password
+SUPABASE_DB_NAME=postgres
+SUPABASE_DB_PORT=5432
+
+# MongoDB (local or Docker)
+MONGO_URI=mongodb://localhost:27017
+
+# Redis (local or Docker)
+REDIS_URL=redis://localhost:6379/0
+
+# API Keys
 FREEPIK_API_KEY=your-freepik-key-here
 GEMINI_API_KEY=your-gemini-key-here
-
-# Database settings (defaults work for local dev)
-MONGO_URI=mongodb://localhost:27017
-POSTGRES_HOST=localhost
-POSTGRES_PASSWORD=postgres
-REDIS_URL=redis://localhost:6379/0
 ```
 
-### 4. Start Databases
+### 5. Start Required Services
 
-**Option A: Using Docker (Recommended)**
+**Option A: Using Docker for MongoDB & Redis (Recommended)**
 ```bash
-# Start only databases
-docker-compose up -d mongo postgres redis
+# Start only MongoDB and Redis (no PostgreSQL needed!)
+docker compose up -d mongo redis
 ```
 
 **Option B: Local Installation**
-- Install MongoDB, PostgreSQL, and Redis locally
+- Install MongoDB and Redis locally
 - Ensure they're running on default ports
+- **No need to install PostgreSQL** - using Supabase!
 
-### 5. Initialize Database
+### 6. Initialize Database
 
 ```bash
-# Run migrations
+# Test Supabase connection
+python manage.py check --database default
+
+# Run migrations (creates tables in Supabase)
 python manage.py migrate
 
 # Create superuser (optional)
