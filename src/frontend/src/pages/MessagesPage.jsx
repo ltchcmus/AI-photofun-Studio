@@ -32,8 +32,9 @@ import VideoCallModal from "../components/common/VideoCallModal";
 import IncomingCallModal from "../components/common/IncomingCallModal";
 import { stopCall } from "../api/call-video";
 
-// Use relative URL for socket to work with Vite proxy and ngrok
-const SOCKET_URL = window.location.origin;
+// For ngrok: use backend ngrok URL directly
+// For localhost: use window.location.origin with Vite proxy
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || window.location.origin;
 const DEFAULT_GROUP_AVATAR = "https://res.cloudinary.com/derwtva4p/image/upload/v1765458810/file-service/fffsss.png";
 
 const MessagesPage = () => {
