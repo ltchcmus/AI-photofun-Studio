@@ -1,8 +1,7 @@
-version: "3.9"
-
 services:
   # Main Django API Server
-  backendAI:
+  backendai:
+    image: backendai-api:latest
     build:
       context: .
       target: development
@@ -15,28 +14,28 @@ services:
       DJANGO_DEBUG: "1"
       DJANGO_SECRET_KEY: "${DJANGO_SECRET_KEY:-dev-secret-key-change-in-production}"
       DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,0.0.0.0"
-      
+
       # MongoDB (Conversations)
       MONGO_URI: "mongodb://mongo:27017"
       MONGO_DB_NAME: "ai_photofun_studio"
-      
+
       # PostgreSQL (Image Gallery)
       POSTGRES_HOST: "postgres"
       POSTGRES_PORT: "5432"
       POSTGRES_DB: "ai_photofun_gallery"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-postgres}"
-      
+
       # Redis (Celery)
       REDIS_URL: "redis://redis:6379/0"
       CELERY_BROKER_URL: "redis://redis:6379/0"
       CELERY_RESULT_BACKEND: "redis://redis:6379/0"
-      
+
       # External APIs
       FREEPIK_API_KEY: "${FREEPIK_API_KEY}"
       GEMINI_API_KEY: "${GEMINI_API_KEY}"
       FILE_SERVICE_URL: "${FILE_SERVICE_URL:-https://file-service-cdal.onrender.com}"
-      
+
     volumes:
       - .:/app
       - ./logs:/app/logs
@@ -46,7 +45,7 @@ services:
       - postgres
       - redis
     healthcheck:
-      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:9999/health/', timeout=5)"]
+      test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:9999/health/', timeout=5)" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -54,6 +53,7 @@ services:
 
   # Celery Worker for Background Tasks
   celery_worker:
+    image: backendai-celery:latest
     build:
       context: .
       target: development
@@ -63,28 +63,28 @@ services:
       # Django Settings
       DJANGO_DEBUG: "1"
       DJANGO_SECRET_KEY: "${DJANGO_SECRET_KEY:-dev-secret-key-change-in-production}"
-      
+
       # MongoDB
       MONGO_URI: "mongodb://mongo:27017"
       MONGO_DB_NAME: "ai_photofun_studio"
-      
+
       # PostgreSQL
       POSTGRES_HOST: "postgres"
       POSTGRES_PORT: "5432"
       POSTGRES_DB: "ai_photofun_gallery"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-postgres}"
-      
+
       # Redis
       REDIS_URL: "redis://redis:6379/0"
       CELERY_BROKER_URL: "redis://redis:6379/0"
       CELERY_RESULT_BACKEND: "redis://redis:6379/0"
-      
+
       # External APIs
       FREEPIK_API_KEY: "${FREEPIK_API_KEY}"
       GEMINI_API_KEY: "${GEMINI_API_KEY}"
       FILE_SERVICE_URL: "${FILE_SERVICE_URL:-https://file-service-cdal.onrender.com}"
-      
+
     volumes:
       - .:/app
       - ./logs:/app/logs
@@ -93,7 +93,7 @@ services:
       - mongo
       - postgres
       - redis
-      - backendAI
+      - backendai
 
   # Redis for Celery
   redis:
@@ -104,7 +104,7 @@ services:
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -118,7 +118,7 @@ services:
     volumes:
       - mongo_data:/data/db
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -136,13 +136,14 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
       timeout: 5s
       retries: 5
 
   # Flower for Celery Monitoring (Optional)
   flower:
+    image: backendai-flower:latest
     build:
       context: .
       target: development
@@ -163,6 +164,7 @@ volumes:
   mongo_data:
   postgres_data:
   redis_data:
+
 
 networks:
   default:
