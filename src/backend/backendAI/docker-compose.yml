@@ -20,12 +20,13 @@ services:
       MONGO_URI: "mongodb://mongo:27017"
       MONGO_DB_NAME: "ai_photofun_studio"
       
-      # PostgreSQL (Image Gallery)
-      POSTGRES_HOST: "postgres"
-      POSTGRES_PORT: "5432"
-      POSTGRES_DB: "ai_photofun_gallery"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-postgres}"
+      # Supabase PostgreSQL (Image Gallery) - Use environment variables
+      SUPABASE_DB_HOST: "${SUPABASE_DB_HOST}"
+      SUPABASE_DB_PORT: "${SUPABASE_DB_PORT:-5432}"
+      SUPABASE_DB_NAME: "${SUPABASE_DB_NAME:-postgres}"
+      SUPABASE_DB_USER: "${SUPABASE_DB_USER:-postgres}"
+      SUPABASE_DB_PASSWORD: "${SUPABASE_DB_PASSWORD}"
+      SUPABASE_DB_SSLMODE: "${SUPABASE_DB_SSLMODE:-require}"
       
       # Redis (Celery)
       REDIS_URL: "redis://redis:6379/0"
@@ -43,10 +44,9 @@ services:
       - ./media:/app/media
     depends_on:
       - mongo
-      - postgres
       - redis
     healthcheck:
-      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:9999/health/', timeout=5)"]
+      test: ["CMD", "curl", "-f", "http://localhost:9999/health/"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -58,7 +58,7 @@ services:
       context: .
       target: development
     container_name: backendai_celery
-    command: celery -A backendAI worker --loglevel=info --concurrency=4
+    command: celery -A backendAI worker --loglevel=info --concurrency=10
     environment:
       # Django Settings
       DJANGO_DEBUG: "1"
@@ -68,12 +68,13 @@ services:
       MONGO_URI: "mongodb://mongo:27017"
       MONGO_DB_NAME: "ai_photofun_studio"
       
-      # PostgreSQL
-      POSTGRES_HOST: "postgres"
-      POSTGRES_PORT: "5432"
-      POSTGRES_DB: "ai_photofun_gallery"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-postgres}"
+      # Supabase PostgreSQL
+      SUPABASE_DB_HOST: "${SUPABASE_DB_HOST}"
+      SUPABASE_DB_PORT: "${SUPABASE_DB_PORT:-5432}"
+      SUPABASE_DB_NAME: "${SUPABASE_DB_NAME:-postgres}"
+      SUPABASE_DB_USER: "${SUPABASE_DB_USER:-postgres}"
+      SUPABASE_DB_PASSWORD: "${SUPABASE_DB_PASSWORD}"
+      SUPABASE_DB_SSLMODE: "${SUPABASE_DB_SSLMODE:-require}"
       
       # Redis
       REDIS_URL: "redis://redis:6379/0"
@@ -91,7 +92,6 @@ services:
       - ./media:/app/media
     depends_on:
       - mongo
-      - postgres
       - redis
       - backendAI
 
@@ -123,24 +123,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # PostgreSQL for Image Gallery
-  postgres:
-    image: postgres:15-alpine
-    container_name: backendai_postgres
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_DB: "ai_photofun_gallery"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-postgres}"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   # Flower for Celery Monitoring (Optional)
   flower:
     build:
@@ -161,7 +143,6 @@ services:
 
 volumes:
   mongo_data:
-  postgres_data:
   redis_data:
 
 networks:

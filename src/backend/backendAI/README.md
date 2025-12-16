@@ -44,9 +44,8 @@ AI PhotoFun Studio Backend provides RESTful APIs for AI-powered image processing
 ### Option 1: Docker (Recommended)
 
 ```bash
-# 1. Configure environment
-cp .env.example .env
-nano .env  # Add your FREEPIK_API_KEY and GEMINI_API_KEY
+# 1. Configure environment (file .env already in repo)
+nano .env  # Verify/update your API keys if needed
 
 # 2. Start all services
 docker-compose up -d
@@ -68,9 +67,8 @@ source venv/bin/activate
 # 2. Install dependencies
 pip install -r requirements.txt
 
-# 3. Configure environment
-cp .env.example .env
-nano .env  # Add API keys
+# 3. Configure environment (file .env already in repo)
+nano .env  # Verify API keys
 
 # 4. Start databases (Docker)
 docker-compose up -d mongo postgres redis
