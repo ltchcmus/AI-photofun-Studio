@@ -1,8 +1,47 @@
-const servers = {
-  iceServers: [
+// Build ICE servers configuration
+const buildIceServers = () => {
+  const iceServers = [
+    // Google STUN servers (miễn phí và ổn định)
     { urls: "stun:stun1.l.google.com:19302" },
     { urls: "stun:stun2.l.google.com:19302" },
+    { urls: "stun:stun3.l.google.com:19302" },
+    { urls: "stun:stun4.l.google.com:19302" },
     { urls: "stun:stun.l.google.com:19302" },
+
+    // Twilio STUN (public, no auth needed)
+    { urls: "stun:global.stun.twilio.com:3478" },
+  ];
+
+  // Add custom TURN servers from environment variables (if configured)
+  if (import.meta.env.VITE_TURN_URL_1 && import.meta.env.VITE_TURN_USERNAME_1) {
+    iceServers.push({
+      urls: import.meta.env.VITE_TURN_URL_1,
+      username: import.meta.env.VITE_TURN_USERNAME_1,
+      credential: import.meta.env.VITE_TURN_CREDENTIAL_1,
+    });
+    console.log("✅ Custom TURN server 1 configured");
+  }
+
+  if (import.meta.env.VITE_TURN_URL_2 && import.meta.env.VITE_TURN_USERNAME_2) {
+    iceServers.push({
+      urls: import.meta.env.VITE_TURN_URL_2,
+      username: import.meta.env.VITE_TURN_USERNAME_2,
+      credential: import.meta.env.VITE_TURN_CREDENTIAL_2,
+    });
+    console.log("✅ Custom TURN server 2 configured");
+  }
+
+  if (import.meta.env.VITE_TURN_URL_3 && import.meta.env.VITE_TURN_USERNAME_3) {
+    iceServers.push({
+      urls: import.meta.env.VITE_TURN_URL_3,
+      username: import.meta.env.VITE_TURN_USERNAME_3,
+      credential: import.meta.env.VITE_TURN_CREDENTIAL_3,
+    });
+    console.log("✅ Custom TURN server 3 configured");
+  }
+
+  // Fallback TURN servers (OpenRelay - miễn phí nhưng có thể bị chặn)
+  iceServers.push(
     {
       urls: "turn:openrelay.metered.ca:80",
       username: "openrelayproject",
@@ -17,15 +56,26 @@ const servers = {
       urls: "turn:openrelay.metered.ca:443?transport=tcp",
       username: "openrelayproject",
       credential: "openrelayproject",
-    },
-  ],
-  iceCandidatePoolSize: 10,
+    }
+  );
+
+  return iceServers;
+};
+
+const servers = {
+  iceServers: buildIceServers(),
+  iceCandidatePoolSize: 20,
+  // Thêm cấu hình để tối ưu kết nối
+  iceTransportPolicy: "all", // Cho phép cả relay và direct connection
+  bundlePolicy: "max-bundle", // Gom tất cả media vào một kết nối
+  rtcpMuxPolicy: "require", // Giảm số lượng ports cần thiết
 };
 
 let peerConnection = null;
 let localStream = null;
 let currentSocket = null;
 let currentRemoteUserId = null;
+let iceCandidateQueue = []; // Queue for ICE candidates received before remote description
 
 export function initPeerConnection(
   socket,
@@ -39,16 +89,29 @@ export function initPeerConnection(
 
   currentSocket = socket;
   currentRemoteUserId = remoteUserId;
+  iceCandidateQueue = []; // Reset queue
+
+  console.log("🔧 Initializing peer connection with config:", {
+    iceServersCount: servers.iceServers.length,
+    remoteUserId,
+  });
 
   peerConnection = new RTCPeerConnection(servers);
 
   peerConnection.onicecandidate = (event) => {
     if (event.candidate && currentSocket) {
-      console.log("📤 Sending ICE candidate to:", currentRemoteUserId);
+      console.log(
+        "📤 Sending ICE candidate to:",
+        currentRemoteUserId,
+        "type:",
+        event.candidate.type
+      );
       currentSocket.emit("webrtc-ice-candidate", {
         targetUserId: currentRemoteUserId,
         candidate: event.candidate,
       });
+    } else if (!event.candidate) {
+      console.log("✅ All ICE candidates have been sent");
     }
   };
 
@@ -68,6 +131,14 @@ export function initPeerConnection(
 
   peerConnection.oniceconnectionstatechange = () => {
     console.log("🧊 ICE connection state:", peerConnection.iceConnectionState);
+    if (peerConnection.iceConnectionState === "failed") {
+      console.error("❌ ICE connection failed. Restarting ICE...");
+      peerConnection.restartIce();
+    }
+  };
+
+  peerConnection.onicegatheringstatechange = () => {
+    console.log("🔍 ICE gathering state:", peerConnection.iceGatheringState);
   };
 
   return peerConnection;
@@ -161,6 +232,18 @@ export async function handleOffer(offer) {
       localStream.getTracks().map((t) => t.kind)
     );
     await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+    console.log("✅ Remote description set successfully");
+
+    // Process any queued ICE candidates
+    if (iceCandidateQueue.length > 0) {
+      console.log(
+        `📥 Processing ${iceCandidateQueue.length} queued ICE candidates`
+      );
+      for (const candidate of iceCandidateQueue) {
+        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+      }
+      iceCandidateQueue = [];
+    }
 
     const answer = await peerConnection.createAnswer();
     await peerConnection.setLocalDescription(answer);
@@ -186,6 +269,18 @@ export async function handleAnswer(answer) {
     await peerConnection.setRemoteDescription(
       new RTCSessionDescription(answer)
     );
+    console.log("✅ Remote description set successfully");
+
+    // Process any queued ICE candidates
+    if (iceCandidateQueue.length > 0) {
+      console.log(
+        `📥 Processing ${iceCandidateQueue.length} queued ICE candidates`
+      );
+      for (const candidate of iceCandidateQueue) {
+        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+      }
+      iceCandidateQueue = [];
+    }
   } catch (error) {
     console.error("Error handling answer:", error);
   }
@@ -198,8 +293,16 @@ export async function handleIceCandidate(candidate) {
   }
 
   try {
-    console.log("📥 Adding ICE candidate");
+    // If remote description is not set yet, queue the candidate
+    if (!peerConnection.remoteDescription) {
+      console.log("⏳ Queuing ICE candidate (remote description not set yet)");
+      iceCandidateQueue.push(candidate);
+      return;
+    }
+
+    console.log("📥 Adding ICE candidate type:", candidate.type);
     await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+    console.log("✅ ICE candidate added successfully");
   } catch (error) {
     console.error("Error handling ICE candidate:", error);
   }
@@ -222,6 +325,7 @@ export function stopCall() {
 
   currentSocket = null;
   currentRemoteUserId = null;
+  iceCandidateQueue = []; // Clear queue
 }
 
 export function toggleAudio(enabled) {
