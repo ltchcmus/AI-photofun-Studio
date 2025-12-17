@@ -88,17 +88,11 @@ spring:
     driver-class-name: org.postgresql.Driver
     # HikariCP settings for Supabase transaction pooler
     hikari:
-      # Keep connection pool small for transaction pooler
       maximum-pool-size: 2
       minimum-idle: 1
-      # Short connection lifetime for transaction pooler
-      max-lifetime: 300000
-      connection-timeout: 20000
-      # CRITICAL: Don't use test queries with transaction pooler
+      max-lifetime: 600000
+      connection-timeout: 40000
       connection-test-query: null
-      validation-timeout: 3000
-      idle-timeout: 60000
-      # Disable auto-commit for consistency
+      validation-timeout: 5000
+      idle-timeout: 120000
       auto-commit: false
-      # Connection init SQL for Supabase
-      connection-init-sql: SELECT 1

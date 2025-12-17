@@ -9,7 +9,7 @@ export default defineConfig({
     allowedHosts: [
       ".ngrok-free.dev",
       ".ngrok.io",
-      "localhost",
+      "3.26.198.240:",
       "https://tashia-rude-subcortically.ngrok-free.dev",
     ],
     host: true,
@@ -22,7 +22,7 @@ export default defineConfig({
         secure: true,
       },
       "/socket.io": {
-        target: "http://localhost:8899",
+        target: "http://3.26.198.240:8899",
         changeOrigin: true,
         ws: true,
         secure: false,
@@ -34,17 +34,17 @@ export default defineConfig({
         },
       },
       "/api/v1/identity": {
-        target: "http://localhost:8888",
+        target: "http://3.26.198.240:8888",
         changeOrigin: true,
         secure: false,
       },
       "/api/v1/comments": {
-        target: "http://localhost:8003",
+        target: "http://3.26.198.240:8003",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/v1/, ""),
       },
       "/api/v1": {
-        target: "http://localhost:8888",
+        target: "http://3.26.198.240:8888",
         changeOrigin: true,
         secure: false,
       },
