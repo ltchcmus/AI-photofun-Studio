@@ -1,0 +1,51 @@
+# WINDOWS-SPECIFIC REQUIREMENTS
+# Dùng file này trên Windows để tránh lỗi
+
+# Core Django
+Django
+djangorestframework
+django-cors-headers
+django-filter
+drf-yasg
+
+# Database
+pymongo
+psycopg2-binary
+
+# Authentication
+djangorestframework-simplejwt
+PyJWT
+python-decouple
+
+# AI - Google Gemini (CẦN THIẾT)
+google-generativeai
+google
+google-genai
+google-auth
+
+# Image Processing (CẦN THIẾT)
+Pillow
+
+# Async Tasks - Windows compatible
+celery
+redis
+eventlet
+django-celery-beat
+
+# HTTP
+requests
+httpx
+
+# Data Validation
+pydantic
+
+# Utilities
+python-dotenv
+
+# Production - Windows compatible
+waitress
+whitenoise
+
+# Development (optional)
+django-debug-toolbar
+django-extensions

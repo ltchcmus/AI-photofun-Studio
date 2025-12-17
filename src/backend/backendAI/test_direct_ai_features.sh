@@ -62,41 +62,41 @@ poll_task() {
     return 1
 }
 
-# # Test 1: Image Generation
-# echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-# echo -e "${YELLOW}TEST 1: Image Generation${NC}"
-# echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+# Test 1: Image Generation
+echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${YELLOW}TEST 1: Image Generation${NC}"
+echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
-# echo "📤 Request: Generate a beautiful sunset over mountains"
-# response=$(curl -s -X POST "$BASE_URL/v1/features/image-generation/" \
-#   -H "Content-Type: application/json" \
-#   -d '{
-#     "user_id": "'"$SESSION_ID"'",
-#     "prompt": "A beautiful sunset over mountains, golden hour, dramatic clouds, photorealistic",
-#     "model": "realism",
-#     "aspect_ratio": "16:9",
-#     "session_id": "'"$SESSION_ID"'"
-#   }')
+echo "📤 Request: Generate a beautiful sunset over mountains"
+response=$(curl -s -X POST "$BASE_URL/v1/features/image-generation/" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": "'"$SESSION_ID"'",
+    "prompt": "A beautiful sunset over mountains, golden hour, dramatic clouds, photorealistic",
+    "model": "realism",
+    "aspect_ratio": "16:9",
+    "session_id": "'"$SESSION_ID"'"
+  }')
 
-# echo $response | jq '.'
-# task_id=$(echo $response | jq -r '.result.task_id')
+echo $response | jq '.'
+task_id=$(echo $response | jq -r '.result.task_id')
 
-# if [ "$task_id" != "null" ] && [ ! -z "$task_id" ]; then
-#     echo ""
-#     if poll_task $task_id "v1/features/image-generation"; then
-#         echo -e "${GREEN}✓ TEST 1 PASSED${NC}"
-#         TEST_IMAGE_URL=$(cat /tmp/last_generated_image.txt)
-#     else
-#         echo -e "${RED}✗ TEST 1 FAILED${NC}"
-#         exit 1
-#     fi
-# else
-#     echo -e "${RED}✗ TEST 1 FAILED: No task_id returned${NC}"
-#     exit 1
-# fi
+if [ "$task_id" != "null" ] && [ ! -z "$task_id" ]; then
+    echo ""
+    if poll_task $task_id "v1/features/image-generation"; then
+        echo -e "${GREEN}✓ TEST 1 PASSED${NC}"
+        TEST_IMAGE_URL=$(cat /tmp/last_generated_image.txt)
+    else
+        echo -e "${RED}✗ TEST 1 FAILED${NC}"
+        exit 1
+    fi
+else
+    echo -e "${RED}✗ TEST 1 FAILED: No task_id returned${NC}"
+    exit 1
+fi
 
-# echo ""
-# sleep 2
+echo ""
+sleep 2
 
 # Test 2: Upscale
 echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
