@@ -1,10 +1,33 @@
 @import "tailwindcss";
 
+/* Base reset for proper layout */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 /* Premium User Animations */
 @keyframes spin-slow {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -14,17 +37,20 @@
   0% {
     background-position: -200% center;
   }
+
   100% {
     background-position: 200% center;
   }
 }
 
 @keyframes pulse-glow {
+
   0%,
   100% {
     box-shadow: 0 0 5px rgba(236, 72, 153, 0.5),
       0 0 10px rgba(168, 85, 247, 0.3);
   }
+
   50% {
     box-shadow: 0 0 15px rgba(236, 72, 153, 0.8),
       0 0 25px rgba(168, 85, 247, 0.5);
