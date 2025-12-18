@@ -8,6 +8,7 @@ Base URL: https://api.freepik.com
 import requests
 import base64
 import logging
+import time
 from typing import Dict, Any, Optional, List
 from django.conf import settings
 
@@ -35,7 +36,7 @@ class FreepikClient:
     BASE_URL = "https://api.freepik.com"
     
     def __init__(self):
-        self.api_key = getattr(settings, 'FREEPIK_API_KEY', 'FPSX66c28e0d80af9f0e2e80d89ee01e834c')
+        self.api_key = getattr(settings, 'FREEPIK_API_KEY', 'FPSX3d8830ff41ace804badb3f71265b89bd')
         self.timeout = getattr(settings, 'FREEPIK_TIMEOUT', 60)  # Longer timeout for AI operations
         
     def _get_headers(self) -> Dict[str, str]:
@@ -45,20 +46,21 @@ class FreepikClient:
             'Content-Type': 'application/json'
         }
     
-    def _make_request(self, method: str, endpoint: str, **kwargs) -> Dict[str, Any]:
+    def _make_request(self, method: str, endpoint: str, max_retries: int = 3, **kwargs) -> Dict[str, Any]:
         """
-        Make HTTP request to Freepik API
+        Make HTTP request to Freepik API with retry mechanism
         
         Args:
             method: HTTP method
             endpoint: API endpoint (without base URL)
+            max_retries: Maximum number of retry attempts
             **kwargs: Additional request parameters
             
         Returns:
             Response JSON
             
         Raises:
-            FreepikAPIError: When request fails
+            FreepikAPIError: When request fails after all retries
         """
         url = f"{self.BASE_URL}{endpoint}"
         headers = self._get_headers()
@@ -67,33 +69,60 @@ class FreepikClient:
         if 'headers' in kwargs:
             headers.update(kwargs.pop('headers'))
         
-        try:
-            response = requests.request(
-                method=method,
-                url=url,
-                headers=headers,
-                timeout=self.timeout,
-                **kwargs
-            )
-            response.raise_for_status()
-            result = response.json()
-            
-            # Log response for debugging
-            logger.info(f"Freepik API response: {result}")
-            
-            return result
-            
-        except requests.exceptions.Timeout:
-            logger.error(f"Freepik API timeout: {url}")
-            raise FreepikAPIError("Freepik API request timeout")
-            
-        except requests.exceptions.HTTPError as e:
-            logger.error(f"Freepik API HTTP error: {e.response.status_code} - {e.response.text}")
-            raise FreepikAPIError(f"Freepik API error: {e.response.status_code}")
-            
-        except requests.exceptions.RequestException as e:
-            logger.error(f"Freepik API request failed: {str(e)}")
-            raise FreepikAPIError(f"Freepik API unavailable: {str(e)}")
+        last_error = None
+        for attempt in range(max_retries):
+            try:
+                response = requests.request(
+                    method=method,
+                    url=url,
+                    headers=headers,
+                    timeout=self.timeout,
+                    **kwargs
+                )
+                response.raise_for_status()
+                result = response.json()
+                
+                # Log response for debugging
+                logger.info(f"Freepik API response: {result}")
+                
+                return result
+                
+            except requests.exceptions.Timeout:
+                last_error = "Freepik API request timeout"
+                logger.warning(f"Freepik API timeout (attempt {attempt + 1}/{max_retries}): {url}")
+                if attempt < max_retries - 1:
+                    time.sleep(2 ** attempt)  # Exponential backoff
+                    continue
+                logger.error(f"Freepik API timeout after {max_retries} attempts: {url}")
+                
+            except requests.exceptions.HTTPError as e:
+                status_code = e.response.status_code
+                
+                # Don't retry on client errors (4xx)
+                if 400 <= status_code < 500:
+                    logger.error(f"Freepik API client error {status_code}: {e.response.text[:500]}")
+                    raise FreepikAPIError(f"Freepik API error {status_code}: Invalid request")
+                
+                # Retry on server errors (5xx)
+                last_error = f"Freepik API server error {status_code}"
+                logger.warning(f"Freepik API server error {status_code} (attempt {attempt + 1}/{max_retries})")
+                
+                if attempt < max_retries - 1:
+                    time.sleep(2 ** attempt)  # Exponential backoff: 1s, 2s, 4s
+                    continue
+                    
+                logger.error(f"Freepik API error {status_code} after {max_retries} attempts: {e.response.text[:200]}")
+                
+            except requests.exceptions.RequestException as e:
+                last_error = f"Freepik API unavailable: {str(e)}"
+                logger.warning(f"Freepik API request failed (attempt {attempt + 1}/{max_retries}): {str(e)}")
+                if attempt < max_retries - 1:
+                    time.sleep(2 ** attempt)
+                    continue
+                logger.error(f"Freepik API request failed after {max_retries} attempts: {str(e)}")
+        
+        # All retries exhausted
+        raise FreepikAPIError(f"{last_error} (after {max_retries} retries)")
     
     def _encode_image_to_base64(self, image_path_or_url: str) -> str:
         """

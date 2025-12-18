@@ -165,7 +165,7 @@ class PromptService:
         
         Usage:
             result = PromptService.refine_and_detect_intent("make a sunset")
-            # → {"refined_prompt": "...", "intent": "image_generate", ...}
+            # → {"refined_prompt": "...", "intent": "image_generation", ...}
         """
         system_prompt = f"""
         You are an AI assistant specialized in refining prompts for image generation and manipulation systems.
@@ -175,7 +175,7 @@ class PromptService:
         2. intent – The detected intent of the user from the following list:
         
         **Available AI Features:**
-        - image_generate: Tạo ảnh mới từ mô tả văn bản (text-to-image). Ví dụ: "vẽ một bức tranh hoàng hôn", "tạo ảnh con mèo".
+        - image_generation: Tạo ảnh mới từ mô tả văn bản (text-to-image). Ví dụ: "vẽ một bức tranh hoàng hôn", "tạo ảnh con mèo".
         - upscale: Tăng độ phân giải, làm rõ nét ảnh. Ví dụ: "làm rõ ảnh này", "tăng chất lượng ảnh".
         - remove_background: Xóa nền ảnh, tách đối tượng. Ví dụ: "xóa background", "tách nền ảnh này".
         - relight: Điều chỉnh ánh sáng, thay đổi lighting. Ví dụ: "chiếu sáng từ trái", "ánh sáng mặt trời buổi sáng".
@@ -187,7 +187,7 @@ class PromptService:
         **Rules:**
         - DO NOT invent details not implied by the user. Only clarify, structure, and enhance descriptiveness.
         - Keep the refined_prompt safe, descriptive, visual, and image-generation-friendly.
-        - If the user's intent is unclear or ambiguous, classify as "image_generate".
+        - If the user's intent is unclear or ambiguous, classify as "image_generation".
         - For features requiring images (upscale, remove_background, relight, style_transfer, reimagine, image_expand), the user should have already uploaded an image in the conversation context.
         - Output JSON ONLY, with exactly this schema:
 
@@ -197,7 +197,7 @@ class PromptService:
         }}
 
         **Examples:**
-        - User: "tạo ảnh một con rồng bay trên trời" → {{"refined_prompt": "A majestic dragon flying in the sky with spread wings, dramatic clouds, fantasy art style", "intent": "image_generate"}}
+        - User: "tạo ảnh một con rồng bay trên trời" → {{"refined_prompt": "A majestic dragon flying in the sky with spread wings, dramatic clouds, fantasy art style", "intent": "image_generation"}}
         - User: "làm rõ ảnh này" → {{"refined_prompt": "Enhance image resolution and clarity", "intent": "upscale"}}
         - User: "xóa background" → {{"refined_prompt": "Remove background from image", "intent": "remove_background"}}
         - User: "thêm ánh sáng mặt trời buổi chiều" → {{"refined_prompt": "Add warm afternoon sunlight with golden hour lighting", "intent": "relight"}}
@@ -231,7 +231,7 @@ class PromptService:
 
         result = {
             "refined_prompt": parsed_response.get("refined_prompt", "") or prompt,
-            "intent": parsed_response.get("intent", "image_generate"),
+            "intent": parsed_response.get("intent", "image_generation"),
             "metadata": {
                 "model": GEMINI_MODEL,
                 "processing_time": processing_time,
@@ -302,7 +302,7 @@ def merge_prompts(original_prompt: str, user_update_prompt: str):
     6. intent – The detected intent of the user from the following list:
     
     **Available AI Features:**
-    - image_generate: Tạo ảnh mới từ mô tả văn bản (text-to-image).
+    - image_generation: Tạo ảnh mới từ mô tả văn bản (text-to-image).
     - upscale: Tăng độ phân giải, làm rõ nét ảnh.
     - remove_background: Xóa nền ảnh, tách đối tượng.
     - relight: Điều chỉnh ánh sáng, thay đổi lighting.

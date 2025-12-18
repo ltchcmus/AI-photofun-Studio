@@ -73,7 +73,7 @@ class ImageGalleryService:
             user_id: User identifier
             image_url: Full URL of uploaded image
             refined_prompt: AI-refined prompt used for generation
-            intent: Generation intent (image_generate, upscale, relight, etc.)
+            intent: Generation intent (image_generation, upscale, relight, etc.)
             metadata: Additional metadata (model, aspect_ratio, style, etc.)
             
         Returns:
@@ -82,7 +82,7 @@ class ImageGalleryService:
                 "user_id": "user123",
                 "image_url": "https://...",
                 "refined_prompt": "...",
-                "intent": "image_generate",
+                "intent": "image_generation",
                 "metadata": {...},
                 "created_at": "2025-12-13T10:30:00Z"
             }

@@ -42,7 +42,7 @@ class ImageGenerationView(APIView):
         """
         serializer = ImageGenerationInputSerializer(data=request.data)
         if not serializer.is_valid():
-            return APIResponse.error(message="Validation failed", errors=serializer.errors)
+            return APIResponse.error(message="Validation failed", result=serializer.errors)
         
         validated_data = serializer.validated_data
         user_id = validated_data['user_id']
@@ -93,7 +93,7 @@ class ImageGenerationView(APIView):
             logger.error(f"Image generation error: {str(e)}")
             return APIResponse.error(
                 message="Image generation failed",
-                errors=str(e),
+                result={"detail": str(e)},
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
         
@@ -101,7 +101,7 @@ class ImageGenerationView(APIView):
             logger.error(f"Unexpected error in image generation: {str(e)}")
             return APIResponse.error(
                 message="Internal server error",
-                errors=str(e),
+                result={"detail": str(e)},
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
@@ -135,7 +135,7 @@ class ImageGenerationStatusView(APIView):
                             user_id=user_id,
                             image_url=image_url,
                             refined_prompt=result.get('prompt', 'Generated image'),
-                            intent='image_generate',
+                            intent='image_generation',
                             metadata={
                                 'task_id': task_id,
                                 'model': result.get('model', 'realism'),
@@ -159,7 +159,7 @@ class ImageGenerationStatusView(APIView):
             logger.error(f"Status polling error: {str(e)}")
             return APIResponse.error(
                 message="Failed to get task status",
-                errors=str(e),
+                result={"detail": str(e)},
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
         
@@ -167,6 +167,6 @@ class ImageGenerationStatusView(APIView):
             logger.error(f"Unexpected error polling status: {str(e)}")
             return APIResponse.error(
                 message="Internal server error",
-                errors=str(e),
+                result={"detail": str(e)},
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )

@@ -19,9 +19,9 @@ class ImageExpandView(APIView):
     
     @require_tokens(cost=TOKEN_COSTS['image_expand'], feature='image_expand')
     def post(self, request):
-        serializer = ImageExpandInputSerializer(data=request.data)
+        serializer = ImageExpandSerializer(data=request.data)
         if not serializer.is_valid():
-            return APIResponse.error(message="Validation failed", errors=serializer.errors)
+            return APIResponse.error(message="Validation failed", result=serializer.errors)
         
         validated_data = serializer.validated_data
         
@@ -61,7 +61,7 @@ class ImageExpandView(APIView):
             logger.error(f"Expand error: {str(e)}")
             return APIResponse.error(
                 message="Expand failed",
-                errors=str(e),
+                result={"detail": str(e)},
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
@@ -85,4 +85,4 @@ class ImageExpandStatusView(APIView):
             )
         
         except ImageExpandError as e:
-            return APIResponse.error(message="Failed to get status", errors=str(e))
+            return APIResponse.error(message="Failed to get status", result=str(e))

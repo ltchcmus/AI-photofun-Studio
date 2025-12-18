@@ -72,9 +72,9 @@ class RateLimitMiddleware(MiddlewareMixin):
             logger.warning(f"Rate limit exceeded for IP: {client_ip}")
             return JsonResponse(
                 {
-                    'error': 'Rate limit exceeded',
-                    'message': f'Maximum {self.requests_per_window} request(s) per {self.window_seconds} second(s)',
-                    'retry_after': self.window_seconds
+                    'code': 9999,
+                    'message': f'Rate limit exceeded: Maximum {self.requests_per_window} request(s) per {self.window_seconds} second(s)',
+                    'result': {'retry_after': self.window_seconds}
                 },
                 status=429
             )
@@ -171,10 +171,9 @@ class AdvancedRateLimitMiddleware(MiddlewareMixin):
             logger.warning(f"Rate limit exceeded for IP {client_ip} on tier {tier_name}")
             return JsonResponse(
                 {
-                    'error': 'Rate limit exceeded',
-                    'message': f'Maximum {max_requests} request(s) per {window} second(s) for {tier_name}',
-                    'tier': tier_name,
-                    'retry_after': window
+                    'code': 9999,
+                    'message': f'Rate limit exceeded: Maximum {max_requests} request(s) per {window} second(s) for {tier_name}',
+                    'result': {'tier': tier_name, 'retry_after': window}
                 },
                 status=429
             )
@@ -308,9 +307,9 @@ class InputSanitizationMiddleware(MiddlewareMixin):
             logger.warning(f"Input sanitization rejected request: {str(e)}")
             return JsonResponse(
                 {
-                    'error': 'Invalid input',
+                    'code': 9999,
                     'message': 'Your input contains potentially dangerous content',
-                    'detail': str(e)
+                    'result': {'detail': str(e)}
                 },
                 status=400
             )

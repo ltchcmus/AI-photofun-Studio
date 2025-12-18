@@ -46,7 +46,7 @@ def test_prompt_service():
     print('='*60)
     
     test_cases = [
-        ('tạo ảnh một con mèo', 'image_generate'),
+        ('tạo ảnh một con mèo', 'image_generation'),
         ('làm rõ ảnh này', 'upscale'),
         ('xóa background', 'remove_background'),
         ('thêm ánh sáng mặt trời', 'relight'),

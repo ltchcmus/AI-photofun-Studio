@@ -13,13 +13,13 @@ class IntentRouter:
     
     Usage:
         router = IntentRouter()
-        task_chain = router.route(intent="image_generate", payload=data, context={"session_id": "123"})
+        task_chain = router.route(intent="image_generation", payload=data, context={"session_id": "123"})
         result = task_chain.apply_async()
     """
     
     # Mapping intent to handler methods
     INTENT_HANDLERS: Dict[str, str] = {
-        IntentType.IMAGE_GENERATE: 'route_to_image_generation',
+        IntentType.image_generation: 'route_to_image_generation',
         IntentType.UPSCALE: 'route_to_upscale',
         IntentType.REMOVE_BACKGROUND: 'route_to_remove_background',
         IntentType.RELIGHT: 'route_to_relight',
@@ -35,7 +35,7 @@ class IntentRouter:
         Main routing method
         
         Args:
-            intent: Intent type (e.g., 'image_generate', 'upscale')
+            intent: Intent type (e.g., 'image_generation', 'upscale')
             payload: Request payload with feature-specific parameters
             context: Additional context (session_id, user_id, etc.)
         
@@ -56,7 +56,7 @@ class IntentRouter:
     @staticmethod
     def route_to_image_generation(payload: Dict, context: Dict):
         """
-        Intent: image_generate
+        Intent: image_generation
         
         Expected payload:
         {

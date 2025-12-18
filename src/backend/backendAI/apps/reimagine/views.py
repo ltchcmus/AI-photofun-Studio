@@ -19,9 +19,9 @@ class ReimagineView(APIView):
     
     @require_tokens(cost=TOKEN_COSTS['reimagine'], feature='reimagine')
     def post(self, request):
-        serializer = ReimagineInputSerializer(data=request.data)
+        serializer = ReimagineSerializer(data=request.data)
         if not serializer.is_valid():
-            return APIResponse.error(message="Validation failed", errors=serializer.errors)
+            return APIResponse.error(message="Validation failed", result=serializer.errors)
         
         validated_data = serializer.validated_data
         
@@ -59,7 +59,7 @@ class ReimagineView(APIView):
             logger.error(f"Reimagine error: {str(e)}")
             return APIResponse.error(
                 message="Reimagine failed",
-                errors=str(e),
+                result={"detail": str(e)},
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
@@ -83,4 +83,4 @@ class ReimagineStatusView(APIView):
             )
         
         except ReimagineError as e:
-            return APIResponse.error(message="Failed to get status", errors=str(e))
+            return APIResponse.error(message="Failed to get status", result=str(e))

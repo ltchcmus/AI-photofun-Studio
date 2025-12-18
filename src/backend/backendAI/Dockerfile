@@ -21,7 +21,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libsm6 \
     libxext6 \
     libxrender-dev \
-    libgl1 \
     git \
     curl \
     && rm -rf /var/lib/apt/lists/*
@@ -30,10 +29,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 
 # Install Python dependencies into /install directory
+# Use --no-deps for problematic packages
 RUN pip install --prefix=/install --no-warn-script-location \
     --upgrade pip setuptools wheel && \
     pip install --prefix=/install --no-warn-script-location \
-    -r requirements.txt gunicorn
+    -r requirements.txt gunicorn || \
+    pip install --prefix=/install --no-warn-script-location \
+    --no-deps -r requirements.txt gunicorn
 
 
 # ============================================================================
@@ -55,7 +57,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libsm6 \
     libxext6 \
     libxrender1 \
-    libgl1 \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
@@ -101,7 +102,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libsm6 \
     libxext6 \
     libxrender1 \
-    libgl1 \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 

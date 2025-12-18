@@ -1,0 +1,121 @@
+# Docker Compose cho Windows
+# Dùng file này nếu gặp vấn đề với docker-compose.yml chính
+
+version: "3.9"
+
+services:
+  # Redis for Celery
+  redis:
+    image: redis:7-alpine
+    container_name: backendai_redis_windows
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # Main Django API Server
+  backendAI:
+    build:
+      context: .
+      target: development
+      dockerfile: Dockerfile
+    container_name: backendai_api_windows
+    command: python manage.py runserver 0.0.0.0:9999
+    ports:
+      - "9999:9999"
+    environment:
+      # Django Settings
+      DJANGO_DEBUG: "1"
+      DJANGO_SECRET_KEY: "${DJANGO_SECRET_KEY:-dev-secret-key-change-in-production}"
+      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,0.0.0.0"
+      
+      # MongoDB (Conversations)
+      MONGO_URI: "${MONGO_URI:-mongodb://localhost:27017}"
+      MONGO_DB_NAME: "ai_photofun_studio"
+      
+      # Supabase PostgreSQL (Image Gallery)
+      SUPABASE_DB_HOST: "${SUPABASE_DB_HOST}"
+      SUPABASE_DB_PORT: "${SUPABASE_DB_PORT:-5432}"
+      SUPABASE_DB_NAME: "${SUPABASE_DB_NAME:-postgres}"
+      SUPABASE_DB_USER: "${SUPABASE_DB_USER:-postgres}"
+      SUPABASE_DB_PASSWORD: "${SUPABASE_DB_PASSWORD}"
+      SUPABASE_DB_SSLMODE: "${SUPABASE_DB_SSLMODE:-require}"
+      
+      # Redis (Celery)
+      REDIS_URL: "redis://redis:6379/0"
+      CELERY_BROKER_URL: "redis://redis:6379/0"
+      CELERY_RESULT_BACKEND: "redis://redis:6379/0"
+      
+      # External APIs
+      FREEPIK_API_KEY: "${FREEPIK_API_KEY}"
+      GEMINI_API_KEY: "${GEMINI_API_KEY}"
+      FILE_SERVICE_URL: "${FILE_SERVICE_URL:-https://file-service-cdal.onrender.com}"
+      
+    volumes:
+      # Windows path mapping - adjust if needed
+      - .:/app
+      - ./logs:/app/logs
+      - ./media:/app/media
+    depends_on:
+      - redis
+    networks:
+      - backendai_network
+
+  # Celery Worker (Windows compatible with eventlet)
+  celery_worker:
+    build:
+      context: .
+      target: development
+    container_name: backendai_celery_windows
+    # Windows: use eventlet pool instead of default
+    command: celery -A backendAI worker --loglevel=info --pool=solo --concurrency=10
+    environment:
+      DJANGO_DEBUG: "1"
+      DJANGO_SECRET_KEY: "${DJANGO_SECRET_KEY:-dev-secret-key-change-in-production}"
+      MONGO_URI: "${MONGO_URI:-mongodb://localhost:27017}"
+      MONGO_DB_NAME: "ai_photofun_studio"
+      REDIS_URL: "redis://redis:6379/0"
+      CELERY_BROKER_URL: "redis://redis:6379/0"
+      CELERY_RESULT_BACKEND: "redis://redis:6379/0"
+      FREEPIK_API_KEY: "${FREEPIK_API_KEY}"
+      GEMINI_API_KEY: "${GEMINI_API_KEY}"
+      FILE_SERVICE_URL: "${FILE_SERVICE_URL:-https://file-service-cdal.onrender.com}"
+    volumes:
+      - .:/app
+      - ./logs:/app/logs
+      - ./media:/app/media
+    depends_on:
+      - redis
+      - backendAI
+    networks:
+      - backendai_network
+
+  # Flower (Celery monitoring - optional)
+  flower:
+    build:
+      context: .
+      target: development
+    container_name: backendai_flower_windows
+    command: celery -A backendAI flower --port=5555
+    ports:
+      - "5555:5555"
+    environment:
+      CELERY_BROKER_URL: "redis://redis:6379/0"
+      CELERY_RESULT_BACKEND: "redis://redis:6379/0"
+    depends_on:
+      - redis
+      - celery_worker
+    networks:
+      - backendai_network
+
+volumes:
+  redis_data:
+
+networks:
+  backendai_network:
+    driver: bridge

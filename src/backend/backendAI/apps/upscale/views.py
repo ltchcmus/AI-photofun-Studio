@@ -39,9 +39,9 @@ class UpscaleView(APIView):
             "user_id": "user123"
         }
         """
-        serializer = UpscaleInputSerializer(data=request.data)
+        serializer = UpscaleSerializer(data=request.data)
         if not serializer.is_valid():
-            return APIResponse.error(message="Validation failed", errors=serializer.errors)
+            return APIResponse.error(message="Validation failed", result=serializer.errors)
         
         validated_data = serializer.validated_data
         
@@ -84,7 +84,7 @@ class UpscaleView(APIView):
             logger.error(f"Upscale error: {str(e)}")
             return APIResponse.error(
                 message="Upscale failed",
-                errors=str(e),
+                result={"detail": str(e)},
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
         
@@ -92,7 +92,7 @@ class UpscaleView(APIView):
             logger.error(f"Unexpected error in upscale: {str(e)}")
             return APIResponse.error(
                 message="Internal server error",
-                errors=str(e),
+                result={"detail": str(e)},
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
@@ -122,7 +122,7 @@ class UpscaleStatusView(APIView):
             logger.error(f"Status polling error: {str(e)}")
             return APIResponse.error(
                 message="Failed to get task status",
-                errors=str(e),
+                result={"detail": str(e)},
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
         
@@ -130,6 +130,6 @@ class UpscaleStatusView(APIView):
             logger.error(f"Unexpected error polling status: {str(e)}")
             return APIResponse.error(
                 message="Internal server error",
-                errors=str(e),
+                result={"detail": str(e)},
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )

@@ -14,7 +14,7 @@ Intent Router giúp:
 
 | Intent Code | Feature | App Name |
 |-------------|---------|----------|
-| `image_generate` | Generate images from text | `image_generation` |
+| `image_generation` | Generate images from text | `image_generation` |
 | `upscale` | Enhance image resolution | `upscale` |
 | `remove_background` | Remove image background | `remove_background` |
 | `relight` | Adjust image lighting | `relight` |
@@ -31,7 +31,7 @@ from apps.intent_router import IntentRouter
 
 # Route request to appropriate service
 task_chain = IntentRouter.route(
-    intent="image_generate",
+    intent="image_generation",
     payload={
         "prompt": "A sunset over mountains",
         "aspect_ratio": "16:9",
@@ -222,7 +222,7 @@ router = IntentRouter()
 
 # Test image generation
 result = router.route(
-    intent=IntentType.IMAGE_GENERATE,
+    intent=IntentType.image_generation,
     payload={"prompt": "test"},
     context={"session_id": "test123"}
 )
@@ -241,7 +241,7 @@ result = router.route(
 ```python
 from apps.intent_router import IntentType
 
-IntentType.IMAGE_GENERATE       # "image_generate"
+IntentType.image_generation       # "image_generation"
 IntentType.UPSCALE               # "upscale"
 IntentType.REMOVE_BACKGROUND     # "remove_background"
 IntentType.RELIGHT               # "relight"

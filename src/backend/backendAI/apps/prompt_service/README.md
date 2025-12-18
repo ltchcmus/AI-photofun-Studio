@@ -40,7 +40,7 @@ result = PromptService.refine_and_detect_intent(
 )
 # → {
 #     "refined_prompt": "A vibrant sunset...",
-#     "intent": "image_generate",
+#     "intent": "image_generation",
 #     "metadata": {"model": "gemini-2.5-flash", "processing_time": 1.2}
 # }
 ```
@@ -178,14 +178,14 @@ Output: "A vibrant sunset over mountains with warm orange and pink hues"
 System Prompt:
   "Analyze the prompt and output JSON:
    1. refined_prompt - detailed version
-   2. intent - detected intent from [image_generate, upscale, ...]
+   2. intent - detected intent from [image_generation, upscale, ...]
    
    Output JSON with schema: {refined_prompt, intent}"
 
 Input: "make a sunset"
 Output: {
   "refined_prompt": "A vibrant sunset...",
-  "intent": "image_generate"
+  "intent": "image_generation"
 }
 ```
 
@@ -321,7 +321,7 @@ def refine_and_detect_intent(
 ```python
 {
     "refined_prompt": str,
-    "intent": str,  # One of: image_generate, upscale, style_transfer, ...
+    "intent": str,  # One of: image_generation, upscale, style_transfer, ...
     "metadata": {
         "model": str,
         "processing_time": float
@@ -343,7 +343,7 @@ assert len(refined) > len("make sunset")
 result = PromptService.refine_and_detect_intent("make sunset")
 assert "refined_prompt" in result
 assert "intent" in result
-assert result["intent"] == "image_generate"
+assert result["intent"] == "image_generation"
 
 # Test with context
 refined = PromptService.refine_only(

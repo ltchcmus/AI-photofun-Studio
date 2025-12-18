@@ -1,0 +1,42 @@
+# MINIMAL REQUIREMENTS - Chỉ những gì BẮT BUỘC phải có
+# Dùng file này nếu requirements.txt bị lỗi
+
+# Core Django
+Django
+djangorestframework
+django-cors-headers
+
+# Database
+pymongo
+psycopg2-binary
+
+# Authentication
+djangorestframework-simplejwt
+PyJWT
+python-decouple
+
+# AI - Google Gemini (BẮT BUỘC)
+google-generativeai
+google
+google-genai
+google-auth
+
+
+# Image Processing (BẮT BUỘC)
+Pillow
+
+# Async Tasks (BẮT BUỘC cho Celery)
+celery
+redis
+
+# HTTP (BẮT BUỘC cho API calls)
+requests
+
+# Data Validation
+pydantic
+
+# Utilities
+python-dotenv
+
+# Production Server
+gunicorn

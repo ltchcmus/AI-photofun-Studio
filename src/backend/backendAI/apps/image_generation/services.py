@@ -4,6 +4,7 @@ Business logic for text-to-image generation using Freepik Mystic API
 """
 
 import logging
+import time
 from typing import Dict, Optional, Any
 from core.freepik_client import freepik_client
 from core.file_uploader import file_uploader, FileUploadError
@@ -11,6 +12,7 @@ from core.exceptions import TokenServiceError
 from apps.prompt_service.services import PromptService
 from apps.image_gallery.services import image_gallery_service
 from apps.intent_router.constants import AspectRatio
+from shared.metadata_schema import MetadataBuilder
 
 logger = logging.getLogger(__name__)
 
@@ -113,17 +115,20 @@ class ImageGenerationService:
                 data['uploaded_urls'] = uploaded_urls
                 
                 # Save to image gallery
+                metadata = MetadataBuilder.image_generation(
+                    task_id=data.get('task_id', 'unknown'),
+                    aspect_ratio=aspect_ratio,
+                    model=model,
+                    resolution=resolution,
+                    num_images=len(uploaded_urls),
+                    freepik_task_id=data.get('task_id')
+                )
                 self._save_to_gallery(
                     user_id=user_id,
                     uploaded_urls=uploaded_urls,
-                    refined_prompt=refined_prompt,
-                    intent='image_generate',
-                    metadata={
-                        'model': model,
-                        'aspect_ratio': aspect_ratio,
-                        'resolution': resolution,
-                        'original_prompt': prompt
-                    }
+                    refined_prompt=prompt,
+                    intent='image_generation',
+                    metadata=metadata
                 )
             
             return {

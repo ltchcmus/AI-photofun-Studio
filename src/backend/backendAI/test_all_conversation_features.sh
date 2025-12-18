@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Test All Conversation Features
-# Tests image_generate, upscale, remove_background, reimagine, relight, expand
+# Tests image_generation, upscale, remove_background, reimagine, relight, expand
 
 BASE_URL="http://localhost:9999/api/v1/chat"
 USER_ID="test_user_$(date +%s)"

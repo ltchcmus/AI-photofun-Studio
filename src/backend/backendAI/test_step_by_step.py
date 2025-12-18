@@ -173,7 +173,7 @@ def test_image_generation_flow():
         
         gallery_images = image_gallery_service.get_user_images(
             user_id=user_id,
-            intent='image_generate',
+            intent='image_generation',
             limit=10
         )
         
