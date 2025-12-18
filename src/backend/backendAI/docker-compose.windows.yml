@@ -73,7 +73,7 @@ services:
       target: development
     container_name: backendai_celery_windows
     # Windows: use eventlet pool instead of default
-    command: celery -A backendAI worker --loglevel=info --pool=solo --concurrency=4
+    command: celery -A backendAI worker --loglevel=info --pool=solo --concurrency=10
     environment:
       DJANGO_DEBUG: "1"
       DJANGO_SECRET_KEY: "${DJANGO_SECRET_KEY:-dev-secret-key-change-in-production}"

@@ -12,14 +12,14 @@ urlpatterns = [
     path('', ImageGalleryListView.as_view(), name='image-gallery-list'),
     
     # Deleted images
-    path('deleted', ImageGalleryDeletedListView.as_view(), name='image-gallery-deleted'),
+    path('deleted/', ImageGalleryDeletedListView.as_view(), name='image-gallery-deleted'),
     
-    # Image detail and soft delete
-    path('<uuid:image_id>', ImageGalleryDetailView.as_view(), name='image-gallery-detail'),
+    # Image detail and soft delete (with optional trailing slash)
+    path('<uuid:image_id>/', ImageGalleryDetailView.as_view(), name='image-gallery-detail'),
     
     # Restore deleted image
-    path('<uuid:image_id>/restore', ImageGalleryRestoreView.as_view(), name='image-gallery-restore'),
+    path('<uuid:image_id>/restore/', ImageGalleryRestoreView.as_view(), name='image-gallery-restore'),
     
     # Permanent delete
-    path('<uuid:image_id>/permanent', ImageGalleryPermanentDeleteView.as_view(), name='image-gallery-permanent-delete'),
+    path('<uuid:image_id>/permanent/', ImageGalleryPermanentDeleteView.as_view(), name='image-gallery-permanent-delete'),
 ]
