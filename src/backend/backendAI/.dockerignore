@@ -1,0 +1,72 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info
+dist
+build
+venv
+env
+ENV
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Testing
+.pytest_cache
+.coverage
+htmlcov
+*.log
+
+# Documentation
+*.md
+!README.md
+docs/
+testing_apps/
+
+# Logs
+logs/*.log
+*.log
+
+# Media (will be mounted as volume)
+media/*
+!media/.gitkeep
+
+# Models (download at runtime)
+ml_models/*
+!ml_models/.gitkeep
+
+# Static files (collect at runtime)
+staticfiles/*
+!staticfiles/.gitkeep
+
+# Database
+*.db
+*.sqlite3
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Test files
+test_*.sh
+test_*.py
+*_test.py
+tests/

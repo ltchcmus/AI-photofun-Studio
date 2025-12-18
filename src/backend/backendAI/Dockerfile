@@ -1,7 +1,7 @@
 # ============================================================================
-# STAGE 1: Base Image with Python and System Dependencies
+# STAGE 1: Builder - Heavy image for compiling dependencies
 # ============================================================================
-FROM python:3.11-slim as base
+FROM python:3.12-slim as builder
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
@@ -10,10 +10,9 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     DEBIAN_FRONTEND=noninteractive
 
-# Set work directory
 WORKDIR /app
 
-# Install system dependencies
+# Install build dependencies (needed for compiling packages)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
@@ -22,23 +21,46 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libsm6 \
     libxext6 \
     libxrender-dev \
-    libgl1-mesa-glx \
-    libglib2.0-0 \
-    wget \
+    libgl1 \
     git \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-
-# ============================================================================
-# STAGE 2: Development Image
-# ============================================================================
-FROM base as development
-
-# Install Python dependencies
+# Copy only requirements first (for better layer caching)
 COPY requirements.txt .
-RUN pip install --upgrade pip setuptools wheel && \
-    pip install -r requirements.txt
+
+# Install Python dependencies into /install directory
+RUN pip install --prefix=/install --no-warn-script-location \
+    --upgrade pip setuptools wheel && \
+    pip install --prefix=/install --no-warn-script-location \
+    -r requirements.txt gunicorn
+
+
+# ============================================================================
+# STAGE 2: Development - Includes all tools for local development
+# ============================================================================
+FROM python:3.12-slim as development
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    DEBIAN_FRONTEND=noninteractive
+
+WORKDIR /app
+
+# Install only runtime dependencies (lighter than builder)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    libgomp1 \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender1 \
+    libgl1 \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy Python packages from builder
+COPY --from=builder /install /usr/local
 
 # Copy project files
 COPY . .
@@ -46,108 +68,80 @@ COPY . .
 # Create necessary directories
 RUN mkdir -p media logs ml_models staticfiles
 
-# Expose API Gateway port
+# Expose port
 EXPOSE 9999
 
-# Run migrations and start development server
+# Development command (with auto-reload)
 CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:9999"]
 
 
 # ============================================================================
-# STAGE 3: Production Image
+# STAGE 3: Production - Minimal runtime image (SMALLEST)
 # ============================================================================
-FROM base as production
+FROM python:3.12-slim as production
 
-# Install Python dependencies (production only)
-COPY requirements.txt .
-RUN pip install --upgrade pip setuptools wheel && \
-    pip install -r requirements.txt && \
-    pip install gunicorn
-
-# Copy project files
-COPY . .
-
-# Create necessary directories
-RUN mkdir -p media logs ml_models staticfiles
-
-# Collect static files
-RUN python manage.py collectstatic --noinput || true
-
-# Create non-root user
-RUN useradd -m -u 1000 appuser && \
-    chown -R appuser:appuser /app
-USER appuser
-
-# Expose API Gateway port
-EXPOSE 9999
-
-# Run gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:9999", "--workers", "4", "--timeout", "300", "backendAI.wsgi:application"]
-
-
-# ============================================================================
-# STAGE 4: GPU-Enabled Image (for AI model inference)
-# ============================================================================
-FROM nvidia/cuda:12.1.0-cudnn8-runtime-ubuntu22.04 as gpu
-
-# Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=1 \
     DEBIAN_FRONTEND=noninteractive \
-    CUDA_HOME=/usr/local/cuda
+    # Supabase PostgreSQL configuration
+    SUPABASE_DB_HOST=${SUPABASE_DB_HOST:-localhost} \
+    SUPABASE_DB_PORT=${SUPABASE_DB_PORT:-5432} \
+    SUPABASE_DB_NAME=${SUPABASE_DB_NAME:-postgres} \
+    SUPABASE_DB_USER=${SUPABASE_DB_USER:-postgres} \
+    SUPABASE_DB_PASSWORD=${SUPABASE_DB_PASSWORD} \
+    SUPABASE_DB_SSLMODE=${SUPABASE_DB_SSLMODE:-require}
 
-# Install Python 3.11
+WORKDIR /app
+
+# Install ONLY runtime libraries (no build tools = smaller image)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    software-properties-common && \
-    add-apt-repository ppa:deadsnakes/ppa && \
-    apt-get update && apt-get install -y --no-install-recommends \
-    python3.11 \
-    python3.11-dev \
-    python3.11-distutils \
-    python3-pip \
-    build-essential \
-    libpq-dev \
+    libpq5 \
     libgomp1 \
     libglib2.0-0 \
     libsm6 \
     libxext6 \
-    libxrender-dev \
-    libgl1-mesa-glx \
-    wget \
-    git \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+    libxrender1 \
+    libgl1 \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
 
-# Set Python 3.11 as default
-RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1 && \
-    update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1
+# Copy ONLY compiled packages from builder (not source code)
+COPY --from=builder /install /usr/local
 
-WORKDIR /app
+# Copy only necessary application files (exclude tests, docs, etc)
+COPY manage.py .
+COPY backendAI ./backendAI
+COPY apps ./apps
+COPY core ./core
+COPY shared ./shared
+COPY services ./services
 
-# Install Python dependencies with GPU support
-COPY requirements.txt .
-RUN pip3 install --upgrade pip setuptools wheel && \
-    pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu121 && \
-    pip3 install -r requirements.txt && \
-    pip3 install gunicorn
-
-# Copy project files
-COPY . .
-
-# Create necessary directories
-RUN mkdir -p media logs ml_models staticfiles
-
-# Collect static files
-RUN python3 manage.py collectstatic --noinput || true
-
-# Create non-root user
-RUN useradd -m -u 1000 appuser && \
+# Create directories with proper permissions
+RUN mkdir -p media logs ml_models staticfiles && \
+    useradd -m -u 1000 appuser && \
     chown -R appuser:appuser /app
+
+# Collect static files (if any)
+RUN python manage.py collectstatic --noinput || true
+
+# Switch to non-root user for security
 USER appuser
 
-# Expose API Gateway port
+# Expose port
 EXPOSE 9999
 
-# Run gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:9999", "--workers", "2", "--timeout", "600", "backendAI.wsgi:application"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:9999/health/ || exit 1
+
+# Production server with optimized settings
+CMD ["gunicorn", "backendAI.wsgi:application", \
+     "--bind", "0.0.0.0:9999", \
+     "--workers", "4", \
+     "--worker-class", "sync", \
+     "--timeout", "120", \
+     "--max-requests", "1000", \
+     "--max-requests-jitter", "50", \
+     "--access-logfile", "-", \
+     "--error-logfile", "-", \
+     "--log-level", "info"]

@@ -35,9 +35,9 @@ db.sqlite3-journal
 /staticfiles
 /static
 
-# Environment variables
+# Environment variables - REMOVED (private repo, safe to push .env)
 .env
-.env.local
+# .env.local
 
 # IDE
 .vscode/
