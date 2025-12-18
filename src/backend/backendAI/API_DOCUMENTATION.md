@@ -226,7 +226,7 @@ console.log(data.result.session_id);
         "content": "I'll generate a beautiful sunset image for you.",
         "timestamp": "2025-12-14T10:31:05Z",
         "task_id": "abc123",
-        "intent": "image_generate"
+        "intent": "image_generation"
       }
     ],
     "created_at": "2025-12-14T10:30:00Z",
@@ -276,7 +276,7 @@ curl http://localhost:9999/v1/chat/sessions/6766f0a3e5c9d2a3b4c5d6e7
       "content": "I'll generate that image for you. Processing...",
       "timestamp": "2025-12-14T10:32:02Z",
       "task_id": "0a83d2ae-472e-484b-9c2b-3ae774907280",
-      "intent": "image_generate",
+      "intent": "image_generation",
       "status": "CREATED"
     }
   }
@@ -664,11 +664,19 @@ with open('image.jpg', 'rb') as f:
 
 API for managing user's generated images collection.
 
+**Important:** All gallery endpoints do NOT use trailing slash.
+
+**URL Format:**
+- ✅ `/v1/gallery` (correct)
+- ✅ `/v1/gallery/<image_id>` (correct)
+- ❌ `/v1/gallery/` (wrong - will redirect)
+- ❌ `/v1/gallery/<image_id>/` (wrong - will redirect)
+
 ### 1. List User Images
 
-**Endpoint:** `GET /v1/gallery/`
+**Endpoint:** `GET /v1/gallery`
 
-**Description:** Retrieves all images for a user (excludes deleted images).
+**Description:** Retrieves all non-deleted images for a user.
 
 **Query Parameters:**
 - `user_id` (string, required) - User identifier
@@ -684,22 +692,34 @@ API for managing user's generated images collection.
       "user_id": "user123",
       "image_url": "https://res.cloudinary.com/derwtva4p/image/upload/v1765695826/file-service/13c09135.png",
       "prompt": "A breathtaking sunset over mountains",
-      "intent": "image_generate",
+      "intent": "image_generation",
       "metadata": {
+        "feature": "image_generation",
+        "version": "1.0",
+        "timestamp": "2025-12-14T10:32:15Z",
         "task_id": "0a83d2ae-472e-484b-9c2b-3ae774907280",
         "aspect_ratio": "16:9",
-        "style": "photorealistic"
+        "style": "photorealistic",
+        "processing_time": 3.5
       },
-      "created_at": "2025-12-14T10:32:15Z"
+      "created_at": "2025-12-14T10:32:15Z",
+      "deleted_at": null
     },
     {
       "id": 2,
       "user_id": "user123",
       "image_url": "https://res.cloudinary.com/derwtva4p/image/upload/v1765696480/file-service/51d7a4a8.png",
-      "prompt": null,
+      "prompt": "Portrait photo with transparent background",
       "intent": "remove_background",
-      "metadata": {},
-      "created_at": "2025-12-14T10:35:20Z"
+      "metadata": {
+        "feature": "remove_background",
+        "version": "1.0",
+        "timestamp": "2025-12-14T10:35:20Z",
+        "task_id": "51d7a4a8",
+        "processing_time": 2.1
+      },
+      "created_at": "2025-12-14T10:35:20Z",
+      "deleted_at": null
     }
   ]
 }
@@ -727,7 +747,7 @@ images.forEach(img => {
 
 ### 2. Create Gallery Entry
 
-**Endpoint:** `POST /v1/gallery/`
+**Endpoint:** `POST /v1/gallery`
 
 **Description:** Manually adds an image to user's gallery (usually done automatically after generation).
 
@@ -737,10 +757,14 @@ images.forEach(img => {
   "user_id": "user123",
   "image_url": "https://res.cloudinary.com/derwtva4p/image/upload/v1765695826/file-service/abc123.png",
   "prompt": "A beautiful landscape",
-  "intent": "image_generate",
+  "intent": "image_generation",
   "metadata": {
+    "feature": "image_generation",
+    "version": "1.0",
+    "timestamp": "2025-12-14T11:00:00Z",
     "task_id": "abc123",
-    "aspect_ratio": "16:9"
+    "aspect_ratio": "16:9",
+    "processing_time": 3.5
   }
 }
 ```
@@ -752,8 +776,8 @@ images.forEach(img => {
 | `user_id` | string | Yes | User identifier |
 | `image_url` | string | Yes | Cloudinary URL of the image |
 | `prompt` | string | No | Original or refined prompt used |
-| `intent` | string | No | Feature used: "image_generate", "remove_background", etc. |
-| `metadata` | object | No | Additional data (task_id, parameters, etc.) |
+| `intent` | string | No | Feature used: "image_generation", "remove_background", etc. |
+| `metadata` | object | No | Standardized metadata from MetadataBuilder (feature, version, timestamp, task_id, processing_time, feature-specific fields) |
 
 **Response:**
 ```json
@@ -765,12 +789,17 @@ images.forEach(img => {
     "user_id": "user123",
     "image_url": "https://res.cloudinary.com/derwtva4p/image/upload/v1765695826/file-service/abc123.png",
     "prompt": "A beautiful landscape",
-    "intent": "image_generate",
+    "intent": "image_generation",
     "metadata": {
+      "feature": "image_generation",
+      "version": "1.0",
+      "timestamp": "2025-12-14T11:00:00Z",
       "task_id": "abc123",
-      "aspect_ratio": "16:9"
+      "aspect_ratio": "16:9",
+      "processing_time": 3.5
     },
-    "created_at": "2025-12-14T11:00:00Z"
+    "created_at": "2025-12-14T11:00:00Z",
+    "deleted_at": null
   }
 }
 ```
@@ -779,12 +808,12 @@ images.forEach(img => {
 
 ### 3. Get Single Image
 
-**Endpoint:** `GET /v1/gallery/{image_id}/`
+**Endpoint:** `GET /v1/gallery/{image_id}`
 
 **Description:** Retrieves details of a specific image.
 
 **URL Parameters:**
-- `image_id` (integer, required) - Image ID
+- `image_id` (UUID, required) - Image ID
 
 **Response:**
 ```json
@@ -796,30 +825,36 @@ images.forEach(img => {
     "user_id": "user123",
     "image_url": "https://res.cloudinary.com/derwtva4p/image/upload/v1765695826/file-service/13c09135.png",
     "prompt": "A breathtaking sunset over mountains",
-    "intent": "image_generate",
+    "intent": "image_generation",
     "metadata": {
-      "task_id": "0a83d2ae-472e-484b-9c2b-3ae774907280"
+      "feature": "image_generation",
+      "version": "1.0",
+      "timestamp": "2025-12-14T10:32:15Z",
+      "task_id": "0a83d2ae-472e-484b-9c2b-3ae774907280",
+      "aspect_ratio": "16:9",
+      "processing_time": 3.5
     },
-    "created_at": "2025-12-14T10:32:15Z"
+    "created_at": "2025-12-14T10:32:15Z",
+    "deleted_at": null
   }
 }
 ```
 
 **Example (cURL):**
 ```bash
-curl http://localhost:9999/v1/gallery/1/
+curl "http://localhost:9999/v1/gallery/1"
 ```
 
 ---
 
 ### 4. Delete Image
 
-**Endpoint:** `DELETE /v1/gallery/{image_id}/`
+**Endpoint:** `DELETE /v1/gallery/{image_id}`
 
-**Description:** Soft deletes an image (marks as deleted, doesn't remove from Cloudinary).
+**Description:** Soft deletes an image (marks as deleted, doesn't remove from Cloudinary). The image can be restored later.
 
 **URL Parameters:**
-- `image_id` (integer, required) - Image ID
+- `image_id` (UUID, required) - Image ID
 
 **Response:**
 ```json
@@ -832,13 +867,13 @@ curl http://localhost:9999/v1/gallery/1/
 
 **Example (cURL):**
 ```bash
-curl -X DELETE http://localhost:9999/v1/gallery/1/
+curl -X DELETE "http://localhost:9999/v1/gallery/cf5bdd40-c8b2-49a6-83e4-f2917919648c"
 ```
 
 **Example (JavaScript):**
 ```javascript
 const deleteImage = async (imageId) => {
-  const response = await fetch(`http://localhost:9999/v1/gallery/${imageId}/`, {
+  const response = await fetch(`http://localhost:9999/v1/gallery/${imageId}`, {
     method: 'DELETE'
   });
   
@@ -850,12 +885,495 @@ const deleteImage = async (imageId) => {
 };
 
 // Usage
-await deleteImage(1);
+await deleteImage('cf5bdd40-c8b2-49a6-83e4-f2917919648c');
 ```
 
 ---
 
+### 5. List Deleted Images
+
+**Endpoint:** `GET /v1/gallery/deleted`
+
+**Description:** Retrieves all soft-deleted images for a user. Useful for implementing a "trash" or "recycle bin" feature.
+
+**Query Parameters:**
+- `user_id` (string, required) - User identifier
+
+**Response:**
+```json
+{
+  "code": 1000,
+  "message": "Success",
+  "result": [
+    {
+      "id": "cf5bdd40-c8b2-49a6-83e4-f2917919648c",
+      "user_id": "user123",
+      "image_url": "https://res.cloudinary.com/derwtva4p/image/upload/v1765695826/file-service/abc123.png",
+      "prompt": "A sunset over mountains",
+      "intent": "image_generation",
+      "metadata": {
+        "feature": "image_generation",
+        "task_id": "abc123",
+        "aspect_ratio": "16:9"
+      },
+      "created_at": "2025-12-18T10:00:00Z",
+      "deleted_at": "2025-12-18T15:30:00Z"
+    }
+  ]
+}
+```
+
+**Example (cURL):**
+```bash
+curl "http://localhost:9999/v1/gallery/deleted?user_id=user123"
+```
+
+**Example (JavaScript):**
+```javascript
+const getDeletedImages = async (userId) => {
+  const response = await fetch(`http://localhost:9999/v1/gallery/deleted?user_id=${userId}`);
+  const { result: images } = await response.json();
+  
+  console.log(`Found ${images.length} deleted images`);
+  images.forEach(img => {
+    console.log(`Deleted: ${img.prompt} at ${img.deleted_at}`);
+  });
+  
+  return images;
+};
+
+// Usage
+const deletedImages = await getDeletedImages('user123');
+```
+
+---
+
+### 6. Restore Deleted Image
+
+**Endpoint:** `POST /v1/gallery/{image_id}/restore`
+
+**Description:** Restores a soft-deleted image, making it visible in the main gallery again.
+
+**URL Parameters:**
+- `image_id` (UUID, required) - Image ID to restore
+
+**Response:**
+```json
+{
+  "code": 1000,
+  "message": "Image restored successfully",
+  "result": {
+    "id": "cf5bdd40-c8b2-49a6-83e4-f2917919648c",
+    "user_id": "user123",
+    "image_url": "https://res.cloudinary.com/derwtva4p/image/upload/v1765695826/file-service/abc123.png",
+    "prompt": "A sunset over mountains",
+    "intent": "image_generation",
+    "metadata": {
+      "feature": "image_generation",
+      "task_id": "abc123"
+    },
+    "created_at": "2025-12-18T10:00:00Z",
+    "deleted_at": null
+  }
+}
+```
+
+**Error Response (Image Not Deleted):**
+```json
+{
+  "code": 9999,
+  "message": "Image is not deleted",
+  "errors": null
+}
+```
+
+**Example (cURL):**
+```bash
+curl -X POST "http://localhost:9999/v1/gallery/cf5bdd40-c8b2-49a6-83e4-f2917919648c/restore"
+```
+
+**Example (JavaScript):**
+```javascript
+const restoreImage = async (imageId) => {
+  const response = await fetch(
+    `http://localhost:9999/v1/gallery/${imageId}/restore`,
+    { method: 'POST' }
+  );
+  
+  const data = await response.json();
+  
+  if (data.code === 1000) {
+    console.log('Image restored successfully');
+    return data.result;
+  } else {
+    console.error('Restore failed:', data.message);
+    throw new Error(data.message);
+  }
+};
+
+// Usage
+await restoreImage('cf5bdd40-c8b2-49a6-83e4-f2917919648c');
+```
+
+---
+
+### 7. Permanent Delete
+
+**Endpoint:** `DELETE /v1/gallery/{image_id}/permanent`
+
+**Description:** Permanently deletes an image from the database. **This action cannot be undone.** The image will be removed from the database but NOT from Cloudinary.
+
+**⚠️ Warning:** This is a destructive operation. Consider using soft delete (endpoint #4) instead.
+
+**URL Parameters:**
+- `image_id` (UUID, required) - Image ID
+
+**Response:**
+```json
+{
+  "code": 1000,
+  "message": "Image permanently deleted",
+  "result": {}
+}
+```
+
+**Example (cURL):**
+```bash
+curl -X DELETE "http://localhost:9999/v1/gallery/cf5bdd40-c8b2-49a6-83e4-f2917919648c/permanent"
+```
+
+**Example (JavaScript):**
+```javascript
+const permanentlyDeleteImage = async (imageId) => {
+  // Show confirmation dialog
+  if (!confirm('Are you sure? This action cannot be undone!')) {
+    return;
+  }
+  
+  const response = await fetch(
+    `http://localhost:9999/v1/gallery/${imageId}/permanent`,
+    { method: 'DELETE' }
+  );
+  
+  if (response.ok) {
+    console.log('Image permanently deleted');
+    // Remove from UI completely
+    document.getElementById(`img-${imageId}`).remove();
+  }
+};
+
+// Usage
+await permanentlyDeleteImage('cf5bdd40-c8b2-49a6-83e4-f2917919648c');
+```
+
+---
+
+## Image Gallery Complete Workflow
+
+### Trash/Recycle Bin Implementation
+
+Here's a complete example of implementing a trash bin feature:
+
+```javascript
+class GalleryWithTrash {
+  constructor(baseUrl = 'http://localhost:9999/v1') {
+    this.baseUrl = baseUrl;
+  }
+  
+  // Get active images
+  async getActiveImages(userId) {
+    const response = await fetch(`${this.baseUrl}/gallery?user_id=${userId}`);
+    const { result } = await response.json();
+    return result;
+  }
+  
+  // Get deleted images (trash)
+  async getDeletedImages(userId) {
+    const response = await fetch(`${this.baseUrl}/gallery/deleted?user_id=${userId}`);
+    const { result } = await response.json();
+    return result;
+  }
+  
+  // Soft delete (move to trash)
+  async moveToTrash(imageId) {
+    const response = await fetch(`${this.baseUrl}/gallery/${imageId}`, {
+      method: 'DELETE'
+    });
+    return response.ok;
+  }
+  
+  // Restore from trash
+  async restoreFromTrash(imageId) {
+    const response = await fetch(`${this.baseUrl}/gallery/${imageId}/restore`, {
+      method: 'POST'
+    });
+    const data = await response.json();
+    return data.code === 1000;
+  }
+  
+  // Empty trash (permanent delete all)
+  async emptyTrash(userId) {
+    const deletedImages = await this.getDeletedImages(userId);
+    
+    const deletePromises = deletedImages.map(img =>
+      fetch(`${this.baseUrl}/gallery/${img.id}/permanent`, {
+        method: 'DELETE'
+      })
+    );
+    
+    await Promise.all(deletePromises);
+    console.log(`Permanently deleted ${deletedImages.length} images`);
+  }
+  
+  // Render gallery with trash support
+  renderGallery(containerId, images, isTrash = false) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    
+    images.forEach(img => {
+      const card = document.createElement('div');
+      card.className = 'gallery-card';
+      card.id = `img-${img.id}`;
+      
+      if (isTrash) {
+        card.innerHTML = `
+          <img src="${img.image_url}" alt="${img.prompt || 'Image'}">
+          <div class="info">
+            <p>${img.prompt || 'No prompt'}</p>
+            <small>Deleted: ${new Date(img.deleted_at).toLocaleString()}</small>
+          </div>
+          <button onclick="gallery.restoreFromTrash('${img.id}')">Restore</button>
+          <button onclick="gallery.permanentDelete('${img.id}')">Delete Forever</button>
+        `;
+      } else {
+        card.innerHTML = `
+          <img src="${img.image_url}" alt="${img.prompt || 'Image'}">
+          <div class="info">
+            <p>${img.prompt || 'No prompt'}</p>
+            <small>${new Date(img.created_at).toLocaleString()}</small>
+          </div>
+          <button onclick="gallery.moveToTrash('${img.id}')">Delete</button>
+        `;
+      }
+      
+      container.appendChild(card);
+    });
+  }
+}
+
+// Usage
+const gallery = new GalleryWithTrash();
+
+// Load active gallery
+const activeImages = await gallery.getActiveImages('user123');
+gallery.renderGallery('gallery-container', activeImages, false);
+
+// Load trash
+const deletedImages = await gallery.getDeletedImages('user123');
+gallery.renderGallery('trash-container', deletedImages, true);
+```
+
+---
+
+## Gallery API Summary
+
+| Endpoint | Method | Description | Soft Delete Safe? |
+|----------|--------|-------------|-------------------|
+| `/v1/gallery` | GET | List active images | ✅ Yes |
+| `/v1/gallery` | POST | Create image entry | N/A |
+| `/v1/gallery/{id}` | GET | Get single image | ✅ Yes (if not deleted) |
+| `/v1/gallery/{id}` | DELETE | Soft delete image | ✅ Yes (reversible) |
+| `/v1/gallery/deleted` | GET | List deleted images | ✅ Shows deleted only |
+| `/v1/gallery/{id}/restore` | POST | Restore deleted image | ✅ Yes |
+| `/v1/gallery/{id}/permanent` | DELETE | Permanent delete | ❌ No (irreversible) |
+
+---
+
 ## Error Handling
+
+---
+
+## Standardized Metadata Structure
+
+All AI feature responses include a standardized `metadata` object created by the `MetadataBuilder` class. This ensures consistency across all features.
+
+### Base Metadata Fields
+
+Every metadata object includes these core fields:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `feature` | string | Feature name: "image_generation", "upscale", "remove_background", "relight", "style_transfer", "reimagine", "image_expand" |
+| `version` | string | Feature version (default: "1.0") |
+| `timestamp` | string | ISO 8601 timestamp when processing started |
+| `task_id` | string | Unique identifier for the task |
+| `processing_time` | float | Time taken in seconds (optional) |
+
+### Feature-Specific Fields
+
+Each feature adds its own specific fields to the base metadata:
+
+#### Image Generation
+```json
+{
+  "feature": "image_generation",
+  "version": "1.0",
+  "timestamp": "2025-12-18T10:00:00Z",
+  "task_id": "abc123",
+  "processing_time": 3.5,
+  "aspect_ratio": "16:9",
+  "num_images": 1,
+  "seed": 42,
+  "style": "photorealistic"
+}
+```
+
+#### Upscale
+```json
+{
+  "feature": "upscale",
+  "version": "1.0",
+  "timestamp": "2025-12-18T10:00:00Z",
+  "task_id": "abc123",
+  "processing_time": 2.1,
+  "scale_factor": 2,
+  "upscaling_type": "conservative"
+}
+```
+
+#### Remove Background
+```json
+{
+  "feature": "remove_background",
+  "version": "1.0",
+  "timestamp": "2025-12-18T10:00:00Z",
+  "task_id": "abc123",
+  "processing_time": 1.8,
+  "input_source": "url"
+}
+```
+
+#### Relight
+```json
+{
+  "feature": "relight",
+  "version": "1.0",
+  "timestamp": "2025-12-18T10:00:00Z",
+  "task_id": "abc123",
+  "processing_time": 2.5,
+  "light_direction": "top-right",
+  "intensity": 0.8
+}
+```
+
+#### Style Transfer
+```json
+{
+  "feature": "style_transfer",
+  "version": "1.0",
+  "timestamp": "2025-12-18T10:00:00Z",
+  "task_id": "abc123",
+  "processing_time": 3.2,
+  "style_name": "van_gogh",
+  "strength": 0.75
+}
+```
+
+#### Reimagine
+```json
+{
+  "feature": "reimagine",
+  "version": "1.0",
+  "timestamp": "2025-12-18T10:00:00Z",
+  "task_id": "abc123",
+  "processing_time": 3.8,
+  "creativity_level": "medium",
+  "reference_image_url": "https://..."
+}
+```
+
+#### Image Expand
+```json
+{
+  "feature": "image_expand",
+  "version": "1.0",
+  "timestamp": "2025-12-18T10:00:00Z",
+  "task_id": "abc123",
+  "processing_time": 2.9,
+  "expand_direction": "all",
+  "expand_pixels": 100,
+  "prompt": "seamless continuation of the scene"
+}
+```
+
+### Using Metadata in Frontend
+
+**TypeScript Interface Example:**
+```typescript
+interface BaseMetadata {
+  feature: string;
+  version: string;
+  timestamp: string;
+  task_id: string;
+  processing_time?: number;
+}
+
+interface ImageGenerationMetadata extends BaseMetadata {
+  feature: 'image_generation';
+  aspect_ratio: string;
+  num_images: number;
+  seed?: number;
+  style?: string;
+}
+
+interface RemoveBackgroundMetadata extends BaseMetadata {
+  feature: 'remove_background';
+  input_source: 'url' | 'base64' | 'file';
+}
+
+// Usage
+const handleImageGeneration = (response: any) => {
+  const metadata: ImageGenerationMetadata = response.result.metadata;
+  
+  console.log(`Feature: ${metadata.feature}`);
+  console.log(`Took ${metadata.processing_time}s`);
+  console.log(`Aspect ratio: ${metadata.aspect_ratio}`);
+  
+  // Display in UI
+  displayProcessingInfo(metadata);
+};
+```
+
+**JavaScript Example:**
+```javascript
+const displayMetadata = (metadata) => {
+  const info = {
+    'Feature': metadata.feature,
+    'Processing Time': `${metadata.processing_time}s`,
+    'Task ID': metadata.task_id,
+    'Timestamp': new Date(metadata.timestamp).toLocaleString()
+  };
+  
+  // Add feature-specific fields
+  if (metadata.feature === 'image_generation') {
+    info['Aspect Ratio'] = metadata.aspect_ratio;
+    info['Style'] = metadata.style;
+  } else if (metadata.feature === 'remove_background') {
+    info['Input Source'] = metadata.input_source;
+  }
+  
+  console.table(info);
+};
+
+// Usage
+fetch('http://localhost:9999/v1/gallery/1/')
+  .then(res => res.json())
+  .then(({ result }) => {
+    displayMetadata(result.metadata);
+  });
+```
+
+---
 
 ### Common Error Codes
 
@@ -1076,13 +1594,13 @@ class GalleryManager {
   }
   
   async loadGallery(userId) {
-    const response = await fetch(`${this.baseUrl}/gallery/?user_id=${userId}`);
+    const response = await fetch(`${this.baseUrl}/gallery?user_id=${userId}`);
     const { result: images } = await response.json();
     return images;
   }
   
   async deleteImage(imageId) {
-    const response = await fetch(`${this.baseUrl}/gallery/${imageId}/`, {
+    const response = await fetch(`${this.baseUrl}/gallery/${imageId}`, {
       method: 'DELETE'
     });
     return response.ok;
