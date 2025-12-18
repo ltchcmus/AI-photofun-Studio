@@ -12,10 +12,14 @@ export default function CommunicationTab({ config, auth, apiClient }) {
   // 1-1 Chat
   const [receiverId, setReceiverId] = useState('')
   const [message, setMessage] = useState('')
+  const [isImage, setIsImage] = useState(false)
+  const [isVideo, setIsVideo] = useState(false)
   
   // Group Chat
   const [groupId, setGroupId] = useState('')
   const [groupMessage, setGroupMessage] = useState('')
+  const [groupIsImage, setGroupIsImage] = useState(false)
+  const [groupIsVideo, setGroupIsVideo] = useState(false)
   const [groupName, setGroupName] = useState('')
 
   // Socket.IO connection - Compatible with netty-socketio
@@ -126,11 +130,15 @@ export default function CommunicationTab({ config, auth, apiClient }) {
       senderId: auth.userId,
       receiverId: receiverId,
       message: message,
-      isImage: false
+      isImage: isImage,
+      isVideo: isVideo
     }
     socket.emit('sendMessage', data)
-    addSocketMessage(`📤 Sent to ${receiverId}: ${message}`)
+    const type = isVideo ? '🎥 Video' : isImage ? '🖼️ Image' : '💬 Text'
+    addSocketMessage(`📤 Sent to ${receiverId} (${type}): ${message}`)
     setMessage('')
+    setIsImage(false)
+    setIsVideo(false)
   }
 
   const sendGroupMsg = () => {
@@ -147,11 +155,15 @@ export default function CommunicationTab({ config, auth, apiClient }) {
       senderId: auth.userId,
       groupId: groupId,
       message: groupMessage,
-      isImage: false
+      isImage: groupIsImage,
+      isVideo: groupIsVideo
     }
     socket.emit('sendMessageToGroup', data)
-    addSocketMessage(`📤 Sent to group ${groupId}: ${groupMessage}`)
+    const type = groupIsVideo ? '🎥 Video' : groupIsImage ? '🖼️ Image' : '💬 Text'
+    addSocketMessage(`📤 Sent to group ${groupId} (${type}): ${groupMessage}`)
     setGroupMessage('')
+    setGroupIsImage(false)
+    setGroupIsVideo(false)
   }
 
   const joinRoom = () => {
@@ -202,11 +214,35 @@ export default function CommunicationTab({ config, auth, apiClient }) {
             onChange={(e) => setReceiverId(e.target.value)} 
           />
           <input 
-            placeholder="Message" 
+            placeholder="Message (URL if image/video)" 
             value={message} 
             onChange={(e) => setMessage(e.target.value)} 
             onKeyPress={(e) => e.key === 'Enter' && sendDirectMessage()}
           />
+        </div>
+        <div className="form-row" style={{gap: '10px', alignItems: 'center'}}>
+          <label style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
+            <input 
+              type="checkbox" 
+              checked={isImage} 
+              onChange={(e) => {
+                setIsImage(e.target.checked)
+                if (e.target.checked) setIsVideo(false)
+              }}
+            />
+            🖼️ Is Image
+          </label>
+          <label style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
+            <input 
+              type="checkbox" 
+              checked={isVideo} 
+              onChange={(e) => {
+                setIsVideo(e.target.checked)
+                if (e.target.checked) setIsImage(false)
+              }}
+            />
+            🎥 Is Video
+          </label>
           <button className="btn btn-primary" onClick={sendDirectMessage} disabled={!socketConnected}>
             Send Message
           </button>
@@ -231,13 +267,37 @@ export default function CommunicationTab({ config, auth, apiClient }) {
         </div>
         <div className="form-row">
           <input 
-            placeholder="Group Message" 
+            placeholder="Group Message (URL if image/video)" 
             value={groupMessage} 
             onChange={(e) => setGroupMessage(e.target.value)} 
             onKeyPress={(e) => e.key === 'Enter' && sendGroupMsg()}
           />
+        </div>
+        <div className="form-row" style={{gap: '10px', alignItems: 'center'}}>
+          <label style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
+            <input 
+              type="checkbox" 
+              checked={groupIsImage} 
+              onChange={(e) => {
+                setGroupIsImage(e.target.checked)
+                if (e.target.checked) setGroupIsVideo(false)
+              }}
+            />
+            🖼️ Is Image
+          </label>
+          <label style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
+            <input 
+              type="checkbox" 
+              checked={groupIsVideo} 
+              onChange={(e) => {
+                setGroupIsVideo(e.target.checked)
+                if (e.target.checked) setGroupIsImage(false)
+              }}
+            />
+            🎥 Is Video
+          </label>
           <button className="btn btn-primary" onClick={sendGroupMsg} disabled={!socketConnected}>
-            Send to Group
+            Send Group Message
           </button>
         </div>
       </div>

@@ -1,23 +1,18 @@
-package service.post.DTOs.response;
+package service.post.DTOs.request;
 
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Builder
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreatePostResponse {
-    String postId;
-    String userId;
+public class CreateVideoPostRequest {
     String caption;
-    String imageUrl;
     String videoUrl;
     String prompt;
-    long likes;
-    long comments;
-    String createdAt;
 }

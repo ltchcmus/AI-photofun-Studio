@@ -17,6 +17,7 @@ public class GetPostResponse {
     String userId;
     String caption;
     String imageUrl;
+    String videoUrl;
     String prompt;
     long likes = 0;
     long comments = 0;

@@ -136,6 +136,7 @@ public class WebSocket {
                                       .senderId(data.getSenderId())
                                       .message(data.getMessage())
                                       .isImage(data.isImage())
+                                      .isVideo(data.isVideo())
                                       .build();
     communicationService.addCommunication(communication);
   }
@@ -164,6 +165,7 @@ public class WebSocket {
                                .senderId(data.getSenderId())
                                .message(data.getMessage())
                                .isImage(data.isImage())
+                               .isVideo(data.isVideo())
                                .build();
     groupService.addGroupMessage(message);
 

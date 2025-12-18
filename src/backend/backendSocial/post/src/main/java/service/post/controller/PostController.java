@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import service.post.DTOs.HttpResponse;
 import service.post.DTOs.request.CreatePostRequest;
+import service.post.DTOs.request.CreateVideoPostRequest;
 import service.post.DTOs.response.CreatePostResponse;
 import service.post.DTOs.response.GetPostResponse;
 import service.post.DTOs.response.PageResponse;
@@ -39,6 +40,22 @@ public class PostController {
         .build();
   }
 
+  @PostMapping("/create-video")
+  HttpResponse<CreatePostResponse> createVideoPost(@RequestPart("caption") String caption,
+                                                    @RequestPart("prompt") String prompt,
+                                                   @RequestPart("videoUrl") String videoUrl) {
+      CreateVideoPostRequest request = CreateVideoPostRequest.builder()
+              .caption(caption)
+              .prompt(prompt)
+              .videoUrl(videoUrl)
+              .build();
+      service.post.DTOs.response.CreatePostResponse createPostResponse = postService.uploadVideo(request);
+    return HttpResponse.<CreatePostResponse>builder()
+        .code(1000)
+        .result(createPostResponse)
+        .message("Video post created successfully")
+        .build();
+  }
   @DeleteMapping("/delete-all")
   HttpResponse<Void> deleteAll() {
     postService.deleteAll();

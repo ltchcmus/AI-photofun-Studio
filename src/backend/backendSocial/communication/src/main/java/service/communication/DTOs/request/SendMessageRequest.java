@@ -20,4 +20,5 @@ public class SendMessageRequest {
     String message;
 
     boolean isImage;
+    boolean isVideo;
 }

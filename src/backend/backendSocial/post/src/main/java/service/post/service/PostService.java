@@ -24,10 +24,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import service.post.DTOs.HttpResponse;
 import service.post.DTOs.request.CreatePostRequest;
+import service.post.DTOs.request.CreateVideoPostRequest;
 import service.post.DTOs.response.CreatePostResponse;
+import service.post.DTOs.response.CreateVideoPostResponse;
 import service.post.DTOs.response.GetPostResponse;
 import service.post.DTOs.response.PageResponse;
 import service.post.DTOs.response.file.UploadFileResponse;
+import service.post.DTOs.response.file.UploadVideoResponse;
 import service.post.entity.Post;
 import service.post.exception.AppException;
 import service.post.exception.ErrorCode;
@@ -214,5 +217,43 @@ public class PostService {
     getPostResponse.setCreatedAt(
         utils.convertInstantToString(post.getCreatedAt()));
     return getPostResponse;
+  }
+
+  @PreAuthorize("isAuthenticated()")
+  public CreatePostResponse uploadVideo(CreateVideoPostRequest request){
+      String uuid = UUID.randomUUID().toString();
+      String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+      CreatePostResponse createVideoPostResponse;
+      try {
+          HttpResponse<UploadVideoResponse> uploadFileResponse =
+                  fileClient.uploadVideoFile(uuid, request.getVideoUrl());
+          if (uploadFileResponse.getCode() != 1000) {
+              log.error("File service returned error code while uploading image: {}",
+                      uploadFileResponse.getCode());
+              throw new AppException(ErrorCode.DONT_CREATE_POST);
+          }
+          String videoUrl = uploadFileResponse.getResult().getVideo();
+          Post post = Post.builder()
+                  // a post match a file
+                  .postId(uuid)
+                  .userId(userId)
+                  .caption(request.getCaption())
+                  .videoUrl(videoUrl)
+                  .prompt(request.getPrompt())
+                  .build();
+          Post savePost = postRepository.save(post);
+          if (savePost == null) {
+              log.error("Error while saving post to database");
+              throw new AppException(ErrorCode.DONT_CREATE_POST);
+          }
+
+          createVideoPostResponse = postMapper.toCreatePostResponse(savePost);
+      } catch (Exception e) {
+          log.error("Error while uploading image to file service: {}",
+                  e.getMessage());
+          throw new AppException(ErrorCode.DONT_CREATE_POST);
+      }
+
+      return createVideoPostResponse;
   }
 }

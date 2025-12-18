@@ -5,7 +5,7 @@ export default function PostTab({ config, auth, apiClient }) {
   const [response, setResponse] = useState('')
   const [loading, setLoading] = useState(false)
   const [postId, setPostId] = useState('')
-  const [createData, setCreateData] = useState({ caption: '', prompt: '' })
+  const [createData, setCreateData] = useState({ caption: '', prompt: '', videoUrl: '' })
 
   const apiCall = async (method, endpoint, data = null, isFile = false) => {
     setLoading(true);
@@ -40,6 +40,20 @@ export default function PostTab({ config, auth, apiClient }) {
     formData.append("image", file);
 
     await apiCall("POST", "/api/v1/posts/create", formData, true);
+  };
+
+  const createVideoPost = async () => {
+    if (!createData.videoUrl) {
+      alert('Please enter video URL');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("caption", createData.caption);
+    formData.append("prompt", createData.prompt);
+    formData.append("videoUrl", createData.videoUrl);
+
+    await apiCall("POST", "/api/v1/posts/create-video", formData, true);
   };
 
   return (
@@ -87,7 +101,7 @@ export default function PostTab({ config, auth, apiClient }) {
       </div>
 
       <div className="api-section">
-        <h3>➕ Create Post (API #32)</h3>
+        <h3>➕ Create Image Post (API #32)</h3>
         <div className="form-row">
           <input
             placeholder="Caption"
@@ -104,6 +118,43 @@ export default function PostTab({ config, auth, apiClient }) {
             }
           />
           <input type="file" onChange={createPost} accept="image/*" />
+        </div>
+      </div>
+
+      <div className="api-section">
+        <h3>🎥 Create Video Post (API #33)</h3>
+        <p style={{fontSize: '0.9em', color: '#666'}}>
+          Note: Upload video to external server first to get videoUrl
+        </p>
+        <div className="form-row">
+          <input
+            placeholder="Caption"
+            value={createData.caption}
+            onChange={(e) =>
+              setCreateData({ ...createData, caption: e.target.value })
+            }
+          />
+          <input
+            placeholder="Prompt"
+            value={createData.prompt}
+            onChange={(e) =>
+              setCreateData({ ...createData, prompt: e.target.value })
+            }
+          />
+          <input
+            placeholder="Video URL (from external server)"
+            value={createData.videoUrl || ''}
+            onChange={(e) =>
+              setCreateData({ ...createData, videoUrl: e.target.value })
+            }
+          />
+          <button
+            className="btn btn-success"
+            onClick={createVideoPost}
+            disabled={loading || !createData.videoUrl}
+          >
+            Create Video Post
+          </button>
         </div>
       </div>
 

@@ -5,44 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="740a1931-dd5b-46a1-9947-5fe7d5aa7c77" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/identity/dbscript/ddl_Authority.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/dbscript/ddl_LimitRegister.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/dbscript/ddl_RemoveToken.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/dbscript/ddl_Role.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/dbscript/ddl_User.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/request/GetUserSummaryRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/request/ModifyUserTokenRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/GetRequestMemberResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/GetUserTokensResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/PageResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/RefreshTokenResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/UserSummaryResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/entity/LimitRegister.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/LimitRegisterRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/http/CommunicationClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/DTOs/request/CreateVideoPostRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/DTOs/response/CreateVideoPostResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/DTOs/response/file/UploadVideoResponse.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/identity/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/identity/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/identity/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/GetMeResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/GetMeResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/GetUserResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/GetUserResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/RegisterUserResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/DTOs/response/RegisterUserResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/configuration/SecurityGlobal.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/configuration/SecurityGlobal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/entity/Role.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/entity/Role.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/entity/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/exception/ErrorCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/exception/ErrorCode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/mapper/UserMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/mapper/UserMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/UserRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/http/PostClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/repository/http/PostClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/AuthService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/AuthorityService.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/AuthorityService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/RoleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/RoleService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/java/service/identity/utils/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/java/service/identity/utils/Utils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/resources/application.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/identity/src/main/resources/templates/welcome.html" beforeDir="false" afterPath="$PROJECT_DIR$/identity/src/main/resources/templates/welcome.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GROUP_API_FIXES.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HELP.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/NOTE.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/request/SendMessageGroupRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/request/SendMessageGroupRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/request/SendMessageRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/request/SendMessageRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/response/GetGroupMessageResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/response/GetGroupMessageResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/response/GetMessageCoupleResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/response/GetMessageCoupleResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/response/GroupMessageResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/response/GroupMessageResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/controller/WebSocket.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/controller/WebSocket.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/entity/Communication.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/entity/Communication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/entity/GroupMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/entity/GroupMessage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/DTOs/response/CreatePostResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/DTOs/response/CreatePostResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/DTOs/response/GetPostResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/DTOs/response/GetPostResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/controller/PostController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/entity/Post.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/entity/Post.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/mapper/PostMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/mapper/PostMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/repository/http/FileClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/repository/http/FileClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/service/PostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/service/PostService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +45,7 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/identity" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
     <option name="ROOT_SYNC" value="DONT_SYNC" />
   </component>
   <component name="ProjectColorInfo">{
@@ -73,41 +57,41 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Profile.executor&quot;: &quot;Run&quot;,
-    &quot;Application.communication.executor&quot;: &quot;Run&quot;,
-    &quot;Application.gateway.executor&quot;: &quot;Run&quot;,
-    &quot;Application.identity.executor&quot;: &quot;Run&quot;,
-    &quot;Application.post.executor&quot;: &quot;Run&quot;,
-    &quot;Maven.api-gateway [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.api-gateway [compile].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.communication [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.identity [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.post [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.profile [clean].executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/ACER/Desktop/Project/NMCNPM/AI photofun Studio/src/backend/backendSocial/communication/src/main/java/service/communication/DTOs/request&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.intellij.jpb.viewMode&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Profile.executor": "Run",
+    "Application.communication.executor": "Run",
+    "Application.gateway.executor": "Run",
+    "Application.identity.executor": "Run",
+    "Application.post.executor": "Run",
+    "Maven.api-gateway [clean].executor": "Run",
+    "Maven.api-gateway [compile].executor": "Run",
+    "Maven.communication [clean].executor": "Run",
+    "Maven.identity [clean].executor": "Run",
+    "Maven.post [clean].executor": "Run",
+    "Maven.profile [clean].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "init-video",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/ACER/Desktop/Project/NMCNPM/temp/AI-photofun-Studio/src/backend/backendSocial",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "run.configurations.included.in.services": "true",
+    "settings.editor.selected.configurable": "com.intellij.jpb.viewMode",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\ACER\Desktop\Project\NMCNPM\AI photofun Studio\src\backend\backendSocial\communication\src\main\java\service\communication\DTOs\request" />
@@ -140,7 +124,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Application.identity">
+  <component name="RunManager" selected="Application.communication">
     <configuration name="Profile" type="Application" factoryName="Application">
       <option name="ALTERNATIVE_JRE_PATH" value="temurin-21" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />

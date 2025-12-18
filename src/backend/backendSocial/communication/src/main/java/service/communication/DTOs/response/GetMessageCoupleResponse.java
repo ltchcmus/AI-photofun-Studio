@@ -14,5 +14,6 @@ public class GetMessageCoupleResponse {
     String userId;
     String message;
     boolean isImage;
+    boolean isVideo;
     String timestamp;
 }
