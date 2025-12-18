@@ -4,30 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="740a1931-dd5b-46a1-9947-5fe7d5aa7c77" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/DTOs/request/CreateVideoPostRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/DTOs/response/CreateVideoPostResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/post/src/main/java/service/post/DTOs/response/file/UploadVideoResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GROUP_API_FIXES.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/HELP.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/NOTE.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/request/SendMessageGroupRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/request/SendMessageGroupRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/request/SendMessageRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/request/SendMessageRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/response/GetGroupMessageResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/response/GetGroupMessageResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/response/GetMessageCoupleResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/response/GetMessageCoupleResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/response/GroupMessageResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/DTOs/response/GroupMessageResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/controller/WebSocket.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/controller/WebSocket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/entity/Communication.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/entity/Communication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/java/service/communication/entity/GroupMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/java/service/communication/entity/GroupMessage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/DTOs/response/CreatePostResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/DTOs/response/CreatePostResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/DTOs/response/GetPostResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/DTOs/response/GetPostResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/controller/PostController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/entity/Post.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/entity/Post.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/mapper/PostMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/mapper/PostMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/repository/http/FileClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/repository/http/FileClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/post/src/main/java/service/post/service/PostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/post/src/main/java/service/post/service/PostService.java" afterDir="false" />
-    </list>
+    <list default="true" id="740a1931-dd5b-46a1-9947-5fe7d5aa7c77" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
