@@ -13,13 +13,13 @@ services:
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 5s
       timeout: 3s
       retries: 5
 
   # Main Django API Server
-  backendAI:
+  backendai:
     build:
       context: .
       target: development
@@ -33,11 +33,11 @@ services:
       DJANGO_DEBUG: "1"
       DJANGO_SECRET_KEY: "${DJANGO_SECRET_KEY:-dev-secret-key-change-in-production}"
       DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,0.0.0.0"
-      
+
       # MongoDB (Conversations)
       MONGO_URI: "${MONGO_URI:-mongodb://localhost:27017}"
       MONGO_DB_NAME: "ai_photofun_studio"
-      
+
       # Supabase PostgreSQL (Image Gallery)
       SUPABASE_DB_HOST: "${SUPABASE_DB_HOST}"
       SUPABASE_DB_PORT: "${SUPABASE_DB_PORT:-5432}"
@@ -45,17 +45,17 @@ services:
       SUPABASE_DB_USER: "${SUPABASE_DB_USER:-postgres}"
       SUPABASE_DB_PASSWORD: "${SUPABASE_DB_PASSWORD}"
       SUPABASE_DB_SSLMODE: "${SUPABASE_DB_SSLMODE:-require}"
-      
+
       # Redis (Celery)
       REDIS_URL: "redis://redis:6379/0"
       CELERY_BROKER_URL: "redis://redis:6379/0"
       CELERY_RESULT_BACKEND: "redis://redis:6379/0"
-      
+
       # External APIs
       FREEPIK_API_KEY: "${FREEPIK_API_KEY}"
       GEMINI_API_KEY: "${GEMINI_API_KEY}"
       FILE_SERVICE_URL: "${FILE_SERVICE_URL:-https://file-service-cdal.onrender.com}"
-      
+
     volumes:
       # Windows path mapping - adjust if needed
       - .:/app
@@ -91,7 +91,7 @@ services:
       - ./media:/app/media
     depends_on:
       - redis
-      - backendAI
+      - backendai
     networks:
       - backendai_network
 
@@ -115,6 +115,7 @@ services:
 
 volumes:
   redis_data:
+
 
 networks:
   backendai_network:
