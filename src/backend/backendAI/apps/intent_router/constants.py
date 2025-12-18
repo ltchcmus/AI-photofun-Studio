@@ -8,7 +8,7 @@ class IntentType:
     Intent codes for routing to appropriate AI feature services
     """
     # Image Generation
-    IMAGE_GENERATE = "image_generate"
+    image_generation = "image_generation"
     
     # Image Enhancement
     UPSCALE = "upscale"
@@ -33,7 +33,7 @@ class IntentType:
     def all(cls):
         """Return all intent types"""
         return [
-            cls.IMAGE_GENERATE,
+            cls.image_generation,
             cls.UPSCALE,
             cls.REMOVE_BACKGROUND,
             cls.RELIGHT,
@@ -169,7 +169,7 @@ class AspectRatio:
 
 # Intent to Feature App Mapping
 INTENT_TO_APP_MAP = {
-    IntentType.IMAGE_GENERATE: "image_generation",
+    IntentType.image_generation: "image_generation",
     IntentType.UPSCALE: "upscale",
     IntentType.REMOVE_BACKGROUND: "remove_background",
     IntentType.RELIGHT: "relight",

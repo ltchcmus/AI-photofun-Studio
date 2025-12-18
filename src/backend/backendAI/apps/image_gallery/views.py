@@ -30,7 +30,7 @@ class ImageGalleryListView(APIView):
     def post(self, request):
         serializer = ImageGalleryCreateSerializer(data=request.data)
         if not serializer.is_valid():
-            return APIResponse.error(message='Validation failed', errors=serializer.errors)
+            return APIResponse.error(message='Validation failed', result=serializer.errors)
 
         try:
             image = serializer.save()

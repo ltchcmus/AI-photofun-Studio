@@ -71,3 +71,10 @@ logs/
 temp/
 tmp/
 *.tmp
+
+# Ignore all markdown files
+*.md
+
+# But keep README.md
+!README.md
+!API_DOCUMENTATION.md

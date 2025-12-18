@@ -162,13 +162,13 @@ echo "════════════════════════�
 echo ""
 
 echo "📤 REQUEST:"
-echo "   GET $BASE_URL/v1/gallery/?user_id=$USER_ID&intent=image_generate"
+echo "   GET $BASE_URL/v1/gallery/?user_id=$USER_ID&intent=image_generation"
 echo ""
 
 echo "⏳ Sending request..."
 echo ""
 
-GALLERY_RESPONSE=$(curl -s -X GET "$BASE_URL/v1/gallery/?user_id=$USER_ID&intent=image_generate")
+GALLERY_RESPONSE=$(curl -s -X GET "$BASE_URL/v1/gallery/?user_id=$USER_ID&intent=image_generation")
 
 echo "📥 RESPONSE:"
 echo "$GALLERY_RESPONSE" | jq '.'

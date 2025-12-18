@@ -73,7 +73,7 @@ def route_to_ai_feature_task(self, refined_prompt_result: dict) -> tuple:
     wrapped_refined_prompt = ResponseFormatter.success(result=refined_prompt_result)
 
     # Extract intent and context from raw dict
-    intent = refined_prompt_result.get('intent', 'image_generate')
+    intent = refined_prompt_result.get('intent', 'image_generation')
     context = refined_prompt_result.get('context', {})
     prompt = refined_prompt_result.get('prompt', '')
     image_url = context.get('image_url')
@@ -86,7 +86,7 @@ def route_to_ai_feature_task(self, refined_prompt_result: dict) -> tuple:
     
     try:
         # Route based on intent
-        if intent == 'image_generate':
+        if intent == 'image_generation':
             from apps.image_generation.services import ImageGenerationService
             
             service = ImageGenerationService()

@@ -17,32 +17,31 @@ class ResponseFormatter:
         return response_data
 
     @staticmethod
-    def error(message="Error", code=ResponseCode.ERROR, errors=None, status_code=status.HTTP_400_BAD_REQUEST):
+    def error(message="Error", code=ResponseCode.ERROR, result=None, status_code=status.HTTP_400_BAD_REQUEST):
         print("API Error:", message)
         response_data = {
             'code': code,
             'message': message,
+            'result': result
         }
-        if errors:
-            response_data['errors'] = errors
         # return Response(response_data, status=status_code)
         return response_data
 
     @staticmethod
-    def not_found(message="Resource not found", code=ResponseCode.NOT_FOUND):
-        return ResponseFormatter.error(message, code=code, status_code=status.HTTP_404_NOT_FOUND)
+    def not_found(message="Resource not found", code=ResponseCode.NOT_FOUND, result=None):
+        return ResponseFormatter.error(message, code=code, result=result, status_code=status.HTTP_404_NOT_FOUND)
 
     @staticmethod
-    def unauthorized(message="Unauthorized", code=ResponseCode.UNAUTHORIZED):
-        return ResponseFormatter.error(message, code=code, status_code=status.HTTP_401_UNAUTHORIZED)
+    def unauthorized(message="Unauthorized", code=ResponseCode.UNAUTHORIZED, result=None):
+        return ResponseFormatter.error(message, code=code, result=result, status_code=status.HTTP_401_UNAUTHORIZED)
 
     @staticmethod
-    def forbidden(message="Forbidden", code=ResponseCode.FORBIDDEN):
-        return ResponseFormatter.error(message, code=code, status_code=status.HTTP_403_FORBIDDEN)
+    def forbidden(message="Forbidden", code=ResponseCode.FORBIDDEN, result=None):
+        return ResponseFormatter.error(message, code=code, result=result, status_code=status.HTTP_403_FORBIDDEN)
 
     @staticmethod
-    def server_error(message="Internal server error", code=ResponseCode.SERVER_ERROR):
-        return ResponseFormatter.error(message, code=code, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    def server_error(message="Internal server error", code=ResponseCode.SERVER_ERROR, result=None):
+        return ResponseFormatter.error(message, code=code, result=result, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class APIResponse:
@@ -56,26 +55,26 @@ class APIResponse:
         return Response(data, status=status_code)
 
     @staticmethod
-    def error(message="Error", code=ResponseCode.ERROR, errors=None, status_code=status.HTTP_400_BAD_REQUEST):
-        data = ResponseFormatter.error(message=message, code=code, errors=errors, status_code=status_code)
+    def error(message="Error", code=ResponseCode.ERROR, result=None, status_code=status.HTTP_400_BAD_REQUEST):
+        data = ResponseFormatter.error(message=message, code=code, result=result, status_code=status_code)
         return Response(data, status=status_code)
 
     @staticmethod
-    def not_found(message="Resource not found", code=ResponseCode.NOT_FOUND):
-        data = ResponseFormatter.error(message=message, code=code, status_code=status.HTTP_404_NOT_FOUND)
+    def not_found(message="Resource not found", code=ResponseCode.NOT_FOUND, result=None):
+        data = ResponseFormatter.error(message=message, code=code, result=result, status_code=status.HTTP_404_NOT_FOUND)
         return Response(data, status=status.HTTP_404_NOT_FOUND)
 
     @staticmethod
-    def unauthorized(message="Unauthorized", code=ResponseCode.UNAUTHORIZED):
-        data = ResponseFormatter.error(message=message, code=code, status_code=status.HTTP_401_UNAUTHORIZED)
+    def unauthorized(message="Unauthorized", code=ResponseCode.UNAUTHORIZED, result=None):
+        data = ResponseFormatter.error(message=message, code=code, result=result, status_code=status.HTTP_401_UNAUTHORIZED)
         return Response(data, status=status.HTTP_401_UNAUTHORIZED)
 
     @staticmethod
-    def forbidden(message="Forbidden", code=ResponseCode.FORBIDDEN):
-        data = ResponseFormatter.error(message=message, code=code, status_code=status.HTTP_403_FORBIDDEN)
+    def forbidden(message="Forbidden", code=ResponseCode.FORBIDDEN, result=None):
+        data = ResponseFormatter.error(message=message, code=code, result=result, status_code=status.HTTP_403_FORBIDDEN)
         return Response(data, status=status.HTTP_403_FORBIDDEN)
 
     @staticmethod
-    def server_error(message="Internal server error", code=ResponseCode.SERVER_ERROR):
-        data = ResponseFormatter.error(message=message, code=code, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    def server_error(message="Internal server error", code=ResponseCode.SERVER_ERROR, result=None):
+        data = ResponseFormatter.error(message=message, code=code, result=result, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

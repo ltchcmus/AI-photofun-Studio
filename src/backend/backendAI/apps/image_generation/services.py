@@ -127,7 +127,7 @@ class ImageGenerationService:
                     user_id=user_id,
                     uploaded_urls=uploaded_urls,
                     refined_prompt=prompt,
-                    intent='image_generate',
+                    intent='image_generation',
                     metadata=metadata
                 )
             

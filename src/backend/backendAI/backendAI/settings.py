@@ -34,6 +34,9 @@ SECRET_KEY = os.environ.get(
 DEBUG = env_bool('DJANGO_DEBUG', True)
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',')
 
+# URL Configuration
+APPEND_SLASH = True  # Auto-redirect URLs without trailing slash to with trailing slash
+
 # ============================================================================
 # APPLICATIONS (MongoDB Only - Minimal Django Apps)
 # ============================================================================

@@ -34,7 +34,7 @@ class RemoveBackgroundView(APIView):
         """
         serializer = RemoveBackgroundInputSerializer(data=request.data)
         if not serializer.is_valid():
-            return APIResponse.error(message="Validation failed", errors=serializer.errors)
+            return APIResponse.error(message="Validation failed", result=serializer.errors)
         
         validated_data = serializer.validated_data
         
@@ -64,7 +64,7 @@ class RemoveBackgroundView(APIView):
             logger.error(f"Background removal error: {str(e)}")
             return APIResponse.error(
                 message="Background removal failed",
-                errors=str(e),
+                result={"detail": str(e)},
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
         
@@ -72,6 +72,6 @@ class RemoveBackgroundView(APIView):
             logger.error(f"Unexpected error: {str(e)}")
             return APIResponse.error(
                 message="Internal server error",
-                errors=str(e),
+                result={"detail": str(e)},
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )

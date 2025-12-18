@@ -93,7 +93,7 @@ def test_image_generation_with_gallery():
                 print("\n🔍 Checking gallery database...")
                 gallery_images = image_gallery_service.get_user_images(
                     user_id=user_id,
-                    intent='image_generate',
+                    intent='image_generation',
                     limit=5
                 )
                 
@@ -238,10 +238,10 @@ def test_gallery_queries():
         print("\n📋 Test: Filter by intent")
         gen_images = image_gallery_service.get_user_images(
             user_id=user_id,
-            intent='image_generate',
+            intent='image_generation',
             limit=5
         )
-        print(f"   Found {len(gen_images)} image_generate images")
+        print(f"   Found {len(gen_images)} image_generation images")
         
         # Test 3: Test pagination
         print("\n📋 Test: Pagination")
