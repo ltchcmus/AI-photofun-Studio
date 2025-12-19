@@ -4,7 +4,7 @@ server:
     context-path: /communications
 config:
   http:
-    identity: ${IDENTITY_SERVICE_URL:http://localhost:8080/identity}
+    identity: ${IDENTITY_SERVICE_URL:http://localhost:8000/identity}
     file: https://file-service-cdal.onrender.com
   socket:
     port: ${SOCKET_SERVICE_PORT:8899}

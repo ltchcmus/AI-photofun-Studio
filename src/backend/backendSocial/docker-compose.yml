@@ -5,9 +5,9 @@ services:
       dockerfile: Dockerfile
     container_name: identity-service
     ports:
-      - "8080:8080"
+      - "8000:8000"
     environment:
-      PORT: 8080
+      PORT: 8000
       PROFILE_SERVICE_URL: http://profile-service:8081/profiles
       POST_SERVICE_URL: http://post-service:8082/posts
       DATABASE_URL: jdbc:postgresql://aws-1-ap-south-1.pooler.supabase.com:6543/postgres?sslmode=require&prepareThreshold=0&preparedStatementCacheQueries=0&preferQueryMode=simple&connectTimeout=30&socketTimeout=30&loginTimeout=30
@@ -87,7 +87,7 @@ services:
       PORT: 8085
       SOCKET_SERVICE_PORT: 8899
       SOCKET_SERVICE_HOST: 0.0.0.0
-      IDENTITY_SERVICE_URL: http://identity-service:8080/identity
+      IDENTITY_SERVICE_URL: http://identity-service:8000/identity
     depends_on:
       - identity-service
     networks:
@@ -103,12 +103,12 @@ services:
       - "8888:8888"
     environment:
       PORT: 8888
-      IDENTITY_SERVICE_URL: http://identity-service:8080
+      IDENTITY_SERVICE_URL: http://identity-service:8000
       PROFILE_SERVICE_URL: http://profile-service:8081
       POST_SERVICE_URL: http://post-service:8082
       COMMENT_SERVICE_URL: http://comments-service:8003
       COMMUNICATION_SERVICE_URL: http://communication-service:8085
-      CONFIG_HTTP_IDENTITY: http://identity-service:8080/identity
+      CONFIG_HTTP_IDENTITY: http://identity-service:8000/identity
     depends_on:
       - identity-service
       - profile-service

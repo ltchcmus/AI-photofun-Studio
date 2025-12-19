@@ -5,7 +5,7 @@ server:
 
 config:
   http:
-    identity: ${IDENTITY_SERVICE_URL:http://localhost:8080/identity}
+    identity: ${IDENTITY_SERVICE_URL:http://localhost:8000/identity}
   prefix: /api/v1
   remove-prefix: 2
 
@@ -20,7 +20,7 @@ spring:
     gateway:
       routes:
         - id: identity-service
-          uri: ${IDENTITY_SERVICE_URL:http://localhost:8080}
+          uri: ${IDENTITY_SERVICE_URL:http://localhost:8000}
           predicates:
             - Path=${config.prefix}/identity/**
           filters:
