@@ -14,5 +14,6 @@ public class GroupMessageResponse {
   String senderId;
   String message;
   boolean isImage;
+  boolean isVideo;
   String timestamp;
 }

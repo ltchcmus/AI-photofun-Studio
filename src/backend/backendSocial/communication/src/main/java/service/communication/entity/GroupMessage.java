@@ -20,6 +20,6 @@ public class GroupMessage {
   String senderId;
   String message;
   boolean isImage;
-
+  boolean isVideo;
   @Builder.Default Instant timestamp = Instant.now();
 }

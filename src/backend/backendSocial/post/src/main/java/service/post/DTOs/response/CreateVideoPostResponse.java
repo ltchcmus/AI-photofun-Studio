@@ -10,11 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 @Builder
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreatePostResponse {
+public class CreateVideoPostResponse {
     String postId;
     String userId;
     String caption;
-    String imageUrl;
     String videoUrl;
     String prompt;
     long likes;

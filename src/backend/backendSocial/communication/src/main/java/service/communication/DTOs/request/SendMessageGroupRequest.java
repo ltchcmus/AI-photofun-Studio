@@ -15,4 +15,5 @@ public class SendMessageGroupRequest {
     String groupId;
     String message;
     boolean isImage;
+    boolean isVideo;
 }

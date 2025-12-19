@@ -26,6 +26,7 @@ public class Post {
     String userId;
     String caption;
     String imageUrl;
+    String videoUrl;
     String prompt;
 
 
