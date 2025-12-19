@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Download, Image, Share2, Sparkles } from "lucide-react";
+import { generateImage, pollTaskStatus } from "../api/aiApi";
 
 const readFileAsDataUrl = (file) =>
   new Promise((resolve, reject) => {
@@ -17,8 +18,10 @@ const TextToImage = () => {
   const [prompt, setPrompt] = useState("");
   const [uploadedImage, setUploadedImage] = useState(null);
   const [dragOver, setDragOver] = useState(false);
-  const [selectedStyle] = useState(null);
+  const [model, setModel] = useState("realism");
+  const [aspectRatio, setAspectRatio] = useState("1:1");
   const [loading, setLoading] = useState(false);
+  const [taskStatus, setTaskStatus] = useState("");
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
 
@@ -67,10 +70,7 @@ const TextToImage = () => {
     if (uploadInputRef.current) uploadInputRef.current.value = "";
   };
 
-  const placeholderUrl = (seed) =>
-    `https://images.unsplash.com/photo-${seed}?w=1024&h=1024&fit=crop`;
-
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!prompt.trim()) {
       setError("Vui lòng nhập mô tả trước khi tạo ảnh.");
       return;
@@ -78,29 +78,85 @@ const TextToImage = () => {
     setError("");
     setLoading(true);
     setResult(null);
+    setTaskStatus("Đang khởi tạo...");
 
-    setTimeout(() => {
-      const seed = Math.floor(Math.random() * 999999999999);
-      setResult({
-        imageUrl: placeholderUrl(seed),
+    try {
+      // Step 1: Submit generation request
+      const genResult = await generateImage({
         prompt,
-        timestamp: new Date().toLocaleString(),
-        style: selectedStyle,
+        model,
+        aspectRatio,
       });
+
+      if (!genResult.success) {
+        setError(genResult.error || "Không thể tạo ảnh. Vui lòng thử lại.");
+        setLoading(false);
+        return;
+      }
+
+      setTaskStatus("Đang tạo ảnh...");
+
+      // Step 2: Poll for result
+      const pollResult = await pollTaskStatus(
+        genResult.taskId,
+        "v1/features/image-generation",
+        (status, attempt) => {
+          setTaskStatus(`${status} (lần thử ${attempt})...`);
+        }
+      );
+
+      if (pollResult.success) {
+        setResult({
+          imageUrl: pollResult.imageUrl,
+          prompt,
+          timestamp: new Date().toLocaleString(),
+          model,
+          aspectRatio,
+        });
+      } else {
+        setError(pollResult.error || "Không thể tạo ảnh. Vui lòng thử lại.");
+      }
+    } catch (err) {
+      setError(err.message || "Đã xảy ra lỗi. Vui lòng thử lại.");
+    } finally {
       setLoading(false);
-    }, 1800);
+      setTaskStatus("");
+    }
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!result?.imageUrl) return;
-    const link = document.createElement("a");
-    link.href = result.imageUrl;
-    link.download = "text-to-image.jpg";
-    link.click();
+    try {
+      const response = await fetch(result.imageUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "ai-generated-image.jpg";
+      link.click();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      // Fallback to direct link
+      const link = document.createElement("a");
+      link.href = result.imageUrl;
+      link.download = "ai-generated-image.jpg";
+      link.target = "_blank";
+      link.click();
+    }
   };
 
   const handleShare = () => {
-    alert("Share feature will be available soon.");
+    if (navigator.share && result?.imageUrl) {
+      navigator.share({
+        title: "AI Generated Image",
+        text: result.prompt,
+        url: result.imageUrl,
+      }).catch(() => { });
+    } else {
+      // Copy URL to clipboard
+      navigator.clipboard?.writeText(result?.imageUrl || "");
+      alert("Link đã được sao chép vào clipboard!");
+    }
   };
 
   const handleSave = () => {
@@ -152,6 +208,41 @@ const TextToImage = () => {
                 Clear
               </button>
             </div>
+
+            {/* Model and Aspect Ratio Selection */}
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div>
+                <label className="block text-sm font-semibold mb-2" htmlFor="model">
+                  Model
+                </label>
+                <select
+                  id="model"
+                  value={model}
+                  onChange={(e) => setModel(e.target.value)}
+                  className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-black text-sm bg-white"
+                >
+                  <option value="realism">Realism</option>
+                  <option value="artistic">Artistic</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-2" htmlFor="aspect-ratio">
+                  Aspect Ratio
+                </label>
+                <select
+                  id="aspect-ratio"
+                  value={aspectRatio}
+                  onChange={(e) => setAspectRatio(e.target.value)}
+                  className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-black text-sm bg-white"
+                >
+                  <option value="1:1">1:1 (Square)</option>
+                  <option value="16:9">16:9 (Landscape)</option>
+                  <option value="9:16">9:16 (Portrait)</option>
+                  <option value="4:3">4:3 (Standard)</option>
+                  <option value="3:4">3:4 (Portrait)</option>
+                </select>
+              </div>
+            </div>
           </div>
 
           <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
@@ -159,11 +250,10 @@ const TextToImage = () => {
               Upload Reference Image (Optional)
             </h2>
             <div
-              className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-colors ${
-                dragOver
-                  ? "border-blue-300 bg-blue-50"
-                  : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
-              }`}
+              className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-colors ${dragOver
+                ? "border-blue-300 bg-blue-50"
+                : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+                }`}
               onClick={() => uploadInputRef.current?.click()}
               onDrop={handleDrop}
               onDragOver={handleDragOver}
@@ -224,7 +314,7 @@ const TextToImage = () => {
                   Đang tạo hình ảnh...
                 </p>
                 <p className="text-sm text-gray-500">
-                  Quá trình có thể mất vài giây
+                  {taskStatus || "Quá trình có thể mất vài giây"}
                 </p>
               </div>
             </div>
@@ -274,10 +364,14 @@ const TextToImage = () => {
                     <p className="text-xs text-gray-500">Prompt</p>
                     <p className="font-medium">{result.prompt}</p>
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-3 gap-3">
                     <div>
-                      <p className="text-xs text-gray-500">Style</p>
-                      <p className="font-medium">{result.style || "Custom"}</p>
+                      <p className="text-xs text-gray-500">Model</p>
+                      <p className="font-medium capitalize">{result.model || "Realism"}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Aspect Ratio</p>
+                      <p className="font-medium">{result.aspectRatio || "1:1"}</p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">Generated at</p>
