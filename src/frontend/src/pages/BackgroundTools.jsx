@@ -8,6 +8,8 @@ import {
   Sparkles,
   Trash2,
 } from "lucide-react";
+import { removeBackground } from "../api/aiApi";
+import { communicationApi } from "../api/communicationApi";
 
 const readFileAsDataUrl = (file) =>
   new Promise((resolve, reject) => {
@@ -26,7 +28,7 @@ const createCanvas = (width, height) => {
 
 const compositeWithColor = (foregroundSrc, color) =>
   new Promise((resolve) => {
-    const fg = new Image();
+    const fg = new window.Image();
     fg.crossOrigin = "anonymous";
     fg.src = foregroundSrc;
     fg.onload = () => {
@@ -41,8 +43,8 @@ const compositeWithColor = (foregroundSrc, color) =>
 
 const compositeWithImage = (foregroundSrc, backgroundSrc) =>
   new Promise((resolve) => {
-    const fg = new Image();
-    const bg = new Image();
+    const fg = new window.Image();
+    const bg = new window.Image();
     fg.crossOrigin = bg.crossOrigin = "anonymous";
     let loaded = 0;
     const finish = () => {
@@ -63,10 +65,24 @@ const compositeWithImage = (foregroundSrc, backgroundSrc) =>
     bg.src = backgroundSrc;
   });
 
+// Convert data URL to File object
+const dataUrlToFile = (dataUrl, filename = "image.png") => {
+  const arr = dataUrl.split(",");
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], filename, { type: mime });
+};
+
 const BackgroundTools = () => {
   const navigate = useNavigate();
   const origInputRef = useRef(null);
   const bgInputRef = useRef(null);
+  const origFileRef = useRef(null); // Store the original file for upload
 
   const [option, setOption] = useState(null); // remove | color | image
   const [color, setColor] = useState("#ffffff");
@@ -74,7 +90,10 @@ const BackgroundTools = () => {
   const [bgData, setBgData] = useState(null);
   const [resultData, setResultData] = useState(null);
   const [processing, setProcessing] = useState(false);
+  const [processingStatus, setProcessingStatus] = useState("");
   const [error, setError] = useState("");
+  // Store the removed background image for compositing
+  const [removedBgData, setRemovedBgData] = useState(null);
 
   const handleFileSelection = useCallback(async (files, type) => {
     if (!files || !files.length) return;
@@ -83,6 +102,8 @@ const BackgroundTools = () => {
       if (type === "orig") {
         setOrigData(dataUrl);
         setResultData(null);
+        setRemovedBgData(null);
+        origFileRef.current = files[0]; // Store the file
       } else {
         setBgData(dataUrl);
       }
@@ -103,7 +124,8 @@ const BackgroundTools = () => {
 
   const optionRequiresBg = option === "image";
   const canApply = useMemo(() => {
-    if (!origData || !option || processing) return false;
+    if (!option || processing) return false;
+    if (!origData) return false;
     if (optionRequiresBg && !bgData) return false;
     return true;
   }, [origData, option, processing, optionRequiresBg, bgData]);
@@ -112,20 +134,65 @@ const BackgroundTools = () => {
     if (!canApply) return;
     setProcessing(true);
     setError("");
+    setProcessingStatus("Đang chuẩn bị...");
+
     try {
+      // Step 1: Upload image to get a public URL
+      setProcessingStatus("Đang upload ảnh...");
+
+      let apiImageUrl;
+      const fileToUpload = origFileRef.current || dataUrlToFile(origData, "image.png");
+
+      try {
+        const uploadResult = await communicationApi.uploadChatImage(fileToUpload);
+        // Response format: { result: { image: "..." } } or { result: { url: "..." } }
+        apiImageUrl = uploadResult?.result?.image || uploadResult?.result?.url || uploadResult?.url || uploadResult?.image;
+
+        if (!apiImageUrl) {
+          console.error("Upload response:", uploadResult);
+          throw new Error("Không nhận được URL từ server");
+        }
+      } catch (uploadErr) {
+        console.error("Upload error:", uploadErr);
+        setError("Không thể upload ảnh. Vui lòng thử lại sau.");
+        setProcessing(false);
+        return;
+      }
+
+      // Step 2: Call the remove background API
+      setProcessingStatus("Đang xóa nền ảnh...");
+
+      // Call the remove background API
+      const result = await removeBackground(apiImageUrl);
+
+      if (!result.success) {
+        setError(result.error || "Không thể xóa nền. Vui lòng thử lại.");
+        setProcessing(false);
+        return;
+      }
+
+      const removedBgUrl = result.imageUrl;
+      setRemovedBgData(removedBgUrl);
+
       if (option === "remove") {
-        setResultData(origData);
+        // Just show the removed background result
+        setResultData(removedBgUrl);
       } else if (option === "color") {
-        const data = await compositeWithColor(origData, color);
+        // Composite with color background
+        setProcessingStatus("Đang thay nền màu...");
+        const data = await compositeWithColor(removedBgUrl, color);
         setResultData(data);
       } else if (option === "image" && bgData) {
-        const data = await compositeWithImage(origData, bgData);
+        // Composite with image background
+        setProcessingStatus("Đang ghép ảnh nền...");
+        const data = await compositeWithImage(removedBgUrl, bgData);
         setResultData(data);
       }
     } catch (err) {
       setError("Có lỗi khi áp dụng thay đổi, hãy thử lại.");
     } finally {
       setProcessing(false);
+      setProcessingStatus("");
     }
   };
 
@@ -141,6 +208,8 @@ const BackgroundTools = () => {
     if (type === "orig") {
       setOrigData(null);
       setResultData(null);
+      setRemovedBgData(null);
+      origFileRef.current = null;
       if (origInputRef.current) origInputRef.current.value = "";
     } else {
       setBgData(null);
@@ -189,11 +258,10 @@ const BackgroundTools = () => {
             <div
               onDrop={(event) => onDrop(event, "orig")}
               onDragOver={(event) => event.preventDefault()}
-              className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
-                origData
-                  ? "border-blue-200 bg-blue-50"
-                  : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
-              }`}
+              className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${origData
+                ? "border-blue-200 bg-blue-50"
+                : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+                }`}
               onClick={() => origInputRef.current?.click()}
             >
               <Image className="w-12 h-12 mx-auto mb-3 text-gray-400" />
@@ -249,11 +317,10 @@ const BackgroundTools = () => {
                   key={card.id}
                   type="button"
                   onClick={() => setOption(card.id)}
-                  className={`w-full text-left p-4 border-2 rounded-2xl transition-colors ${
-                    option === card.id
-                      ? "border-black bg-gray-50"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
+                  className={`w-full text-left p-4 border-2 rounded-2xl transition-colors ${option === card.id
+                    ? "border-black bg-gray-50"
+                    : "border-gray-200 hover:border-gray-300"
+                    }`}
                 >
                   <p className="font-semibold">{card.title}</p>
                   <p className="text-xs text-gray-600">{card.subtitle}</p>
@@ -277,11 +344,10 @@ const BackgroundTools = () => {
                   <div
                     onDrop={(event) => onDrop(event, "bg")}
                     onDragOver={(event) => event.preventDefault()}
-                    className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-colors ${
-                      bgData
-                        ? "border-blue-200 bg-blue-50"
-                        : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
-                    }`}
+                    className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-colors ${bgData
+                      ? "border-blue-200 bg-blue-50"
+                      : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+                      }`}
                     onClick={() => bgInputRef.current?.click()}
                   >
                     <p className="text-sm text-gray-600 mb-2">
@@ -339,7 +405,7 @@ const BackgroundTools = () => {
                 <div className="w-16 h-16 border-4 border-gray-200 border-t-black rounded-full animate-spin mx-auto" />
                 <p className="text-gray-600 font-medium">Đang xử lý...</p>
                 <p className="text-xs text-gray-500">
-                  Vui lòng chờ trong giây lát
+                  {processingStatus || "Vui lòng chờ trong giây lát"}
                 </p>
               </div>
             ) : resultData ? (
