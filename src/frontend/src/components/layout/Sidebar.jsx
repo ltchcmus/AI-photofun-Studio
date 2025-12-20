@@ -9,6 +9,7 @@ import {
   Moon,
   Settings,
   Crown,
+  Coins,
 } from "lucide-react";
 import { navItems } from "../../config/navConfig";
 import { useAuth } from "../../hooks/useAuth";
@@ -28,9 +29,9 @@ const Sidebar = () => {
   const avatarUrl = user?.avatar || DEFAULT_AVATAR;
   const isPremium = Boolean(
     user?.isPremium ||
-      user?.premium ||
-      user?.premiumOneMonth ||
-      user?.premiumSixMonths
+    user?.premium ||
+    user?.premiumOneMonth ||
+    user?.premiumSixMonths
   );
 
   const handleLogout = useCallback(async () => {
@@ -68,18 +69,16 @@ const Sidebar = () => {
             />
           )}
           <div
-            className={`relative ${
-              isPremium
-                ? "p-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-2xl"
-                : ""
-            }`}
+            className={`relative ${isPremium
+              ? "p-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-2xl"
+              : ""
+              }`}
           >
             <img
               src={avatarUrl}
               alt={displayName}
-              className={`w-12 h-12 rounded-2xl object-cover bg-white ${
-                isPremium ? "border-0" : "border border-gray-200"
-              }`}
+              className={`w-12 h-12 rounded-2xl object-cover bg-white ${isPremium ? "border-0" : "border border-gray-200"
+                }`}
             />
           </div>
           {/* Premium Crown Badge */}
@@ -90,11 +89,10 @@ const Sidebar = () => {
           )}
         </div>
         <p
-          className={`mt-2 text-sm font-semibold line-clamp-2 ${
-            isPremium
-              ? "bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text text-transparent"
-              : "text-gray-800"
-          }`}
+          className={`mt-2 text-sm font-semibold line-clamp-2 ${isPremium
+            ? "bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text text-transparent"
+            : "text-gray-800"
+            }`}
         >
           {displayName}
         </p>
@@ -104,6 +102,13 @@ const Sidebar = () => {
             PRO
           </span>
         )}
+        {/* Tokens Display */}
+        <div className="mt-2 flex items-center gap-1 px-2 py-1 rounded-full bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200">
+          <Coins className="w-3 h-3 text-yellow-600" />
+          <span className="text-xs font-bold text-yellow-700">
+            {user?.tokens?.toLocaleString() ?? 0}
+          </span>
+        </div>
       </div>
 
       <nav className="flex-1 flex flex-col items-center gap-6">
@@ -115,15 +120,13 @@ const Sidebar = () => {
             <button
               key={item.id}
               onClick={() => navigate(item.path)}
-              className={`p-3 rounded-xl transition-colors ${
-                isActive ? "bg-gray-100" : "hover:bg-gray-50"
-              }`}
+              className={`p-3 rounded-xl transition-colors ${isActive ? "bg-gray-100" : "hover:bg-gray-50"
+                }`}
               title={item.label}
             >
               <Icon
-                className={`w-6 h-6 ${
-                  isActive ? "text-black" : "text-gray-600"
-                }`}
+                className={`w-6 h-6 ${isActive ? "text-black" : "text-gray-600"
+                  }`}
               />
             </button>
           );

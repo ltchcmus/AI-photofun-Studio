@@ -8,6 +8,7 @@ export default function CreatePostWidget({
   onCreatePost,
   onCreateVideoPost,
   onNavigateAiTools,
+  autoOpen = false,
 }) {
   const [showModal, setShowModal] = useState(false);
   const [caption, setCaption] = useState("");
@@ -32,6 +33,13 @@ export default function CreatePostWidget({
       }
     };
   }, [imagePreview, videoPreview]);
+
+  // Auto-open modal when autoOpen prop is true
+  useEffect(() => {
+    if (autoOpen) {
+      setShowModal(true);
+    }
+  }, [autoOpen]);
 
   const resetForm = () => {
     setCaption("");
