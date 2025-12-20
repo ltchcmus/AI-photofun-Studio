@@ -37,11 +37,11 @@ const VerifyEmailPage = () => {
     return () => clearInterval(interval);
   }, [timer]);
 
-  // Xử lý nhập mã (Chỉ cho phép nhập số, tối đa 6 ký tự)
+  // Xử lý nhập mã (Chỉ cho phép nhập số, tối đa 4 ký tự)
   const handleInputChange = (e) => {
     // Chỉ lấy số
     const value = e.target.value.replace(/[^0-9]/g, "");
-    if (value.length <= 6) {
+    if (value.length <= 4) {
       setCode(value);
       setError(""); // Xóa lỗi khi người dùng bắt đầu nhập lại
     }
@@ -50,8 +50,8 @@ const VerifyEmailPage = () => {
   // Xử lý nút Xác thực
   const handleVerify = async (e) => {
     e.preventDefault();
-    if (code.length < 6) {
-      setError("Vui lòng nhập đủ 6 chữ số.");
+    if (code.length < 4) {
+      setError("Vui lòng nhập đủ 4 chữ số.");
       return;
     }
 
@@ -103,9 +103,8 @@ const VerifyEmailPage = () => {
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center border border-gray-100 animate-in fade-in zoom-in duration-300">
         {/* Icon Email - Có hiệu ứng chuyển đổi trạng thái */}
         <div
-          className={`mx-auto h-20 w-20 rounded-full flex items-center justify-center mb-6 relative transition-colors duration-500 ${
-            success ? "bg-green-100" : "bg-blue-100"
-          }`}
+          className={`mx-auto h-20 w-20 rounded-full flex items-center justify-center mb-6 relative transition-colors duration-500 ${success ? "bg-green-100" : "bg-blue-100"
+            }`}
         >
           {success ? (
             <CheckCircle className="h-10 w-10 text-green-600 animate-in zoom-in spin-in-90 duration-300" />
@@ -125,7 +124,7 @@ const VerifyEmailPage = () => {
           Xác thực Email
         </h1>
         <p className="text-gray-500 mb-8 text-sm leading-relaxed">
-          Chúng tôi đã gửi một mã xác thực 6 số đến email của bạn. <br />
+          Chúng tôi đã gửi một mã xác thực 4 số đến email của bạn. <br />
           Vui lòng kiểm tra hộp thư đến.
         </p>
 
@@ -136,19 +135,18 @@ const VerifyEmailPage = () => {
               type="text"
               value={code}
               onChange={handleInputChange}
-              placeholder="000000"
+              placeholder="0000"
               className={`w-full text-center text-4xl font-bold tracking-[0.5em] py-4 border-2 rounded-xl focus:outline-none transition-all font-mono
-                ${
-                  error
-                    ? "border-red-300 bg-red-50 text-red-600 focus:border-red-500 placeholder-red-200"
-                    : success
+                ${error
+                  ? "border-red-300 bg-red-50 text-red-600 focus:border-red-500 placeholder-red-200"
+                  : success
                     ? "border-green-300 bg-green-50 text-green-600"
                     : "border-gray-200 bg-gray-50 text-gray-800 focus:border-blue-500 focus:bg-white placeholder-gray-200 hover:border-blue-300"
                 }
               `}
               disabled={loading || success}
               autoFocus
-              maxLength={6}
+              maxLength={4}
             />
             {error && (
               <div className="flex items-center justify-center gap-1.5 text-red-500 text-sm mt-3 animate-in slide-in-from-top-1">
@@ -159,12 +157,11 @@ const VerifyEmailPage = () => {
 
           <button
             type="submit"
-            disabled={loading || code.length < 6 || success}
+            disabled={loading || code.length < 4 || success}
             className={`w-full font-bold py-3.5 px-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2
-              ${
-                success
-                  ? "bg-green-500 hover:bg-green-600 text-white shadow-green-200"
-                  : "bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:shadow-none text-white shadow-blue-200"
+              ${success
+                ? "bg-green-500 hover:bg-green-600 text-white shadow-green-200"
+                : "bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:shadow-none text-white shadow-blue-200"
               }
             `}
           >
@@ -190,17 +187,15 @@ const VerifyEmailPage = () => {
             onClick={handleResend}
             disabled={!canResend}
             className={`flex items-center justify-center gap-2 mx-auto text-sm font-medium transition-colors p-2 rounded-lg
-              ${
-                canResend
-                  ? "text-blue-600 hover:text-blue-800 hover:bg-blue-50 cursor-pointer"
-                  : "text-gray-400 cursor-not-allowed"
+              ${canResend
+                ? "text-blue-600 hover:text-blue-800 hover:bg-blue-50 cursor-pointer"
+                : "text-gray-400 cursor-not-allowed"
               }
             `}
           >
             <RotateCcw
-              className={`w-4 h-4 ${
-                !canResend && "animate-spin-slow opacity-50"
-              }`}
+              className={`w-4 h-4 ${!canResend && "animate-spin-slow opacity-50"
+                }`}
             />
             {canResend ? "Gửi lại mã ngay" : `Gửi lại sau ${timer}s`}
           </button>

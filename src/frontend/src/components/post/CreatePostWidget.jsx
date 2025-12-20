@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Image, Sparkles, X } from "lucide-react";
+import { Image, Video, Sparkles, X, Loader2 } from "lucide-react";
 
 const DEFAULT_AVATAR = "https://placehold.co/40x40/111/fff?text=U";
 
 export default function CreatePostWidget({
   currentUser,
   onCreatePost,
+  onCreateVideoPost,
   onNavigateAiTools,
 }) {
   const [showModal, setShowModal] = useState(false);
@@ -13,27 +14,40 @@ export default function CreatePostWidget({
   const [prompt, setPrompt] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
+  const [videoPreview, setVideoPreview] = useState(null);
+  const [videoFile, setVideoFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [postType, setPostType] = useState("image"); // "image" or "video"
   const fileInputRef = useRef(null);
+  const videoInputRef = useRef(null);
 
   useEffect(() => {
     return () => {
       if (imagePreview) {
         URL.revokeObjectURL(imagePreview);
       }
+      if (videoPreview) {
+        URL.revokeObjectURL(videoPreview);
+      }
     };
-  }, [imagePreview]);
+  }, [imagePreview, videoPreview]);
 
   const resetForm = () => {
     setCaption("");
     setPrompt("");
     setImageFile(null);
+    setVideoFile(null);
     if (imagePreview) {
       URL.revokeObjectURL(imagePreview);
       setImagePreview(null);
     }
+    if (videoPreview) {
+      URL.revokeObjectURL(videoPreview);
+      setVideoPreview(null);
+    }
     setError("");
+    setPostType("image");
   };
 
   const handleOpen = () => {
@@ -53,23 +67,69 @@ export default function CreatePostWidget({
     if (imagePreview) {
       URL.revokeObjectURL(imagePreview);
     }
+    // Clear video if selecting image
+    if (videoPreview) {
+      URL.revokeObjectURL(videoPreview);
+      setVideoPreview(null);
+      setVideoFile(null);
+    }
 
     const preview = URL.createObjectURL(file);
     setImagePreview(preview);
     setImageFile(file);
+    setPostType("image");
+  };
+
+  const handleVideoChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("video/")) {
+      setError("Vui lòng chọn file video!");
+      return;
+    }
+
+    // Validate file size (max 50MB)
+    if (file.size > 50 * 1024 * 1024) {
+      setError("Video quá lớn! Vui lòng chọn video dưới 50MB.");
+      return;
+    }
+
+    if (videoPreview) {
+      URL.revokeObjectURL(videoPreview);
+    }
+    // Clear image if selecting video
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+      setImagePreview(null);
+      setImageFile(null);
+    }
+
+    const preview = URL.createObjectURL(file);
+    setVideoPreview(preview);
+    setVideoFile(file);
+    setPostType("video");
+    setError("");
   };
 
   const handleSubmit = async () => {
     if (submitting) return;
-    if (!caption && !imageFile) {
-      setError("Vui lòng nhập nội dung hoặc chọn ảnh.");
+    if (!caption && !imageFile && !videoFile) {
+      setError("Vui lòng nhập nội dung hoặc chọn ảnh/video.");
       return;
     }
 
     setError("");
     setSubmitting(true);
     try {
-      await onCreatePost({ caption, prompt, image: imageFile });
+      if (postType === "video" && videoFile) {
+        // Create video post
+        await onCreateVideoPost({ caption, prompt, video: videoFile });
+      } else {
+        // Create image post
+        await onCreatePost({ caption, prompt, image: imageFile });
+      }
       handleClose();
     } catch (submitError) {
       const message =
@@ -103,8 +163,17 @@ export default function CreatePostWidget({
           type="button"
           className="p-2 -m-2 hover:bg-gray-100 rounded-full text-gray-500"
           onClick={handleOpen}
+          title="Upload image"
         >
           <Image className="w-5 h-5" />
+        </button>
+        <button
+          type="button"
+          className="p-2 -m-2 hover:bg-gray-100 rounded-full text-blue-500"
+          onClick={handleOpen}
+          title="Upload video"
+        >
+          <Video className="w-5 h-5" />
         </button>
       </div>
 
@@ -157,6 +226,28 @@ export default function CreatePostWidget({
                   </div>
                 )}
 
+                {videoPreview && (
+                  <div className="relative mt-4">
+                    <video
+                      src={videoPreview}
+                      controls
+                      className="w-full rounded-xl border border-gray-200"
+                    />
+                    <button
+                      type="button"
+                      className="absolute top-3 right-3 p-1.5 bg-black/70 rounded-full text-white z-10"
+                      onClick={() => {
+                        URL.revokeObjectURL(videoPreview);
+                        setVideoPreview(null);
+                        setVideoFile(null);
+                        setPostType("image");
+                      }}
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+
                 <div className="mt-4 flex flex-wrap gap-3">
                   <button
                     type="button"
@@ -165,6 +256,14 @@ export default function CreatePostWidget({
                   >
                     <Image className="w-4 h-4" />
                     Upload image
+                  </button>
+                  <button
+                    type="button"
+                    className="flex items-center gap-2 px-4 py-2 border border-blue-300 rounded-xl text-sm font-medium text-blue-600"
+                    onClick={() => videoInputRef.current?.click()}
+                  >
+                    <Video className="w-4 h-4" />
+                    Upload video
                   </button>
                   <button
                     type="button"
@@ -180,6 +279,13 @@ export default function CreatePostWidget({
                     className="hidden"
                     onChange={handleFileChange}
                   />
+                  <input
+                    ref={videoInputRef}
+                    type="file"
+                    accept="video/*"
+                    className="hidden"
+                    onChange={handleVideoChange}
+                  />
                 </div>
 
                 <div className="mt-6">
@@ -190,7 +296,7 @@ export default function CreatePostWidget({
                   <textarea
                     value={prompt}
                     onChange={(event) => setPrompt(event.target.value)}
-                    placeholder="Nhập prompt bạn đã dùng để tạo ảnh..."
+                    placeholder="Nhập prompt bạn đã dùng để tạo ảnh/video..."
                     className="mt-3 w-full rounded-xl border border-gray-200 bg-gray-50 p-3 text-xs font-mono text-gray-700 focus:ring-2 focus:ring-purple-200"
                     rows={3}
                   />
@@ -214,11 +320,12 @@ export default function CreatePostWidget({
                 </button>
                 <button
                   type="button"
-                  className="px-5 py-2 text-sm font-semibold text-white bg-black rounded-lg hover:bg-gray-900 disabled:opacity-50"
+                  className="px-5 py-2 text-sm font-semibold text-white bg-black rounded-lg hover:bg-gray-900 disabled:opacity-50 flex items-center gap-2"
                   onClick={handleSubmit}
                   disabled={submitting}
                 >
-                  {submitting ? "Đang đăng..." : "Đăng bài"}
+                  {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                  {submitting ? "Đang đăng..." : postType === "video" ? "Đăng video" : "Đăng bài"}
                 </button>
               </div>
             </div>

@@ -11,6 +11,7 @@ export default function DashboardForm() {
     loading,
     error,
     createPost,
+    createVideoPost,
     handleLike,
     currentUser,
     userCache,
@@ -37,6 +38,7 @@ export default function DashboardForm() {
           <CreatePostWidget
             currentUser={currentUser}
             onCreatePost={createPost}
+            onCreateVideoPost={createVideoPost}
             onNavigateAiTools={goToAiTools}
           />
         </section>
