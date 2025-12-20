@@ -8,6 +8,7 @@ const UPDATE_PROFILE_ENDPOINT = "/api/v1/profiles/update";
 const VERIFY_PROFILE_ENDPOINT = "/api/v1/profiles/verify-profile";
 const RESEND_VERIFY_EMAIL_ENDPOINT = "/api/v1/profiles/resend-verify-email";
 const ACTIVATE_PROFILE_ENDPOINT = "/api/v1/profiles/activate-profile";
+const CHECK_VERIFY_ENDPOINT = "/api/v1/profiles/check-verify";
 
 const fetchMe = () => axiosClient.get(CURRENT_USER_ENDPOINT);
 
@@ -40,6 +41,9 @@ export const userApi = {
 
   activateProfile: (code) =>
     axiosClient.patch(`${ACTIVATE_PROFILE_ENDPOINT}/${code}`),
+
+  // Kiểm tra trạng thái xác minh email
+  checkVerifyStatus: () => axiosClient.get(CHECK_VERIFY_ENDPOINT),
 
   // Get pending join group requests (for group admins)
   getMemberRequests: (page = 1, size = 20) =>

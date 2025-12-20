@@ -61,8 +61,9 @@ const VerifyEmailPage = () => {
 
       setSuccess(true);
       toast.success("Xác thực email thành công!");
+      // Chuyển về trang profile và reload để hiển thị trạng thái mới
       setTimeout(() => {
-        navigate("/login");
+        window.location.href = "/profile";
       }, 1500);
     } catch (err) {
       const message =

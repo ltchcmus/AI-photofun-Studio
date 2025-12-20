@@ -45,9 +45,9 @@ const RegisterPage = () => {
         roles: ["USER"],
       });
       toast.success(
-        "Đăng ký thành công! Vui lòng kiểm tra email để lấy mã xác thực."
+        "Đăng ký thành công! Vui lòng đăng nhập."
       );
-      navigate("/verify-email");
+      navigate("/login");
     } catch (err) {
       // backend may return object or message
       const msg =
@@ -163,9 +163,8 @@ const RegisterPage = () => {
               type="button"
               onClick={handleSubmit}
               disabled={loading}
-              className={`w-full py-3.5 bg-black text-white rounded-xl text-base font-semibold ${
-                loading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              className={`w-full py-3.5 bg-black text-white rounded-xl text-base font-semibold ${loading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
             >
               {loading ? "Signing up..." : "Sign Up"}
             </button>
