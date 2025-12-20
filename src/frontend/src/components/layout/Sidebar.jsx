@@ -21,7 +21,11 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const activePath = location.pathname;
   const [menuOpen, setMenuOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  // Khởi tạo darkMode từ localStorage
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem("darkMode");
+    return saved === "true";
+  });
   const menuRef = useRef(null);
   const { user, logout } = useAuth();
 
@@ -36,6 +40,10 @@ const Sidebar = () => {
 
   const handleLogout = useCallback(async () => {
     try {
+      // Reset dark mode khi logout
+      setDarkMode(false);
+      localStorage.removeItem("darkMode");
+      document.body.classList.remove("dark");
       await logout();
       navigate("/login");
     } catch (error) {
@@ -44,6 +52,17 @@ const Sidebar = () => {
       setMenuOpen(false);
     }
   }, [logout, navigate]);
+
+  // Toggle dark mode class trên document body và lưu vào localStorage
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add("dark");
+      localStorage.setItem("darkMode", "true");
+    } else {
+      document.body.classList.remove("dark");
+      localStorage.setItem("darkMode", "false");
+    }
+  }, [darkMode]);
 
   useEffect(() => {
     if (!menuOpen) return;
