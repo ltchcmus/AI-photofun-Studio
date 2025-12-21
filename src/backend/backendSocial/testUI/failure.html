@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Google Login - Failed</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .container {
+        background: white;
+        padding: 50px 60px;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        max-width: 500px;
+        animation: fadeIn 0.5s ease-in;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+        animation: shake 0.5s ease-in-out;
+      }
+
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        10%,
+        30%,
+        50%,
+        70%,
+        90% {
+          transform: translateX(-10px);
+        }
+        20%,
+        40%,
+        60%,
+        80% {
+          transform: translateX(10px);
+        }
+      }
+
+      h1 {
+        color: #d32f2f;
+        margin: 0 0 15px 0;
+        font-size: 32px;
+        font-weight: 600;
+      }
+
+      .message {
+        color: #666;
+        font-size: 18px;
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+
+      .error-box {
+        background: #ffebee;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid #f44336;
+        text-align: left;
+        margin: 20px 0;
+      }
+
+      .error-title {
+        font-weight: bold;
+        color: #c62828;
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+
+      .error-details {
+        color: #666;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .reasons {
+        text-align: left;
+        margin: 20px 0;
+      }
+
+      .reasons ul {
+        padding-left: 20px;
+      }
+
+      .reasons li {
+        margin: 10px 0;
+        color: #555;
+        font-size: 14px;
+      }
+
+      .btn {
+        background: #4285f4;
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        margin: 10px 5px;
+        transition: all 0.3s ease;
+      }
+
+      .btn:hover {
+        background: #357ae8;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(66, 133, 244, 0.3);
+      }
+
+      .btn-secondary {
+        background: #9e9e9e;
+      }
+
+      .btn-secondary:hover {
+        background: #757575;
+      }
+
+      .countdown {
+        color: #999;
+        font-size: 14px;
+        margin-top: 20px;
+      }
+
+      .support-link {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+      }
+
+      .support-link a {
+        color: #2196f3;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      .support-link a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="icon">❌</div>
+      <h1>Google Login Failed</h1>
+      <div class="message">
+        We couldn't complete your Google login. This might happen for several
+        reasons.
+      </div>
+
+      <div class="error-box">
+        <div class="error-title">⚠️ What happened?</div>
+        <div class="error-details" id="error-details">
+          The authentication process was interrupted or failed.
+        </div>
+      </div>
+
+      <div class="reasons">
+        <strong>Common reasons:</strong>
+        <ul>
+          <li>❌ Google login was cancelled</li>
+          <li>❌ Invalid or expired authorization code</li>
+          <li>❌ Google API configuration issues</li>
+          <li>❌ Account creation limit reached for your IP</li>
+          <li>❌ Network connection problems</li>
+          <li>❌ Backend service unavailable</li>
+        </ul>
+      </div>
+
+      <div style="margin: 30px 0">
+        <a href="/" class="btn">🔄 Try Again</a>
+        <a href="/" class="btn btn-secondary">← Back to Login</a>
+      </div>
+
+      <div class="countdown">
+        Automatically redirecting in <span id="countdown">10</span> seconds...
+      </div>
+
+      <div class="support-link">
+        <p>
+          Need help? <a href="mailto:support@example.com">Contact Support</a>
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // Get URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const error = urlParams.get("error");
+      const errorDescription = urlParams.get("error_description");
+
+      // Display error if available
+      if (error) {
+        const errorDetails = document.getElementById("error-details");
+        let errorMessage = `Error: ${error}`;
+        if (errorDescription) {
+          errorMessage += `\nDescription: ${errorDescription}`;
+        }
+        errorDetails.textContent = errorMessage;
+      }
+
+      // Countdown timer
+      let seconds = 10;
+      const countdownElement = document.getElementById("countdown");
+
+      const timer = setInterval(() => {
+        seconds--;
+        countdownElement.textContent = seconds;
+
+        if (seconds <= 0) {
+          clearInterval(timer);
+          window.location.href = "/";
+        }
+      }, 1000);
+
+      // Log error for debugging
+      console.error("Google Login Failed:", {
+        error: error,
+        errorDescription: errorDescription,
+        timestamp: new Date().toISOString(),
+      });
+    </script>
+  </body>
+</html>

@@ -1,16 +1,36 @@
 # 🧪 API Testing Dashboard - React Version
 
-Ứng dụng React test đầy đủ **59 REST APIs + 2 Socket.IO servers** cho hệ thống microservices.
+Ứng dụng React test đầy đủ **59 REST APIs + 2 Socket.IO servers + Google OAuth2 Login** cho hệ thống microservices.
+
+## 🆕 NEW FEATURE: Google Login (OAuth2)
+
+✨ **Mới thêm:** Tích hợp đầy đủ Google OAuth2 Login flow!
+
+### Tính năng Google Login:
+
+- 🔵 Login bằng tài khoản Google
+- ⚡ Tự động tạo tài khoản nếu chưa có
+- 🔐 JWT token authentication với httpOnly cookie
+- 👤 Lấy thông tin user từ Google (email, name, avatar)
+- 🔑 Cho phép set password sau khi login bằng Google
+- ✅ Kiểm tra trạng thái login by Google
+
+**📖 Xem hướng dẫn chi tiết:** [GOOGLE_LOGIN_TEST_GUIDE.md](./GOOGLE_LOGIN_TEST_GUIDE.md)
+
+---
 
 ## 📋 Danh sách API
 
-### Authentication (5 APIs)
+### Authentication (8 APIs) ⬅️ **Updated!**
 
 1. POST `/api/v1/identity/users/register` - Register
 2. POST `/api/v1/identity/auth/login` - Login
 3. GET `/api/v1/identity/auth/introspect/{token}` - Introspect
 4. GET `/api/v1/identity/auth/refresh/{token}` - Refresh Token
 5. GET `/api/v1/identity/auth/logout` - Logout
+6. **🆕 GET `/api/v1/identity/auth/authentication?code={code}` - Google OAuth Callback**
+7. **🆕 GET `/api/v1/identity/users/check-login-by-google` - Check Google Login Status**
+8. **🆕 POST `/api/v1/identity/users/set-password` - Set Password (for Google users)**
 
 ### User Management (8 APIs)
 
@@ -246,7 +266,7 @@ Make sure all backend services have CORS enabled for `http://localhost:3000`
 
 | Service       | Port | Context Path     | APIs Count     |
 | ------------- | ---- | ---------------- | -------------- |
-| Identity      | 8080 | /api/v1/identity | 20             |
+| Identity      | 8000 | /api/v1/identity | 20             |
 | Profile       | 8081 | /api/v1/profiles | 5              |
 | Post          | 8082 | /api/v1/posts    | 6              |
 | Comments      | 8003 | /comments        | 5 + Socket.IO  |

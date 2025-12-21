@@ -140,11 +140,19 @@ public class UserController {
 
   @GetMapping("/me")
   HttpResponse<GetMeResponse> getMyInfo() {
-    return HttpResponse.<GetMeResponse>builder()
-        .code(1000)
-        .result(userService.getMyInfo())
-        .message("User info fetched successfully")
-        .build();
+    try {
+      GetMeResponse result = userService.getMyInfo();
+      return HttpResponse.<GetMeResponse>builder()
+          .code(1000)
+          .result(result)
+          .message("User info fetched successfully")
+          .build();
+    } catch (Exception e) {
+      // Log the actual error
+      System.err.println("Error in /me endpoint: " + e.getMessage());
+      e.printStackTrace();
+      throw e; // Re-throw to be handled by GlobalException
+    }
   }
 
   @DeleteMapping("/delete/{userId}")
