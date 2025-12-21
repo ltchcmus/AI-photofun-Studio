@@ -35,7 +35,6 @@ import service.identity.service.AuthService;
 import service.identity.utils.CookieUtils;
 import service.identity.utils.Utils;
 
-
 @RestController
 @RequestMapping("/auth")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -157,15 +156,17 @@ public class AuthController {
       clientIp = request.getRemoteAddr();
     }
     boolean success = authService.authenticate(code, response, clientIp);
+
+    String redirectUrl = success ? redirectAfterLoginGoogleFrontendSuccess
+                                 : redirectAfterLoginGoogleFrontendFailure;
+
     if (success) {
       return ResponseEntity.ok()
           .header("Access-Control-Expose-Headers", "X-Access-Token")
-          .body(Map.of("success", true, "redirectUrl",
-                       redirectAfterLoginGoogleFrontendSuccess));
+          .body(Map.of("success", true, "redirectUrl", redirectUrl));
     } else {
       return ResponseEntity.ok().body(
-          Map.of("success", false, "redirectUrl",
-                 redirectAfterLoginGoogleFrontendFailure));
+          Map.of("success", false, "redirectUrl", redirectUrl));
     }
   }
 

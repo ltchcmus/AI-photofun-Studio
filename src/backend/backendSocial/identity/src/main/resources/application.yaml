@@ -28,7 +28,7 @@ config:
     mail: ${MAIL_SERVICE_URL:https://mail-service-80a4.onrender.com}
     redirect-after-login-google-frontend-success: ${REDIRECT_AFTER_LOGIN_GOOGLE_FRONTEND:http://localhost:5173/google-loading}
     redirect-after-login-google-frontend-failure: ${REDIRECT_AFTER_LOGIN_GOOGLE_FRONTEND_FAILURE:http://localhost:5173/failure}
-    redirect-uri: ${REDIRECT_URI:http://localhost:8000/identity/auth/authentication}
+    redirect-uri: ${REDIRECT_URI:http://localhost:5173/google-loading}
     communication: ${COMMUNICATION_SERVICE_URL:http://localhost:8085}
 
   gg:
