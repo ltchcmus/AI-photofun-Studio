@@ -59,8 +59,28 @@ const RegisterPage = () => {
   };
 
   const loginWithGoogle = () => {
-    // Translated alert
-    alert("Google sign-up function (Demo)");
+    // Get Google OAuth config from environment variables
+    const clientId =
+      import.meta.env.VITE_GOOGLE_CLIENT_ID ||
+      "935823816630-4thvb6jh7hboao1dt67kf9cvei7glshl.apps.googleusercontent.com";
+
+    // Redirect to frontend google-loading page
+    const redirectUri =
+      import.meta.env.VITE_GOOGLE_REDIRECT_URI ||
+      "http://localhost:5173/google-loading";
+
+    // Build Google OAuth2 authorization URL
+    const googleAuthUrl =
+      `https://accounts.google.com/o/oauth2/v2/auth?` +
+      `client_id=${encodeURIComponent(clientId)}&` +
+      `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+      `response_type=code&` +
+      `scope=${encodeURIComponent("openid email profile")}&` +
+      `access_type=offline&` +
+      `prompt=consent`;
+
+    // Redirect to Google OAuth
+    window.location.href = googleAuthUrl;
   };
 
   const loginWithFacebook = () => {

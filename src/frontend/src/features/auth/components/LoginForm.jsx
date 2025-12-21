@@ -44,8 +44,8 @@ const LoginForm = () => {
     // Get Google OAuth config from environment variables
     const clientId =
       import.meta.env.VITE_GOOGLE_CLIENT_ID ||
-      "424511485278-d36bocf4e3avqsadguauellt3gn4l412.apps.googleusercontent.com";
-    
+      "935823816630-4thvb6jh7hboao1dt67kf9cvei7glshl.apps.googleusercontent.com";
+
     // Redirect to frontend google-loading page, not backend
     const redirectUri =
       import.meta.env.VITE_GOOGLE_REDIRECT_URI ||
@@ -149,9 +149,8 @@ const LoginForm = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className={`w-full py-3 bg-black text-white rounded-xl text-base font-semibold cursor-pointer transition-all duration-300 hover:bg-gray-800 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:shadow-md ${
-                  submitting ? "opacity-50 cursor-not-allowed" : ""
-                }`}
+                className={`w-full py-3 bg-black text-white rounded-xl text-base font-semibold cursor-pointer transition-all duration-300 hover:bg-gray-800 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:shadow-md ${submitting ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
               >
                 {submitting ? "Logging in..." : "Login"}
               </button>

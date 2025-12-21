@@ -13,6 +13,7 @@ services:
       DATABASE_URL: jdbc:postgresql://aws-1-ap-south-1.pooler.supabase.com:6543/postgres?sslmode=require&prepareThreshold=0&preparedStatementCacheQueries=0&preferQueryMode=simple&connectTimeout=30&socketTimeout=30&loginTimeout=30
       DATABASE_USERNAME: postgres.noyltxzqpksuzxmjonkm
       DATABASE_PASSWORD: Cong2642005@@
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
     depends_on:
       - profile-service
       - post-service

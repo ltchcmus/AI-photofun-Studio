@@ -32,8 +32,8 @@ config:
     communication: ${COMMUNICATION_SERVICE_URL:http://localhost:8085}
 
   gg:
-    client-id: ${GOOGLE_CLIENT_ID:424511485278-d36bocf4e3avqsadguauellt3gn4l412.apps.googleusercontent.com}
-    client-secret: ${GOOGLE_CLIENT_SECRET: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}
+    client-id: ${GOOGLE_CLIENT_ID:935823816630-4thvb6jh7hboao1dt67kf9cvei7glshl.apps.googleusercontent.com}
+    client-secret: ${GOOGLE_CLIENT_SECRET:}
 
   jwt:
     secret: ${JWT_SECRET:83dc48544aeb79bb92fb8f7271d4cbeb825e5ec19ce7f0b4c1be2048d1bd98671fc1e39e2a0a97c4d7d0a20a63b580e7c238f5ba880bcd2b6a091fd79f72e3e1}
