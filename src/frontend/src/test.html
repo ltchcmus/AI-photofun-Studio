@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI & Video API Tester</title>
+    <title>Google Login API Tester</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .loader {
@@ -22,410 +22,211 @@
             }
         }
 
-        .tab-active {
-            background-color: #3b82f6;
-            color: white;
+        .google-btn {
+            background: linear-gradient(135deg, #4285f4 0%, #357ae8 100%);
+            transition: all 0.3s ease;
         }
 
-        .tab-inactive {
-            background-color: #e5e7eb;
-            color: #374151;
+        .google-btn:hover {
+            background: linear-gradient(135deg, #357ae8 0%, #2a5db5 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(66, 133, 244, 0.4);
         }
     </style>
 </head>
 
-<body class="bg-gray-100 min-h-screen p-8">
-    <div class="max-w-5xl mx-auto">
-        <h1 class="text-3xl font-bold text-center mb-6 text-blue-600">🎬 AI & Video API Tester</h1>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen p-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-3xl font-bold text-center mb-6 text-blue-600">🔐 Google Login API Tester</h1>
 
-        <!-- Tab Navigation -->
-        <div class="flex mb-6 border-b">
-            <button onclick="switchTab('ai')" id="tab-ai" class="px-6 py-3 rounded-t-lg font-semibold tab-active">🖼️ AI
-                Features</button>
-            <button onclick="switchTab('video')" id="tab-video"
-                class="px-6 py-3 rounded-t-lg font-semibold tab-inactive ml-2">🎥 Video APIs</button>
-            <button onclick="switchTab('chat')" id="tab-chat"
-                class="px-6 py-3 rounded-t-lg font-semibold tab-inactive ml-2">💬 Video Chat</button>
-        </div>
-
-        <!-- AI Features Tab -->
-        <div id="content-ai" class="tab-content">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Image Generation -->
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4 border-b pb-2">1. Image Generation</h2>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium">Prompt</label>
-                            <input id="gen-prompt" type="text" value="A beautiful sunset over mountains, photorealistic"
-                                class="w-full border p-2 rounded mt-1">
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-sm font-medium">Model</label>
-                                <select id="gen-model" class="w-full border p-2 rounded mt-1">
-                                    <option value="realism">Realism</option>
-                                    <option value="artistic">Artistic</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium">Aspect Ratio</label>
-                                <input id="gen-ratio" type="text" value="16:9" class="w-full border p-2 rounded mt-1">
-                            </div>
-                        </div>
-                        <button onclick="generateImage()"
-                            class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition">Generate</button>
-                    </div>
-                    <div id="gen-result" class="mt-4 hidden">
-                        <p class="text-sm font-bold">Status: <span id="gen-status">Waiting...</span></p>
-                        <div id="gen-loader"
-                            class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-8 w-8 mx-auto my-2 hidden">
-                        </div>
-                        <img id="gen-img" src="" class="mt-2 w-full rounded shadow hidden">
-                    </div>
+        <!-- Configuration -->
+        <div class="bg-white p-6 rounded-xl shadow-lg mb-6">
+            <h2 class="text-xl font-semibold mb-4 border-b pb-2 text-gray-700">⚙️ Configuration</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">API Gateway URL</label>
+                    <input id="api-gateway" type="text" value="http://localhost:8888"
+                        class="w-full border border-gray-300 p-3 rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
-
-                <!-- Remove Background -->
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4 border-b pb-2">2. Remove Background</h2>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium">Image URL</label>
-                            <input id="bg-url" type="text"
-                                value="https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=800"
-                                class="w-full border p-2 rounded mt-1">
-                        </div>
-                        <button onclick="removeBackground()"
-                            class="w-full bg-purple-500 text-white py-2 rounded hover:bg-purple-600 transition">Remove
-                            Background</button>
-                    </div>
-                    <div id="bg-result" class="mt-4 hidden">
-                        <p class="text-sm font-bold text-green-600">Result:</p>
-                        <img id="bg-img-res" src="" class="mt-2 w-full rounded shadow">
-                    </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Google Client ID</label>
+                    <input id="google-client-id" type="text"
+                        value="424511485278-d36bocf4e3avqsadguauellt3gn4l412.apps.googleusercontent.com"
+                        class="w-full border border-gray-300 p-3 rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Redirect URI (after Google consent)</label>
+                    <input id="redirect-uri" type="text"
+                        value="http://localhost:8888/api/v1/identity/auth/authentication"
+                        class="w-full border border-gray-300 p-3 rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
                 </div>
             </div>
         </div>
 
-        <!-- Video APIs Tab -->
-        <div id="content-video" class="tab-content hidden">
-            <!-- Auth Section -->
-            <div class="bg-yellow-50 border border-yellow-300 p-4 rounded-lg mb-6">
-                <h3 class="font-bold text-yellow-800 mb-2">🔐 Authentication Required</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium">Username/Email</label>
-                        <input id="auth-username" type="text" value="admin" class="w-full border p-2 rounded mt-1">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium">Password</label>
-                        <input id="auth-password" type="password" value="admin" class="w-full border p-2 rounded mt-1">
-                    </div>
-                    <div class="flex items-end">
-                        <button onclick="login()"
-                            class="w-full bg-yellow-500 text-white py-2 rounded hover:bg-yellow-600 transition">Login</button>
-                    </div>
-                </div>
-                <p id="auth-status" class="text-sm mt-2 text-gray-600">Status: Not logged in</p>
-            </div>
+        <!-- Google Login Section -->
+        <div class="bg-white p-6 rounded-xl shadow-lg mb-6">
+            <h2 class="text-xl font-semibold mb-4 border-b pb-2 text-gray-700">🚀 Login with Google</h2>
 
-            <!-- Upload Video to URL -->
-            <div class="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-300 p-4 rounded-lg mb-6">
-                <h3 class="font-bold text-purple-800 mb-2">📤 Upload Video to Get URL</h3>
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium">Server</label>
-                        <select id="upload-server" class="w-full border p-2 rounded mt-1">
-                            <option value="local">🏠 Local (localhost:8000)</option>
-                            <option value="proxy">🔄 CORS Proxy (localhost:9090)</option>
-                            <option value="remote">🌐 Remote (có thể bị CORS)</option>
-                        </select>
+            <div class="text-center space-y-4">
+                <p class="text-gray-600 text-sm">Click the button below to authenticate with Google OAuth 2.0</p>
+
+                <button onclick="loginWithGoogle()"
+                    class="google-btn text-white px-8 py-4 rounded-lg font-semibold text-lg flex items-center justify-center mx-auto gap-3">
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                            fill="#fff" />
+                        <path
+                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                            fill="#fff" />
+                        <path
+                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                            fill="#fff" />
+                        <path
+                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                            fill="#fff" />
+                    </svg>
+                    Đăng nhập bằng Google
+                </button>
+
+                <div id="login-status" class="text-sm text-gray-500 hidden">
+                    <div
+                        class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-8 w-8 mx-auto my-2">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium">ID</label>
-                        <input id="upload-video-id" type="text" placeholder="unique-id"
-                            class="w-full border p-2 rounded mt-1">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium">Video File</label>
-                        <input id="upload-video-file" type="file" accept="video/*"
-                            class="w-full border p-2 rounded mt-1 bg-white">
-                    </div>
-                    <div class="flex items-end">
-                        <button onclick="uploadVideoToUrl()" id="btn-upload-video"
-                            class="w-full bg-purple-500 text-white py-2 rounded hover:bg-purple-600 transition">
-                            📤 Upload
-                        </button>
-                    </div>
-                </div>
-                <p id="upload-server-info" class="text-xs text-purple-600 mt-2">API: POST
-                    http://localhost:8000/api/v1/file/uploads-video-file</p>
-                <div id="upload-video-result" class="mt-4 hidden">
-                    <p class="text-sm font-bold text-green-600">✅ Video URL:</p>
-                    <div class="flex items-center gap-2 mt-1">
-                        <input id="uploaded-video-url" type="text" readonly
-                            class="flex-1 border p-2 rounded bg-gray-100 text-sm">
-                        <button onclick="copyVideoUrl()"
-                            class="bg-gray-500 text-white px-3 py-2 rounded hover:bg-gray-600 text-sm">📋 Copy</button>
-                        <button onclick="useVideoUrl()"
-                            class="bg-green-500 text-white px-3 py-2 rounded hover:bg-green-600 text-sm">✅ Use</button>
-                    </div>
-                </div>
-                <div id="upload-video-loading" class="mt-4 hidden">
-                    <div class="flex items-center gap-2">
-                        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-6 w-6"></div>
-                        <span class="text-purple-600">Uploading video... (this may take a while)</span>
-                    </div>
+                    <p>Đang chuyển hướng đến Google...</p>
                 </div>
             </div>
+        </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Create Video Post -->
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4 border-b pb-2 flex items-center">
-                        <span class="mr-2">🎥</span> Create Video Post
-                    </h2>
-                    <p class="text-xs text-gray-500 mb-4">POST /api/v1/posts/create-video</p>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium">Caption</label>
-                            <input id="video-caption" type="text" placeholder="My awesome video"
-                                class="w-full border p-2 rounded mt-1">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium">Prompt</label>
-                            <input id="video-prompt" type="text" placeholder="AI generated video description"
-                                class="w-full border p-2 rounded mt-1">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium">Video URL <span
-                                    class="text-red-500">*</span></label>
-                            <input id="video-url" type="text" placeholder="https://example.com/video.mp4"
-                                class="w-full border p-2 rounded mt-1">
-                            <p class="text-xs text-gray-400 mt-1">Upload video to external server first (S3, Cloudinary,
-                                etc.)</p>
-                        </div>
-                        <button onclick="createVideoPost()"
-                            class="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition">
-                            🎬 Create Video Post
-                        </button>
-                    </div>
-                    <div id="video-post-result" class="mt-4 hidden">
-                        <p class="text-sm font-bold text-green-600">Response:</p>
-                        <pre id="video-post-response"
-                            class="bg-gray-100 p-2 rounded text-xs overflow-auto max-h-40"></pre>
+        <!-- How it works -->
+        <div class="bg-white p-6 rounded-xl shadow-lg mb-6">
+            <h2 class="text-xl font-semibold mb-4 border-b pb-2 text-gray-700">📖 Cách hoạt động</h2>
+            <div class="space-y-3 text-sm text-gray-600">
+                <div class="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+                    <span
+                        class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
+                    <div>
+                        <p class="font-medium text-gray-800">User clicks "Login with Google"</p>
+                        <p>Redirect to Google OAuth consent screen</p>
                     </div>
                 </div>
-
-                <!-- Get All Posts (including videos) -->
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4 border-b pb-2 flex items-center">
-                        <span class="mr-2">📋</span> Get All Posts
-                    </h2>
-                    <p class="text-xs text-gray-500 mb-4">GET /api/v1/posts/get-all</p>
-                    <div class="space-y-4">
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-sm font-medium">Page</label>
-                                <input id="posts-page" type="number" value="1" min="1"
-                                    class="w-full border p-2 rounded mt-1">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium">Size</label>
-                                <input id="posts-size" type="number" value="10" min="1" max="50"
-                                    class="w-full border p-2 rounded mt-1">
-                            </div>
-                        </div>
-                        <button onclick="getAllPosts()"
-                            class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition">
-                            📋 Get Posts
-                        </button>
-                    </div>
-                    <div id="posts-result" class="mt-4 hidden">
-                        <p class="text-sm font-bold text-green-600">Posts:</p>
-                        <div id="posts-list" class="space-y-2 max-h-60 overflow-auto"></div>
+                <div class="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
+                    <span
+                        class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+                    <div>
+                        <p class="font-medium text-gray-800">Google returns authorization code</p>
+                        <p>Redirects to: <code
+                                class="bg-gray-200 px-1 rounded">/api/v1/identity/auth/authentication?code=xxx</code>
+                        </p>
                     </div>
                 </div>
-
-                <!-- View Single Post -->
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4 border-b pb-2 flex items-center">
-                        <span class="mr-2">👁️</span> View Post Details
-                    </h2>
-                    <p class="text-xs text-gray-500 mb-4">GET /api/v1/posts/view/{postId}</p>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium">Post ID</label>
-                            <input id="view-post-id" type="text" placeholder="Enter post ID"
-                                class="w-full border p-2 rounded mt-1">
-                        </div>
-                        <button onclick="viewPost()"
-                            class="w-full bg-indigo-500 text-white py-2 rounded hover:bg-indigo-600 transition">
-                            👁️ View Post
-                        </button>
-                    </div>
-                    <div id="view-post-result" class="mt-4 hidden">
-                        <pre id="view-post-response"
-                            class="bg-gray-100 p-2 rounded text-xs overflow-auto max-h-40"></pre>
+                <div class="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg">
+                    <span
+                        class="bg-yellow-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
+                    <div>
+                        <p class="font-medium text-gray-800">Backend exchanges code for token</p>
+                        <p>Creates/logs in user, sets JWT cookie</p>
                     </div>
                 </div>
-
-                <!-- My Posts -->
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4 border-b pb-2 flex items-center">
-                        <span class="mr-2">👤</span> My Posts
-                    </h2>
-                    <p class="text-xs text-gray-500 mb-4">GET /api/v1/posts/my-posts</p>
-                    <div class="space-y-4">
-                        <button onclick="getMyPosts()"
-                            class="w-full bg-teal-500 text-white py-2 rounded hover:bg-teal-600 transition">
-                            👤 Get My Posts
-                        </button>
-                    </div>
-                    <div id="my-posts-result" class="mt-4 hidden">
-                        <div id="my-posts-list" class="space-y-2 max-h-60 overflow-auto"></div>
+                <div class="flex items-start gap-3 p-3 bg-purple-50 rounded-lg">
+                    <span
+                        class="bg-purple-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold flex-shrink-0">4</span>
+                    <div>
+                        <p class="font-medium text-gray-800">Redirect to frontend</p>
+                        <p>Success: <code class="bg-gray-200 px-1 rounded">/google-loading</code> | Failure: <code
+                                class="bg-gray-200 px-1 rounded">/failure</code></p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Video Chat Tab -->
-        <div id="content-chat" class="tab-content hidden">
-            <div class="bg-blue-50 border border-blue-300 p-4 rounded-lg mb-6">
-                <h3 class="font-bold text-blue-800 mb-2">💬 Video Message via WebSocket</h3>
-                <p class="text-sm text-blue-700">Send video URL as a message with isVideo=true flag</p>
+        <!-- API Endpoints Reference -->
+        <div class="bg-white p-6 rounded-xl shadow-lg mb-6">
+            <h2 class="text-xl font-semibold mb-4 border-b pb-2 text-gray-700">📚 API Endpoints</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-4 py-2 text-left">Endpoint</th>
+                            <th class="px-4 py-2 text-left">Method</th>
+                            <th class="px-4 py-2 text-left">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y">
+                        <tr>
+                            <td class="px-4 py-2 font-mono text-xs text-blue-600">/api/v1/identity/auth/authentication
+                            </td>
+                            <td class="px-4 py-2"><span
+                                    class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">GET</span></td>
+                            <td class="px-4 py-2">Google OAuth callback</td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-2 font-mono text-xs text-blue-600">
+                                /api/v1/identity/users/check-login-by-google</td>
+                            <td class="px-4 py-2"><span
+                                    class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">GET</span></td>
+                            <td class="px-4 py-2">Check if user logged in via Google</td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-2 font-mono text-xs text-blue-600">/api/v1/identity/users/set-password
+                            </td>
+                            <td class="px-4 py-2"><span
+                                    class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">POST</span></td>
+                            <td class="px-4 py-2">Set password for Google users</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
+        </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- 1-1 Video Message -->
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4 border-b pb-2 flex items-center">
-                        <span class="mr-2">📤</span> Send Video Message (1-1)
-                    </h2>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium">Receiver User ID</label>
-                            <input id="chat-receiver" type="text" placeholder="User ID to send to"
-                                class="w-full border p-2 rounded mt-1">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium">Video URL</label>
-                            <input id="chat-video-url" type="text" placeholder="https://example.com/video.mp4"
-                                class="w-full border p-2 rounded mt-1">
-                        </div>
-                        <div class="flex items-center space-x-4">
-                            <label class="flex items-center">
-                                <input type="checkbox" id="chat-is-video" checked class="mr-2">
-                                <span class="text-sm">🎥 Is Video</span>
-                            </label>
-                        </div>
-                        <button onclick="sendVideoMessage()"
-                            class="w-full bg-pink-500 text-white py-2 rounded hover:bg-pink-600 transition">
-                            📤 Send Video Message
-                        </button>
-                    </div>
-                    <div id="chat-result" class="mt-4 hidden">
-                        <pre id="chat-response" class="bg-gray-100 p-2 rounded text-xs overflow-auto max-h-40"></pre>
-                    </div>
+        <!-- Test Check Google Login -->
+        <div class="bg-white p-6 rounded-xl shadow-lg mb-6">
+            <h2 class="text-xl font-semibold mb-4 border-b pb-2 text-gray-700">🧪 Test API: Check Login by Google</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Access Token (JWT)</label>
+                    <input id="access-token" type="text" placeholder="Paste your JWT token here..."
+                        class="w-full border border-gray-300 p-3 rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
                 </div>
-
-                <!-- Group Video Message -->
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4 border-b pb-2 flex items-center">
-                        <span class="mr-2">👥</span> Send Video to Group
-                    </h2>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium">Group ID</label>
-                            <input id="group-id" type="text" placeholder="Group ID"
-                                class="w-full border p-2 rounded mt-1">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium">Video URL</label>
-                            <input id="group-video-url" type="text" placeholder="https://example.com/video.mp4"
-                                class="w-full border p-2 rounded mt-1">
-                        </div>
-                        <div class="flex items-center space-x-4">
-                            <label class="flex items-center">
-                                <input type="checkbox" id="group-is-video" checked class="mr-2">
-                                <span class="text-sm">🎥 Is Video</span>
-                            </label>
-                        </div>
-                        <button onclick="sendGroupVideoMessage()"
-                            class="w-full bg-orange-500 text-white py-2 rounded hover:bg-orange-600 transition">
-                            👥 Send to Group
-                        </button>
-                    </div>
-                    <div id="group-chat-result" class="mt-4 hidden">
-                        <pre id="group-chat-response"
-                            class="bg-gray-100 p-2 rounded text-xs overflow-auto max-h-40"></pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- WebSocket Connection -->
-            <div class="bg-white p-6 rounded-lg shadow-md mt-6">
-                <h2 class="text-xl font-semibold mb-4 border-b pb-2">🔌 WebSocket Connection</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium">Socket URL</label>
-                        <input id="socket-url" type="text" value="ws://localhost:8899"
-                            class="w-full border p-2 rounded mt-1">
-                    </div>
-                    <div class="flex items-end space-x-2">
-                        <button onclick="connectSocket()"
-                            class="flex-1 bg-green-500 text-white py-2 rounded hover:bg-green-600 transition">Connect</button>
-                        <button onclick="disconnectSocket()"
-                            class="flex-1 bg-red-500 text-white py-2 rounded hover:bg-red-600 transition">Disconnect</button>
-                    </div>
-                    <div class="flex items-end">
-                        <p id="socket-status" class="text-sm font-medium py-2">Status: <span
-                                class="text-gray-500">Disconnected</span></p>
-                    </div>
+                <button onclick="checkLoginByGoogle()"
+                    class="w-full bg-indigo-500 text-white py-3 rounded-lg hover:bg-indigo-600 transition font-medium">
+                    🔍 Check Login by Google
+                </button>
+                <div id="check-result" class="hidden">
+                    <pre class="bg-gray-100 p-4 rounded-lg text-sm overflow-auto max-h-40"></pre>
                 </div>
             </div>
         </div>
 
         <!-- Console Logs -->
-        <div class="mt-8 bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+        <div class="bg-gray-800 text-green-400 p-4 rounded-xl font-mono text-sm overflow-x-auto">
             <div class="flex justify-between items-center border-b border-gray-600 pb-2 mb-2">
-                <h3 class="text-white">Console Logs:</h3>
+                <h3 class="text-white font-semibold">📋 Console Logs:</h3>
                 <button onclick="clearLogs()"
-                    class="text-xs bg-gray-600 text-white px-3 py-1 rounded hover:bg-gray-500">Clear</button>
+                    class="text-xs bg-gray-600 text-white px-3 py-1 rounded hover:bg-gray-500 transition">Clear</button>
             </div>
-            <div id="logs" class="h-40 overflow-y-auto"></div>
+            <div id="logs" class="h-40 overflow-y-auto space-y-1"></div>
         </div>
     </div>
 
-    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
     <script>
-        // Configuration
-        const AI_BASE_URL = "http://localhost:9999";
-        const SOCIAL_BASE_URL = "http://localhost:8888";
-        const SESSION_ID = "web_test_" + Date.now();
-
-        let authToken = null;
-        let userId = null;
-        let socket = null;
-
-        // Tab Switching
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('[id^="tab-"]').forEach(el => {
-                el.classList.remove('tab-active');
-                el.classList.add('tab-inactive');
-            });
-            document.getElementById('content-' + tab).classList.remove('hidden');
-            document.getElementById('tab-' + tab).classList.remove('tab-inactive');
-            document.getElementById('tab-' + tab).classList.add('tab-active');
-        }
-
         // Logging
         function log(message, type = 'info') {
             const logDiv = document.getElementById('logs');
-            const colors = { info: 'text-green-400', error: 'text-red-400', warn: 'text-yellow-400', success: 'text-blue-400' };
+            const colors = {
+                info: 'text-green-400',
+                error: 'text-red-400',
+                warn: 'text-yellow-400',
+                success: 'text-blue-400'
+            };
+            const icons = {
+                info: 'ℹ️',
+                error: '❌',
+                warn: '⚠️',
+                success: '✅'
+            };
             const time = new Date().toLocaleTimeString();
-            logDiv.innerHTML += `<div class="${colors[type] || 'text-green-400'}">[${time}] ${message}</div>`;
+            logDiv.innerHTML += `<div class="${colors[type] || 'text-green-400'}">${icons[type] || ''} [${time}] ${message}</div>`;
             logDiv.scrollTop = logDiv.scrollHeight;
         }
 
@@ -433,501 +234,96 @@
             document.getElementById('logs').innerHTML = '';
         }
 
-        // ==================== UPLOAD VIDEO TO URL ====================
-        const FILE_SERVICE_LOCAL = "http://localhost:8000";
-        const FILE_SERVICE_PROXY = "http://localhost:9090";
-        const FILE_SERVICE_REMOTE = "https://file-service-cdal.onrender.com";
+        // Google OAuth Login
+        function loginWithGoogle() {
+            const clientId = document.getElementById('google-client-id').value;
+            const redirectUri = document.getElementById('redirect-uri').value;
 
-        // Update API info when server changes
-        document.addEventListener('DOMContentLoaded', () => {
-            const serverSelect = document.getElementById('upload-server');
-            if (serverSelect) {
-                serverSelect.addEventListener('change', updateServerInfo);
-            }
-        });
+            log('Initiating Google OAuth flow...', 'info');
+            log(`Client ID: ${clientId.substring(0, 20)}...`, 'info');
+            log(`Redirect URI: ${redirectUri}`, 'info');
 
-        function updateServerInfo() {
-            const server = document.getElementById('upload-server').value;
-            const infoEl = document.getElementById('upload-server-info');
-            if (server === 'local') {
-                infoEl.textContent = 'API: POST http://localhost:8000/api/v1/file/uploads-video-file';
-            } else if (server === 'proxy') {
-                infoEl.innerHTML = '🔄 Proxy → Remote | <b>Chạy: node cors-proxy.js</b>';
-            } else {
-                infoEl.textContent = '⚠️ Có thể bị CORS! API: POST https://file-service-cdal.onrender.com/...';
-            }
+            // Build Google OAuth URL
+            const googleAuthUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+            googleAuthUrl.searchParams.set('client_id', clientId);
+            googleAuthUrl.searchParams.set('redirect_uri', redirectUri);
+            googleAuthUrl.searchParams.set('response_type', 'code');
+            googleAuthUrl.searchParams.set('scope', 'openid email profile');
+            googleAuthUrl.searchParams.set('access_type', 'offline');
+            googleAuthUrl.searchParams.set('prompt', 'consent');
+
+            log('Redirecting to Google...', 'success');
+            log(`URL: ${googleAuthUrl.toString().substring(0, 100)}...`, 'info');
+
+            document.getElementById('login-status').classList.remove('hidden');
+
+            // Redirect to Google
+            setTimeout(() => {
+                window.location.href = googleAuthUrl.toString();
+            }, 1000);
         }
 
-        async function uploadVideoToUrl() {
-            const server = document.getElementById('upload-server').value;
-            const videoId = document.getElementById('upload-video-id').value || 'video_' + Date.now();
-            const videoFile = document.getElementById('upload-video-file').files[0];
+        // Check Login by Google API
+        async function checkLoginByGoogle() {
+            const apiGateway = document.getElementById('api-gateway').value;
+            const token = document.getElementById('access-token').value;
 
-            if (!videoFile) {
-                log("Please select a video file!", 'error');
+            if (!token) {
+                log('Please enter an access token!', 'error');
                 return;
             }
 
-            let apiUrl;
-            if (server === 'local') {
-                apiUrl = `${FILE_SERVICE_LOCAL}/api/v1/file/uploads-video-file`;
-                log(`📤 Uploading to LOCAL server (localhost:8000)...`);
-            } else if (server === 'proxy') {
-                apiUrl = `${FILE_SERVICE_PROXY}/api/v1/file/uploads-video-file`;
-                log(`📤 Uploading via CORS PROXY (localhost:9090 → render.com)...`);
-                log(`💡 Đảm bảo đã chạy: node cors-proxy.js`);
-            } else {
-                apiUrl = `${FILE_SERVICE_REMOTE}/api/v1/file/uploads-video-file`;
-                log(`📤 Uploading to REMOTE server (có thể bị CORS)...`);
-            }
-            log(`Video: ${videoFile.name} (${(videoFile.size / 1024 / 1024).toFixed(2)} MB)`);
-
-            document.getElementById('upload-video-loading').classList.remove('hidden');
-            document.getElementById('upload-video-result').classList.add('hidden');
-            document.getElementById('btn-upload-video').disabled = true;
-
-            const formData = new FormData();
-            formData.append('id', videoId);
-            formData.append('video', videoFile);
+            log('Checking login by Google...', 'info');
 
             try {
-                const res = await fetch(apiUrl, {
-                    method: 'POST',
-                    body: formData
+                const res = await fetch(`${apiGateway}/api/v1/identity/users/check-login-by-google`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
                 });
 
                 const data = await res.json();
-                log("Upload response: " + JSON.stringify(data), 'info');
 
-                // Try to extract URL from response
-                let videoUrl = null;
-                if (data.result && data.result.videoUrl) {
-                    videoUrl = data.result.videoUrl;
-                } else if (data.url) {
-                    videoUrl = data.url;
-                } else if (data.result && data.result.url) {
-                    videoUrl = data.result.url;
-                } else if (data.videoUrl) {
-                    videoUrl = data.videoUrl;
-                } else if (data.data && data.data.videoUrl) {
-                    videoUrl = data.data.videoUrl;
-                } else if (typeof data === 'string') {
-                    videoUrl = data;
-                }
-
-                if (videoUrl) {
-                    document.getElementById('uploaded-video-url').value = videoUrl;
-                    document.getElementById('upload-video-result').classList.remove('hidden');
-                    log("✅ Video uploaded successfully! URL: " + videoUrl, 'success');
-                } else {
-                    log("Upload completed but couldn't extract URL. Response: " + JSON.stringify(data), 'warn');
-                    // Show raw response in case URL is in different format
-                    document.getElementById('uploaded-video-url').value = JSON.stringify(data);
-                    document.getElementById('upload-video-result').classList.remove('hidden');
-                }
-            } catch (err) {
-                log("Error uploading video: " + err.message, 'error');
-            } finally {
-                document.getElementById('upload-video-loading').classList.add('hidden');
-                document.getElementById('btn-upload-video').disabled = false;
-            }
-        }
-
-        function copyVideoUrl() {
-            const urlInput = document.getElementById('uploaded-video-url');
-            urlInput.select();
-            document.execCommand('copy');
-            log("📋 URL copied to clipboard!", 'success');
-        }
-
-        function useVideoUrl() {
-            const videoUrl = document.getElementById('uploaded-video-url').value;
-            if (videoUrl) {
-                document.getElementById('video-url').value = videoUrl;
-                log("✅ Video URL set in 'Create Video Post' form!", 'success');
-            }
-        }
-
-        // ==================== AUTH ====================
-        async function login() {
-            const username = document.getElementById('auth-username').value;
-            const password = document.getElementById('auth-password').value;
-            log("Attempting login...");
-
-            try {
-                const res = await fetch(`${SOCIAL_BASE_URL}/api/v1/identity/auth/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ usernameOrEmail: username, password: password })
-                });
-                const data = await res.json();
-
-                if (data.result && data.result.token) {
-                    authToken = data.result.token;
-                    userId = data.result.userId || data.result.id;
-                    document.getElementById('auth-status').innerHTML =
-                        `<span class="text-green-600 font-bold">✓ Logged in as ${username}</span>`;
-                    log("Login successful! Token received.", 'success');
-                } else {
-                    log("Login failed: " + JSON.stringify(data), 'error');
-                }
-            } catch (err) {
-                log("Login error: " + err.message, 'error');
-            }
-        }
-
-        // ==================== VIDEO POST APIs ====================
-        async function createVideoPost() {
-            if (!authToken) {
-                log("Please login first!", 'error');
-                return;
-            }
-
-            const caption = document.getElementById('video-caption').value;
-            const prompt = document.getElementById('video-prompt').value;
-            const videoUrl = document.getElementById('video-url').value;
-
-            if (!videoUrl) {
-                log("Video URL is required!", 'error');
-                return;
-            }
-
-            log("Creating video post...");
-
-            const formData = new FormData();
-            formData.append('caption', caption);
-            formData.append('prompt', prompt);
-            formData.append('videoUrl', videoUrl);
-
-            try {
-                const res = await fetch(`${SOCIAL_BASE_URL}/api/v1/posts/create-video`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${authToken}` },
-                    body: formData
-                });
-                const data = await res.json();
-
-                document.getElementById('video-post-result').classList.remove('hidden');
-                document.getElementById('video-post-response').textContent = JSON.stringify(data, null, 2);
+                document.getElementById('check-result').classList.remove('hidden');
+                document.getElementById('check-result').querySelector('pre').textContent = JSON.stringify(data, null, 2);
 
                 if (data.code === 1000) {
-                    log("Video post created successfully!", 'success');
-                } else {
-                    log("Error: " + data.message, 'error');
-                }
-            } catch (err) {
-                log("Error creating video post: " + err.message, 'error');
-            }
-        }
-
-        async function getAllPosts() {
-            const page = document.getElementById('posts-page').value;
-            const size = document.getElementById('posts-size').value;
-            log("Fetching posts...");
-
-            try {
-                const headers = authToken ? { 'Authorization': `Bearer ${authToken}` } : {};
-                const res = await fetch(`${SOCIAL_BASE_URL}/api/v1/posts/get-all?page=${page}&size=${size}`, {
-                    method: 'GET',
-                    headers: headers
-                });
-                const data = await res.json();
-
-                document.getElementById('posts-result').classList.remove('hidden');
-                const listDiv = document.getElementById('posts-list');
-                listDiv.innerHTML = '';
-
-                if (data.result && data.result.data) {
-                    data.result.data.forEach(post => {
-                        const isVideo = post.videoUrl ? '🎥' : '🖼️';
-                        const mediaUrl = post.videoUrl || post.imageUrl || 'N/A';
-                        listDiv.innerHTML += `
-                            <div class="bg-gray-50 p-2 rounded border text-xs">
-                                <div class="font-bold">${isVideo} ${post.caption || 'No caption'}</div>
-                                <div class="text-gray-500">ID: ${post.id}</div>
-                                <div class="text-gray-500 truncate">Media: ${mediaUrl}</div>
-                                <div class="text-gray-400">Likes: ${post.likedCount || 0} | Comments: ${post.commentCount || 0}</div>
-                            </div>
-                        `;
-                    });
-                    log(`Fetched ${data.result.data.length} posts`, 'success');
-                } else {
-                    listDiv.innerHTML = '<p class="text-gray-500">No posts found</p>';
-                }
-            } catch (err) {
-                log("Error fetching posts: " + err.message, 'error');
-            }
-        }
-
-        async function viewPost() {
-            const postId = document.getElementById('view-post-id').value;
-            if (!postId) {
-                log("Please enter a post ID", 'error');
-                return;
-            }
-            log("Viewing post " + postId + "...");
-
-            try {
-                const headers = authToken ? { 'Authorization': `Bearer ${authToken}` } : {};
-                const res = await fetch(`${SOCIAL_BASE_URL}/api/v1/posts/view/${postId}`, {
-                    method: 'GET',
-                    headers: headers
-                });
-                const data = await res.json();
-
-                document.getElementById('view-post-result').classList.remove('hidden');
-                document.getElementById('view-post-response').textContent = JSON.stringify(data, null, 2);
-                log("Post details fetched", 'success');
-            } catch (err) {
-                log("Error viewing post: " + err.message, 'error');
-            }
-        }
-
-        async function getMyPosts() {
-            if (!authToken) {
-                log("Please login first!", 'error');
-                return;
-            }
-            log("Fetching my posts...");
-
-            try {
-                const res = await fetch(`${SOCIAL_BASE_URL}/api/v1/posts/my-posts?page=1&size=10`, {
-                    method: 'GET',
-                    headers: { 'Authorization': `Bearer ${authToken}` }
-                });
-                const data = await res.json();
-
-                document.getElementById('my-posts-result').classList.remove('hidden');
-                const listDiv = document.getElementById('my-posts-list');
-                listDiv.innerHTML = '';
-
-                if (data.result && data.result.data) {
-                    data.result.data.forEach(post => {
-                        const isVideo = post.videoUrl ? '🎥' : '🖼️';
-                        listDiv.innerHTML += `
-                            <div class="bg-gray-50 p-2 rounded border text-xs">
-                                <div class="font-bold">${isVideo} ${post.caption || 'No caption'}</div>
-                                <div class="text-gray-500">ID: ${post.id}</div>
-                            </div>
-                        `;
-                    });
-                    log(`Found ${data.result.data.length} of my posts`, 'success');
-                } else {
-                    listDiv.innerHTML = '<p class="text-gray-500">No posts found</p>';
-                }
-            } catch (err) {
-                log("Error fetching my posts: " + err.message, 'error');
-            }
-        }
-
-        // ==================== WEBSOCKET & VIDEO CHAT ====================
-        function connectSocket() {
-            const url = document.getElementById('socket-url').value;
-            log("Connecting to WebSocket: " + url);
-
-            try {
-                socket = io(url, {
-                    auth: { token: authToken },
-                    transports: ['websocket']
-                });
-
-                socket.on('connect', () => {
-                    log("WebSocket connected!", 'success');
-                    document.getElementById('socket-status').innerHTML =
-                        'Status: <span class="text-green-600 font-bold">Connected</span>';
-                });
-
-                socket.on('disconnect', () => {
-                    log("WebSocket disconnected", 'warn');
-                    document.getElementById('socket-status').innerHTML =
-                        'Status: <span class="text-red-600">Disconnected</span>';
-                });
-
-                socket.on('receiveMessage', (data) => {
-                    const type = data.isVideo ? '🎥 Video' : data.isImage ? '🖼️ Image' : '💬 Text';
-                    log(`Received ${type} from ${data.senderId}: ${data.message}`, 'info');
-                });
-
-                socket.on('error', (err) => {
-                    log("Socket error: " + err, 'error');
-                });
-
-            } catch (err) {
-                log("Socket connection error: " + err.message, 'error');
-            }
-        }
-
-        function disconnectSocket() {
-            if (socket) {
-                socket.disconnect();
-                socket = null;
-                log("Disconnected from WebSocket");
-                document.getElementById('socket-status').innerHTML =
-                    'Status: <span class="text-gray-500">Disconnected</span>';
-            }
-        }
-
-        function sendVideoMessage() {
-            if (!socket || !socket.connected) {
-                log("Please connect to WebSocket first!", 'error');
-                return;
-            }
-
-            const receiverId = document.getElementById('chat-receiver').value;
-            const videoUrl = document.getElementById('chat-video-url').value;
-            const isVideo = document.getElementById('chat-is-video').checked;
-
-            if (!receiverId || !videoUrl) {
-                log("Receiver ID and Video URL are required!", 'error');
-                return;
-            }
-
-            const data = {
-                senderId: userId,
-                receiverId: receiverId,
-                message: videoUrl,
-                isImage: false,
-                isVideo: isVideo
-            };
-
-            socket.emit('sendMessage', data);
-            log(`📤 Sent ${isVideo ? '🎥 Video' : '💬 Message'} to ${receiverId}: ${videoUrl}`, 'success');
-
-            document.getElementById('chat-result').classList.remove('hidden');
-            document.getElementById('chat-response').textContent = JSON.stringify(data, null, 2);
-        }
-
-        function sendGroupVideoMessage() {
-            if (!socket || !socket.connected) {
-                log("Please connect to WebSocket first!", 'error');
-                return;
-            }
-
-            const groupId = document.getElementById('group-id').value;
-            const videoUrl = document.getElementById('group-video-url').value;
-            const isVideo = document.getElementById('group-is-video').checked;
-
-            if (!groupId || !videoUrl) {
-                log("Group ID and Video URL are required!", 'error');
-                return;
-            }
-
-            const data = {
-                senderId: userId,
-                groupId: groupId,
-                message: videoUrl,
-                isImage: false,
-                isVideo: isVideo
-            };
-
-            socket.emit('sendMessageToGroup', data);
-            log(`👥 Sent ${isVideo ? '🎥 Video' : '💬 Message'} to group ${groupId}`, 'success');
-
-            document.getElementById('group-chat-result').classList.remove('hidden');
-            document.getElementById('group-chat-response').textContent = JSON.stringify(data, null, 2);
-        }
-
-        // ==================== AI FEATURES (Original) ====================
-        async function pollTask(taskId, endpoint, imgElementId, statusId, loaderId) {
-            const maxAttempts = 30;
-            const statusText = document.getElementById(statusId);
-            const loader = document.getElementById(loaderId);
-            const imgTarget = document.getElementById(imgElementId);
-
-            for (let i = 1; i <= maxAttempts; i++) {
-                log(`Polling task ${taskId} (Attempt ${i})...`);
-                try {
-                    const response = await fetch(`${AI_BASE_URL}/${endpoint}/status/${taskId}/?user_id=${SESSION_ID}`);
-                    const data = await response.json();
-                    const status = data.result.status;
-
-                    statusText.innerText = status;
-
-                    if (status === "COMPLETED") {
-                        log("Success: Task completed!", 'success');
-                        imgTarget.src = data.result.image_url || data.result.output_url;
-                        imgTarget.classList.remove('hidden');
-                        loader.classList.add('hidden');
-                        return;
+                    const isGoogleLogin = data.result;
+                    if (isGoogleLogin) {
+                        log('✅ User logged in via Google!', 'success');
+                    } else {
+                        log('ℹ️ User did NOT log in via Google (regular login)', 'info');
                     }
-
-                    if (status === "FAILED") {
-                        log("Error: Task failed!", 'error');
-                        loader.classList.add('hidden');
-                        return;
-                    }
-                } catch (err) {
-                    log("Polling error: " + err.message, 'error');
-                }
-                await new Promise(r => setTimeout(r, 3000));
-            }
-            log("Timeout waiting for task.", 'warn');
-        }
-
-        async function generateImage() {
-            const prompt = document.getElementById('gen-prompt').value;
-            const model = document.getElementById('gen-model').value;
-            const ratio = document.getElementById('gen-ratio').value;
-
-            document.getElementById('gen-result').classList.remove('hidden');
-            document.getElementById('gen-loader').classList.remove('hidden');
-            document.getElementById('gen-img').classList.add('hidden');
-            log("Starting Image Generation...");
-
-            try {
-                const res = await fetch(`${AI_BASE_URL}/v1/features/image-generation/`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        user_id: SESSION_ID,
-                        prompt: prompt,
-                        model: model,
-                        aspect_ratio: ratio,
-                        session_id: SESSION_ID
-                    })
-                });
-                const data = await res.json();
-                const taskId = data.result.task_id;
-
-                if (taskId) {
-                    log("Task ID received: " + taskId);
-                    pollTask(taskId, "v1/features/image-generation", "gen-img", "gen-status", "gen-loader");
-                }
-            } catch (err) {
-                log("Fetch Error: " + err.message, 'error');
-            }
-        }
-
-        async function removeBackground() {
-            const imageUrl = document.getElementById('bg-url').value;
-            log("Starting Remove Background...");
-
-            try {
-                const res = await fetch(`${AI_BASE_URL}/v1/features/remove-background/`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        user_id: SESSION_ID,
-                        image_url: imageUrl,
-                        session_id: SESSION_ID
-                    })
-                });
-                const data = await res.json();
-
-                if (data.result && data.result.image_url) {
-                    log("Background removed successfully", 'success');
-                    document.getElementById('bg-result').classList.remove('hidden');
-                    document.getElementById('bg-img-res').src = data.result.image_url;
                 } else {
-                    log("Failed to remove background", 'error');
+                    log(`Error: ${data.message || 'Unknown error'}`, 'error');
                 }
             } catch (err) {
-                log("Fetch Error: " + err.message, 'error');
+                log(`Fetch error: ${err.message}`, 'error');
             }
         }
 
-        // Initial log
-        log("🚀 API Tester ready! Switch tabs to test different features.");
+        // Parse URL params on page load (check for callback)
+        function checkCallback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const error = urlParams.get('error');
+
+            if (code) {
+                log(`Received Google authorization code: ${code.substring(0, 20)}...`, 'success');
+                log('Backend should exchange this code for tokens automatically.', 'info');
+            }
+
+            if (error) {
+                log(`Google OAuth error: ${error}`, 'error');
+            }
+        }
+
+        // Initialize
+        log('🚀 Google Login API Tester ready!', 'success');
+        log('Click "Đăng nhập bằng Google" to start OAuth flow.', 'info');
+        checkCallback();
     </script>
 </body>
 
