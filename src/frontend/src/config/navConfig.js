@@ -1,6 +1,5 @@
 import {
   Home,
-  Search,
   Plus,
   Sparkles,
   Heart,
@@ -10,10 +9,10 @@ import {
 
 export const navItems = [
   { id: "home", icon: Home, label: "Home", path: "/dashboard" },
-  { id: "search", icon: Search, label: "Search", path: "/search" },
-  { id: "create", icon: Plus, label: "Create", path: "/create" },
+  { id: "create", icon: Plus, label: "Post", path: "/dashboard?create=true" },
   { id: "ai-tools", icon: Sparkles, label: "AI Tools", path: "/ai-tools" },
   { id: "activity", icon: Heart, label: "Activity", path: "/activity" },
   { id: "messages", icon: MessageCircle, label: "Messages", path: "/messages" },
   { id: "profile", icon: User, label: "Profile", path: "/profile" },
 ];
+

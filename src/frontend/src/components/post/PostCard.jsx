@@ -57,8 +57,8 @@ export default function PostCard({
           )}
           <div
             className={`relative ${isPremium
-                ? "p-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-full"
-                : ""
+              ? "p-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-full"
+              : ""
               }`}
           >
             <img
@@ -83,8 +83,8 @@ export default function PostCard({
                   type="button"
                   onClick={handleViewProfile}
                   className={`font-semibold text-sm transition-colors focus:outline-none text-left ${isPremium
-                      ? "bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text text-transparent hover:from-yellow-400 hover:via-orange-400 hover:to-pink-400"
-                      : "text-gray-900 hover:text-blue-600 hover:underline"
+                    ? "bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text text-transparent hover:from-yellow-400 hover:via-orange-400 hover:to-pink-400"
+                    : "text-gray-900 hover:text-blue-600 hover:underline"
                     }`}
                 >
                   {displayName}
@@ -125,13 +125,24 @@ export default function PostCard({
 
           <p className="text-sm text-gray-800 mt-3">{post.content}</p>
 
-          {post.image && (
+          {post.image && !post.video && (
             <div className="rounded-2xl overflow-hidden border border-gray-200 mt-4">
               <img
                 src={post.image}
                 alt={`Post by ${displayName}`}
                 className="w-full h-auto object-cover"
                 loading="lazy"
+              />
+            </div>
+          )}
+
+          {post.video && (
+            <div className="rounded-2xl overflow-hidden border border-gray-200 mt-4">
+              <video
+                src={post.video}
+                controls
+                className="w-full h-auto"
+                preload="metadata"
               />
             </div>
           )}

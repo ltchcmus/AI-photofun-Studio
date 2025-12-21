@@ -1,16 +1,20 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import CreatePostWidget from "../../../components/post/CreatePostWidget";
 import PostList from "../../../components/post/PostList";
 import { usePosts } from "../../../hooks/usePosts";
 
 export default function DashboardForm() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const shouldOpenCreateModal = searchParams.get("create") === "true";
+
   const {
     posts,
     loading,
     error,
     createPost,
+    createVideoPost,
     handleLike,
     currentUser,
     userCache,
@@ -37,7 +41,9 @@ export default function DashboardForm() {
           <CreatePostWidget
             currentUser={currentUser}
             onCreatePost={createPost}
+            onCreateVideoPost={createVideoPost}
             onNavigateAiTools={goToAiTools}
+            autoOpen={shouldOpenCreateModal}
           />
         </section>
 

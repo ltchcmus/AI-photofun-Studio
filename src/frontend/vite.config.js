@@ -21,6 +21,14 @@ export default defineConfig({
           path.replace(/^\/api\/file-upload/, "/api/v1/file/uploads"),
         secure: true,
       },
+      // Video upload via external file service (bypass CORS)
+      "/api/file-service": {
+        target: "https://file-service-cdal.onrender.com",
+        changeOrigin: true,
+        rewrite: (path) =>
+          path.replace(/^\/api\/file-service/, ""),
+        secure: true,
+      },
       "/socket.io": {
         target: "http://localhost:8899",
         changeOrigin: true,

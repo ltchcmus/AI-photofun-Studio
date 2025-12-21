@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { postApi } from "../api/postApi";
 import { userApi } from "../api/userApi";
+import { communicationApi } from "../api/communicationApi";
 import { useAuth } from "./useAuth";
 
 const DEFAULT_AVATAR = "https://placehold.co/40x40/111/fff?text=U";
@@ -59,7 +60,8 @@ const normalizePost = (post, index = 0) => {
       post.image ||
       post.coverUrl ||
       post.mediaUrl ||
-      DEFAULT_IMAGE,
+      (!post.videoUrl ? DEFAULT_IMAGE : null),
+    video: post.videoUrl || post.video || null,
     likes: post.totalLikes ?? post.likeCount ?? post.likes ?? 0,
     comments: post.totalComments ?? post.commentCount ?? post.comments ?? 0,
     liked: Boolean(post.liked ?? post.isLiked ?? false),
@@ -77,8 +79,8 @@ export const usePosts = (options = {}) => {
 
   const isMyPosts = Boolean(
     normalizedOptions.isMyPosts ||
-      normalizedOptions.scope === "my" ||
-      normalizedOptions.scope === "my-posts"
+    normalizedOptions.scope === "my" ||
+    normalizedOptions.scope === "my-posts"
   );
   const scope = isMyPosts ? "my" : normalizedOptions.scope || "feed";
   const page = normalizedOptions.page ?? 1;
@@ -133,10 +135,10 @@ export const usePosts = (options = {}) => {
             if (key) {
               acc[key] = Boolean(
                 entry.liked ??
-                  entry.isLiked ??
-                  entry.value ??
-                  entry.status ??
-                  true
+                entry.isLiked ??
+                entry.value ??
+                entry.status ??
+                true
               );
             }
             return acc;
@@ -197,9 +199,9 @@ export const usePosts = (options = {}) => {
                 // Premium status
                 isPremium: Boolean(
                   data?.isPremium ||
-                    data?.premium ||
-                    data?.premiumOneMonth ||
-                    data?.premiumSixMonths
+                  data?.premium ||
+                  data?.premiumOneMonth ||
+                  data?.premiumSixMonths
                 ),
                 premiumOneMonth: Boolean(data?.premiumOneMonth),
                 premiumSixMonths: Boolean(data?.premiumSixMonths),
@@ -307,6 +309,46 @@ export const usePosts = (options = {}) => {
     [fetchAuthors]
   );
 
+  const createVideoPost = useCallback(
+    async ({ caption, prompt, video }) => {
+      // Step 1: Upload video to file service to get URL
+      console.log("📤 Uploading video to file service...");
+      const uploadResult = await communicationApi.uploadChatVideo(video);
+      const videoUrl = uploadResult.result?.videoUrl || uploadResult.videoUrl;
+
+      if (!videoUrl) {
+        throw new Error("Không thể upload video");
+      }
+      console.log("✅ Video uploaded:", videoUrl);
+
+      // Step 2: Create video post with the URL
+      const formData = new FormData();
+      formData.append("caption", caption || "");
+      if (prompt?.trim()) {
+        formData.append("prompt", prompt.trim());
+      }
+      formData.append("videoUrl", videoUrl);
+
+      const response = await postApi.createVideoPost(formData);
+      const result =
+        response.data?.result?.item ||
+        response.data?.result?.data ||
+        response.data?.result ||
+        response.data?.data ||
+        response.data.post ||
+        response.data;
+
+      const normalized = normalizePost(result, Date.now());
+      if (normalized) {
+        setPosts((prev) => [normalized, ...prev]);
+        fetchAuthors([normalized]);
+      }
+
+      return normalized;
+    },
+    [fetchAuthors]
+  );
+
   const handleLike = useCallback(
     async (postId) => {
       if (!postId || pendingLikes[postId]) return;
@@ -330,10 +372,10 @@ export const usePosts = (options = {}) => {
         prev.map((post) =>
           post.id === postId
             ? {
-                ...post,
-                liked: nextLiked,
-                likes: nextLikes,
-              }
+              ...post,
+              liked: nextLiked,
+              likes: nextLikes,
+            }
             : post
         )
       );
@@ -346,10 +388,10 @@ export const usePosts = (options = {}) => {
           prev.map((post) =>
             post.id === postId
               ? {
-                  ...post,
-                  liked: prevLiked,
-                  likes: prevLikes,
-                }
+                ...post,
+                liked: prevLiked,
+                likes: prevLikes,
+              }
               : post
           )
         );
@@ -371,12 +413,14 @@ export const usePosts = (options = {}) => {
       error,
       refresh: fetchPosts,
       createPost,
+      createVideoPost,
       handleLike,
       currentUser: authUser,
       userCache,
     }),
     [
       createPost,
+      createVideoPost,
       authUser,
       error,
       fetchPosts,

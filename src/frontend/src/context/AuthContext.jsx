@@ -28,12 +28,14 @@ const normalizeUser = (rawUser) => {
     // Premium fields
     isPremium: Boolean(
       rawUser?.isPremium ||
-        rawUser?.premium ||
-        rawUser?.premiumOneMonth ||
-        rawUser?.premiumSixMonths
+      rawUser?.premium ||
+      rawUser?.premiumOneMonth ||
+      rawUser?.premiumSixMonths
     ),
     premiumOneMonth: Boolean(rawUser?.premiumOneMonth),
     premiumSixMonths: Boolean(rawUser?.premiumSixMonths),
+    // Tokens
+    tokens: rawUser?.tokens ?? 0,
   };
 };
 
@@ -93,8 +95,8 @@ export const AuthProvider = ({ children }) => {
         console.error("Failed to login", loginError);
         setError(
           loginError?.response?.data?.message ||
-            loginError?.message ||
-            "Đăng nhập thất bại"
+          loginError?.message ||
+          "Đăng nhập thất bại"
         );
         throw loginError;
       } finally {
@@ -114,8 +116,8 @@ export const AuthProvider = ({ children }) => {
       console.error("Failed to register", registerError);
       setError(
         registerError?.response?.data?.message ||
-          registerError?.message ||
-          "Đăng ký thất bại"
+        registerError?.message ||
+        "Đăng ký thất bại"
       );
       throw registerError;
     } finally {

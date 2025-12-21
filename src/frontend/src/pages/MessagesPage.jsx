@@ -62,6 +62,7 @@ const MessagesPage = () => {
   const [loadingAction, setLoadingAction] = useState(false);
   const [userCache, setUserCache] = useState({}); // Cache user info { odId: { username, avatarUrl } }
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
 
   // Edit Group State (Admin Only)
   const [isEditingGroup, setIsEditingGroup] = useState(false);
@@ -82,6 +83,7 @@ const MessagesPage = () => {
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);
   const imageInputRef = useRef(null);
+  const videoInputRef = useRef(null);
 
   // Fetch conversations from API
   const fetchConversations = useCallback(async () => {
@@ -368,10 +370,22 @@ const MessagesPage = () => {
         return imageExtensions.test(text) || imageHosts.test(text);
       };
 
+      // Helper function to detect if a message is a video URL
+      const isVideoUrl = (text) => {
+        if (!text || typeof text !== 'string') return false;
+        // Check common video extensions
+        const videoExtensions = /\.(mp4|webm|ogg|mov|avi|mkv)(\?.*)?$/i;
+        // Check cloudinary video URLs
+        const isCloudinaryVideo = text.includes('cloudinary.com') && text.includes('/video/');
+        return videoExtensions.test(text) || isCloudinaryVideo;
+      };
+
       const formattedMessages = data.map((msg) => {
         const messageText = msg.message || msg.content || "";
-        // Check if it's an image: use msg.image flag OR detect from URL
-        const msgIsImage = msg.image === true || isImageUrl(messageText);
+        // Check if it's a video: use msg.video flag OR detect from URL
+        const msgIsVideo = msg.video === true || isVideoUrl(messageText);
+        // Check if it's an image: use msg.image flag OR detect from URL (but not if it's a video)
+        const msgIsImage = !msgIsVideo && (msg.image === true || isImageUrl(messageText));
 
         // Support both senderId (group) and userId (1-1) fields
         const messageSenderId = msg.senderId || msg.userId;
@@ -392,6 +406,7 @@ const MessagesPage = () => {
             })
             : ""),
           isImage: msgIsImage,
+          isVideo: msgIsVideo,
         };
       });
 
@@ -455,8 +470,16 @@ const MessagesPage = () => {
         return imageExtensions.test(text) || imageHosts.test(text);
       };
 
-      // Check if it's an image: use isImage flag OR detect from URL
-      const msgIsImage = data.isImage === true || data.image === true || isImageUrl(data.message);
+      // Helper function to detect if a message is a video URL
+      const isVideoUrl = (text) => {
+        if (!text || typeof text !== 'string') return false;
+        const videoExtensions = /\.(mp4|webm|ogg|mov|avi|mkv)(\?.*)?$/i;
+        return videoExtensions.test(text) || (text.includes('cloudinary.com') && text.includes('/video/'));
+      };
+
+      // Check if it's an image or video
+      const msgIsVideo = data.isVideo === true || isVideoUrl(data.message);
+      const msgIsImage = !msgIsVideo && (data.isImage === true || data.image === true || isImageUrl(data.message));
 
       // Add message to current chat if it matches
       if (activeChat?.userId === data.senderId) {
@@ -465,6 +488,7 @@ const MessagesPage = () => {
           sender: "other",
           text: data.message,
           isImage: msgIsImage,
+          isVideo: msgIsVideo,
           time: new Date().toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
@@ -477,12 +501,12 @@ const MessagesPage = () => {
     // Receive incoming call
     newSocket.on("incomingCall", async (data) => {
       console.log("📞 Incoming call from:", data);
-      
+
       // Get caller info
       try {
         const userRes = await userApi.getUserById(data.callerId);
         const userData = userRes?.data?.result;
-        
+
         setIncomingCallData({
           callerId: data.callerId,
           callerName: userData?.username || userData?.fullName || "Người dùng",
@@ -540,8 +564,16 @@ const MessagesPage = () => {
         return imageExtensions.test(text) || imageHosts.test(text);
       };
 
-      // Check if it's an image: use isImage flag OR detect from URL
-      const msgIsImage = data.isImage === true || data.image === true || isImageUrl(data.message);
+      // Helper function to detect if a message is a video URL
+      const isVideoUrl = (text) => {
+        if (!text || typeof text !== 'string') return false;
+        const videoExtensions = /\.(mp4|webm|ogg|mov|avi|mkv)(\?.*)?$/i;
+        return videoExtensions.test(text) || (text.includes('cloudinary.com') && text.includes('/video/'));
+      };
+
+      // Check if it's an image or video
+      const msgIsVideo = data.isVideo === true || isVideoUrl(data.message);
+      const msgIsImage = !msgIsVideo && (data.isImage === true || data.image === true || isImageUrl(data.message));
 
       // Add message to current chat if it matches
       // Skip if sender is current user (already added locally when sending)
@@ -583,6 +615,7 @@ const MessagesPage = () => {
           senderIsPremium: senderInfo.isPremium || false,
           text: data.message,
           isImage: msgIsImage,
+          isVideo: msgIsVideo,
           time: new Date().toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
@@ -667,7 +700,7 @@ const MessagesPage = () => {
       alert("Chỉ có thể gọi video trong chat 1-1!");
       return;
     }
-    
+
     if (!socketRef.current || !socketConnected) {
       alert("Không thể kết nối! Vui lòng thử lại sau.");
       return;
@@ -766,7 +799,7 @@ const MessagesPage = () => {
       callId: incomingCallData.callId,
     });
 
-    
+
 
     setShowIncomingCall(false);
     setIncomingCallData(null);
@@ -823,7 +856,7 @@ const MessagesPage = () => {
       };
 
       socketRef.current.emit("sendMessage", messageData);
-  
+
     }
 
     // Add to local messages immediately
@@ -913,6 +946,84 @@ const MessagesPage = () => {
       // Reset input
       if (imageInputRef.current) {
         imageInputRef.current.value = "";
+      }
+    }
+  };
+
+  // Handle send video
+  const handleSendVideo = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file || !socketRef.current || !socketConnected || !activeChat) return;
+
+    // Validate file type
+    if (!file.type.startsWith("video/")) {
+      alert("Vui lòng chọn file video!");
+      return;
+    }
+
+    // Validate file size (max 50MB for video)
+    if (file.size > 50 * 1024 * 1024) {
+      alert("Video quá lớn! Vui lòng chọn video dưới 50MB.");
+      return;
+    }
+
+    setUploadingVideo(true);
+
+    try {
+      // Upload video to external service
+      const uploadResult = await communicationApi.uploadChatVideo(file);
+
+      // Get video URL from response
+      // Response format: { code: 1000, message: "Upload video successful", result: { videoUrl: "url" } }
+      const videoUrl = uploadResult.result?.videoUrl || uploadResult.videoUrl || uploadResult.url;
+
+      if (!videoUrl || typeof videoUrl !== 'string') {
+        console.error("Invalid upload response:", uploadResult);
+        throw new Error("Không lấy được URL video");
+      }
+
+      // Send message with video
+      if (activeChat.isGroup) {
+        const messageData = {
+          senderId: user.id,
+          groupId: activeChat.groupId,
+          message: videoUrl,
+          isImage: false,
+          isVideo: true,
+        };
+        socketRef.current.emit("sendMessageToGroup", messageData);
+      } else {
+        const messageData = {
+          senderId: user.id,
+          receiverId: activeChat.userId,
+          message: videoUrl,
+          isImage: false,
+          isVideo: true,
+        };
+        socketRef.current.emit("sendMessage", messageData);
+      }
+
+      // Add to local messages immediately
+      const newMessage = {
+        id: Date.now(),
+        sender: "me",
+        text: videoUrl,
+        isVideo: true,
+        time: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      };
+      setMessages((prev) => [...prev, newMessage]);
+
+    } catch (error) {
+      console.error("Failed to send video:", error);
+      alert("Không thể gửi video. Vui lòng thử lại!");
+    } finally {
+      setUploadingVideo(false);
+      // Reset input
+      if (videoInputRef.current) {
+        videoInputRef.current.value = "";
       }
     }
   };
@@ -1623,8 +1734,15 @@ const MessagesPage = () => {
                             {message.senderIsPremium && " ✨"}
                           </p>
                         )}
-                        {/* Display image or text */}
-                        {message.isImage ? (
+                        {/* Display video, image, or text */}
+                        {message.isVideo ? (
+                          <video
+                            src={message.text}
+                            controls
+                            className="max-w-full max-h-64 rounded-lg"
+                            preload="metadata"
+                          />
+                        ) : message.isImage ? (
                           <img
                             src={message.text}
                             alt="Sent image"
@@ -1658,6 +1776,15 @@ const MessagesPage = () => {
                   className="hidden"
                   id="chat-image-upload"
                 />
+                {/* Hidden file input for videos */}
+                <input
+                  ref={videoInputRef}
+                  type="file"
+                  accept="video/*"
+                  onChange={handleSendVideo}
+                  className="hidden"
+                  id="chat-video-upload"
+                />
 
                 <form
                   onSubmit={handleSendMessage}
@@ -1678,9 +1805,16 @@ const MessagesPage = () => {
                   </button>
                   <button
                     type="button"
-                    className="rounded-full p-2 text-blue-600 transition-colors hover:bg-blue-50"
+                    onClick={() => videoInputRef.current?.click()}
+                    disabled={uploadingVideo || !socketConnected}
+                    className="rounded-full p-2 text-blue-600 transition-colors hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Gửi video"
                   >
-                    <Paperclip className="h-5 w-5" />
+                    {uploadingVideo ? (
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                    ) : (
+                      <Video className="h-6 w-6" />
+                    )}
                   </button>
                   <div className="relative flex-1">
                     <input

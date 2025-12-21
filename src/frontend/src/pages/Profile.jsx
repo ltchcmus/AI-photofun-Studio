@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Calendar,
@@ -10,10 +10,13 @@ import {
   Share2,
   Crown,
   Sparkles,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
 import PostList from "../components/post/PostList";
 import { usePosts } from "../hooks/usePosts";
 import { useProfile } from "../hooks/useProfile";
+import { userApi } from "../api/userApi";
 
 const DEFAULT_AVATAR = "https://placehold.co/128x128/111/fff?text=U";
 
@@ -40,6 +43,9 @@ const recentWorks = [
 
 const Profile = () => {
   const navigate = useNavigate();
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const [verifyMessage, setVerifyMessage] = useState("");
   const {
     profile,
     currentUser,
@@ -60,6 +66,37 @@ const Profile = () => {
     fetchProfile();
   }, [fetchProfile]);
 
+  // Gọi API kiểm tra trạng thái xác minh email
+  useEffect(() => {
+    const checkEmailVerification = async () => {
+      try {
+        const response = await userApi.checkVerifyStatus();
+        // API trả về { code: "1000", message: "Success", result: true/false }
+        const isVerified = response.data?.result ?? false;
+        setEmailVerified(isVerified);
+      } catch (error) {
+        console.error("Failed to check email verification status:", error);
+        setEmailVerified(false);
+      }
+    };
+    checkEmailVerification();
+  }, []);
+
+  // Hàm gửi email xác minh
+  const handleSendVerification = async () => {
+    setVerifying(true);
+    setVerifyMessage("");
+    try {
+      await userApi.sendVerification();
+      // Chuyển hướng sang trang xác minh email sau khi gửi thành công
+      navigate("/verify-email");
+    } catch (error) {
+      console.error("Failed to send verification email:", error);
+      setVerifyMessage("Không thể gửi email xác minh. Vui lòng thử lại sau.");
+      setVerifying(false);
+    }
+  };
+
   const displayProfile = {
     fullName:
       profile?.fullName || currentUser?.fullName || PROFILE_DEFAULTS.fullName,
@@ -79,11 +116,11 @@ const Profile = () => {
       : PROFILE_DEFAULTS.created,
     isPremium: Boolean(
       profile?.isPremium ||
-        profile?.premium ||
-        profile?.premiumOneMonth ||
-        profile?.premiumSixMonths ||
-        currentUser?.premiumOneMonth ||
-        currentUser?.premiumSixMonths
+      profile?.premium ||
+      profile?.premiumOneMonth ||
+      profile?.premiumSixMonths ||
+      currentUser?.premiumOneMonth ||
+      currentUser?.premiumSixMonths
     ),
     premiumOneMonth: Boolean(
       profile?.premiumOneMonth || currentUser?.premiumOneMonth
@@ -116,11 +153,10 @@ const Profile = () => {
         </div>
       )}
       <section
-        className={`bg-white border border-gray-200 rounded-2xl p-6 md:p-8 shadow-sm relative overflow-hidden ${
-          displayProfile.isPremium
-            ? "border-2 border-transparent bg-gradient-to-r from-yellow-50 via-orange-50 to-pink-50"
-            : ""
-        }`}
+        className={`bg-white border border-gray-200 rounded-2xl p-6 md:p-8 shadow-sm relative overflow-hidden ${displayProfile.isPremium
+          ? "border-2 border-transparent bg-gradient-to-r from-yellow-50 via-orange-50 to-pink-50"
+          : ""
+          }`}
       >
         {/* Premium Background Decoration */}
         {displayProfile.isPremium && (
@@ -142,18 +178,16 @@ const Profile = () => {
               />
             )}
             <div
-              className={`relative ${
-                displayProfile.isPremium
-                  ? "p-1 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-full"
-                  : ""
-              }`}
+              className={`relative ${displayProfile.isPremium
+                ? "p-1 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-full"
+                : ""
+                }`}
             >
               <img
                 src={displayProfile.avatarUrl}
                 alt={`${displayProfile.fullName} avatar`}
-                className={`w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg ${
-                  displayProfile.isPremium ? "animate-pulse-glow" : ""
-                }`}
+                className={`w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg ${displayProfile.isPremium ? "animate-pulse-glow" : ""
+                  }`}
               />
             </div>
             {/* Premium Crown Badge */}
@@ -172,11 +206,10 @@ const Profile = () => {
               <div>
                 <div className="flex items-center gap-3 flex-wrap">
                   <h1
-                    className={`text-3xl font-bold ${
-                      displayProfile.isPremium
-                        ? "bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text text-transparent"
-                        : ""
-                    }`}
+                    className={`text-3xl font-bold ${displayProfile.isPremium
+                      ? "bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text text-transparent"
+                      : ""
+                      }`}
                   >
                     {displayProfile.fullName}
                   </h1>
@@ -229,6 +262,7 @@ const Profile = () => {
         <div className="space-y-4">
           {contactDetails.map((item) => {
             const Icon = item.icon;
+            const isEmailField = item.id === "email";
             return (
               <div key={item.id}>
                 <p className="text-xs uppercase text-gray-500 font-semibold mb-2">
@@ -239,7 +273,55 @@ const Profile = () => {
                   <span className="text-sm font-medium text-gray-800">
                     {item.value}
                   </span>
+                  {isEmailField && (
+                    <span
+                      className={`ml-auto inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${emailVerified
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                        }`}
+                    >
+                      {emailVerified ? (
+                        <>
+                          <CheckCircle className="w-3.5 h-3.5" />
+                          Đã xác minh
+                        </>
+                      ) : (
+                        <>
+                          <XCircle className="w-3.5 h-3.5" />
+                          Chưa xác minh
+                        </>
+                      )}
+                    </span>
+                  )}
                 </div>
+                {/* Nút xác minh và thông báo */}
+                {isEmailField && !emailVerified && (
+                  <div className="mt-2 flex flex-col gap-2">
+                    <button
+                      type="button"
+                      onClick={handleSendVerification}
+                      disabled={verifying}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors w-fit"
+                    >
+                      {verifying ? (
+                        <>
+                          <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          Đang gửi...
+                        </>
+                      ) : (
+                        <>
+                          <Mail className="w-4 h-4" />
+                          Xác minh ngay
+                        </>
+                      )}
+                    </button>
+                    {verifyMessage && (
+                      <p className={`text-sm ${verifyMessage.includes("Đã gửi") ? "text-green-600" : "text-red-600"}`}>
+                        {verifyMessage}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             );
           })}
@@ -306,7 +388,7 @@ const Profile = () => {
           onNavigateAiTools={() => navigate("/ai-tools")}
         />
       </section>
-    </div>
+    </div >
   );
 };
 
