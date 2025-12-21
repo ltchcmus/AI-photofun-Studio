@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import LoadingScreen from "../components/common/LoadingScreen";
 import axiosClient from "../api/axiosClient";
+import SetPasswordModal from "../components/auth/SetPasswordModal";
 
 const GoogleLoadingPage = () => {
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
   const [error, setError] = useState("");
+  const [showSetPasswordModal, setShowSetPasswordModal] = useState(false);
   
   // Prevent double call in React StrictMode
   const hasCalledRef = useRef(false);
@@ -75,7 +77,30 @@ const GoogleLoadingPage = () => {
             console.warn("Could not fetch user info, but token is valid:", userErr);
           }
           
-          // Navigate to home regardless
+          // Check if user needs to set password (logged in via Google and hasn't set password yet)
+          try {
+            console.log("Calling check-login-by-google API...");
+            const checkResponse = await axiosClient.get("/api/v1/identity/users/check-login-by-google");
+            console.log("✅ Check login by Google response:", checkResponse.data);
+            console.log("   - Code:", checkResponse.data.code);
+            console.log("   - Result (isLoginByGoogle):", checkResponse.data.result);
+            console.log("   - Message:", checkResponse.data.message);
+            
+            if (checkResponse.data.code === 1000 && checkResponse.data.result === true) {
+              // User logged in via Google and hasn't set password yet
+              console.log("🔐 User needs to set password - showing modal");
+              setShowSetPasswordModal(true);
+              return; // Don't navigate yet, wait for password to be set
+            } else {
+              console.log("✅ User already set password or not Google login, proceeding to home");
+            }
+          } catch (checkErr) {
+            console.error("❌ Could not check Google login status:", checkErr);
+            console.error("   - Error details:", checkErr.response?.data || checkErr.message);
+            // Continue to home even if check fails
+          }
+          
+          // Navigate to home if no password needed or check failed
           console.log("Google login successful! Redirecting to /home");
           navigate("/home");
         } else {
@@ -94,6 +119,18 @@ const GoogleLoadingPage = () => {
     handleGoogleCallback();
   }, [navigate, refreshUser]);
 
+  const handlePasswordSet = () => {
+    // After password is set successfully, navigate to home
+    console.log("Password set successfully, navigating to home");
+    navigate("/home");
+  };
+
+  const handleSkipPassword = () => {
+    // If user skips setting password, still navigate to home
+    console.log("User skipped password setup, navigating to home");
+    navigate("/home");
+  };
+
   if (error) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-white">
@@ -107,7 +144,17 @@ const GoogleLoadingPage = () => {
     );
   }
 
-  return <LoadingScreen message="Completing Google login..." />;
+  return (
+    <>
+      <LoadingScreen message="Completing Google login..." />
+      {showSetPasswordModal && (
+        <SetPasswordModal
+          onClose={handleSkipPassword}
+          onSuccess={handlePasswordSet}
+        />
+      )}
+    </>
+  );
 };
 
 export default GoogleLoadingPage;
