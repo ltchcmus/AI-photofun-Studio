@@ -5,9 +5,11 @@ Business logic for image upscaling using Freepik Upscaler Precision API
 
 import logging
 from typing import Dict, Optional
+from django.core.cache import cache
 from core.freepik_client import freepik_client
 from core.file_uploader import file_uploader, FileUploadError
 from apps.image_gallery.services import image_gallery_service
+from shared.metadata_schema import MetadataBuilder
 
 logger = logging.getLogger(__name__)
 
@@ -110,12 +112,13 @@ class UpscaleService:
             logger.error(f"Image upscaling failed: {str(e)}")
             raise UpscaleError(f"Upscale failed: {str(e)}")
     
-    def poll_task_status(self, task_id: str) -> Dict:
+    def poll_task_status(self, task_id: str, user_id: Optional[str] = None) -> Dict:
         """
-        Poll upscale task status
+        Poll upscale task status and save to gallery when completed
         
         Args:
             task_id: Task UUID
+            user_id: User ID for gallery save (from query params)
             
         Returns:
             Task status with upscaled URLs
@@ -124,20 +127,63 @@ class UpscaleService:
             UpscaleError: When polling fails
         """
         try:
+            # CRITICAL: Freepik endpoint for upscale is 'image-upscaler-precision'
             result = freepik_client.get_task_status(task_id, endpoint='image-upscaler-precision')
             
             # Extract data layer (Freepik returns nested structure)
             data = result.get('data', result)
             
+            # DEBUG: Log all fields to understand Freepik response structure
+            logger.info(f"[DEBUG] Freepik upscale response fields: {list(data.keys())}")
+            logger.info(f"[DEBUG] Full response data: {data}")
+            
             # If completed, upload to file service
-            if data.get('status') == 'COMPLETED' and data.get('upscaled'):
+            # Check multiple possible field names: generated, upscaled, result, images
+            image_urls = data.get('generated') or data.get('upscaled') or data.get('result') or data.get('images') or []
+            
+            logger.info(f"[DEBUG] Extracted image_urls: {image_urls}")
+            
+            if data.get('status') == 'COMPLETED' and image_urls:
                 if not data.get('uploaded_urls'):  # Only upload if empty
-                    logger.info(f"Uploading {len(data['upscaled'])} upscaled images...")
-                    uploaded_urls = self._upload_upscaled_images(data['upscaled'])
+                    logger.info(f"Uploading {len(image_urls)} upscaled images...")
+                    uploaded_urls = self._upload_upscaled_images(image_urls)
                     data['uploaded_urls'] = uploaded_urls
                     logger.info(f"✓ Uploaded {len(uploaded_urls)} images successfully")
+                    
+                    # Save to gallery if user_id provided and not already saved
+                    cache_key = f'upscale_saved_{task_id}'
+                    if user_id and not cache.get(cache_key):
+                        # Retrieve task metadata from cache
+                        task_metadata = cache.get(f'upscale_task_{task_id}', {})
+                        
+                        # Build standardized metadata
+                        settings = task_metadata.get('settings', {})
+                        metadata = MetadataBuilder.upscale(
+                            task_id=task_id,
+                            upscale_factor=2,
+                            freepik_task_id=task_id,
+                            original_image=task_metadata.get('original_image'),
+                            settings=settings
+                        )
+                        
+                        # Save to gallery
+                        self._save_to_gallery(
+                            user_id=user_id,
+                            uploaded_urls=uploaded_urls,
+                            refined_prompt=None,
+                            intent='upscale',
+                            metadata=metadata
+                        )
+                        
+                        # Mark as saved to prevent duplicate saves
+                        cache.set(cache_key, True, timeout=3600)
+                        logger.info(f"Saved {len(uploaded_urls)} upscaled images to gallery")
             
-            return data
+            return {
+                'task_id': task_id,
+                'status': data.get('status'),
+                'uploaded_urls': data.get('uploaded_urls', [])
+            }
         
         except Exception as e:
             logger.error(f"Failed to poll upscale status: {str(e)}")

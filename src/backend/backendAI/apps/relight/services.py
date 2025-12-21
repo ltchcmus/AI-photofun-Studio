@@ -5,10 +5,12 @@ Business logic for image relighting using Freepik Relight API
 
 import logging
 from typing import Dict, Optional
+from django.core.cache import cache
 from core.freepik_client import freepik_client
 from core.file_uploader import file_uploader, FileUploadError
 from apps.prompt_service.services import PromptService
 from apps.image_gallery.services import image_gallery_service
+from shared.metadata_schema import MetadataBuilder
 
 logger = logging.getLogger(__name__)
 
@@ -80,57 +82,83 @@ class RelightService:
             
             # Extract data layer (Freepik returns nested structure)
             data = result.get('data', result)
-            logger.info(f"Relight task created: {data.get('task_id')}")
+            task_id = data.get('task_id')
+            logger.info(f"Relight task created: {task_id}")
             
-            # Upload if completed
-            if data.get('status') == 'COMPLETED' and data.get('relit'):
-                uploaded_urls = self._upload_relit_images(data['relit'])
-                data['uploaded_urls'] = uploaded_urls
-                
-                # Save to gallery
-                self._save_to_gallery(
-                    user_id=user_id,
-                    uploaded_urls=uploaded_urls,
-                    refined_prompt=refined_prompt,
-                    intent='relight',
-                    metadata={
-                        'original_image': image_url,
-                        'original_prompt': prompt,
-                        'style': style,
-                        'light_transfer_strength': light_transfer_strength
-                    }
-                )
-            
-            return {
-                'task_id': data.get('task_id'),
-                'status': data.get('status'),
-                'uploaded_urls': data.get('uploaded_urls', []),
+            # Store task metadata in cache for later retrieval (30 min TTL)
+            cache.set(f'relight_task_{task_id}', {
+                'user_id': user_id,
                 'original_image': image_url,
                 'original_prompt': prompt,
                 'refined_prompt': refined_prompt,
-                'style': style
+                'style': style,
+                'light_transfer_strength': light_transfer_strength
+            }, timeout=1800)
+            
+            # Note: Relight is always async, gallery save happens in poll_task_status()
+            
+            return {
+                'task_id': task_id,
+                'status': data.get('status'),
+                'uploaded_urls': data.get('uploaded_urls', [])
             }
         
         except Exception as e:
             logger.error(f"Relighting failed: {str(e)}")
             raise RelightError(f"Relight failed: {str(e)}")
     
-    def poll_task_status(self, task_id: str) -> Dict:
-        """Poll relight task status"""
+    def poll_task_status(self, task_id: str, user_id: Optional[str] = None) -> Dict:
+        """Poll relight task status and save to gallery when completed"""
         try:
-            result = freepik_client.get_task_status(task_id, endpoint='relight')
+            # CRITICAL: Freepik endpoint for relight is 'image-relight'
+            result = freepik_client.get_task_status(task_id, endpoint='image-relight')
             
             # Extract data layer (Freepik returns nested structure)
             data = result.get('data', result)
             
-            if data.get('status') == 'COMPLETED' and data.get('relit'):
+            # Upload generated images if completed
+            if data.get('status') == 'COMPLETED' and data.get('generated'):
                 if not data.get('uploaded_urls'):  # Only upload if empty
-                    logger.info(f"Uploading {len(data['relit'])} relit images...")
-                    uploaded_urls = self._upload_relit_images(data['relit'])
+                    logger.info(f"Uploading {len(data['generated'])} relit images...")
+                    uploaded_urls = self._upload_relit_images(data['generated'])
                     data['uploaded_urls'] = uploaded_urls
                     logger.info(f"✓ Uploaded {len(uploaded_urls)} images successfully")
+                    
+                    # Save to gallery if user_id provided and not already saved
+                    cache_key = f'relight_saved_{task_id}'
+                    if user_id and not cache.get(cache_key):
+                        # Retrieve task metadata from cache
+                        task_metadata = cache.get(f'relight_task_{task_id}', {})
+                        
+                        # Build standardized metadata
+                        metadata = MetadataBuilder.relight(
+                            task_id=task_id,
+                            freepik_task_id=task_id,
+                            original_image=task_metadata.get('original_image'),
+                            original_prompt=task_metadata.get('original_prompt'),
+                            refined_prompt=task_metadata.get('refined_prompt'),
+                            style=task_metadata.get('style', 'standard'),
+                            light_transfer_strength=task_metadata.get('light_transfer_strength', 1.0)
+                        )
+                        
+                        # Save to gallery
+                        self._save_to_gallery(
+                            user_id=user_id,
+                            uploaded_urls=uploaded_urls,
+                            refined_prompt=task_metadata.get('refined_prompt'),
+                            intent='relight',
+                            metadata=metadata
+                        )
+                        
+                        # Mark as saved to prevent duplicate saves
+                        cache.set(cache_key, True, timeout=3600)
+                        logger.info(f"Saved {len(uploaded_urls)} relit images to gallery")
             
-            return data
+            return {
+                'task_id': task_id,
+                'status': data.get('status'),
+                'uploaded_urls': data.get('uploaded_urls', [])
+            }
         
         except Exception as e:
             logger.error(f"Failed to poll relight status: {str(e)}")

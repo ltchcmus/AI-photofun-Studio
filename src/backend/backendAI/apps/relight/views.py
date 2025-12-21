@@ -19,7 +19,7 @@ class RelightView(APIView):
     
     @require_tokens(cost=TOKEN_COSTS['relight'], feature='relight')
     def post(self, request):
-        serializer = RelightSerializer(data=request.data)
+        serializer = RelightInputSerializer(data=request.data)
         if not serializer.is_valid():
             return APIResponse.error(message="Validation failed", result=serializer.errors)
         
@@ -60,8 +60,10 @@ class RelightView(APIView):
                     "task_id": result['task_id'],
                     "status": result['status'],
                     "image_url": result.get('uploaded_urls', [None])[0] if result.get('uploaded_urls') else None,
-                    "refined_prompt": result.get('refined_prompt'),
-                    "input_source": source_type
+                    "original_image": image_url,
+                    "reference_image": reference_image_url,
+                    "light_transfer_strength": validated_data.get('light_transfer_strength', 0.8),
+                    "style": validated_data.get('style', 'standard')
                 },
                 message="Relight started. Use task_id to poll status."
             )
@@ -80,15 +82,17 @@ class RelightStatusView(APIView):
     
     def get(self, request, task_id):
         try:
+            # Get user_id from query params for gallery save
+            user_id = request.query_params.get('user_id')
+            
             service = RelightService()
-            result = service.poll_task_status(task_id)
+            result = service.poll_task_status(task_id, user_id=user_id)
             
             return APIResponse.success(
                 result={
                     "task_id": result.get('task_id'),
                     "status": result.get('status'),
-                    "relit": result.get('relit', []),
-                    "uploaded_urls": result.get('uploaded_urls', [])
+                    "image_url": result.get('uploaded_urls', [None])[0] if result.get('uploaded_urls') else None
                 },
                 message="Task status retrieved"
             )

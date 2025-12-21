@@ -19,7 +19,7 @@ class ReimagineView(APIView):
     
     @require_tokens(cost=TOKEN_COSTS['reimagine'], feature='reimagine')
     def post(self, request):
-        serializer = ReimagineSerializer(data=request.data)
+        serializer = ReimagineInputSerializer(data=request.data)
         if not serializer.is_valid():
             return APIResponse.error(message="Validation failed", result=serializer.errors)
         
@@ -42,17 +42,23 @@ class ReimagineView(APIView):
                 aspect_ratio=validated_data.get('aspect_ratio', 'square_1_1')
             )
             
+            # Reimagine API returns COMPLETED immediately with URLs
+            # If completed, extract image_url from uploaded_urls
+            image_url = None
+            if result.get('status') == 'COMPLETED' and result.get('uploaded_urls'):
+                image_url = result['uploaded_urls'][0]
+            
             return APIResponse.success(
                 result={
                     "task_id": result['task_id'],
                     "status": result['status'],
-                    "reimagined": result.get('reimagined', []),
-                    "uploaded_urls": result.get('uploaded_urls', []),
-                    "original_image": result['original_image'],
-                    "imagination": result['imagination'],
-                    "input_source": source_type
+                    "image_url": image_url,
+                    "original_image": result.get('original_image'),
+                    "imagination": result.get('imagination'),
+                    "refined_prompt": result.get('refined_prompt'),  # Return refined, not original
+                    "aspect_ratio": result.get('aspect_ratio')
                 },
-                message="Reimagine started. Use task_id to poll status."
+                message="Reimagine completed!" if result.get('status') == 'COMPLETED' else "Reimagine started. Use task_id to poll status."
             )
         
         except ReimagineError as e:
@@ -76,8 +82,7 @@ class ReimagineStatusView(APIView):
                 result={
                     "task_id": result.get('task_id'),
                     "status": result.get('status'),
-                    "reimagined": result.get('reimagined', []),
-                    "uploaded_urls": result.get('uploaded_urls', [])
+                    "image_url": result.get('uploaded_urls', [None])[0] if result.get('uploaded_urls') else None
                 },
                 message="Task status retrieved"
             )

@@ -5,10 +5,12 @@ Business logic for image expansion using Freepik Image Expand API
 
 import logging
 from typing import Dict, Optional
+from django.core.cache import cache
 from core.freepik_client import freepik_client
 from core.file_uploader import file_uploader, FileUploadError
 from apps.prompt_service.services import PromptService
 from apps.image_gallery.services import image_gallery_service
+from shared.metadata_schema import MetadataBuilder
 
 logger = logging.getLogger(__name__)
 
@@ -88,61 +90,89 @@ class ImageExpandService:
             
             # Extract data layer (Freepik returns nested structure)
             data = result.get('data', result)
-            logger.info(f"Expand task created: {data.get('task_id')}")
+            task_id = data.get('task_id')
+            logger.info(f"Expand task created: {task_id}")
             
-            # Upload if completed
-            if data.get('status') == 'COMPLETED' and data.get('expanded'):
-                uploaded_urls = self._upload_expanded_images(data['expanded'])
-                data['uploaded_urls'] = uploaded_urls
-                
-                # Save to gallery
-                self._save_to_gallery(
-                    user_id=user_id,
-                    uploaded_urls=uploaded_urls,
-                    refined_prompt=refined_prompt,
-                    intent='image_expand',
-                    metadata={
-                        'original_image': image_url,
-                        'original_prompt': prompt,
-                        'expansion': {'left': left, 'right': right, 'top': top, 'bottom': bottom}
-                    }
-                )
-            
-            return {
-                'task_id': data.get('task_id'),
-                'status': data.get('status'),
-                'uploaded_urls': data.get('uploaded_urls', []),
+            # Store task metadata in cache for later retrieval (30 min TTL)
+            cache.set(f'expand_task_{task_id}', {
+                'user_id': user_id,
                 'original_image': image_url,
                 'original_prompt': prompt,
                 'refined_prompt': refined_prompt,
-                'expansion': {
+                'expansion_params': {
                     'left': left,
                     'right': right,
                     'top': top,
                     'bottom': bottom
                 }
+            }, timeout=1800)
+            
+            # Note: Image expand is always async, gallery save happens in poll_task_status()
+            
+            return {
+                'task_id': task_id,
+                'status': data.get('status'),
+                'uploaded_urls': data.get('uploaded_urls', [])
             }
         
         except Exception as e:
             logger.error(f"Image expansion failed: {str(e)}")
             raise ImageExpandError(f"Expand failed: {str(e)}")
     
-    def poll_task_status(self, task_id: str) -> Dict:
-        """Poll expand task status"""
+    def poll_task_status(self, task_id: str, user_id: Optional[str] = None) -> Dict:
+        """Poll expand task status and save to gallery when completed"""
         try:
-            result = freepik_client.get_task_status(task_id, endpoint='image-expand')
+            # CRITICAL: Freepik endpoint for image-expand is 'image-expand/flux-pro'
+            result = freepik_client.get_task_status(task_id, endpoint='image-expand/flux-pro')
             
             # Extract data layer (Freepik returns nested structure)
             data = result.get('data', result)
             
-            if data.get('status') == 'COMPLETED' and data.get('expanded'):
+            # Upload generated images if completed
+            if data.get('status') == 'COMPLETED' and data.get('generated'):
                 if not data.get('uploaded_urls'):  # Only upload if empty
-                    logger.info(f"Uploading {len(data['expanded'])} expanded images...")
-                    uploaded_urls = self._upload_expanded_images(data['expanded'])
+                    logger.info(f"Uploading {len(data['generated'])} expanded images...")
+                    uploaded_urls = self._upload_expanded_images(data['generated'])
                     data['uploaded_urls'] = uploaded_urls
                     logger.info(f"✓ Uploaded {len(uploaded_urls)} images successfully")
+                    
+                    # Save to gallery if user_id provided and not already saved
+                    cache_key = f'expand_saved_{task_id}'
+                    if user_id and not cache.get(cache_key):
+                        # Retrieve task metadata from cache
+                        task_metadata = cache.get(f'expand_task_{task_id}', {})
+                        
+                        # Build standardized metadata
+                        expansion_params = task_metadata.get('expansion_params', {})
+                        metadata = MetadataBuilder.image_expand(
+                            task_id=task_id,
+                            expand_direction='custom',
+                            expand_amount=sum(expansion_params.values()) if expansion_params else 0,
+                            freepik_task_id=task_id,
+                            expansion_params=expansion_params,
+                            original_image=task_metadata.get('original_image'),
+                            original_prompt=task_metadata.get('original_prompt'),
+                            refined_prompt=task_metadata.get('refined_prompt')
+                        )
+                        
+                        # Save to gallery
+                        self._save_to_gallery(
+                            user_id=user_id,
+                            uploaded_urls=uploaded_urls,
+                            refined_prompt=task_metadata.get('refined_prompt'),
+                            intent='image_expand',
+                            metadata=metadata
+                        )
+                        
+                        # Mark as saved to prevent duplicate saves
+                        cache.set(cache_key, True, timeout=3600)
+                        logger.info(f"Saved {len(uploaded_urls)} expanded images to gallery")
             
-            return data
+            return {
+                'task_id': task_id,
+                'status': data.get('status'),
+                'uploaded_urls': data.get('uploaded_urls', [])
+            }
         
         except Exception as e:
             logger.error(f"Failed to poll expand status: {str(e)}")

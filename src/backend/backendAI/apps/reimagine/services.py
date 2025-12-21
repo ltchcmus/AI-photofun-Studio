@@ -89,9 +89,13 @@ class ReimagineService:
             logger.info(f"Reimagine task created: {data.get('task_id')}")
             
             # Upload if completed
-            if data.get('status') == 'COMPLETED' and data.get('reimagined'):
-                uploaded_urls = self._upload_reimagined_images(data['reimagined'])
+            # Freepik returns 'generated' not 'reimagined' for this endpoint
+            image_urls = data.get('generated') or data.get('reimagined') or []
+            if data.get('status') == 'COMPLETED' and image_urls:
+                logger.info(f"Reimagine completed synchronously, uploading {len(image_urls)} images...")
+                uploaded_urls = self._upload_reimagined_images(image_urls)
                 data['uploaded_urls'] = uploaded_urls
+                logger.info(f"✓ Uploaded {len(uploaded_urls)} reimagined images")
                 
                 # Save to gallery
                 self._save_to_gallery(

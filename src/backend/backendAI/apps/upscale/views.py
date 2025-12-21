@@ -39,7 +39,7 @@ class UpscaleView(APIView):
             "user_id": "user123"
         }
         """
-        serializer = UpscaleSerializer(data=request.data)
+        serializer = UpscaleInputSerializer(data=request.data)
         if not serializer.is_valid():
             return APIResponse.error(message="Validation failed", result=serializer.errors)
         
@@ -75,7 +75,11 @@ class UpscaleView(APIView):
             return APIResponse.success(
                 result={
                     "task_id": result['task_id'],
-                    "status": result['status']
+                    "status": result['status'],
+                    "image_url": result.get('uploaded_urls', [None])[0] if result.get('uploaded_urls') else None,
+                    "original_image": result.get('original_image'),
+                    "flavor": validated_data.get('flavor', 'photo'),
+                    "settings": result.get('settings', {})
                 },
                 message="Upscale started. Use task_id to poll status."
             )
@@ -106,8 +110,11 @@ class UpscaleStatusView(APIView):
     def get(self, request, task_id):
         """Get upscale task status"""
         try:
+            # Get user_id from query params for gallery save
+            user_id = request.query_params.get('user_id')
+            
             service = UpscaleService()
-            result = service.poll_task_status(task_id)
+            result = service.poll_task_status(task_id, user_id=user_id)
             
             return APIResponse.success(
                 result={
