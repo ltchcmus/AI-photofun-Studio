@@ -29,6 +29,8 @@ class UpscaleService:
         sharpen: float = 0.5,
         smart_grain: float = 0.0,
         ultra_detail: float = 0.0,
+        flavor: str = 'photo',
+        scale_factor: int = 2,
         webhook_url: Optional[str] = None
     ) -> Dict:
         """
@@ -40,6 +42,8 @@ class UpscaleService:
             sharpen: Sharpness level (0.0-1.0)
             smart_grain: Grain enhancement (0.0-1.0)
             ultra_detail: Ultra detail level (0.0-1.0)
+            flavor: Upscale flavor (photo/sublime/photo_denoiser)
+            scale_factor: Upscale factor (2-16)
             webhook_url: Webhook for async notifications
             
         Returns:
@@ -62,13 +66,15 @@ class UpscaleService:
             smart_grain_int = int(smart_grain * 100)
             ultra_detail_int = int(ultra_detail * 100)
             
-            # Step 2: Call Freepik Upscaler API
-            logger.info(f"Calling Freepik Upscaler with sharpen={sharpen_int}, smart_grain={smart_grain_int}")
+            # Step 2: Call Freepik Upscaler API V2
+            logger.info(f"Calling Freepik Upscaler V2 with sharpen={sharpen_int}, smart_grain={smart_grain_int}, flavor={flavor}")
             result = freepik_client.upscale_image(
                 image=image_url,  # Can pass URL or local path
                 sharpen=sharpen_int,
                 smart_grain=smart_grain_int,
                 ultra_detail=ultra_detail_int,
+                flavor=flavor,
+                scale_factor=scale_factor,
                 webhook_url=webhook_url
             )
             
@@ -92,7 +98,9 @@ class UpscaleService:
                         'original_image': image_url,
                         'sharpen': sharpen,
                         'smart_grain': smart_grain,
-                        'ultra_detail': ultra_detail
+                        'ultra_detail': ultra_detail,
+                        'flavor': flavor,
+                        'scale_factor': scale_factor
                     }
                 )
             
@@ -101,6 +109,8 @@ class UpscaleService:
                 'status': data.get('status'),
                 'uploaded_urls': data.get('uploaded_urls', []),
                 'original_image': image_url,
+                'flavor': flavor,
+                'scale_factor': scale_factor,
                 'settings': {
                     'sharpen': sharpen,
                     'smart_grain': smart_grain,
@@ -127,8 +137,8 @@ class UpscaleService:
             UpscaleError: When polling fails
         """
         try:
-            # CRITICAL: Freepik endpoint for upscale is 'image-upscaler-precision'
-            result = freepik_client.get_task_status(task_id, endpoint='image-upscaler-precision')
+            # CRITICAL: Freepik endpoint for upscale V2 is 'image-upscaler-precision-v2'
+            result = freepik_client.get_task_status(task_id, endpoint='image-upscaler-precision-v2')
             
             # Extract data layer (Freepik returns nested structure)
             data = result.get('data', result)

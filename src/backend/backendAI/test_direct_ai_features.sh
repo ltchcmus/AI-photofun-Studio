@@ -98,39 +98,39 @@ poll_task() {
 # sleep 2
 
 # Test 2: Upscale
-# echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-# echo -e "${YELLOW}TEST 2: Upscale${NC}"
-# echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${YELLOW}TEST 2: Upscale${NC}"
+echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
-# echo "📤 Request: Upscale image"
-# echo "   Using image: $TEST_IMAGE_URL"
+echo "📤 Request: Upscale image"
+echo "   Using image: $TEST_IMAGE_URL"
 
-# response=$(curl -s -X POST "$BASE_URL/v1/features/upscale/" \
-#   -H "Content-Type: application/json" \
-#   -d '{
-#     "user_id": "'"$SESSION_ID"'",
-#     "image_url": "'"$TEST_IMAGE_URL"'",
-#     "upscale_factor": 2,
-#     "flavor": "photo",
-#     "session_id": "'"$SESSION_ID"'"
-#   }')
+response=$(curl -s -X POST "$BASE_URL/v1/features/upscale/" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": "'"$SESSION_ID"'",
+    "image_url": "'"$TEST_IMAGE_URL"'",
+    "upscale_factor": 2,
+    "flavor": "photo",
+    "session_id": "'"$SESSION_ID"'"
+  }')
 
-# echo $response | jq '.'
-# task_id=$(echo $response | jq -r '.result.task_id')
+echo $response | jq '.'
+task_id=$(echo $response | jq -r '.result.task_id')
 
-# if [ "$task_id" != "null" ] && [ ! -z "$task_id" ]; then
-#     echo ""
-#     if poll_task $task_id "v1/features/upscale"; then
-#         echo -e "${GREEN}✓ TEST 2 PASSED${NC}"
-#     else
-#         echo -e "${RED}✗ TEST 2 FAILED${NC}"
-#     fi
-# else
-#     echo -e "${RED}✗ TEST 2 FAILED: No task_id returned${NC}"
-# fi
+if [ "$task_id" != "null" ] && [ ! -z "$task_id" ]; then
+    echo ""
+    if poll_task $task_id "v1/features/upscale"; then
+        echo -e "${GREEN}✓ TEST 2 PASSED${NC}"
+    else
+        echo -e "${RED}✗ TEST 2 FAILED${NC}"
+    fi
+else
+    echo -e "${RED}✗ TEST 2 FAILED: No task_id returned${NC}"
+fi
 
-# echo ""
-# sleep 2
+echo ""
+sleep 2
 
 # # Test 3: Remove Background
 # echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
@@ -284,42 +284,42 @@ poll_task() {
 # sleep 2
 
 # Test 7: Style Transfer
-echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${YELLOW}TEST 7: Style Transfer${NC}"
-echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+# echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+# echo -e "${YELLOW}TEST 7: Style Transfer${NC}"
+# echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
-# Using two different images for style transfer
-REFERENCE_IMAGE_URL="https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=800"
+# # Using two different images for style transfer
+# REFERENCE_IMAGE_URL="https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=800"
 
-echo "📤 Request: Apply artistic style"
-echo "   Original image: $TEST_IMAGE_URL"
-echo "   Reference style: $REFERENCE_IMAGE_URL"
+# echo "📤 Request: Apply artistic style"
+# echo "   Original image: $TEST_IMAGE_URL"
+# echo "   Reference style: $REFERENCE_IMAGE_URL"
 
-response=$(curl -s -X POST "$BASE_URL/v1/features/style-transfer/" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "user_id": "'"$SESSION_ID"'",
-    "image_url": "'"$TEST_IMAGE_URL"'",
-    "reference_image_url": "'"$REFERENCE_IMAGE_URL"'",
-    "session_id": "'"$SESSION_ID"'"
-  }')
+# response=$(curl -s -X POST "$BASE_URL/v1/features/style-transfer/" \
+#   -H "Content-Type: application/json" \
+#   -d '{
+#     "user_id": "'"$SESSION_ID"'",
+#     "image_url": "'"$TEST_IMAGE_URL"'",
+#     "reference_image_url": "'"$REFERENCE_IMAGE_URL"'",
+#     "session_id": "'"$SESSION_ID"'"
+#   }')
 
-echo $response | jq '.'
-task_id=$(echo $response | jq -r '.result.task_id')
+# echo $response | jq '.'
+# task_id=$(echo $response | jq -r '.result.task_id')
 
-if [ "$task_id" != "null" ] && [ ! -z "$task_id" ]; then
-    echo ""
-    if poll_task $task_id "v1/features/style-transfer"; then
-        echo -e "${GREEN}✓ TEST 7 PASSED${NC}"
-    else
-        echo -e "${RED}✗ TEST 7 FAILED${NC}"
-    fi
-else
-    echo -e "${RED}✗ TEST 7 FAILED: No task_id returned${NC}"
-fi
+# if [ "$task_id" != "null" ] && [ ! -z "$task_id" ]; then
+#     echo ""
+#     if poll_task $task_id "v1/features/style-transfer"; then
+#         echo -e "${GREEN}✓ TEST 7 PASSED${NC}"
+#     else
+#         echo -e "${RED}✗ TEST 7 FAILED${NC}"
+#     fi
+# else
+#     echo -e "${RED}✗ TEST 7 FAILED: No task_id returned${NC}"
+# fi
 
-echo ""
-echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+# echo ""
+# echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 # echo -e "${GREEN}🎉 All direct API tests completed!${NC}"
 # echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 # echo ""

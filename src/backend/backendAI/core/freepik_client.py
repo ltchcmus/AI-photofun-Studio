@@ -229,23 +229,27 @@ class FreepikClient:
     
     def upscale_image(
         self,
-        image: str,  # Base64 encoded
+        image: str,  # Base64 encoded or URL
         webhook_url: Optional[str] = None,
-        sharpen: int = 50,
+        sharpen: int = 7,
         smart_grain: int = 7,
-        ultra_detail: int = 30
+        ultra_detail: int = 30,
+        flavor: str = "photo",
+        scale_factor: int = 2
     ) -> Dict[str, Any]:
         """
-        Upscale image with precision
+        Upscale image with precision V2
         
-        POST /v1/ai/image-upscaler-precision
+        POST /v1/ai/image-upscaler-precision-v2
         
         Args:
-            image: Base64 encoded image
+            image: Base64 encoded image or URL
             webhook_url: Optional callback URL
-            sharpen: Sharpen level (0-100)
-            smart_grain: Smart grain (0-100)
-            ultra_detail: Ultra detail (0-100)
+            sharpen: Sharpen level (0-100), default 7
+            smart_grain: Smart grain (0-100), default 7
+            ultra_detail: Ultra detail (0-100), default 30
+            flavor: sublime, photo, photo_denoiser - default photo
+            scale_factor: Scaling factor (2-16), default 2
             
         Returns:
             {
@@ -260,13 +264,15 @@ class FreepikClient:
             "image": image,
             "sharpen": sharpen,
             "smart_grain": smart_grain,
-            "ultra_detail": ultra_detail
+            "ultra_detail": ultra_detail,
+            "flavor": flavor,
+            "scale_factor": scale_factor
         }
         
         if webhook_url:
             payload["webhook_url"] = webhook_url
         
-        return self._make_request('POST', '/v1/ai/image-upscaler-precision', json=payload)
+        return self._make_request('POST', '/v1/ai/image-upscaler-precision-v2', json=payload)
     
     # =========================================================================
     # REMOVE BACKGROUND

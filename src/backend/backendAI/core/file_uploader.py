@@ -42,7 +42,7 @@ class FileUploader:
     UPLOAD_URL = "https://file-service-cdal.onrender.com/api/v1/file/uploads"
     
     def __init__(self):
-        self.timeout = getattr(settings, 'FILE_UPLOAD_TIMEOUT', 30)
+        self.timeout = getattr(settings, 'FILE_UPLOAD_TIMEOUT', 60)  # Increased for large upscaled images
     
     def upload_file(self, file_path: str, custom_id: Optional[str] = None) -> str:
         """
@@ -126,7 +126,7 @@ class FileUploader:
         try:
             # Download image
             logger.info(f"Downloading image from: {image_url}")
-            response = requests.get(image_url, timeout=30)
+            response = requests.get(image_url, timeout=60, stream=True)  # Increased timeout for large images
             response.raise_for_status()
             
             # Detect file extension from URL or content-type

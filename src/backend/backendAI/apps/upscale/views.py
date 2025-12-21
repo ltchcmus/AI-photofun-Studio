@@ -69,7 +69,9 @@ class UpscaleView(APIView):
                 user_id=validated_data['user_id'],
                 sharpen=settings['sharpen'],
                 smart_grain=settings['smart_grain'],
-                ultra_detail=settings['ultra_detail']
+                ultra_detail=settings['ultra_detail'],
+                flavor=flavor,
+                scale_factor=2  # V2 default
             )
             
             return APIResponse.success(
@@ -78,10 +80,11 @@ class UpscaleView(APIView):
                     "status": result['status'],
                     "image_url": result.get('uploaded_urls', [None])[0] if result.get('uploaded_urls') else None,
                     "original_image": result.get('original_image'),
-                    "flavor": validated_data.get('flavor', 'photo'),
+                    "flavor": result.get('flavor', 'photo'),
+                    "scale_factor": result.get('scale_factor', 2),
                     "settings": result.get('settings', {})
                 },
-                message="Upscale started. Use task_id to poll status."
+                message="Upscale started (V2 API). Use task_id to poll status."
             )
         
         except UpscaleError as e:
