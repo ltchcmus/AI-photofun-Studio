@@ -71,11 +71,11 @@ class WebGlobalFilter implements GlobalFilter, Ordered {
 
     // Check if Authorization header exists and is not empty
     if (accessToken == null || accessToken.isEmpty()) {
-      log.warn("❌ Access denied - No Authorization header for path: {}", path);
+      log.warn("Access denied - No Authorization header for path: {}", path);
       return unauthorized(exchange);
     }
 
-    log.info("✅ Authorized request proceeding: {}", path);
+    log.info("Authorized request proceeding: {}", path);
     return chain.filter(exchange);
   }
 

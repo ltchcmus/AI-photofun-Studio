@@ -32,7 +32,7 @@ config:
     communication: ${COMMUNICATION_SERVICE_URL:http://localhost:8085}
 
   gg:
-    client-id: ${GOOGLE_CLIENT_ID:935823816630-4thvb6jh7hboao1dt67kf9cvei7glshl.apps.googleusercontent.com}
+    client-id: ${GOOGLE_CLIENT_ID:424511485278-d36bocf4e3avqsadguauellt3gn4l412.apps.googleusercontent.com}
     client-secret: ${GOOGLE_CLIENT_SECRET:}
 
   jwt:
