@@ -41,11 +41,32 @@ const LoginForm = () => {
   };
 
   const loginWithGoogle = () => {
-    alert("Google login functionality (Demo)");
+    // Get Google OAuth config from environment variables
+    const clientId =
+      import.meta.env.VITE_GOOGLE_CLIENT_ID ||
+      "424511485278-d36bocf4e3avqsadguauellt3gn4l412.apps.googleusercontent.com";
+    
+    // Redirect to frontend google-loading page, not backend
+    const redirectUri =
+      import.meta.env.VITE_GOOGLE_REDIRECT_URI ||
+      "http://localhost:5173/google-loading";
+
+    // Build Google OAuth2 authorization URL
+    const googleAuthUrl =
+      `https://accounts.google.com/o/oauth2/v2/auth?` +
+      `client_id=${encodeURIComponent(clientId)}&` +
+      `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+      `response_type=code&` +
+      `scope=${encodeURIComponent("openid email profile")}&` +
+      `access_type=offline&` +
+      `prompt=consent`;
+
+    // Redirect to Google OAuth
+    window.location.href = googleAuthUrl;
   };
 
   const loginWithFacebook = () => {
-    alert("Facebook login functionality (Demo)");
+    alert("Facebook login functionality (Coming soon)");
   };
 
   return (

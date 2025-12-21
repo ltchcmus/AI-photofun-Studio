@@ -1,5 +1,7 @@
 package service.identity.configuration;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -53,9 +56,36 @@ public class SecurityGlobal {
                         -> jwtConfigurer.decoder(new CustomJwtDecoder())
                                .jwtAuthenticationConverter(
                                    jwtAuthenticationConverter()))
+                   .bearerTokenResolver(cookieBearerTokenResolver())
                    .authenticationEntryPoint(new CustomEntryPoint()));
 
     return http.build();
+  }
+
+  @Bean
+  public BearerTokenResolver cookieBearerTokenResolver() {
+    return new BearerTokenResolver() {
+      @Override
+      public String resolve(HttpServletRequest request) {
+        // First, try to get token from Authorization header (for access token)
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+          return authHeader.substring(7);
+        }
+
+        // Second, try to get refresh token from cookie (for refresh endpoints)
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+          for (Cookie cookie : cookies) {
+            if ("jwt".equals(cookie.getName())) {
+              return cookie.getValue();
+            }
+          }
+        }
+
+        return null;
+      }
+    };
   }
 
   @Bean

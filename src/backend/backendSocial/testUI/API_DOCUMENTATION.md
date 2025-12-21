@@ -4,7 +4,7 @@
 
 **Direct Service URLs:**
 
-- Identity Service: `http://localhost:8080/identity`
+- Identity Service: `http://localhost:8000/identity`
 - Profile Service: `http://localhost:8081/profiles`
 - Post Service: `http://localhost:8082/posts`
 - Comments Service: `http://localhost:8003/comments`
@@ -85,7 +85,7 @@ Response:
   "code": 1000,
   "message": "Logout successful"
 }
-``` 
+```
 
 ### 4. Refresh Token
 
@@ -583,7 +583,7 @@ like: 1 (like) or -1 (unlike)
 **Endpoint:** `GET /comments/post/{postId}`
 
 ```json
-Response: 
+Response:
 {
   "code": 1000,
   "message": "Comments retrieved successfully",
@@ -1415,7 +1415,7 @@ socket.on("disconnect", (reason) => {
 
 ```
 API Gateway (8888)
-├── Identity Service (8080)
+├── Identity Service (8000)
 │   ├── Profile Service (8081)
 │   ├── Post Service (8082)
 │   └── File Service (external)
@@ -1426,7 +1426,7 @@ API Gateway (8888)
 ├── Comments Service (8003)
 │   └── Socket.IO (8003)
 └── Communication Service (8085)
-    ├── Identity Service (8080)
+    ├── Identity Service (8000)
     ├── File Service (external)
     └── Socket.IO (8899)
 ```
