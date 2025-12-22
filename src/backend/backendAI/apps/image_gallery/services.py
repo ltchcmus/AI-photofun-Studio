@@ -4,12 +4,30 @@ Handles saving generated images to Supabase PostgreSQL database
 """
 
 import logging
+import os
 import re
 import uuid
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from typing import Dict, List, Optional, Any
 from datetime import datetime
+from django.conf import settings
+
+
+def _load_db_config() -> Dict[str, Any]:
+    db = getattr(settings, "DATABASES", {}).get("default", {})
+    options = db.get("OPTIONS") or {}
+    config = {
+        "host": db.get("HOST") or os.environ.get("SUPABASE_DB_HOST", "localhost"),
+        "port": db.get("PORT") or os.environ.get("SUPABASE_DB_PORT", "5432"),
+        "database": db.get("NAME") or os.environ.get("SUPABASE_DB_NAME", "postgres"),
+        "user": db.get("USER") or os.environ.get("SUPABASE_DB_USER", "postgres"),
+        "password": db.get("PASSWORD") or os.environ.get("SUPABASE_DB_PASSWORD", ""),
+    }
+    sslmode = options.get("sslmode") or os.environ.get("SUPABASE_DB_SSLMODE")
+    if sslmode:
+        config["sslmode"] = sslmode
+    return config
 
 logger = logging.getLogger(__name__)
 
@@ -21,15 +39,7 @@ class ImageGalleryError(Exception):
 
 class ImageGalleryService:
     """Service for managing image gallery in Supabase PostgreSQL"""
-    
-    # Supabase connection details
-    DB_CONFIG = {
-        'host': 'aws-1-ap-southeast-1.pooler.supabase.com',
-        'port': 6543,
-        'database': 'postgres',
-        'user': 'postgres.rbwqlqiedfqnqxnfzkcr',
-        'password': 'aiphotofunstudio'
-    }
+    DB_CONFIG = _load_db_config()
     
     def __init__(self):
         """Initialize connection pool"""

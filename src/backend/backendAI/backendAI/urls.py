@@ -34,6 +34,8 @@ urlpatterns = [
     # Direct feature endpoints (no conversation required)
     path('v1/features/image-generation/', include('apps.image_generation.urls')),
     path('v1/features/upscale/', include('apps.upscale.urls')),
+    path('v1/features/prompt-to-video/', include('apps.prompt_to_video.urls')),
+    path('v1/features/image-to-video/', include('apps.image_to_video.urls')),
     path('v1/features/remove-background/', include('apps.remove_background.urls')),
     path('v1/features/relight/', include('apps.relight.urls')),
     path('v1/features/style-transfer/', include('apps.style_transfer.urls')),
