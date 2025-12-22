@@ -158,10 +158,7 @@ public class UserService {
     return response;
   }
 
-  @PostAuthorize(
-      "returnObject.userId == authentication.name or hasRole('ADMIN')")
-  public GetUserResponse
-  getUserById(String userId) {
+  public GetUserResponse getUserById(String userId) {
     // Clear cache to ensure fresh data from DB
     entityManager.clear();
     User user = userRepository.findById(userId).orElseThrow(

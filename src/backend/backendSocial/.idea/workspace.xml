@@ -6,8 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="740a1931-dd5b-46a1-9947-5fe7d5aa7c77" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/communication/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/communication/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/comments/.env.example" beforeDir="false" afterPath="$PROJECT_DIR$/comments/.env.example" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/pages/GoogleLoadingPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/pages/GoogleLoadingPage.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,7 +105,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Application.communication">
+  <component name="RunManager" selected="Application.identity">
     <configuration name="Profile" type="Application" factoryName="Application">
       <option name="ALTERNATIVE_JRE_PATH" value="temurin-21" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
@@ -136,6 +136,9 @@
     <configuration name="identity" type="Application" factoryName="Application">
       <option name="ALTERNATIVE_JRE_PATH" value="temurin-21" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <envs>
+        <env name="GOOGLE_CLIENT_SECRET" value="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" />
+      </envs>
       <option name="MAIN_CLASS_NAME" value="service.identity.IdentityApplication" />
       <module name="identity" />
       <method v="2">

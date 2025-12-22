@@ -16,6 +16,7 @@ import AdminTab from './components/AdminTab'
 
 function App() {
   const [activeTab, setActiveTab] = useState('auth')
+  const [showSetPasswordModal, setShowSetPasswordModal] = useState(false)
   const [config, setConfig] = useState({
     apiGateway: 'http://localhost:8888',
     comments: 'http://localhost:8003',
@@ -27,6 +28,17 @@ function App() {
     refreshToken: localStorage.getItem('refreshToken') || '',
     userId: localStorage.getItem('userId') || ''
   })
+
+  // Check URL for showSetPassword query param
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.get('showSetPassword') === 'true') {
+      setShowSetPasswordModal(true)
+      setActiveTab('auth')
+      // Clean URL
+      window.history.replaceState({}, '', '/')
+    }
+  }, [])
 
   const [sockets, setSockets] = useState({
     comments: null,
@@ -123,7 +135,7 @@ function App() {
       </div>
 
       <div className="tab-content">
-        {activeTab === 'auth' && <AuthTab config={config} auth={auth} setAuth={setAuth} apiClient={apiClient} logout={logout} />}
+        {activeTab === 'auth' && <AuthTab config={config} auth={auth} setAuth={setAuth} apiClient={apiClient} logout={logout} showSetPasswordModal={showSetPasswordModal} setShowSetPasswordModal={setShowSetPasswordModal} />}
         {activeTab === 'user' && <UserTab config={config} auth={auth} apiClient={apiClient} />}
         {activeTab === 'group' && <GroupTab config={config} auth={auth} apiClient={apiClient} />}
         {activeTab === 'profile' && <ProfileTab config={config} auth={auth} apiClient={apiClient} />}

@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 import service.identity.DTOs.HttpResponse;
 import service.identity.DTOs.request.*;
@@ -140,11 +139,19 @@ public class UserController {
 
   @GetMapping("/me")
   HttpResponse<GetMeResponse> getMyInfo() {
-    return HttpResponse.<GetMeResponse>builder()
-        .code(1000)
-        .result(userService.getMyInfo())
-        .message("User info fetched successfully")
-        .build();
+    try {
+      GetMeResponse result = userService.getMyInfo();
+      return HttpResponse.<GetMeResponse>builder()
+          .code(1000)
+          .result(result)
+          .message("User info fetched successfully")
+          .build();
+    } catch (Exception e) {
+      // Log the actual error
+      System.err.println("Error in /me endpoint: " + e.getMessage());
+      e.printStackTrace();
+      throw e; // Re-throw to be handled by GlobalException
+    }
   }
 
   @DeleteMapping("/delete/{userId}")

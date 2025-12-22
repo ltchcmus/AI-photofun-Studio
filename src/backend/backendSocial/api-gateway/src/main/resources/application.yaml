@@ -18,6 +18,8 @@ spring:
       max-request-size: 10MB
   cloud:
     gateway:
+      default-filters:
+        - PreserveHostHeader
       routes:
         - id: identity-service
           uri: ${IDENTITY_SERVICE_URL:http://localhost:8000}

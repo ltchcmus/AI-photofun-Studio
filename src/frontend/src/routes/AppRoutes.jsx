@@ -28,6 +28,8 @@ import { useAuthContext } from "../context/AuthContext";
 import LoadingScreen from "../components/common/LoadingScreen";
 import { useAuth } from "../hooks/useAuth";
 import VerifyEmailPage from "../pages/VerifyEmailPage";
+import GoogleLoadingPage from "../pages/GoogleLoadingPage";
+import FailurePage from "../pages/FailurePage";
 
 const RequireAuth = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -51,6 +53,8 @@ function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/verify-email" element={<VerifyEmailPage />} />
+      <Route path="/google-loading" element={<GoogleLoadingPage />} />
+      <Route path="/failure" element={<FailurePage />} />
 
       {/* routes using shared layout (sidebar + mobile nav) */}
       <Route
