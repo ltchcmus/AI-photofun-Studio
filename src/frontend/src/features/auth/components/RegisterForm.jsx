@@ -62,12 +62,12 @@ const RegisterPage = () => {
     // Get Google OAuth config from environment variables
     const clientId =
       import.meta.env.VITE_GOOGLE_CLIENT_ID ||
-      "935823816630-4thvb6jh7hboao1dt67kf9cvei7glshl.apps.googleusercontent.com";
+      "424511485278-d36bocf4e3avqsadguauellt3gn4l412.apps.googleusercontent.com";
 
-    // Redirect to frontend google-loading page
+    // Redirect to backend authentication endpoint
     const redirectUri =
       import.meta.env.VITE_GOOGLE_REDIRECT_URI ||
-      "http://localhost:5173/google-loading";
+      "http://localhost:8000/identity/auth/authentication";
 
     // Build Google OAuth2 authorization URL
     const googleAuthUrl =

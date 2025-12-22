@@ -148,26 +148,25 @@ public class AuthController {
   }
 
   @GetMapping("/authentication")
-  ResponseEntity<Map<String, Object>>
+  HttpResponse<Map<String, Object>>
   authenticate(@RequestParam("code") String code, HttpServletResponse response,
                HttpServletRequest request) {
     String clientIp = request.getHeader("X-Forwarded-For");
     if (clientIp == null || clientIp.isEmpty()) {
       clientIp = request.getRemoteAddr();
     }
+
     boolean success = authService.authenticate(code, response, clientIp);
 
     String redirectUrl = success ? redirectAfterLoginGoogleFrontendSuccess
                                  : redirectAfterLoginGoogleFrontendFailure;
 
-    if (success) {
-      return ResponseEntity.ok()
-          .header("Access-Control-Expose-Headers", "X-Access-Token")
-          .body(Map.of("success", true, "redirectUrl", redirectUrl));
-    } else {
-      return ResponseEntity.ok().body(
-          Map.of("success", false, "redirectUrl", redirectUrl));
-    }
+    return HttpResponse.<Map<String, Object>>builder()
+        .code(1000)
+        .message(success ? "Authentication successful"
+                         : "Authentication failed")
+        .result(Map.of("success", success, "redirectUrl", redirectUrl))
+        .build();
   }
 
   @GetMapping("/refresh-token")

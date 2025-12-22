@@ -46,14 +46,17 @@ const GoogleLoadingPage = () => {
           }
         );
 
-        if (!authResponse.ok) {
-          throw new Error("Authentication request failed");
-        }
-
+        // Parse response body first to get error details
         const authData = await authResponse.json();
         console.log("Auth response:", authData);
 
-        if (!authData.success) {
+        if (!authResponse.ok) {
+          // Use backend error message if available
+          const errorMessage = authData?.message || "Authentication request failed";
+          throw new Error(errorMessage);
+        }
+
+        if (!authData.result?.success) {
           console.error("Backend reported authentication failure");
           navigate("/failure");
           return;

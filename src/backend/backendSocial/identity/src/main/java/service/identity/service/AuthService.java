@@ -53,28 +53,21 @@ public class AuthService {
   CookieUtils cookieUtils;
   UserService userService;
 
-  @NonFinal
-  @Value("${config.jwt.expires-in}")
-  Long jwtExpiresIn;
+  @NonFinal @Value("${config.jwt.expires-in}") Long jwtExpiresIn;
 
-  @NonFinal
-  @Value("${config.jwt.refresh-expires-in}")
-  Long jwtRefreshExpiresIn;
+  @NonFinal @Value("${config.jwt.refresh-expires-in}") Long jwtRefreshExpiresIn;
 
-  @NonFinal
-  @Value("${config.jwt.secret}")
-  String jwtSecret;
+  @NonFinal @Value("${config.jwt.secret}") String jwtSecret;
 
-  @NonFinal
-  @Value("${config.jwt.secret-refresh}")
-  String jwtRefreshSecret;
+  @NonFinal @Value("${config.jwt.secret-refresh}") String jwtRefreshSecret;
 
   public User login(LoginRequest loginRequest) throws JOSEException {
 
     String usernameOrEmail = loginRequest.getUsernameOrEmail();
     String password = loginRequest.getPassword();
 
-    User user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail);
+    User user =
+        userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail);
 
     if (user == null) {
       throw new AppException(ErrorCode.INCORRECT_ACCOUNT);
@@ -98,7 +91,8 @@ public class AuthService {
     }
 
     SignedJWT signedJWT = SignedJWT.parse(token);
-    Instant expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime().toInstant();
+    Instant expirationTime =
+        signedJWT.getJWTClaimsSet().getExpirationTime().toInstant();
     boolean isValidAboutTime = Instant.now().isBefore(expirationTime);
 
     String secret = isRefresh ? jwtRefreshSecret : jwtSecret;
@@ -113,29 +107,32 @@ public class AuthService {
   public void logout(String accessToken, String refreshToken)
       throws ParseException {
     SignedJWT signedJWTAccess = SignedJWT.parse(accessToken);
-    Instant accessExpireTime = signedJWTAccess.getJWTClaimsSet().getExpirationTime().toInstant();
+    Instant accessExpireTime =
+        signedJWTAccess.getJWTClaimsSet().getExpirationTime().toInstant();
     removeTokenRepository.save(RemoveToken.builder()
-        .removeAt(accessExpireTime)
-        .token(accessToken)
-        .build());
+                                   .removeAt(accessExpireTime)
+                                   .token(accessToken)
+                                   .build());
     SignedJWT signedJWTRefresh = SignedJWT.parse(refreshToken);
-    Instant refreshExpireTime = signedJWTRefresh.getJWTClaimsSet().getExpirationTime().toInstant();
+    Instant refreshExpireTime =
+        signedJWTRefresh.getJWTClaimsSet().getExpirationTime().toInstant();
     removeTokenRepository.save(RemoveToken.builder()
-        .removeAt(refreshExpireTime)
-        .token(refreshToken)
-        .build());
+                                   .removeAt(refreshExpireTime)
+                                   .token(refreshToken)
+                                   .build());
   }
 
   public String refreshToken(String token)
       throws ParseException, JOSEException {
     SignedJWT signedJWT = SignedJWT.parse(token);
-    User user = userRepository.findById(signedJWT.getJWTClaimsSet().getSubject())
-        .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+    User user =
+        userRepository.findById(signedJWT.getJWTClaimsSet().getSubject())
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
     return utils.generateToken(user);
   }
 
   public boolean authenticate(String code, HttpServletResponse response,
-      String clientIp) {
+                              String clientIp) {
     if (code == null || code.isEmpty()) {
       return false;
     }
@@ -143,34 +140,40 @@ public class AuthService {
 
     try {
       // Use RestTemplate instead of Feign for reliable form-urlencoded POST
-      org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
+      org.springframework.web.client.RestTemplate restTemplate =
+          new org.springframework.web.client.RestTemplate();
 
-      org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
-      headers.setContentType(org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED);
+      org.springframework.http.HttpHeaders headers =
+          new org.springframework.http.HttpHeaders();
+      headers.setContentType(
+          org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED);
 
-      org.springframework.util.MultiValueMap<String, String> params = utils.generateParamGgRequest(code);
-      log.info("Sending token request with params: code={}, client_id={}, redirect_uri={}",
-          code.substring(0, Math.min(code.length(), 20)) + "...",
-          params.getFirst("client_id"),
-          params.getFirst("redirect_uri"));
+      org.springframework.util.MultiValueMap<String, String> params =
+          utils.generateParamGgRequest(code);
+      log.info("Sending token request with params: code={}, client_id={}, " +
+               "redirect_uri={}",
+               code.substring(0, Math.min(code.length(), 20)) + "...",
+               params.getFirst("client_id"), params.getFirst("redirect_uri"));
 
-      org.springframework.http.HttpEntity<org.springframework.util.MultiValueMap<String, String>> request = new org.springframework.http.HttpEntity<>(
-          params, headers);
+      org.springframework.http.HttpEntity<
+          org.springframework.util.MultiValueMap<String, String>> request =
+          new org.springframework.http.HttpEntity<>(params, headers);
 
-      org.springframework.http.ResponseEntity<GetTokenResponse> responseEntity = restTemplate.postForEntity(
-          "https://oauth2.googleapis.com/token",
-          request,
-          GetTokenResponse.class);
+      org.springframework.http.ResponseEntity<GetTokenResponse> responseEntity =
+          restTemplate.postForEntity("https://oauth2.googleapis.com/token",
+                                     request, GetTokenResponse.class);
 
       GetTokenResponse ggTokenResponse = responseEntity.getBody();
-      String token = ggTokenResponse != null ? ggTokenResponse.getAccessToken() : null;
+      String token =
+          ggTokenResponse != null ? ggTokenResponse.getAccessToken() : null;
       log.info("token {}", token);
 
       if (token == null || token.isEmpty()) {
         return false;
       }
 
-      GetInfoResponse ggInfoResponse = openIdClient.getUserInfoByAccessToken("Bearer " + token);
+      GetInfoResponse ggInfoResponse =
+          openIdClient.getUserInfoByAccessToken("Bearer " + token);
       log.info("Google user info: {}", ggInfoResponse.toString());
 
       String username = ggInfoResponse.getEmail();
@@ -197,25 +200,28 @@ public class AuthService {
       }
 
       log.info("User not found, creating new user...");
-      RegisterUserRequest registerUserRequest = RegisterUserRequest.builder()
-          .username(username)
-          .email(ggInfoResponse.getEmail())
-          .fullName(ggInfoResponse.getName())
-          .password(ggInfoResponse.getSub())
-          .roles(new HashSet<>(List.of("USER")))
-          .loginByGoogle(true)
-          .confirmPass(ggInfoResponse.getSub())
-          .build();
+      RegisterUserRequest registerUserRequest =
+          RegisterUserRequest.builder()
+              .username(username)
+              .email(ggInfoResponse.getEmail())
+              .fullName(ggInfoResponse.getName())
+              .password(ggInfoResponse.getSub())
+              .roles(new HashSet<>(List.of("USER")))
+              .loginByGoogle(true)
+              .confirmPass(ggInfoResponse.getSub())
+              .build();
       log.info("Register request created: {}", registerUserRequest.toString());
 
       try {
         log.info("Calling userService.register...");
 
-        RegisterUserResponse userResponse = userService.register(registerUserRequest, clientIp);
+        RegisterUserResponse userResponse =
+            userService.register(registerUserRequest, clientIp);
         log.info("Registered user response: {}", userResponse.toString());
 
-        User saveUser = userRepository.findById(userResponse.getUserId())
-            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        User saveUser =
+            userRepository.findById(userResponse.getUserId())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         log.info("Retrieved saved user: {}", saveUser.getUserId());
 
         String accessToken = utils.generateToken(saveUser);
@@ -225,6 +231,10 @@ public class AuthService {
         response.setHeader("X-Access-Token", accessToken);
         log.info("Cookie and header added for new user");
         return true;
+      } catch (AppException e) {
+        log.error("AppException during user registration: {} - {}",
+                  e.getErrorCode().getCode(), e.getMessage());
+        throw e;
       } catch (Exception e) {
         log.error("Error during user registration: {}", e.getMessage(), e);
         throw new AppException(ErrorCode.INTERNAL_SERVER_ERROR);
@@ -233,15 +243,16 @@ public class AuthService {
       // Re-throw AppException to preserve specific error codes (like
       // LIMIT_REGISTER_EXCEEDED)
       log.error("AppException during authentication: {} - {}",
-          e.getErrorCode().getCode(), e.getMessage());
+                e.getErrorCode().getCode(), e.getMessage());
       throw e;
     } catch (org.springframework.web.client.HttpClientErrorException e) {
       // Log detailed error from Google API
       log.error("Google API error - Status: {}, Response: {}",
-          e.getStatusCode(), e.getResponseBodyAsString());
+                e.getStatusCode(), e.getResponseBodyAsString());
       throw new AppException(ErrorCode.AUTHENTICATION_FAILED);
     } catch (Exception e) {
-      log.error("Error during authentication: {} - {}", e.getClass().getName(), e.getMessage(), e);
+      log.error("Error during authentication: {} - {}", e.getClass().getName(),
+                e.getMessage(), e);
       throw new AppException(ErrorCode.AUTHENTICATION_FAILED);
     }
   }
@@ -262,8 +273,9 @@ public class AuthService {
             .removeAt(
                 signedJWT.getJWTClaimsSet().getExpirationTime().toInstant())
             .build());
-    User user = userRepository.findById(tokenUserId)
-        .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+    User user =
+        userRepository.findById(tokenUserId)
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
     return user;
   }
 
