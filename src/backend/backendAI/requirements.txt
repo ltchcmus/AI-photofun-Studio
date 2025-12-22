@@ -20,6 +20,11 @@ google
 google-genai 
 google-auth
 
+# Prompt Recommendation (CẦN THIẾT cho rec_prompt)
+numpy
+scipy
+scikit-learn
+
 # Image Processing (CẦN THIẾT - dùng trong file_handler.py)
 Pillow
 

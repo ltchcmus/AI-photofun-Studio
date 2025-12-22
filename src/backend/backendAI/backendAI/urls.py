@@ -28,6 +28,7 @@ urlpatterns = [
     
     # Internal services (used by conversation flow)
     path('v1/prompt/', include('apps.prompt_service.urls')),
+    path('v1/rec-prompt/', include('apps.rec_prompt.urls')),
     path('v1/image/', include('apps.image_service.urls')),
     
     # Direct feature endpoints (no conversation required)

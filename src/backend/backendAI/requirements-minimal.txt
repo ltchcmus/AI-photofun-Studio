@@ -21,6 +21,11 @@ google
 google-genai
 google-auth
 
+# Prompt Recommendation (BẮT BUỘC cho rec_prompt)
+numpy
+scipy
+scikit-learn
+
 
 # Image Processing (BẮT BUỘC)
 Pillow
