@@ -46,10 +46,10 @@ const LoginForm = () => {
       import.meta.env.VITE_GOOGLE_CLIENT_ID ||
       "424511485278-d36bocf4e3avqsadguauellt3gn4l412.apps.googleusercontent.com";
 
-    // Redirect to backend authentication endpoint
+    // Redirect to frontend google-loading page (Google will redirect here with code)
     const redirectUri =
       import.meta.env.VITE_GOOGLE_REDIRECT_URI ||
-      "http://localhost:8000/identity/auth/authentication";
+      "http://localhost:5173/google-loading";
 
     // Build Google OAuth2 authorization URL
     const googleAuthUrl =
