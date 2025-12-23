@@ -36,7 +36,7 @@ class FreepikClient:
     BASE_URL = "https://api.freepik.com"
     
     def __init__(self):
-        self.api_key = getattr(settings, 'FREEPIK_API_KEY', 'FPSX3d8830ff41ace804badb3f71265b89bd')
+        self.api_key = getattr(settings, 'FREEPIK_API_KEY', 'FPSX47f8a1042b3a64f22d236ef57175ce90')
         self.timeout = getattr(settings, 'FREEPIK_TIMEOUT', 60)  # Longer timeout for AI operations
         
     def _get_headers(self) -> Dict[str, str]:

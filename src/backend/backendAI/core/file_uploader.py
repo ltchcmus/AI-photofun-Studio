@@ -42,7 +42,7 @@ class FileUploader:
     UPLOAD_URL = "https://file-service-cdal.onrender.com/api/v1/file/uploads"
     
     def __init__(self):
-        self.timeout = getattr(settings, 'FILE_UPLOAD_TIMEOUT', 60)  # Increased for large upscaled images
+        self.timeout = getattr(settings, 'FILE_UPLOAD_TIMEOUT', 120)  # 2 minutes for large images/slow networks
     
     def upload_file(self, file_path: str, custom_id: Optional[str] = None) -> str:
         """
