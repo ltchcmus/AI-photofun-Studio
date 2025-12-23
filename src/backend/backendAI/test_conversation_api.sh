@@ -168,6 +168,11 @@ while [ $ATTEMPT -le $MAX_ATTEMPTS ] && [ "$CURRENT_STATUS" == "PROCESSING" ]; d
         break
     elif [ "$CURRENT_STATUS" == "FAILED" ] || [ "$CURRENT_STATUS" == "ERROR" ]; then
         echo "❌ Message processing failed"
+        
+        # Extract error message
+        ERROR_MSG=$(echo "$POLL_RESPONSE" | jq -r ".result.messages[] | select(.message_id == \"$MESSAGE_ID\") | .content // .prompt // .error.message // \"Unknown error\"")
+        echo "   Error: $ERROR_MSG"
+        echo ""
         break
     fi
     

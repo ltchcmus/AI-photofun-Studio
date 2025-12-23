@@ -19,7 +19,7 @@ class StyleTransferView(APIView):
     
     @require_tokens(cost=TOKEN_COSTS['style_transfer'], feature='style_transfer')
     def post(self, request):
-        serializer = StyleTransferSerializer(data=request.data)
+        serializer = StyleTransferInputSerializer(data=request.data)
         if not serializer.is_valid():
             return APIResponse.error(message="Validation failed", result=serializer.errors)
         
@@ -54,13 +54,14 @@ class StyleTransferView(APIView):
             return APIResponse.success(
                 result={
                     "task_id": result['task_id'],
-                    "status": result['status'],
-                    "stylized": result.get('stylized', []),
-                    "uploaded_urls": result.get('uploaded_urls', []),
-                    "original_image": result['original_image'],
-                    "reference_image": result['reference_image'],
-                    "input_source": source_type,
-                    "reference_source": reference_source_type
+                    "status": result.get('status', 'CREATED'),
+                    "image_url": result.get('uploaded_urls', [None])[0] if result.get('uploaded_urls') else None,
+                    "original_image": result.get('original_image'),
+                    "reference_image": result.get('reference_image'),
+                    "style_strength": result.get('style_strength', 0.75),
+                    "structure_strength": result.get('structure_strength', 0.75),
+                    "is_portrait": result.get('is_portrait', False),
+                    "portrait_style": result.get('portrait_style', 'standard')
                 },
                 message="Style transfer started. Use task_id to poll status."
             )
@@ -86,8 +87,7 @@ class StyleTransferStatusView(APIView):
                 result={
                     "task_id": result.get('task_id'),
                     "status": result.get('status'),
-                    "stylized": result.get('stylized', []),
-                    "uploaded_urls": result.get('uploaded_urls', [])
+                    "image_url": result.get('uploaded_urls', [None])[0] if result.get('uploaded_urls') else None
                 },
                 message="Task status retrieved"
             )

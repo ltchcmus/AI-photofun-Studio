@@ -14,7 +14,12 @@
 5. [API Endpoints](#api-endpoints)
    - [Conversation Service](#conversation-service)
    - [Image Generation](#image-generation)
+   - [Upscale (Image Enhancement)](#upscale-image-enhancement)
    - [Remove Background](#remove-background)
+   - [Reimagine](#reimagine)
+   - [Relight](#relight)
+   - [Image Expand](#image-expand)
+   - [Style Transfer](#style-transfer)
    - [Image Gallery](#image-gallery)
 6. [Error Handling](#error-handling)
 7. [Testing](#testing)
@@ -46,14 +51,20 @@ The AI PhotoFun Studio Backend provides AI-powered image manipulation services t
 
 Each AI feature consumes tokens from the user's account:
 
-| Feature | Token Cost |
-|---------|-----------|
-| Image Generation | 10 tokens |
-| Remove Background | 3 tokens |
-| Upscale | 5 tokens |
-| Reimagine | 15 tokens |
-| Relight | 8 tokens |
-| Image Expand | 12 tokens |
+| Feature | Token Cost | Processing Type | Typical Time |
+|---------|-----------|----------------|--------------|
+| Image Generation | 10 tokens | Async (polling) | 3-8 seconds |
+| Upscale | 5 tokens | Async (polling) | 5-15 seconds |
+| Remove Background | 3 tokens | Synchronous | 1-3 seconds |
+| Reimagine | 15 tokens | Sync/Async | < 1s or 3-10s |
+| Relight | 8 tokens | Async (polling) | 5-10 seconds |
+| Image Expand | 12 tokens | Async (polling) | 5-12 seconds |
+| Style Transfer | 10 tokens | Async (polling) | 5-15 seconds |
+
+**Processing Types Explained:**
+- **Synchronous**: Returns result immediately in POST response, no polling needed
+- **Async (polling)**: Returns task_id in POST response, requires polling status endpoint
+- **Sync/Async**: May complete immediately or require polling depending on complexity
 
 ### Bypassing Token Check (Development Only)
 
@@ -145,6 +156,20 @@ curl -X POST http://localhost:9999/v1/features/remove-background/ \
 ---
 
 ## API Endpoints
+
+### Feature Capabilities Overview
+
+| Feature | Input | Key Parameters | Output | Use Cases |
+|---------|-------|----------------|--------|-----------|
+| **Image Generation** | Text prompt | aspect_ratio, num_images, style | New AI image | Create images from descriptions |
+| **Upscale** | Image | flavor (photo/sublime/denoiser) | 2x resolution | Enhance image quality, increase size |
+| **Remove Background** | Image | None | Transparent PNG | Product photos, portraits, compositing |
+| **Reimagine** | Image + prompt | imagination, aspect_ratio | Reimagined image | Creative transformations, style changes |
+| **Relight** | Image + prompt/reference | style, light_transfer_strength | Relit image | Change lighting conditions, time of day |
+| **Image Expand** | Image + directions | left, right, top, bottom | Expanded image | Extend canvas, uncrop photos |
+| **Style Transfer** | Image + reference | style_strength, structure_strength | Styled image | Apply artistic styles, filters |
+
+---
 
 ## Conversation Service
 
@@ -535,6 +560,165 @@ done
 
 ---
 
+## Upscale (Image Enhancement)
+
+Upscale images to higher resolution using Freepik V2 Upscaler Precision API. The V2 API offers improved quality with flavor optimization and configurable scaling factors.
+
+### Create Upscale Task
+
+**Endpoint:** `POST /v1/features/upscale/`
+
+**Description:** Creates an async task to upscale an image to higher resolution with quality enhancement controls. Uses Freepik V2 API for improved results.
+
+**Request Body (URL Format):**
+```json
+{
+  "image_url": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=800",
+  "user_id": "user123",
+  "flavor": "photo"
+}
+```
+
+**Request Body (Base64 Format):**
+```json
+{
+  "image_data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...",
+  "user_id": "user123",
+  "flavor": "sublime"
+}
+```
+
+**Request (File Upload):**
+```bash
+curl -X POST http://localhost:9999/v1/features/upscale/ \
+  -F "image_file=@/path/to/image.jpg" \
+  -F "user_id=user123" \
+  -F "flavor=photo"
+```
+
+**Parameters:**
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `image_data` | string | One of three | - | Base64 encoded image with data URI prefix |
+| `image_url` | string | One of three | - | Publicly accessible image URL |
+| `image_file` | file | One of three | - | Uploaded image file (multipart/form-data) |
+| `user_id` | string | Yes | - | User identifier |
+| `flavor` | string | No | "photo" | Upscale optimization: "photo" (realistic photos), "sublime" (artistic/illustrations), "photo_denoiser" (noisy photos) |
+
+**Flavor Descriptions:**
+- **photo**: Best for realistic photographs, balances sharpness and natural look
+- **sublime**: Optimized for artistic content, illustrations, and creative images
+- **photo_denoiser**: Specifically for noisy/grainy photos, reduces noise while upscaling
+
+**Response:**
+```json
+{
+  "code": 1000,
+  "message": "Upscale started (V2 API). Use task_id to poll status.",
+  "result": {
+    "task_id": "32dfd56d-b60c-47dd-a1a5-63f5de67237e",
+    "status": "CREATED",
+    "image_url": null,
+    "original_image": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=800",
+    "flavor": "photo",
+    "scale_factor": 2,
+    "settings": {
+      "sharpen": 0.5,
+      "smart_grain": 0.2,
+      "ultra_detail": 0.3
+    }
+  }
+}
+```
+
+**Response Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `task_id` | string | Unique task identifier for polling status |
+| `status` | string | Task status: "CREATED", "IN_PROGRESS", "COMPLETED", "FAILED" |
+| `image_url` | string/null | Cloudinary URL of upscaled image (null until completed) |
+| `original_image` | string | URL of the original input image |
+| `flavor` | string | Applied upscale flavor optimization |
+| `scale_factor` | integer | Upscale multiplier (2x = 2, 4x = 4) |
+| `settings` | object | Applied quality settings (sharpen, smart_grain, ultra_detail as 0.0-1.0) |
+
+---
+
+### Check Upscale Status
+
+**Endpoint:** `GET /v1/features/upscale/status/{task_id}/`
+
+**Description:** Polls the status of an upscale task. When completed, returns the upscaled image URL.
+
+**URL Parameters:**
+- `task_id` (string, required) - Task ID from creation response
+
+**Query Parameters:**
+- `user_id` (string, required) - User identifier for gallery save
+
+**Response (In Progress):**
+```json
+{
+  "code": 1000,
+  "message": "Task status retrieved",
+  "result": {
+    "task_id": "32dfd56d-b60c-47dd-a1a5-63f5de67237e",
+    "status": "IN_PROGRESS",
+    "image_url": null
+  }
+}
+```
+
+**Response (Completed):**
+```json
+{
+  "code": 1000,
+  "message": "Task status retrieved",
+  "result": {
+    "task_id": "32dfd56d-b60c-47dd-a1a5-63f5de67237e",
+    "status": "COMPLETED",
+    "image_url": "https://res.cloudinary.com/derwtva4p/image/upload/v1765695826/file-service/abc123.png"
+  }
+}
+```
+
+**Complete Example (JavaScript):**
+```javascript
+// Create upscale task
+const createRes = await fetch('http://localhost:9999/v1/features/upscale/', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    image_url: 'https://example.com/photo.jpg',
+    user_id: 'user123',
+    flavor: 'photo'
+  })
+});
+const { result: task } = await createRes.json();
+
+// Poll status
+const pollInterval = setInterval(async () => {
+  const statusRes = await fetch(
+    `http://localhost:9999/v1/features/upscale/status/${task.task_id}/?user_id=user123`
+  );
+  const { result: status } = await statusRes.json();
+  
+  if (status.status === 'COMPLETED') {
+    clearInterval(pollInterval);
+    console.log('Upscaled image:', status.image_url);
+  } else if (status.status === 'FAILED') {
+    clearInterval(pollInterval);
+    console.error('Upscale failed');
+  }
+}, 3000);
+```
+
+**Processing Time:** Typically 5-15 seconds depending on image size
+
+---
+
 ## Remove Background
 
 Synchronous API for removing image backgrounds using Freepik AI.
@@ -657,6 +841,493 @@ with open('image.jpg', 'rb') as f:
 - Supported formats: JPEG, PNG, WEBP
 - Output format: PNG with transparency
 - Result is automatically uploaded to Cloudinary
+
+---
+
+## Reimagine
+
+Transform images with AI creativity using Freepik Reimagine Flux API. This feature can complete synchronously or asynchronously depending on complexity.
+
+### Create Reimagine Task
+
+**Endpoint:** `POST /v1/features/reimagine/`
+
+**Description:** Reimagines an image with AI creativity, optionally guided by a prompt. The API may return completed results immediately or require polling.
+
+**Request Body:**
+```json
+{
+  "image_url": "https://example.com/photo.jpg",
+  "user_id": "user123",
+  "prompt": "Transform into a watercolor painting",
+  "imagination": "creative",
+  "aspect_ratio": "portrait_4_5"
+}
+```
+
+**Parameters:**
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `image_data` | string | One of three | - | Base64 encoded image with data URI prefix |
+| `image_url` | string | One of three | - | Publicly accessible image URL |
+| `image_file` | file | One of three | - | Uploaded image file (multipart/form-data) |
+| `user_id` | string | Yes | - | User identifier |
+| `prompt` | string | No | null | Optional guidance for reimagination (AI will refine) |
+| `imagination` | string | No | "subtle" | Creativity level: "subtle", "moderate", "creative", "extreme" |
+| `aspect_ratio` | string | No | "square_1_1" | Output dimensions: "square_1_1", "portrait_4_5", "portrait_2_3", "landscape_16_9", "landscape_3_2" |
+
+**Imagination Level Descriptions:**
+- **subtle**: Minor creative adjustments, stays very close to original
+- **moderate**: Balanced creativity, recognizable but enhanced
+- **creative**: Significant creative transformation
+- **extreme**: Maximum AI freedom, dramatic reimagination
+
+**Aspect Ratio Options:**
+- **square_1_1**: 1:1 square format
+- **portrait_4_5**: 4:5 portrait (Instagram style)
+- **portrait_2_3**: 2:3 portrait (standard photo)
+- **landscape_16_9**: 16:9 landscape (widescreen)
+- **landscape_3_2**: 3:2 landscape (classic photo)
+
+**Response (Completed Immediately):**
+```json
+{
+  "code": 1000,
+  "message": "Reimagine completed!",
+  "result": {
+    "task_id": "abc123",
+    "status": "COMPLETED",
+    "image_url": "https://res.cloudinary.com/derwtva4p/image/upload/v1765695826/file-service/abc123.png",
+    "original_image": "https://example.com/photo.jpg",
+    "imagination": "creative",
+    "refined_prompt": "Transform the image into a beautiful watercolor painting with soft brush strokes and artistic flair",
+    "aspect_ratio": "portrait_4_5"
+  }
+}
+```
+
+**Response (Requires Polling):**
+```json
+{
+  "code": 1000,
+  "message": "Reimagine started. Use task_id to poll status.",
+  "result": {
+    "task_id": "abc123",
+    "status": "CREATED",
+    "image_url": null,
+    "original_image": "https://example.com/photo.jpg",
+    "imagination": "creative",
+    "refined_prompt": "Transform the image into a beautiful watercolor painting with soft brush strokes and artistic flair",
+    "aspect_ratio": "portrait_4_5"
+  }
+}
+```
+
+**Response Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `task_id` | string | Unique task identifier |
+| `status` | string | "CREATED", "IN_PROGRESS", "COMPLETED", "FAILED" |
+| `image_url` | string/null | Cloudinary URL of reimagined image (null if not completed) |
+| `original_image` | string | URL of the original input image |
+| `imagination` | string | Applied creativity level |
+| `refined_prompt` | string | AI-enhanced prompt (if prompt provided) |
+| `aspect_ratio` | string | Applied aspect ratio |
+
+---
+
+### Check Reimagine Status
+
+**Endpoint:** `GET /v1/features/reimagine/status/{task_id}/`
+
+**Description:** Polls the status of a reimagine task. Use only if initial response status was not "COMPLETED".
+
+**URL Parameters:**
+- `task_id` (string, required) - Task ID from creation response
+
+**Query Parameters:**
+- `user_id` (string, required) - User identifier for gallery save
+
+**Response:** Same format as completion response above.
+
+**Complete Example (JavaScript):**
+```javascript
+// Create reimagine task
+const createRes = await fetch('http://localhost:9999/v1/features/reimagine/', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    image_url: 'https://example.com/photo.jpg',
+    user_id: 'user123',
+    prompt: 'Transform into a watercolor painting',
+    imagination: 'creative',
+    aspect_ratio: 'portrait_4_5'
+  })
+});
+const { result: task } = await createRes.json();
+
+// Check if already completed
+if (task.status === 'COMPLETED') {
+  console.log('Reimagined immediately:', task.image_url);
+} else {
+  // Poll for completion
+  const pollInterval = setInterval(async () => {
+    const statusRes = await fetch(
+      `http://localhost:9999/v1/features/reimagine/status/${task.task_id}/?user_id=user123`
+    );
+    const { result: status } = await statusRes.json();
+    
+    if (status.status === 'COMPLETED') {
+      clearInterval(pollInterval);
+      console.log('Reimagined image:', status.image_url);
+    } else if (status.status === 'FAILED') {
+      clearInterval(pollInterval);
+      console.error('Reimagine failed');
+    }
+  }, 3000);
+}
+```
+
+**Processing Time:** Often completes synchronously (< 1s), or 3-10 seconds if async
+
+---
+
+## Relight
+
+Relight images with AI-controlled lighting using Freepik Relight API. Supports prompt-based lighting or reference image lighting transfer.
+
+### Create Relight Task
+
+**Endpoint:** `POST /v1/features/relight/`
+
+**Description:** Creates an async task to relight an image with AI-generated lighting. Supports either text prompt for new lighting or reference image for lighting transfer.
+
+**Request Body (Prompt-Based):**
+```json
+{
+  "image_url": "https://example.com/photo.jpg",
+  "user_id": "user123",
+  "prompt": "warm sunset lighting from the right",
+  "style": "dramatic"
+}
+```
+
+**Request Body (Reference Image Transfer):**
+```json
+{
+  "image_url": "https://example.com/photo.jpg",
+  "reference_image_url": "https://example.com/lighting-reference.jpg",
+  "user_id": "user123",
+  "prompt": "apply the lighting from reference image",
+  "light_transfer_strength": 0.8,
+  "style": "standard"
+}
+```
+
+**Parameters:**
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `image_data` | string | One of three | - | Base64 encoded main image |
+| `image_url` | string | One of three | - | Main image URL |
+| `image_file` | file | One of three | - | Main image file upload |
+| `user_id` | string | Yes | - | User identifier |
+| `prompt` | string | Yes | - | Lighting description or instruction |
+| `reference_image_data` | string | Optional | null | Base64 encoded reference image |
+| `reference_image_url` | string | Optional | null | Reference image URL |
+| `reference_image_file` | file | Optional | null | Reference image file upload |
+| `light_transfer_strength` | float | No | 0.8 | Strength of reference lighting transfer (0.0-1.0) |
+| `style` | string | No | "standard" | Relighting style: "standard", "dramatic", "soft", "natural" |
+
+**Style Descriptions:**
+- **standard**: Balanced, natural-looking lighting
+- **dramatic**: High contrast, theatrical lighting
+- **soft**: Gentle, diffused lighting
+- **natural**: Mimics natural light sources
+
+**Response:**
+```json
+{
+  "code": 1000,
+  "message": "Relight started. Use task_id to poll status.",
+  "result": {
+    "task_id": "def456",
+    "status": "CREATED",
+    "image_url": null,
+    "original_image": "https://example.com/photo.jpg",
+    "reference_image": "https://example.com/lighting-reference.jpg",
+    "light_transfer_strength": 0.8,
+    "style": "standard"
+  }
+}
+```
+
+---
+
+### Check Relight Status
+
+**Endpoint:** `GET /v1/features/relight/status/{task_id}/`
+
+**Description:** Polls the status of a relight task.
+
+**URL Parameters:**
+- `task_id` (string, required) - Task ID from creation response
+
+**Query Parameters:**
+- `user_id` (string, required) - User identifier for gallery save
+
+**Response (Completed):**
+```json
+{
+  "code": 1000,
+  "message": "Task status retrieved",
+  "result": {
+    "task_id": "def456",
+    "status": "COMPLETED",
+    "image_url": "https://res.cloudinary.com/derwtva4p/image/upload/v1765695826/file-service/def456.png"
+  }
+}
+```
+
+**Processing Time:** Typically 5-10 seconds
+
+---
+
+## Image Expand
+
+Expand image boundaries with AI-generated content using Freepik Flux Pro API.
+
+### Create Image Expand Task
+
+**Endpoint:** `POST /v1/features/image-expand/`
+
+**Description:** Creates an async task to expand image borders in specified directions with AI-generated seamless content.
+
+**Request Body:**
+```json
+{
+  "image_url": "https://example.com/photo.jpg",
+  "user_id": "user123",
+  "prompt": "continue the ocean waves and beach scenery",
+  "left": 100,
+  "right": 100,
+  "top": 0,
+  "bottom": 50
+}
+```
+
+**Parameters:**
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `image_data` | string | One of three | - | Base64 encoded image |
+| `image_url` | string | One of three | - | Image URL |
+| `image_file` | file | One of three | - | Image file upload |
+| `user_id` | string | Yes | - | User identifier |
+| `prompt` | string | No | null | Optional guidance for expansion content |
+| `left` | integer | No | 0 | Pixels to expand on left side (0-500) |
+| `right` | integer | No | 0 | Pixels to expand on right side (0-500) |
+| `top` | integer | No | 0 | Pixels to expand on top (0-500) |
+| `bottom` | integer | No | 0 | Pixels to expand on bottom (0-500) |
+
+**Note:** At least one direction (left, right, top, bottom) must be > 0.
+
+**Response:**
+```json
+{
+  "code": 1000,
+  "message": "Image expand started. Use task_id to poll status.",
+  "result": {
+    "task_id": "ghi789",
+    "status": "CREATED",
+    "image_url": null,
+    "original_image": "https://example.com/photo.jpg",
+    "left": 100,
+    "right": 100,
+    "top": 0,
+    "bottom": 50
+  }
+}
+```
+
+---
+
+### Check Image Expand Status
+
+**Endpoint:** `GET /v1/features/image-expand/status/{task_id}/`
+
+**Description:** Polls the status of an expand task.
+
+**URL Parameters:**
+- `task_id` (string, required) - Task ID from creation response
+
+**Query Parameters:**
+- `user_id` (string, required) - User identifier for gallery save
+
+**Response (Completed):**
+```json
+{
+  "code": 1000,
+  "message": "Task status retrieved",
+  "result": {
+    "task_id": "ghi789",
+    "status": "COMPLETED",
+    "image_url": "https://res.cloudinary.com/derwtva4p/image/upload/v1765695826/file-service/ghi789.png"
+  }
+}
+```
+
+**Processing Time:** Typically 5-12 seconds depending on expansion size
+
+---
+
+## Style Transfer
+
+Apply artistic style from reference image to target image using Freepik Style Transfer API.
+
+### Create Style Transfer Task
+
+**Endpoint:** `POST /v1/features/style-transfer/`
+
+**Description:** Creates an async task to transfer artistic style from a reference image to a target image. Supports both general and portrait-optimized transfers.
+
+**Request Body (General Style Transfer):**
+```json
+{
+  "image_url": "https://example.com/photo.jpg",
+  "reference_image_url": "https://example.com/painting.jpg",
+  "user_id": "user123",
+  "style_strength": 0.75,
+  "structure_strength": 0.75,
+  "is_portrait": false
+}
+```
+
+**Request Body (Portrait Style Transfer):**
+```json
+{
+  "image_url": "https://example.com/portrait.jpg",
+  "reference_image_url": "https://example.com/artistic-portrait.jpg",
+  "user_id": "user123",
+  "style_strength": 0.8,
+  "structure_strength": 0.7,
+  "is_portrait": true,
+  "portrait_style": "artistic"
+}
+```
+
+**Parameters:**
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `image_data` | string | One of three | - | Base64 encoded target image |
+| `image_url` | string | One of three | - | Target image URL |
+| `image_file` | file | One of three | - | Target image file upload |
+| `reference_image_data` | string | One of three | - | Base64 encoded style reference |
+| `reference_image_url` | string | One of three | - | Style reference image URL |
+| `reference_image_file` | file | One of three | - | Style reference file upload |
+| `user_id` | string | Yes | - | User identifier |
+| `style_strength` | float | No | 0.75 | How much style to apply (0.0-1.0) |
+| `structure_strength` | float | No | 0.75 | How much to preserve original structure (0.0-1.0) |
+| `is_portrait` | boolean | No | false | Enable portrait-specific optimization |
+| `portrait_style` | string | No | "standard" | Portrait style: "standard", "artistic", "realistic" (only if is_portrait=true) |
+
+**Parameter Guidelines:**
+- **style_strength**: 0.0 = no style transfer, 1.0 = maximum style application
+- **structure_strength**: 0.0 = free transformation, 1.0 = preserve exact structure
+- Balanced settings: Both around 0.7-0.8 for natural results
+- High style, low structure: More artistic, abstract results
+- Low style, high structure: Subtle style hints, maintains composition
+
+**Portrait Style Options (when is_portrait=true):**
+- **standard**: Balanced portrait style transfer
+- **artistic**: Emphasizes artistic expression, more creative
+- **realistic**: Maintains photorealistic quality
+
+**Response:**
+```json
+{
+  "code": 1000,
+  "message": "Style transfer started. Use task_id to poll status.",
+  "result": {
+    "task_id": "jkl012",
+    "status": "CREATED",
+    "image_url": null,
+    "original_image": "https://example.com/photo.jpg",
+    "reference_image": "https://example.com/painting.jpg",
+    "style_strength": 0.75,
+    "structure_strength": 0.75,
+    "is_portrait": false,
+    "portrait_style": "standard"
+  }
+}
+```
+
+---
+
+### Check Style Transfer Status
+
+**Endpoint:** `GET /v1/features/style-transfer/status/{task_id}/`
+
+**Description:** Polls the status of a style transfer task.
+
+**URL Parameters:**
+- `task_id` (string, required) - Task ID from creation response
+
+**Query Parameters:**
+- `user_id` (string, required) - User identifier for gallery save
+
+**Response (Completed):**
+```json
+{
+  "code": 1000,
+  "message": "Task status retrieved",
+  "result": {
+    "task_id": "jkl012",
+    "status": "COMPLETED",
+    "image_url": "https://res.cloudinary.com/derwtva4p/image/upload/v1765695826/file-service/jkl012.png"
+  }
+}
+```
+
+**Complete Example (JavaScript):**
+```javascript
+// Upload both images and create style transfer
+const createRes = await fetch('http://localhost:9999/v1/features/style-transfer/', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    image_url: 'https://example.com/photo.jpg',
+    reference_image_url: 'https://example.com/painting.jpg',
+    user_id: 'user123',
+    style_strength: 0.75,
+    structure_strength: 0.75,
+    is_portrait: false
+  })
+});
+const { result: task } = await createRes.json();
+
+// Poll for completion
+const pollInterval = setInterval(async () => {
+  const statusRes = await fetch(
+    `http://localhost:9999/v1/features/style-transfer/status/${task.task_id}/?user_id=user123`
+  );
+  const { result: status } = await statusRes.json();
+  
+  if (status.status === 'COMPLETED') {
+    clearInterval(pollInterval);
+    console.log('Style transferred:', status.image_url);
+    document.getElementById('result').src = status.image_url;
+  } else if (status.status === 'FAILED') {
+    clearInterval(pollInterval);
+    console.error('Style transfer failed');
+  }
+}, 3000);
+```
+
+**Processing Time:** Typically 5-15 seconds
 
 ---
 
