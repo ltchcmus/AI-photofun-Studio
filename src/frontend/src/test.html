@@ -2,165 +2,58 @@
 <html lang="vi">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demo Stripe Checkout</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .container {
-            text-align: center;
-            margin-top: 40px;
-            background: white;
-            padding: 40px 60px;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        h2 {
-            color: #333;
-            margin-bottom: 24px;
-            font-size: 28px;
-        }
-
-        .pay-button {
-            padding: 16px 32px;
-            font-size: 18px;
-            background: linear-gradient(135deg, #6772e5 0%, #5469d4 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-
-        .pay-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(103, 114, 229, 0.4);
-        }
-
-        .pay-button:active {
-            transform: translateY(0);
-        }
-
-        .pay-button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .status {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #666;
-        }
-
-        .status.error {
-            color: #e74c3c;
-        }
-
-        .status.loading {
-            color: #3498db;
-        }
-
-        .loader {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #6772e5;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-    </style>
+    <meta charset="UTF-8" />
+    <title>Test Stripe Checkout</title>
 </head>
 
-<body>
-    <div class="container">
-        <h2>💳 Demo Stripe Checkout</h2>
-        <button class="pay-button" onclick="handlePay()">
-            Thanh toán $20
-        </button>
-        <div id="status" class="status"></div>
-    </div>
+<body style="text-align:center; margin-top:40px; font-family: Arial">
+
+    <h2>Demo Stripe Checkout</h2>
+
+    <button id="payBtn" style="padding:12px; font-size:18px;">
+        Thanh toán $20
+    </button>
 
     <script>
-        async function handlePay() {
-            const button = document.querySelector('.pay-button');
-            const status = document.getElementById('status');
-
-            // Disable button and show loading
-            button.disabled = true;
-            status.className = 'status loading';
-            status.innerHTML = '<span class="loader"></span>Đang xử lý...';
-
+        document.getElementById("payBtn").addEventListener("click", async () => {
             try {
-                const res = await fetch("https://nmcnpm-payment-service.onrender.com/payment/create-payment", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "x-api-key": "81aa801afec422868bea639e7c7bde4be900f533a4e1c755bffbb7c331c205b972a70e93bae29c79023cfe53a1fd9abd7c825cd57a1a46152fcaaacabfda350f",
-                    },
-                    body: JSON.stringify({
-                        userId: "8cf89cd2-28a3-4bce-b538-cb361d030c04", // thay bằng user id
-                        productName: "PREMIUM_ONE_MONTH", // nếu gói 1 tháng thì đổi thành PREMIUM_ONE_MONTH
-                        amount: 2000, // -> 20.00 USD
-                        description: "Red T-shirt size M",
-                        image: "https://example.com/red-tshirt.png", // đưa ảnh ông tìm phù hợp đưa tui để tui add rồi đưa ông url
-                        email: "user@example.com", // thay bằng email user
-                        price: 2000, // -> 20.00 USD
-                        currency: "usd",
-                        quantity: 1
-                    })
-                });
+                const res = await fetch(
+                    "https://nmcnpm-payment-service.onrender.com/payment/create-payment",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "x-api-key": "81aa801afec422868bea639e7c7bde4be900f533a4e1c755bffbb7c331c205b972a70e93bae29c79023cfe53a1fd9abd7c825cd57a1a46152fcaaacabfda350f"
+                        },
+                        body: JSON.stringify({
+                            userId: "8cf89cd2-28a3-4bce-b538-cb361d030c04", // thay userId
+                            productName: "PREMIUM_ONE_MONTH",
+                            amount: 2000, // $20.00
+                            description: "Premium 1 month",
+                            image: "https://via.placeholder.com/300x300.png?text=Premium",
+                            email: "user@example.com", // thay email user
+                            price: 2000,
+                            currency: "usd",
+                            quantity: 1
+                        })
+                    }
+                );
 
                 const data = await res.json();
-                console.log('Response:', data);
+                console.log("Response:", data);
 
-                if (data.result && data.result.url) {
-                    status.className = 'status loading';
-                    status.innerHTML = '<span class="loader"></span>Đang chuyển hướng đến Stripe...';
+                if (data?.result?.url) {
                     window.location.href = data.result.url;
                 } else {
-                    throw new Error(data.message || 'Không nhận được URL thanh toán');
+                    alert("Không lấy được URL thanh toán");
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                status.className = 'status error';
-                status.textContent = '❌ Lỗi: ' + error.message;
-                button.disabled = false;
+            } catch (err) {
+                console.error(err);
+                alert("Có lỗi xảy ra, xem console");
             }
-        }
+        });
     </script>
+
 </body>
 
 </html>
-</CodeContent>
-<parameter name="EmptyFile">false
