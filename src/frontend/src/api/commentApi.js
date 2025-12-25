@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const COMMENTS_BASE_URL = "/api/v1/comments";
+// Comment API URL: production dùng VITE_COMMENT_API_URL, local dùng proxy qua vite
+const COMMENT_API_BASE = import.meta.env.VITE_COMMENT_API_URL || "";
+const COMMENTS_BASE_URL = `${COMMENT_API_BASE}/api/v1/comments`;
 
 const commentAxios = axios.create({
   headers: {
