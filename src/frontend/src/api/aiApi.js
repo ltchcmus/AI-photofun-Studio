@@ -430,7 +430,7 @@ export const suggestPrompts = async (query = "") => {
     const sessionId = getSessionId();
 
     try {
-        const response = await aiClient.post("/v1/rec-prompt/suggest", {
+        const response = await aiClient.post("/v1/rec-prompt/suggest/", {
             user_id: sessionId,
             prompt: query,
         });
@@ -468,7 +468,7 @@ export const recordPromptChoice = async (promptText) => {
     const sessionId = getSessionId();
 
     try {
-        const response = await aiClient.post("/v1/rec-prompt/choose", {
+        const response = await aiClient.post("/v1/rec-prompt/choose/", {
             user_id: sessionId,
             prompt: promptText,
         });
