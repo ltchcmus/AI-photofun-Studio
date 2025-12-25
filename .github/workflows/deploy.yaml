@@ -115,15 +115,9 @@ jobs:
             export REDIRECT_AFTER_LOGIN_GOOGLE_FRONTEND_FAILURE=$GOOGLE_REDIRECT_FRONTEND_FAILURE
             export REDIRECT_URI=$GOOGLE_REDIRECT_FRONTEND
 
-            echo "🔧 Environment variables for backendSocial:"
-            echo "   CORS_ALLOWED_ORIGINS: $CORS_ALLOWED_ORIGINS"
-            echo "   COOKIE_SECURE: $COOKIE_SECURE"
-            echo "   REDIRECT_URI: $REDIRECT_URI"
-
             sudo docker-compose down || true
             sudo docker-compose up -d --build --force-recreate
 
-            echo "⏳ Waiting for services to be healthy..."
             sleep 15
             sudo docker-compose ps
             sudo docker-compose logs --tail=50 api-gateway
@@ -154,11 +148,7 @@ jobs:
             EOF
             sudo docker-compose down || true
             sudo docker-compose up -d --build --force-recreate
-
-            echo "⏳ Waiting for backendAI services to be healthy..."
-            sleep 20
-
-            echo "📥 Importing prompts data into MongoDB..."
+            sleep 10
             sudo docker exec backendai_api python import_prompts.py --file prompts.txt || echo "⚠️ Prompts import failed or already imported"
 
             sudo docker-compose ps
@@ -197,10 +187,6 @@ jobs:
             VITE_CHATBOT_USER_ID=$VITE_CHATBOT_USER_ID
             VITE_CHATBOT_BEARER_TOKEN=$VITE_CHATBOT_BEARER_TOKEN
             EOF
-
-            echo "=== Environment Variables ==="
-            cat .env
-            echo "======END======"
 
             npm install --prefer-offline --no-audit
             npm run build
