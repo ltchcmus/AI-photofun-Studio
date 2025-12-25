@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Sparkles, Wand2, Zap, SmilePlus, Image as ImageIcon, History } from "lucide-react";
+import { ArrowLeft, Sparkles, Wand2, Zap, Image as ImageIcon, Sun, Maximize2 } from "lucide-react";
 
 const CreateWithAI = () => {
   const [currentView, setCurrentView] = useState("tool-selection");
@@ -27,22 +27,22 @@ const CreateWithAI = () => {
       description: "Improve clarity, lighting, and details",
     },
     {
-      id: "face-swap",
-      icon: <SmilePlus className="w-7 h-7 text-blue-500" />,
-      title: "Face Swap",
-      description: "Swap faces across any portrait",
-    },
-    {
       id: "background",
       icon: <ImageIcon className="w-7 h-7 text-green-500" />,
       title: "Background Tools",
       description: "Remove or replace any background",
     },
     {
-      id: "restore",
-      icon: <History className="w-7 h-7 text-gray-500" />,
-      title: "Photo Restore",
-      description: "Repair and colorize old photos",
+      id: "relight",
+      icon: <Sun className="w-7 h-7 text-orange-500" />,
+      title: "Relight",
+      description: "Change lighting and atmosphere of images",
+    },
+    {
+      id: "expand",
+      icon: <Maximize2 className="w-7 h-7 text-blue-500" />,
+      title: "Image Expand",
+      description: "Extend image boundaries with AI-generated content",
     },
   ];
 
@@ -59,16 +59,16 @@ const CreateWithAI = () => {
       navigate("/background-tools");
       return;
     }
-    if (tool.id === "face-swap") {
-      navigate("/face-swap");
-      return;
-    }
-    if (tool.id === "restore") {
-      navigate("/photo-restore");
-      return;
-    }
     if (tool.id === "style-transfer") {
       navigate("/style-transfer");
+      return;
+    }
+    if (tool.id === "relight") {
+      navigate("/relight");
+      return;
+    }
+    if (tool.id === "expand") {
+      navigate("/image-expand");
       return;
     }
     setSelectedTool(tool);

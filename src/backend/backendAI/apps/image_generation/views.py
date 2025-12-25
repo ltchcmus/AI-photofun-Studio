@@ -84,7 +84,9 @@ class ImageGenerationView(APIView):
                 result={
                     "task_id": result['task_id'],
                     "status": result['status'],
-                    "refined_prompt": refined_prompt
+                    "refined_prompt": result.get('refined_prompt'),
+                    "image_url": result.get('uploaded_urls', [None])[0] if result.get('uploaded_urls') else None,
+                    "aspect_ratio": result.get('aspect_ratio', 'square_1_1')
                 },
                 message="Image generation started. Use task_id to poll status."
             )

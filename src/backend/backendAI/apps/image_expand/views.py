@@ -19,7 +19,7 @@ class ImageExpandView(APIView):
     
     @require_tokens(cost=TOKEN_COSTS['image_expand'], feature='image_expand')
     def post(self, request):
-        serializer = ImageExpandSerializer(data=request.data)
+        serializer = ImageExpandInputSerializer(data=request.data)
         if not serializer.is_valid():
             return APIResponse.error(message="Validation failed", result=serializer.errors)
         
@@ -48,13 +48,14 @@ class ImageExpandView(APIView):
                 result={
                     "task_id": result['task_id'],
                     "status": result['status'],
-                    "expanded": result.get('expanded', []),
-                    "uploaded_urls": result.get('uploaded_urls', []),
-                    "original_image": result['original_image'],
-                    "expansion": result['expansion'],
-                    "input_source": source_type
+                    "image_url": result.get('uploaded_urls', [None])[0] if result.get('uploaded_urls') else None,
+                    "original_image": image_url,
+                    "left": validated_data.get('left', 0),
+                    "right": validated_data.get('right', 0),
+                    "top": validated_data.get('top', 0),
+                    "bottom": validated_data.get('bottom', 0)
                 },
-                message="Expand started. Use task_id to poll status."
+                message="Image expand started. Use task_id to poll status."
             )
         
         except ImageExpandError as e:
@@ -71,15 +72,17 @@ class ImageExpandStatusView(APIView):
     
     def get(self, request, task_id):
         try:
+            # Get user_id from query params for gallery save
+            user_id = request.query_params.get('user_id')
+            
             service = ImageExpandService()
-            result = service.poll_task_status(task_id)
+            result = service.poll_task_status(task_id, user_id=user_id)
             
             return APIResponse.success(
                 result={
                     "task_id": result.get('task_id'),
                     "status": result.get('status'),
-                    "expanded": result.get('expanded', []),
-                    "uploaded_urls": result.get('uploaded_urls', [])
+                    "image_url": result.get('uploaded_urls', [None])[0] if result.get('uploaded_urls') else None
                 },
                 message="Task status retrieved"
             )

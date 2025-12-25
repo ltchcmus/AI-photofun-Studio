@@ -7,6 +7,8 @@ import {
   Sparkles,
   Wand2,
 } from "lucide-react";
+import { reimagineImage, pollTaskStatus } from "../api/aiApi";
+import { communicationApi } from "../api/communicationApi";
 
 const stylePresets = [
   {
@@ -70,6 +72,7 @@ const StyleTransfer = () => {
   const fileInputRef = useRef(null);
 
   const [uploadedImage, setUploadedImage] = useState(null);
+  const [uploadedFile, setUploadedFile] = useState(null);
   const [dragOver, setDragOver] = useState(false);
   const [selectedStyle, setSelectedStyle] = useState(null);
   const [strength, setStrength] = useState(60);
@@ -77,6 +80,7 @@ const StyleTransfer = () => {
   const [detailLevel, setDetailLevel] = useState("high");
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [processingStatus, setProcessingStatus] = useState("");
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
 
@@ -103,6 +107,7 @@ const StyleTransfer = () => {
     try {
       const dataUrl = await readFile(file);
       setUploadedImage(dataUrl);
+      setUploadedFile(file);
       setResult(null);
       setError("");
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -123,19 +128,94 @@ const StyleTransfer = () => {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const handleTransfer = () => {
+  const handleTransfer = async () => {
     if (!canTransfer) {
       setError("Tải ảnh và chọn style trước khi áp dụng.");
       return;
     }
     setProcessing(true);
+    setProcessingStatus("Đang chuẩn bị...");
     setError("");
     setResult(null);
 
-    setTimeout(() => {
-      setProcessing(false);
+    try {
+      // Step 1: Upload image
+      setProcessingStatus("Đang upload ảnh...");
+
+      let apiImageUrl;
+      try {
+        const uploadResult = await communicationApi.uploadChatImage(uploadedFile);
+        apiImageUrl = uploadResult?.result?.image || uploadResult?.result?.url || uploadResult?.url || uploadResult?.image;
+
+        if (!apiImageUrl) {
+          throw new Error("Không nhận được URL từ server");
+        }
+      } catch (uploadErr) {
+        console.error("Upload error:", uploadErr);
+        setError("Không thể upload ảnh. Vui lòng thử lại.");
+        setProcessing(false);
+        return;
+      }
+
+      // Map style to imagination level
+      let imagination = "subtle"; // default
+      if (strength > 70) {
+        imagination = "wild";
+      } else if (strength > 40) {
+        imagination = "vivid";
+      }
+
+      // Map selected style to prompt
+      const stylePrompts = {
+        oil: "Transform this into an oil painting with rich textures and brush strokes",
+        watercolor: "Transform this into a soft watercolor painting",
+        cartoon: "Transform this into a cartoon style with bold outlines",
+        sketch: "Transform this into a graphite pencil sketch",
+        cyberpunk: "Transform this into a cyberpunk style with neon lights",
+        "3d": "Transform this into a 3D render with plastic lighting",
+        abstract: "Transform this into an abstract art style",
+      };
+
+      const prompt = stylePrompts[selectedStyle] || `Transform this into ${selectedStyle} style`;
+
+      setProcessingStatus("Đang gửi yêu cầu chuyển đổi...");
+      const reimagineResult = await reimagineImage({
+        imageUrl: apiImageUrl,
+        prompt: prompt,
+        imagination: imagination,
+        aspectRatio: "1:1",
+      });
+
+      if (!reimagineResult.success) {
+        throw new Error(reimagineResult.error || "Reimagine failed");
+      }
+
+      // Check if sync or async response
+      let resultImageUrl;
+      if (reimagineResult.imageUrl) {
+        // Sync response
+        resultImageUrl = reimagineResult.imageUrl;
+      } else if (reimagineResult.taskId) {
+        // Async - poll for completion
+        setProcessingStatus("Đang xử lý AI...");
+        const pollResult = await pollTaskStatus(
+          reimagineResult.taskId,
+          "v1/features/reimagine",
+          (status, attempt) => {
+            setProcessingStatus(`Đang xử lý... (${attempt}/60)`);
+          },
+          60,
+          3000
+        );
+
+        if (!pollResult.success) {
+          throw new Error(pollResult.error || "Processing failed");
+        }
+        resultImageUrl = pollResult.imageUrl || pollResult.data?.uploaded_urls?.[0];
+      }
+
       setResult({
-        styled: randomResultUrl(),
+        styled: resultImageUrl || testImageUrl,
         original: uploadedImage,
         style: selectedStyle,
         strength,
@@ -143,7 +223,13 @@ const StyleTransfer = () => {
         detailLevel,
         timestamp: new Date().toLocaleString(),
       });
-    }, 2200);
+    } catch (err) {
+      console.error("Transfer error:", err);
+      setError(`Lỗi: ${err.message}. Vui lòng thử lại.`);
+    } finally {
+      setProcessing(false);
+      setProcessingStatus("");
+    }
   };
 
   const handleDownload = () => {
@@ -183,11 +269,10 @@ const StyleTransfer = () => {
           <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
             <h2 className="text-lg font-bold mb-4">Upload Original Image</h2>
             <div
-              className={`border-2 border-dashed rounded-2xl p-6 h-64 flex items-center justify-center text-center cursor-pointer transition-colors ${
-                dragOver
-                  ? "border-blue-300 bg-blue-50"
-                  : "border-gray-300 hover:border-gray-400"
-              }`}
+              className={`border-2 border-dashed rounded-2xl p-6 h-64 flex items-center justify-center text-center cursor-pointer transition-colors ${dragOver
+                ? "border-blue-300 bg-blue-50"
+                : "border-gray-300 hover:border-gray-400"
+                }`}
               onDragOver={(event) => {
                 event.preventDefault();
                 setDragOver(true);
@@ -265,9 +350,8 @@ const StyleTransfer = () => {
             >
               <span className="text-lg font-bold">Advanced Settings</span>
               <Wand2
-                className={`w-5 h-5 transition-transform ${
-                  advancedOpen ? "rotate-45" : "rotate-0"
-                }`}
+                className={`w-5 h-5 transition-transform ${advancedOpen ? "rotate-45" : "rotate-0"
+                  }`}
               />
             </button>
             {advancedOpen && (
@@ -324,11 +408,10 @@ const StyleTransfer = () => {
                 key={style.id}
                 type="button"
                 onClick={() => setSelectedStyle(style.id)}
-                className={`w-full relative overflow-hidden rounded-2xl border-2 h-24 text-left transition-all ${
-                  selectedStyle === style.id
-                    ? "border-black shadow-[0_0_0_2px_white,0_0_0_4px_black]"
-                    : "border-gray-200 hover:border-gray-400"
-                }`}
+                className={`w-full relative overflow-hidden rounded-2xl border-2 h-24 text-left transition-all ${selectedStyle === style.id
+                  ? "border-black shadow-[0_0_0_2px_white,0_0_0_4px_black]"
+                  : "border-gray-200 hover:border-gray-400"
+                  }`}
               >
                 <img
                   src={style.thumbnail}
@@ -354,7 +437,7 @@ const StyleTransfer = () => {
                   Đang chuyển đổi phong cách...
                 </p>
                 <p className="text-sm text-gray-500">
-                  Vui lòng chờ trong giây lát
+                  {processingStatus || "Vui lòng chờ..."}
                 </p>
               </div>
             ) : result ? (

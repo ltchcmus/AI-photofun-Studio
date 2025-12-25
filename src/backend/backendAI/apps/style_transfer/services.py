@@ -57,22 +57,32 @@ class StyleTransferService:
         try:
             logger.info(f"Transferring style from reference: {reference_image[:50]}...")
             
+            # Convert float (0.0-1.0) to integer (0-100) for Freepik API
+            style_strength_int = int(style_strength * 100) if style_strength <= 1.0 else int(style_strength)
+            structure_strength_int = int(structure_strength * 100) if structure_strength <= 1.0 else int(structure_strength)
+            
             result = freepik_client.transfer_style(
                 image=image_url,
                 reference_image=reference_image,
-                style_strength=style_strength,
-                structure_strength=structure_strength,
+                style_strength=style_strength_int,
+                structure_strength=structure_strength_int,
                 is_portrait=is_portrait,
                 portrait_style=portrait_style,
                 webhook_url=webhook_url
             )
             
-            logger.info(f"Style transfer task created: {result.get('task_id')}")
+            # Extract data layer (Freepik returns nested structure)
+            data = result.get('data', result)
+            logger.info(f"Style transfer task created: {data.get('task_id')}")
             
             # Upload if completed
-            if result.get('status') == 'COMPLETED' and result.get('stylized'):
-                uploaded_urls = self._upload_stylized_images(result['stylized'])
-                result['uploaded_urls'] = uploaded_urls
+            # Freepik returns 'generated' not 'stylized' for this endpoint
+            image_urls = data.get('generated') or data.get('stylized') or []
+            if data.get('status') == 'COMPLETED' and image_urls:
+                logger.info(f"Style transfer completed synchronously, uploading {len(image_urls)} images...")
+                uploaded_urls = self._upload_stylized_images(image_urls)
+                data['uploaded_urls'] = uploaded_urls
+                logger.info(f"✓ Uploaded {len(uploaded_urls)} stylized images")
                 
                 # Save to gallery
                 self._save_to_gallery(
@@ -91,17 +101,15 @@ class StyleTransferService:
                 )
             
             return {
-                'task_id': result.get('task_id'),
-                'status': result.get('status'),
-                'uploaded_urls': result.get('uploaded_urls', []),
+                'task_id': data.get('task_id'),
+                'status': data.get('status') or 'CREATED',  # Default to CREATED if missing
+                'uploaded_urls': data.get('uploaded_urls', []),
                 'original_image': image_url,
                 'reference_image': reference_image,
-                'settings': {
-                    'style_strength': style_strength,
-                    'structure_strength': structure_strength,
-                    'is_portrait': is_portrait,
-                    'portrait_style': portrait_style
-                }
+                'style_strength': style_strength,
+                'structure_strength': structure_strength,
+                'is_portrait': is_portrait,
+                'portrait_style': portrait_style or 'standard'
             }
         
         except Exception as e:
@@ -111,14 +119,26 @@ class StyleTransferService:
     def poll_task_status(self, task_id: str) -> Dict:
         """Poll style transfer task status"""
         try:
-            result = freepik_client.get_task_status(task_id, endpoint='style-transfer')
+            result = freepik_client.get_task_status(task_id, endpoint='image-style-transfer')
             
-            if result.get('status') == 'COMPLETED' and result.get('stylized'):
-                if 'uploaded_urls' not in result:
-                    uploaded_urls = self._upload_stylized_images(result['stylized'])
-                    result['uploaded_urls'] = uploaded_urls
+            # Extract data layer
+            data = result.get('data', result)
             
-            return result
+            # Check for images: Freepik returns 'generated' not 'stylized'
+            image_urls = data.get('generated') or data.get('stylized') or []
+            
+            if data.get('status') == 'COMPLETED' and image_urls:
+                if not data.get('uploaded_urls'):
+                    logger.info(f"Uploading {len(image_urls)} stylized images...")
+                    uploaded_urls = self._upload_stylized_images(image_urls)
+                    data['uploaded_urls'] = uploaded_urls
+                    logger.info(f"✓ Uploaded {len(uploaded_urls)} images")
+            
+            return {
+                'task_id': task_id,
+                'status': data.get('status'),
+                'uploaded_urls': data.get('uploaded_urls', [])
+            }
         
         except Exception as e:
             logger.error(f"Failed to poll style transfer status: {str(e)}")

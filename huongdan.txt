@@ -1,0 +1,113 @@
+HƯỚNG DẪN SỬ DỤNG AI PHOTOFUN STUDIO
+
+=== GIỚI THIỆU ===
+AI PhotoFun Studio là ứng dụng chỉnh sửa ảnh thông minh sử dụng AI tiên tiến (Google Gemini và Freepik AI). Tạo ảnh từ văn bản, xóa nền, nâng cấp chất lượng, hoán đổi khuôn mặt và nhiều tính năng khác.
+
+=== 6 TÍNH NĂNG AI CHÍNH ===
+
+1. TEXT TO IMAGE (Tạo ảnh từ văn bản)
+Mô tả hình ảnh bạn muốn, AI sẽ tạo ra ảnh.
+Tỉ lệ khung hình: 1:1 (vuông), 16:9 (ngang), 9:16 (dọc), 3:2, 2:3
+Phong cách: Photorealistic (ảnh thực), Digital Art (nghệ thuật số), Anime, 3D Render, Oil Painting
+Mẹo viết prompt: Mô tả chi tiết chủ thể + bối cảnh + ánh sáng + phong cách. Ví dụ: "Mèo lông trắng ngồi bậu cửa sổ, ánh nắng chiều vàng, phong cách ảnh chân dung"
+Cách dùng: AI Studio > Text to Image > Nhập mô tả > Chọn tỉ lệ/style > Generate > Đợi 3-8 giây
+
+2. IMAGE ENHANCE (Nâng cao chất lượng ảnh)
+Tăng độ phân giải ảnh lên gấp 2 lần.
+3 chế độ:
+- PHOTO: Cho ảnh chụp camera, điện thoại
+- SUBLIME: Cho artwork, illustration, anime, logo
+- PHOTO DENOISER: Cho ảnh nhiễu, chụp thiếu sáng
+Cách dùng: AI Studio > Image Enhance > Tải ảnh > Chọn chế độ > Enhance > Đợi 5-15 giây
+
+3. BACKGROUND TOOLS (Công cụ xử lý nền)
+A) Xóa nền: Tách đối tượng khỏi nền, xuất PNG trong suốt. Thời gian: 1-3 giây
+B) Thay nền: Thay nền bằng màu đơn sắc hoặc ảnh khác
+Cách dùng xóa nền: AI Studio > Background Tools > Tải ảnh > Remove Background > Apply > Download PNG
+Cách dùng thay nền: Tải ảnh > Replace Background > Chọn màu/ảnh nền > Apply
+
+4. STYLE TRANSFER (Chuyển đổi phong cách)
+Áp dụng phong cách nghệ thuật từ ảnh mẫu sang ảnh của bạn.
+Tham số: Style Strength (mức độ áp dụng), Structure Strength (giữ cấu trúc gốc)
+Cách dùng: AI Studio > Style Transfer > Tải ảnh gốc + ảnh phong cách > Transfer > Đợi 5-15 giây
+
+5. FACE SWAP (Hoán đổi khuôn mặt)
+Ghép khuôn mặt từ ảnh này sang ảnh khác.
+Yêu cầu: Khuôn mặt rõ ràng, ánh sáng đủ, không bị che, tối thiểu 256x256px
+Cách dùng: AI Studio > Face Swap > Tải ảnh nguồn + ảnh đích > Swap
+
+6. PHOTO RESTORE (Phục hồi ảnh cũ)
+Sửa chữa ảnh cũ bị rách, phai màu, tô màu ảnh đen trắng.
+Khả năng: Sửa vết rách/gấp/ố, làm rõ ảnh mờ, tô màu ảnh B&W
+Cách dùng: AI Studio > Photo Restore > Tải ảnh cũ > Restore > Đợi 5-10 giây
+
+=== TÀI KHOẢN ===
+
+Đăng ký: Nhấn Sign Up > Điền email + mật khẩu (8+ ký tự) > Đăng ký > Xác minh email
+Đăng nhập: Email + mật khẩu hoặc đăng nhập bằng Google
+Xác minh email: Profile > Nếu chưa xác minh nhấn "Verify Now" > Nhập mã OTP 4 số từ email
+Quên mật khẩu: Forgot Password > Nhập email > Nhận link đặt lại
+
+=== HỆ THỐNG TOKEN ===
+
+Chi phí token:
+- Text to Image: 10 tokens (3-8 giây)
+- Image Enhance: 5 tokens (5-15 giây)
+- Remove Background: 3 tokens (1-3 giây)
+- Face Swap: 15 tokens (5-10 giây)
+- Style Transfer: 10 tokens (5-15 giây)
+- Photo Restore: 8 tokens (5-10 giây)
+
+=== GÓI DỊCH VỤ ===
+
+FREE (Miễn phí): 50 tokens/ngày, tốc độ chuẩn
+
+GÓI 1 THÁNG ($5/tháng): 500 tokens/ngày, tốc độ nhanh, mở khóa mọi style, không quảng cáo
+
+GÓI 6 THÁNG ($20/6 tháng - tiết kiệm 33%): 2000 tokens/ngày, ưu tiên cao nhất, hỗ trợ 24/7, early access, lưu trữ vĩnh viễn
+
+Nâng cấp: Profile > Upgrade to Premium > Chọn gói > Thanh toán Stripe
+
+=== TÍNH NĂNG XÃ HỘI ===
+
+Messages: Nhắn tin realtime, gửi ảnh/video, video call
+Posts: Đăng ảnh/video, chia sẻ với cộng đồng
+Notifications: Thông báo like, comment, tin nhắn mới
+Gallery: Xem/quản lý tất cả ảnh đã tạo
+
+=== FAQ ===
+
+Q: Có miễn phí không?
+A: Có, 50 tokens miễn phí mỗi ngày.
+
+Q: Ảnh tạo ra có bản quyền không?
+A: Ảnh thuộc quyền sở hữu của bạn, có thể sử dụng thương mại.
+
+Q: Token reset khi nào?
+A: Tự động reset lúc 00:00 UTC mỗi ngày.
+
+Q: Định dạng ảnh hỗ trợ?
+A: JPEG, PNG, WEBP. Tối đa 10MB.
+
+Q: Ảnh tạo lâu quá?
+A: Thử lại nếu quá 30 giây. Prompt tiếng Anh cho kết quả tốt hơn.
+
+Q: Hủy Premium được không?
+A: Có, hủy trong Settings, còn hiệu lực đến hết thời hạn.
+
+Q: Quên mật khẩu?
+A: Forgot Password > Nhập email > Nhận link reset.
+
+Q: Ảnh không đúng ý?
+A: Viết prompt chi tiết hơn, dùng tiếng Anh.
+
+=== MẸO SỬ DỤNG ===
+
+- Viết prompt tiếng Anh để kết quả tốt nhất
+- Mô tả: chủ thể + bối cảnh + ánh sáng + phong cách
+- Remove Background trước Enhance để tiết kiệm token
+- Lưu ảnh yêu thích vào Gallery
+- Kiểm tra token trước khi tạo nhiều ảnh
+- Nâng cấp Premium nếu cần số lượng lớn
+
+Cảm ơn bạn đã sử dụng AI PhotoFun Studio!

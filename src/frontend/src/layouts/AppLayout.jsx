@@ -1,6 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/layout/Sidebar";
+import ChatBot from "../components/common/ChatBot";
 import { navItems } from "../config/navConfig";
 import * as Icons from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -15,7 +16,6 @@ const AppLayout = () => {
       <Sidebar />
 
       <main className="md:ml-20 flex-1 pb-16 md:pb-0">
-        
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8">
           <Outlet />
         </div>
@@ -41,6 +41,9 @@ const AppLayout = () => {
           );
         })}
       </nav>
+
+      {/* ChatBot - appears on all pages */}
+      <ChatBot />
     </div>
   );
 };

@@ -197,10 +197,231 @@ export const uploadImageForAI = async (file) => {
     }
 };
 
+/**
+ * Upscale image to higher resolution
+ * @param {object} params - Upscale parameters
+ * @param {string} params.imageUrl - URL of image to upscale
+ * @param {string} params.flavor - Upscale flavor: "photo", "sublime", "photo_denoiser"
+ * @returns {Promise<object>} - Task ID for polling
+ */
+export const upscaleImage = async ({ imageUrl, flavor = "photo" }) => {
+    const sessionId = getSessionId();
+
+    try {
+        const response = await aiClient.post("/v1/features/upscale/", {
+            user_id: sessionId,
+            image_url: imageUrl,
+            flavor: flavor,
+        });
+
+        const data = response.data;
+        const taskId = data.result?.task_id;
+
+        if (taskId) {
+            return {
+                success: true,
+                taskId,
+                data: data.result,
+            };
+        } else {
+            return {
+                success: false,
+                error: "No task ID received",
+                data: data.result,
+            };
+        }
+    } catch (err) {
+        return {
+            success: false,
+            error: err.response?.data?.message || err.message,
+        };
+    }
+};
+
+/**
+ * Reimagine image with new style
+ * @param {object} params - Reimagine parameters
+ * @param {string} params.imageUrl - URL of image to reimagine
+ * @param {string} params.prompt - Optional guidance prompt
+ * @param {string} params.imagination - Level: "subtle", "vivid", "wild"
+ * @param {string} params.aspectRatio - Aspect ratio: "1:1", "16:9", "9:16", etc.
+ * @returns {Promise<object>} - Task ID for polling
+ */
+export const reimagineImage = async ({
+    imageUrl,
+    prompt = "",
+    imagination = "subtle",
+    aspectRatio = "1:1"
+}) => {
+    const sessionId = getSessionId();
+
+    try {
+        const response = await aiClient.post("/v1/features/reimagine/", {
+            user_id: sessionId,
+            image_url: imageUrl,
+            prompt: prompt,
+            imagination: imagination,
+            aspect_ratio: aspectRatio,
+        });
+
+        const data = response.data;
+        const taskId = data.result?.task_id;
+        const imageResult = data.result?.image_url;
+
+        if (imageResult) {
+            // Sync response
+            return {
+                success: true,
+                imageUrl: imageResult,
+                data: data.result,
+            };
+        } else if (taskId) {
+            // Async response - needs polling
+            return {
+                success: true,
+                taskId,
+                needsPolling: true,
+                data: data.result,
+            };
+        } else {
+            return {
+                success: false,
+                error: "No result received",
+                data: data.result,
+            };
+        }
+    } catch (err) {
+        return {
+            success: false,
+            error: err.response?.data?.message || err.message,
+        };
+    }
+};
+
+/**
+ * Relight image with new lighting
+ * @param {object} params - Relight parameters
+ * @param {string} params.imageUrl - URL of image to relight
+ * @param {string} params.prompt - Lighting description prompt
+ * @param {string} params.style - Lighting style: "standard", "dramatic", "soft", "natural"
+ * @param {string} params.referenceImageUrl - Optional reference image for lighting transfer
+ * @param {number} params.lightTransferStrength - Light transfer strength (0.0-1.0)
+ * @returns {Promise<object>} - Task ID for polling
+ */
+export const relightImage = async ({
+    imageUrl,
+    prompt,
+    style = "standard",
+    referenceImageUrl = null,
+    lightTransferStrength = 0.8
+}) => {
+    const sessionId = getSessionId();
+
+    try {
+        const body = {
+            user_id: sessionId,
+            image_url: imageUrl,
+            prompt: prompt,
+            style: style,
+        };
+
+        // Add optional reference image parameters
+        if (referenceImageUrl) {
+            body.reference_image_url = referenceImageUrl;
+            body.light_transfer_strength = lightTransferStrength;
+        }
+
+        const response = await aiClient.post("/v1/features/relight/", body);
+
+        const data = response.data;
+        const taskId = data.result?.task_id;
+
+        if (taskId) {
+            return {
+                success: true,
+                taskId,
+                data: data.result,
+            };
+        } else {
+            return {
+                success: false,
+                error: "No task ID received",
+                data: data.result,
+            };
+        }
+    } catch (err) {
+        return {
+            success: false,
+            error: err.response?.data?.message || err.message,
+        };
+    }
+};
+
+/**
+ * Expand image boundaries
+ * @param {object} params - Expand parameters
+ * @param {string} params.imageUrl - URL of image to expand
+ * @param {string} params.prompt - Description for expanded areas
+ * @param {number} params.left - Pixels to expand left
+ * @param {number} params.right - Pixels to expand right
+ * @param {number} params.top - Pixels to expand top
+ * @param {number} params.bottom - Pixels to expand bottom
+ * @returns {Promise<object>} - Task ID for polling
+ */
+export const expandImage = async ({
+    imageUrl,
+    prompt = "",
+    left = 100,
+    right = 100,
+    top = 50,
+    bottom = 50
+}) => {
+    const sessionId = getSessionId();
+
+    try {
+        const response = await aiClient.post("/v1/features/image-expand/", {
+            user_id: sessionId,
+            image_url: imageUrl,
+            prompt: prompt,
+            left: left,
+            right: right,
+            top: top,
+            bottom: bottom,
+        });
+
+        const data = response.data;
+        const taskId = data.result?.task_id;
+
+        if (taskId) {
+            return {
+                success: true,
+                taskId,
+                data: data.result,
+            };
+        } else {
+            return {
+                success: false,
+                error: "No task ID received",
+                data: data.result,
+            };
+        }
+    } catch (err) {
+        return {
+            success: false,
+            error: err.response?.data?.message || err.message,
+        };
+    }
+};
+
 export default {
     generateImage,
     removeBackground,
+    upscaleImage,
+    reimagineImage,
+    relightImage,
+    expandImage,
     pollTaskStatus,
     uploadImageForAI,
     getSessionId,
 };
+

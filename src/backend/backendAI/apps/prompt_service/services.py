@@ -150,7 +150,7 @@ class PromptService:
     @staticmethod
     def refine_and_detect_intent(prompt: str, context: Optional[Dict] = None) -> Dict[str, Any]:
         """
-        Mode 2: Refine prompt + Detect intent (for conversation flow)
+        Mode 2: Refine prompt + Detect intent + Extract parameters (for conversation flow)
         
         Args:
             prompt: Raw user prompt
@@ -160,50 +160,101 @@ class PromptService:
             {
                 "refined_prompt": str,
                 "intent": str,
+                "extracted_params": dict,  # NEW: Extracted feature parameters
                 "metadata": dict
             }
         
         Usage:
             result = PromptService.refine_and_detect_intent("make a sunset")
-            # → {"refined_prompt": "...", "intent": "image_generation", ...}
+            # → {"refined_prompt": "...", "intent": "image_generation", "extracted_params": {...}, ...}
         """
         system_prompt = f"""
         You are an AI assistant specialized in refining prompts for image generation and manipulation systems.
-        Your task is to analyze the user's raw prompt and output two things:
+        Your task is to analyze the user's raw prompt and output THREE things:
         
         1. refined_prompt – A clearer, more detailed, well-structured version of the user's input prompt.
-        2. intent – The detected intent of the user from the following list:
+        2. intent – The detected intent of the user from the following list.
+        3. extracted_params – Important categorical parameters extracted from the prompt (based on detected intent).
         
         **Available AI Features:**
         - image_generation: Tạo ảnh mới từ mô tả văn bản (text-to-image). Ví dụ: "vẽ một bức tranh hoàng hôn", "tạo ảnh con mèo".
         - upscale: Tăng độ phân giải, làm rõ nét ảnh. Ví dụ: "làm rõ ảnh này", "tăng chất lượng ảnh".
         - remove_background: Xóa nền ảnh, tách đối tượng. Ví dụ: "xóa background", "tách nền ảnh này".
+        - reimagine: Biến đổi/tái tạo ảnh theo MÔ TẢ/PHONG CÁCH trong prompt (KHÔNG cần ảnh tham chiếu). Ví dụ: "biến thành tranh vẽ nước/watercolor", "phong cách anime", "chuyển thành bức tranh sơn dầu", "tưởng tượng lại với phong cách nghệ thuật".
         - relight: Điều chỉnh ánh sáng, thay đổi lighting. Ví dụ: "chiếu sáng từ trái", "ánh sáng mặt trời buổi sáng".
-        - style_transfer: Áp dụng phong cách nghệ thuật từ ảnh tham chiếu. Ví dụ: "vẽ theo phong cách anime", "chuyển sang phong cách oil painting".
-        - reimagine: Tái tưởng tượng ảnh với biến thể mới (giữ ý tưởng gốc). Ví dụ: "tưởng tượng lại ảnh này", "tạo phiên bản khác của ảnh".
+        - style_transfer: Copy phong cách từ ảnh THAM CHIẾU khác (CẦN reference image). CHỈ dùng khi user nói "theo ảnh kia", "giống như ảnh X", "copy style từ reference". Ví dụ: "áp dụng style từ ảnh tham khảo", "vẽ giống như bức tranh đó".
         - image_expand: Mở rộng biên ảnh, thêm nội dung xung quanh. Ví dụ: "mở rộng ảnh sang phải", "expand ảnh về 4 phía".
         - other: Nếu không thuộc các intent trên (chào hỏi, hỏi thông tin, v.v.).
 
-        **Rules:**
+        **Parameter Extraction Rules (IMPORTANT):**
+        Extract ONLY truly important categorical parameters (strings/enums) that users naturally express in language.
+        Do NOT extract technical numbers (they will use defaults).
+        
+        **Parameters to extract per intent:**
+        
+        1. image_generation:
+           - aspect_ratio: Detect from keywords like "landscape/horizontal/wide" → "widescreen_16_9", "portrait/vertical/tall" → "social_story_9_16", "square" → "square_1_1"
+           - model: Detect from style keywords - "realistic/photo" → "realism", "artistic/smooth/clean" → "zen", "creative/wild/imaginative" → "fluid", "illustration/fantasy" → "flexible"
+        
+        2. upscale:
+           - flavor: Detect from image type - "photo/photograph/picture" → "photo", "artwork/illustration/painting/drawing" → "sublime", "noisy/grainy/dark/low-light" → "photo_denoiser"
+        
+        3. reimagine:
+           - imagination: Detect from creativity level - "subtle/slight/minor" → "subtle", "creative/imaginative/different/vivid" → "vivid", "wild/extreme/crazy/very different" → "wild"
+           - aspect_ratio: Same as image_generation
+           - is_portrait: Detect if mentions "portrait/face/person/người/khuôn mặt/chân dung" → true
+        
+        4. relight:
+           - style: Detect from lighting description - "dramatic/moody/dark" → "darker_but_realistic", "clean/minimal" → "clean", "smooth/soft" → "smooth", "bright/light" → "brighter", "contrast/hdr/vivid" → "contrasted_n_hdr", standard by default
+        
+        5. image_expand:
+           - Parse directional keywords to pixel values (512 default):
+             * "left/trái/bên trái" → {{"left": 512}}
+             * "right/phải/bên phải" → {{"right": 512}}
+             * "top/trên/phía trên" → {{"top": 512}}
+             * "bottom/dưới/phía dưới" → {{"bottom": 512}}
+             * "all sides/all/mọi phía/tất cả" → {{"left": 512, "right": 512, "top": 512, "bottom": 512}}
+        
+        6. style_transfer:
+           - is_portrait: Detect if prompt mentions "portrait/face/person/người/khuôn mặt/chân dung" → true, otherwise false
+        
+        7. remove_background:
+           - No parameters needed, return empty dict
+        
+        8. other:
+           - No parameters needed, return empty dict
+
+        **Output Format:**
+        Output JSON ONLY, with exactly this schema:
+        {{
+        "refined_prompt": "...",
+        "intent": "...",
+        "extracted_params": {{...}}
+        }}
+
+        **Examples:**
+        - User: "tạo ảnh một con rồng bay trên trời" → {{"refined_prompt": "A majestic dragon flying in the sky with spread wings, dramatic clouds, fantasy art style", "intent": "image_generation", "extracted_params": {{}}}}
+        - User: "tạo ảnh phong cảnh hoàng hôn, kiểu realistic" → {{"refined_prompt": "Realistic sunset landscape with warm colors", "intent": "image_generation", "extracted_params": {{"aspect_ratio": "widescreen_16_9", "model": "realism"}}}}
+        - User: "làm rõ ảnh này" → {{"refined_prompt": "Enhance image resolution and clarity", "intent": "upscale", "extracted_params": {{}}}}
+        - User: "upscale bức tranh này" → {{"refined_prompt": "Upscale this artwork with enhanced details", "intent": "upscale", "extracted_params": {{"flavor": "sublime"}}}}
+        - User: "upscale ảnh chụp này" → {{"refined_prompt": "Upscale this photograph", "intent": "upscale", "extracted_params": {{"flavor": "photo"}}}}
+        - User: "biến thành tranh vẽ nước" → {{"refined_prompt": "Transform into watercolor painting style", "intent": "reimagine", "extracted_params": {{"imagination": "vivid"}}}}
+        - User: "chuyển sang phong cách anime" → {{"refined_prompt": "Transform to anime art style", "intent": "reimagine", "extracted_params": {{"imagination": "vivid"}}}}
+        - User: "tưởng tượng lại ảnh này theo phong cách sáng tạo hơn" → {{"refined_prompt": "Reimagine this image with more creative variations", "intent": "reimagine", "extracted_params": {{"imagination": "vivid"}}}}
+        - User: "thêm ánh sáng dramatic" → {{"refined_prompt": "Add dramatic lighting with moody atmosphere", "intent": "relight", "extracted_params": {{"style": "darker_but_realistic"}}}}
+        - User: "áp dụng style từ ảnh tham khảo" → {{"refined_prompt": "Apply artistic style from reference image", "intent": "style_transfer", "extracted_params": {{}}}}
+        - User: "vẽ theo phong cách giống ảnh đó" → {{"refined_prompt": "Copy artistic style from reference image", "intent": "style_transfer", "extracted_params": {{}}}}
+        - User: "chuyển sang phong cách anime cho khuôn mặt" → {{"refined_prompt": "Transform portrait to anime art style", "intent": "reimagine", "extracted_params": {{"imagination": "vivid", "is_portrait": true}}}}
+        - User: "mở rộng ảnh sang 2 bên" → {{"refined_prompt": "Expand image borders on left and right sides", "intent": "image_expand", "extracted_params": {{"left": 512, "right": 512}}}}
+        - User: "expand ảnh về mọi phía" → {{"refined_prompt": "Expand image in all directions", "intent": "image_expand", "extracted_params": {{"left": 512, "right": 512, "top": 512, "bottom": 512}}}}
+
+        **Important Rules:**
         - DO NOT invent details not implied by the user. Only clarify, structure, and enhance descriptiveness.
         - Keep the refined_prompt safe, descriptive, visual, and image-generation-friendly.
         - If the user's intent is unclear or ambiguous, classify as "image_generation".
         - For features requiring images (upscale, remove_background, relight, style_transfer, reimagine, image_expand), the user should have already uploaded an image in the conversation context.
-        - Output JSON ONLY, with exactly this schema:
-
-        {{
-        "refined_prompt": "...",
-        "intent": "..."
-        }}
-
-        **Examples:**
-        - User: "tạo ảnh một con rồng bay trên trời" → {{"refined_prompt": "A majestic dragon flying in the sky with spread wings, dramatic clouds, fantasy art style", "intent": "image_generation"}}
-        - User: "làm rõ ảnh này" → {{"refined_prompt": "Enhance image resolution and clarity", "intent": "upscale"}}
-        - User: "xóa background" → {{"refined_prompt": "Remove background from image", "intent": "remove_background"}}
-        - User: "thêm ánh sáng mặt trời buổi chiều" → {{"refined_prompt": "Add warm afternoon sunlight with golden hour lighting", "intent": "relight"}}
-        - User: "chuyển sang phong cách anime" → {{"refined_prompt": "Transform to anime art style", "intent": "style_transfer"}}
-        - User: "mở rộng ảnh sang 2 bên" → {{"refined_prompt": "Expand image borders on left and right sides", "intent": "image_expand"}}
-        - User: "tưởng tượng lại ảnh này theo phong cách khác" → {{"refined_prompt": "Reimagine this image with creative variations", "intent": "reimagine"}}
+        - Only extract parameters that are CLEARLY mentioned or strongly implied in the user's prompt.
+        - If no relevant parameters are detected, return empty dict: {{"extracted_params": {{}}}}
 
         Now process the following user prompt:
 
@@ -213,7 +264,7 @@ class PromptService:
         if context:
             system_prompt += f"\n\nContext: {json.dumps(context)}"
 
-        print(f"[PromptService] Refine + Detect intent: {prompt}")
+        print(f"[PromptService] Refine + Detect intent + Extract params: {prompt}")
         start = time.time()
         
         response = call_gemini_with_retry(
@@ -232,6 +283,7 @@ class PromptService:
         result = {
             "refined_prompt": parsed_response.get("refined_prompt", "") or prompt,
             "intent": parsed_response.get("intent", "image_generation"),
+            "extracted_params": parsed_response.get("extracted_params", {}),  # NEW: Extract parameters
             "metadata": {
                 "model": GEMINI_MODEL,
                 "processing_time": processing_time,
@@ -266,6 +318,7 @@ def refine_prompt(payload: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "prompt": result["refined_prompt"],  # Legacy key name
         "intent": result["intent"],
+        "extracted_params": result.get("extracted_params", {}),  # NEW: Pass through extracted params
         "metadata": result["metadata"],
         "context": conversation_context,  # Pass through conversation context
     }

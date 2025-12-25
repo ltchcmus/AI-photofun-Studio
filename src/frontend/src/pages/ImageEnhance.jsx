@@ -12,6 +12,8 @@ import {
   Image as ImageIcon,
   Sparkles,
 } from "lucide-react";
+import { upscaleImage, pollTaskStatus } from "../api/aiApi";
+import { communicationApi } from "../api/communicationApi";
 
 const readFileAsDataUrl = (file) =>
   new Promise((resolve, reject) => {
@@ -27,11 +29,13 @@ const ImageEnhance = () => {
   const sliderRef = useRef(null);
 
   const [uploadedImage, setUploadedImage] = useState(null);
+  const [uploadedFile, setUploadedFile] = useState(null);
   const [dragOver, setDragOver] = useState(false);
   const [upscale, setUpscale] = useState("");
   const [faceCorrection, setFaceCorrection] = useState(false);
   const [noiseReduction, setNoiseReduction] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [processingStatus, setProcessingStatus] = useState("");
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [sliderPercent, setSliderPercent] = useState(50);
@@ -45,8 +49,10 @@ const ImageEnhance = () => {
   const handleFileSelect = async (files) => {
     if (!files || !files.length) return;
     try {
-      const dataUrl = await readFileAsDataUrl(files[0]);
+      const file = files[0];
+      const dataUrl = await readFileAsDataUrl(file);
       setUploadedImage(dataUrl);
+      setUploadedFile(file);
       setResult(null);
       setError("");
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -69,30 +75,96 @@ const ImageEnhance = () => {
   const toggleFace = () => setFaceCorrection((prev) => !prev);
   const toggleNoise = () => setNoiseReduction((prev) => !prev);
 
-  const handleEnhance = () => {
+  const handleEnhance = async () => {
     if (!canEnhance) {
       setError("Hãy tải ảnh và chọn tỷ lệ upscale trước.");
       return;
     }
+
     setProcessing(true);
+    setProcessingStatus("Đang chuẩn bị...");
     setResult(null);
     setSliderPercent(50);
-    const processingTime = upscale === "4x" ? 3800 : 2400;
-    setTimeout(() => {
+    setError("");
+
+    try {
+      // Step 1: Upload image to file service first
+      setProcessingStatus("Đang upload ảnh...");
+
+      let apiImageUrl;
+      try {
+        const uploadResult = await communicationApi.uploadChatImage(uploadedFile);
+        apiImageUrl = uploadResult?.result?.image || uploadResult?.result?.url || uploadResult?.url || uploadResult?.image;
+
+        if (!apiImageUrl) {
+          throw new Error("Không nhận được URL từ server");
+        }
+      } catch (uploadErr) {
+        console.error("Upload error:", uploadErr);
+        setError("Không thể upload ảnh. Vui lòng thử lại.");
+        setProcessing(false);
+        return;
+      }
+
+      // Determine flavor based on options
+      let flavor = "photo"; // default
+      if (noiseReduction) {
+        flavor = "photo_denoiser";
+      } else if (upscale === "4x") {
+        flavor = "sublime"; // sublime for high quality 4x
+      }
+
+      // Step 2: Call upscale API
+      setProcessingStatus("Đang gửi yêu cầu upscale...");
+      const upscaleResult = await upscaleImage({
+        imageUrl: apiImageUrl,
+        flavor: flavor,
+      });
+
+      if (!upscaleResult.success) {
+        throw new Error(upscaleResult.error || "Upscale failed");
+      }
+
+      // Step 3: Poll for completion
+      setProcessingStatus("Đang xử lý AI...");
+      const taskId = upscaleResult.taskId;
+
+      const pollResult = await pollTaskStatus(
+        taskId,
+        "v1/features/upscale",
+        (status, attempt) => {
+          setProcessingStatus(`Đang xử lý... (${attempt}/60)`);
+        },
+        60,
+        3000
+      );
+
+      if (!pollResult.success) {
+        throw new Error(pollResult.error || "Processing failed");
+      }
+
+      // Step 4: Display result
+      const enhancedImageUrl = pollResult.imageUrl || pollResult.data?.uploaded_urls?.[0];
+
       const stats = {
-        time: upscale === "4x" ? "3.8s" : "2.4s",
-        size: upscale === "4x" ? "4K (3840x3840)" : "2K (1920x1920)",
-        quality:
-          faceCorrection || noiseReduction ? "+45% Quality" : "+40% Quality",
+        time: "Processing complete",
+        size: upscale === "4x" ? "4x Enhanced" : "2x Enhanced",
+        quality: faceCorrection || noiseReduction ? "+45% Quality" : "+40% Quality",
       };
+
       setResult({
         before: uploadedImage,
-        after:
-          "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1024&h=1024&fit=crop",
+        after: enhancedImageUrl || uploadedImage,
         stats,
       });
+
+    } catch (err) {
+      console.error("Enhance error:", err);
+      setError(`Lỗi: ${err.message}. Vui lòng thử lại.`);
+    } finally {
       setProcessing(false);
-    }, processingTime);
+      setProcessingStatus("");
+    }
   };
 
   const handleDownload = () => {
@@ -159,11 +231,10 @@ const ImageEnhance = () => {
           <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
             <h2 className="text-lg font-bold mb-4">Upload Original Image</h2>
             <div
-              className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-colors ${
-                dragOver
-                  ? "border-blue-300 bg-blue-50"
-                  : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
-              }`}
+              className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-colors ${dragOver
+                ? "border-blue-300 bg-blue-50"
+                : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+                }`}
               onDragOver={(event) => {
                 event.preventDefault();
                 setDragOver(true);
@@ -223,18 +294,16 @@ const ImageEnhance = () => {
                   key={factor}
                   type="button"
                   onClick={() => toggleUpscale(factor)}
-                  className={`w-full text-left p-4 border-2 rounded-2xl flex items-center gap-3 transition-colors ${
-                    upscale === factor
-                      ? "border-black bg-gray-50"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
+                  className={`w-full text-left p-4 border-2 rounded-2xl flex items-center gap-3 transition-colors ${upscale === factor
+                    ? "border-black bg-gray-50"
+                    : "border-gray-200 hover:border-gray-300"
+                    }`}
                 >
                   <span
-                    className={`w-5 h-5 rounded-full border-2 ${
-                      upscale === factor
-                        ? "border-black bg-black"
-                        : "border-gray-400"
-                    }`}
+                    className={`w-5 h-5 rounded-full border-2 ${upscale === factor
+                      ? "border-black bg-black"
+                      : "border-gray-400"
+                      }`}
                   />
                   <span className="font-semibold">{factor} Upscale</span>
                 </button>
@@ -269,14 +338,12 @@ const ImageEnhance = () => {
                 <button
                   type="button"
                   onClick={option.toggle}
-                  className={`relative inline-flex items-center h-7 w-12 rounded-full transition-colors ${
-                    option.value ? "bg-emerald-500" : "bg-gray-300"
-                  }`}
+                  className={`relative inline-flex items-center h-7 w-12 rounded-full transition-colors ${option.value ? "bg-emerald-500" : "bg-gray-300"
+                    }`}
                 >
                   <span
-                    className={`inline-block h-5 w-5 bg-white rounded-full transform transition-transform ${
-                      option.value ? "translate-x-5" : "translate-x-1"
-                    }`}
+                    className={`inline-block h-5 w-5 bg-white rounded-full transform transition-transform ${option.value ? "translate-x-5" : "translate-x-1"
+                      }`}
                   />
                 </button>
               </div>
@@ -305,9 +372,9 @@ const ImageEnhance = () => {
               <div className="aspect-square bg-gray-50 rounded-2xl flex items-center justify-center">
                 <div className="text-center">
                   <div className="w-16 h-16 border-4 border-gray-200 border-t-black rounded-full animate-spin mx-auto mb-4" />
-                  <p className="text-gray-700 font-semibold">Processing...</p>
+                  <p className="text-gray-700 font-semibold">Đang xử lý...</p>
                   <p className="text-sm text-gray-500">
-                    This may take a moment
+                    {processingStatus || "Vui lòng chờ..."}
                   </p>
                 </div>
               </div>
