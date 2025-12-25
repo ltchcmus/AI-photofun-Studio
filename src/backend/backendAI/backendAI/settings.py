@@ -33,7 +33,10 @@ SECRET_KEY = (
 )
 
 DEBUG = env_bool('DJANGO_DEBUG', True)
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',')
+
+# Default allowed hosts include production domains
+_default_hosts = 'localhost,127.0.0.1,0.0.0.0,nmcnpm-api-ai.lethanhcong.site,nmcnpm.lethanhcong.site'
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', _default_hosts).split(',')
 
 # URL Configuration
 APPEND_SLASH = True  # Auto-redirect URLs without trailing slash to with trailing slash
