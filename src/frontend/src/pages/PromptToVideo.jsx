@@ -12,8 +12,8 @@ const PROMPT_TO_VIDEO_MODELS = [
     { value: "wan2.1-t2v-turbo", label: "wan2.1-t2v-turbo", description: "Turbo - nhanh nhất" },
 ];
 
-// AI Backend URL
-const AI_BACKEND_URL = "http://localhost:9999";
+// AI Backend URL - use environment variable for production
+const AI_BACKEND_URL = import.meta.env.VITE_AI_API_URL || "http://localhost:9999";
 
 const PromptToVideo = () => {
     const navigate = useNavigate();
