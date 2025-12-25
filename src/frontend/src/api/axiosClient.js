@@ -1,7 +1,10 @@
 import axios from "axios";
 
+// Use environment variable for production, fallback to relative URL for dev
+const baseURL = import.meta.env.VITE_API_GATEWAY || "";
+
 const axiosClient = axios.create({
-  baseURL: "", // Use relative URL to leverage Vite proxy
+  baseURL: baseURL,
   headers: {
     "Content-Type": "application/json",
   },
