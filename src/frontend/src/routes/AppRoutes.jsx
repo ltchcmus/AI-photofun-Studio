@@ -45,6 +45,17 @@ const RequireAuth = ({ children }) => {
   return children;
 };
 
+// Redirect authenticated users away from login/register pages
+const RedirectIfAuthenticated = ({ children }) => {
+  const { isAuthenticated } = useAuth();
+
+  if (isAuthenticated) {
+    return <Navigate to="/home" replace />;
+  }
+
+  return children;
+};
+
 function AppRoutes() {
   const { loading } = useAuthContext();
 
@@ -54,8 +65,8 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/login" element={<RedirectIfAuthenticated><LoginPage /></RedirectIfAuthenticated>} />
+      <Route path="/register" element={<RedirectIfAuthenticated><RegisterPage /></RedirectIfAuthenticated>} />
       <Route path="/verify-email" element={<VerifyEmailPage />} />
       <Route path="/google-loading" element={<GoogleLoadingPage />} />
       <Route path="/failure" element={<FailurePage />} />
