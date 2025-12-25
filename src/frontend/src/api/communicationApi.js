@@ -98,7 +98,7 @@ export const communicationApi = {
     return response.json();
   },
 
-  // Video Upload - Via Vite proxy to bypass CORS
+  // Video Upload - Production uses VITE_FILE_UPLOAD_URL, dev uses Vite proxy
   uploadChatVideo: async (file) => {
     const formData = new FormData();
     const videoId = `video_${Date.now()}_${Math.random()
@@ -107,6 +107,7 @@ export const communicationApi = {
     formData.append("id", videoId);
     formData.append("video", file);
 
+    console.log("📤 Uploading video to file service...");
     console.log("📤 Uploading video:", {
       id: videoId,
       fileName: file.name,
@@ -114,14 +115,16 @@ export const communicationApi = {
       type: file.type,
     });
 
-    // Use Vite proxy: /api/file-service/api/v1/file/uploads-video-file -> file-service-cdal.onrender.com/api/v1/file/uploads-video-file
-    const response = await fetch(
-      "/api/file-service/api/v1/file/uploads-video-file",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    // Production: VITE_FILE_UPLOAD_URL/api/v1/file/uploads-video-file
+    // Dev: /api/file-service/api/v1/file/uploads-video-file (Vite proxy)
+    const uploadUrl = FILE_UPLOAD_BASE_URL
+      ? `${FILE_UPLOAD_BASE_URL}/api/v1/file/uploads-video-file`
+      : "/api/file-service/api/v1/file/uploads-video-file";
+
+    const response = await fetch(uploadUrl, {
+      method: "POST",
+      body: formData,
+    });
 
     const responseData = await response.json();
     console.log("📥 Upload response:", response.status, responseData);
