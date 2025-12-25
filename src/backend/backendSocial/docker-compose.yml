@@ -14,6 +14,11 @@ services:
       DATABASE_USERNAME: postgres.noyltxzqpksuzxmjonkm
       DATABASE_PASSWORD: Cong2642005@@
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      COOKIE_SAME_SITE: ${COOKIE_SAME_SITE:-Lax}
+      REDIRECT_AFTER_LOGIN_GOOGLE_FRONTEND: ${REDIRECT_AFTER_LOGIN_GOOGLE_FRONTEND:-http://localhost:5173/google-loading}
+      REDIRECT_AFTER_LOGIN_GOOGLE_FRONTEND_FAILURE: ${REDIRECT_AFTER_LOGIN_GOOGLE_FRONTEND_FAILURE:-http://localhost:5173/failure}
+      REDIRECT_URI: ${REDIRECT_URI:-http://localhost:5173/google-loading}
     depends_on:
       - profile-service
       - post-service
@@ -110,6 +115,7 @@ services:
       COMMENT_SERVICE_URL: http://comments-service:8003
       COMMUNICATION_SERVICE_URL: http://communication-service:8085
       CONFIG_HTTP_IDENTITY: http://identity-service:8000/identity
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173,http://localhost:3000}
     depends_on:
       - identity-service
       - profile-service

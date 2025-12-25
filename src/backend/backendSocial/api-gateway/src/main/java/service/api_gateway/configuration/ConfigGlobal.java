@@ -18,6 +18,8 @@ import service.api_gateway.repository.http.HttpClientIdentity;
 public class ConfigGlobal {
 
   @Value("${config.http.identity}") String identityServiceUrl;
+  @Value("${cors.allowed.origins:http://localhost:5173,http://localhost:3000}")
+  String allowedOrigins;
 
   @Bean
   @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -26,8 +28,13 @@ public class ConfigGlobal {
         new UrlBasedCorsConfigurationSource();
 
     CorsConfiguration config = new CorsConfiguration();
-    config.addAllowedOrigin("http://localhost:5173");
-    config.addAllowedOrigin("http://localhost:3000");
+
+    // Add allowed origins from environment variable or default to localhost
+    String[] origins = allowedOrigins.split(",");
+    for (String origin : origins) {
+      config.addAllowedOrigin(origin.trim());
+    }
+
     config.setAllowCredentials(true);
     config.addAllowedHeader("*");
     config.addAllowedMethod("*");
