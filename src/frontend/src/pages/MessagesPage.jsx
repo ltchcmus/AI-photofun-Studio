@@ -666,12 +666,10 @@ const MessagesPage = () => {
 
   // Auto-select conversation based on URL param or first conversation
   useEffect(() => {
-    if (conversations.length === 0) return;
-
     const userIdFromUrl = searchParams.get("userId");
 
+    // If we have a userId from URL, try to find and select that conversation
     if (userIdFromUrl) {
-      // Find and select conversation with userId from URL
       const targetConversation = conversations.find(
         (conv) => conv.userId === userIdFromUrl
       );
@@ -679,15 +677,28 @@ const MessagesPage = () => {
       if (targetConversation) {
         setActiveChat(targetConversation);
         console.log("✅ Auto-selected conversation from URL:", userIdFromUrl);
-      } else {
-        // If conversation not found, select first one
-        setActiveChat(conversations[0]);
+        // Clear the URL param after selecting
+        navigate("/messages", { replace: true });
+      } else if (conversations.length > 0) {
+        // Conversation not found but we have conversations loaded
+        // Try to add conversation and refetch
+        const addAndFetch = async () => {
+          try {
+            console.log("🔄 Conversation not found, trying to add and refetch...");
+            await communicationApi.addConversation(userIdFromUrl);
+            await fetchConversations();
+          } catch (error) {
+            console.log("Conversation may already exist, refetching...");
+            await fetchConversations();
+          }
+        };
+        addAndFetch();
       }
-    } else if (!activeChat) {
+    } else if (!activeChat && conversations.length > 0) {
       // No URL param, select first conversation
       setActiveChat(conversations[0]);
     }
-  }, [conversations, searchParams, activeChat]);
+  }, [conversations, searchParams, activeChat, navigate, fetchConversations]);
 
   // Scroll to bottom when new messages
   useEffect(() => {
