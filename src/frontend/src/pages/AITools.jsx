@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Sparkles, Wand2, Zap, Image as ImageIcon, Sun, Maximize2 } from "lucide-react";
+import { ArrowLeft, Sparkles, Wand2, Zap, Image as ImageIcon, Sun, Maximize2, Film, Video } from "lucide-react";
 
 const CreateWithAI = () => {
   const [currentView, setCurrentView] = useState("tool-selection");
@@ -44,6 +44,18 @@ const CreateWithAI = () => {
       title: "Image Expand",
       description: "Extend image boundaries with AI-generated content",
     },
+    {
+      id: "image-to-video",
+      icon: <Film className="w-7 h-7 text-red-500" />,
+      title: "Image to Video",
+      description: "Chuyển ảnh tĩnh thành video động với AI",
+    },
+    {
+      id: "prompt-to-video",
+      icon: <Video className="w-7 h-7 text-pink-500" />,
+      title: "Prompt to Video",
+      description: "Tạo video từ mô tả văn bản với AI",
+    },
   ];
 
   const handleSelectTool = (tool) => {
@@ -69,6 +81,14 @@ const CreateWithAI = () => {
     }
     if (tool.id === "expand") {
       navigate("/image-expand");
+      return;
+    }
+    if (tool.id === "image-to-video") {
+      navigate("/image-to-video");
+      return;
+    }
+    if (tool.id === "prompt-to-video") {
+      navigate("/prompt-to-video");
       return;
     }
     setSelectedTool(tool);

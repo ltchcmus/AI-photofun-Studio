@@ -1,4 +1,5 @@
 import axios from "axios";
+import rateLimiter from "../utils/rateLimiter";
 
 const axiosClient = axios.create({
   baseURL: "", // Use relative URL to leverage Vite proxy
@@ -8,8 +9,12 @@ const axiosClient = axios.create({
   withCredentials: true,
 });
 
+// Rate limiting interceptor - 5 calls per 2 seconds
 axiosClient.interceptors.request.use(
-  (config) => {
+  async (config) => {
+    // Wait for rate limit slot
+    await rateLimiter.waitForSlot();
+
     const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

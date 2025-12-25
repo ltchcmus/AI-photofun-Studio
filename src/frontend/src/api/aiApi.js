@@ -171,28 +171,64 @@ export const removeBackground = async (imageUrl) => {
  * Upload image to get a URL (helper function)
  * For local files, we need to upload to a file service first
  * @param {File} file - The file to upload
- * @returns {Promise<string>} - The uploaded file URL
+ * @returns {Promise<object>} - Object with success and url
  */
 export const uploadImageForAI = async (file) => {
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("id", `ai_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+    formData.append("image", file);
 
     try {
-        const response = await axios.post("/api/file-upload", formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
+        const response = await fetch("/api/file-upload", {
+            method: "POST",
+            body: formData,
         });
 
-        // Adjust based on your file service response structure
-        return {
-            success: true,
-            url: response.data?.url || response.data?.file_url || response.data?.data?.url,
-        };
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Upload failed:", response.status, errorText);
+            throw new Error(`Upload failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("Upload response:", data);
+        console.log("Upload result:", data?.result);
+
+        // File service returns { code: 1000, message: '...', result: { url: '...' } }
+        // or result might directly be the URL string
+        // Cloudinary may return secure_url
+        let imageUrl = null;
+        if (data?.result) {
+            if (typeof data.result === 'string') {
+                imageUrl = data.result;
+            } else {
+                imageUrl = data.result.url || data.result.secure_url || data.result.file_url || data.result.image_url;
+            }
+        }
+        // Fallback to other common patterns
+        if (!imageUrl) {
+            imageUrl = data?.url || data?.secure_url || data?.file_url || data?.data?.url;
+        }
+
+        console.log("Extracted URL:", imageUrl);
+
+        if (imageUrl) {
+            return {
+                success: true,
+                url: imageUrl,
+            };
+        } else {
+            console.error("No URL in response:", data);
+            return {
+                success: false,
+                error: "No URL returned from server",
+            };
+        }
     } catch (err) {
+        console.error("Upload error:", err);
         return {
             success: false,
-            error: err.response?.data?.message || err.message,
+            error: err.message,
         };
     }
 };
@@ -413,6 +449,73 @@ export const expandImage = async ({
     }
 };
 
+/**
+ * Get prompt suggestions based on query
+ * @param {string} query - Search query for prompts
+ * @returns {Promise<object>} - Array of suggested prompts
+ */
+export const suggestPrompts = async (query = "") => {
+    const sessionId = getSessionId();
+
+    try {
+        const response = await aiClient.post("/v1/rec-prompt/suggest", {
+            user_id: sessionId,
+            prompt: query,
+        });
+
+        const data = response.data;
+
+        if (data.code === 1000 && data.result?.results) {
+            return {
+                success: true,
+                suggestions: data.result.results,
+                query: data.result.query,
+            };
+        } else {
+            return {
+                success: false,
+                error: data.message || "No suggestions found",
+                suggestions: [],
+            };
+        }
+    } catch (err) {
+        return {
+            success: false,
+            error: err.response?.data?.message || err.message,
+            suggestions: [],
+        };
+    }
+};
+
+/**
+ * Record a chosen prompt to improve suggestions
+ * @param {string} promptText - The prompt text that was chosen
+ * @returns {Promise<object>} - Result of recording the choice
+ */
+export const recordPromptChoice = async (promptText) => {
+    const sessionId = getSessionId();
+
+    try {
+        const response = await aiClient.post("/v1/rec-prompt/choose", {
+            user_id: sessionId,
+            prompt: promptText,
+        });
+
+        const data = response.data;
+
+        return {
+            success: data.code === 1000,
+            promptId: data.result?.prompt_id,
+            created: data.result?.created,
+        };
+    } catch (err) {
+        return {
+            success: false,
+            error: err.response?.data?.message || err.message,
+        };
+    }
+};
+
 export default {
     generateImage,
     removeBackground,
@@ -423,5 +526,6 @@ export default {
     pollTaskStatus,
     uploadImageForAI,
     getSessionId,
+    suggestPrompts,
+    recordPromptChoice,
 };
-
