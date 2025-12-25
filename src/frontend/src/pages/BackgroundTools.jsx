@@ -5,11 +5,14 @@ import {
   Download,
   Image,
   Save,
+  Share2,
   Sparkles,
   Trash2,
 } from "lucide-react";
 import { removeBackground } from "../api/aiApi";
 import { communicationApi } from "../api/communicationApi";
+import { usePosts } from "../hooks/usePosts";
+import CreatePostWidget from "../components/post/CreatePostWidget";
 
 const readFileAsDataUrl = (file) =>
   new Promise((resolve, reject) => {
@@ -83,6 +86,7 @@ const BackgroundTools = () => {
   const origInputRef = useRef(null);
   const bgInputRef = useRef(null);
   const origFileRef = useRef(null); // Store the original file for upload
+  const { createPost, currentUser } = usePosts();
 
   const [option, setOption] = useState(null); // remove | color | image
   const [color, setColor] = useState("#ffffff");
@@ -94,6 +98,7 @@ const BackgroundTools = () => {
   const [error, setError] = useState("");
   // Store the removed background image for compositing
   const [removedBgData, setRemovedBgData] = useState(null);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const handleFileSelection = useCallback(async (files, type) => {
     if (!files || !files.length) return;
@@ -215,6 +220,19 @@ const BackgroundTools = () => {
       setBgData(null);
       if (bgInputRef.current) bgInputRef.current.value = "";
     }
+  };
+
+  const handleShare = () => {
+    if (resultData) {
+      setShowShareModal(true);
+    }
+  };
+
+  const getOptionLabel = () => {
+    if (option === "remove") return "Background Removed";
+    if (option === "color") return `Background: ${color}`;
+    if (option === "image") return "Custom Background";
+    return "";
   };
 
   const optionCards = [
@@ -437,13 +455,20 @@ const BackgroundTools = () => {
           </button>
 
           {resultData && !processing && (
-            <div className="mt-4 grid grid-cols-2 gap-3">
+            <div className="mt-4 grid grid-cols-3 gap-3">
               <button
                 type="button"
                 onClick={handleDownload}
                 className="flex items-center justify-center gap-2 py-2 border border-gray-300 rounded-xl text-sm font-semibold"
               >
                 <Download className="w-4 h-4" /> Download
+              </button>
+              <button
+                type="button"
+                onClick={handleShare}
+                className="flex items-center justify-center gap-2 py-2 border border-gray-300 rounded-xl text-sm font-semibold hover:bg-gray-50"
+              >
+                <Share2 className="w-4 h-4" /> Share
               </button>
               <button
                 type="button"
@@ -465,6 +490,19 @@ const BackgroundTools = () => {
           </div>
         </section>
       </div>
+
+      {/* Share to Post Modal */}
+      {showShareModal && (
+        <CreatePostWidget
+          currentUser={currentUser}
+          onCreatePost={createPost}
+          autoOpen={true}
+          hideComposer={true}
+          initialImageUrl={resultData}
+          initialPrompt={`🖼️ Edited with AI Background Tools\n\n${getOptionLabel()}`}
+          onClose={() => setShowShareModal(false)}
+        />
+      )}
     </div>
   );
 };

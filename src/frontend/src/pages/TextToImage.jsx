@@ -2,6 +2,8 @@ import React, { useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Download, Image, Share2, Sparkles } from "lucide-react";
 import { generateImage, pollTaskStatus } from "../api/aiApi";
+import { usePosts } from "../hooks/usePosts";
+import CreatePostWidget from "../components/post/CreatePostWidget";
 
 const readFileAsDataUrl = (file) =>
   new Promise((resolve, reject) => {
@@ -14,6 +16,7 @@ const readFileAsDataUrl = (file) =>
 const TextToImage = () => {
   const navigate = useNavigate();
   const uploadInputRef = useRef(null);
+  const { createPost, currentUser } = usePosts();
 
   const [prompt, setPrompt] = useState("");
   const [uploadedImage, setUploadedImage] = useState(null);
@@ -24,6 +27,7 @@ const TextToImage = () => {
   const [taskStatus, setTaskStatus] = useState("");
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const charCount = useMemo(() => prompt.length, [prompt]);
 
@@ -146,16 +150,8 @@ const TextToImage = () => {
   };
 
   const handleShare = () => {
-    if (navigator.share && result?.imageUrl) {
-      navigator.share({
-        title: "AI Generated Image",
-        text: result.prompt,
-        url: result.imageUrl,
-      }).catch(() => { });
-    } else {
-      // Copy URL to clipboard
-      navigator.clipboard?.writeText(result?.imageUrl || "");
-      alert("Link đã được sao chép vào clipboard!");
+    if (result?.imageUrl) {
+      setShowShareModal(true);
     }
   };
 
@@ -412,6 +408,19 @@ const TextToImage = () => {
           )}
         </section>
       </div>
+
+      {/* Share to Post Modal */}
+      {showShareModal && (
+        <CreatePostWidget
+          currentUser={currentUser}
+          onCreatePost={createPost}
+          autoOpen={true}
+          hideComposer={true}
+          initialImageUrl={result?.imageUrl}
+          initialPrompt={`🎨 Created with AI Text-to-Image\n\nPrompt: ${result?.prompt || prompt}`}
+          onClose={() => setShowShareModal(false)}
+        />
+      )}
     </div>
   );
 };

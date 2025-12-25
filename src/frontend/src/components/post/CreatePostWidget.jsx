@@ -9,6 +9,10 @@ export default function CreatePostWidget({
   onCreateVideoPost,
   onNavigateAiTools,
   autoOpen = false,
+  initialImageUrl = null,
+  initialPrompt = "",
+  onClose = null,
+  hideComposer = false,
 }) {
   const [showModal, setShowModal] = useState(false);
   const [caption, setCaption] = useState("");
@@ -41,6 +45,17 @@ export default function CreatePostWidget({
     }
   }, [autoOpen]);
 
+  // Pre-fill data from AI tools
+  useEffect(() => {
+    if (initialImageUrl) {
+      setImagePreview(initialImageUrl);
+      setPostType("image");
+    }
+    if (initialPrompt) {
+      setPrompt(initialPrompt);
+    }
+  }, [initialImageUrl, initialPrompt]);
+
   const resetForm = () => {
     setCaption("");
     setPrompt("");
@@ -66,6 +81,9 @@ export default function CreatePostWidget({
   const handleClose = () => {
     setShowModal(false);
     resetForm();
+    if (onClose) {
+      onClose();
+    }
   };
 
   const handleFileChange = (event) => {
@@ -123,7 +141,8 @@ export default function CreatePostWidget({
 
   const handleSubmit = async () => {
     if (submitting) return;
-    if (!caption && !imageFile && !videoFile) {
+    // Allow post with imagePreview URL (from AI tools) even without imageFile
+    if (!caption && !imageFile && !videoFile && !imagePreview) {
       setError("Vui lòng nhập nội dung hoặc chọn ảnh/video.");
       return;
     }
@@ -135,8 +154,13 @@ export default function CreatePostWidget({
         // Create video post
         await onCreateVideoPost({ caption, prompt, video: videoFile });
       } else {
-        // Create image post
-        await onCreatePost({ caption, prompt, image: imageFile });
+        // Create image post - pass imageUrl if no file (from AI tools)
+        await onCreatePost({
+          caption,
+          prompt,
+          image: imageFile,
+          imageUrl: !imageFile && imagePreview ? imagePreview : undefined
+        });
       }
       handleClose();
     } catch (submitError) {
@@ -154,36 +178,38 @@ export default function CreatePostWidget({
 
   return (
     <>
-      <div className="flex gap-3 items-center">
-        <img
-          src={currentUser?.avatar || DEFAULT_AVATAR}
-          alt={`${displayName} avatar`}
-          className="w-12 h-12 rounded-full bg-gray-200 shrink-0"
-        />
-        <button
-          type="button"
-          onClick={handleOpen}
-          className="flex-1 text-left text-gray-500 border border-gray-200 rounded-full py-3 px-4 hover:bg-gray-50"
-        >
-          Share something inspiring...
-        </button>
-        <button
-          type="button"
-          className="p-2 -m-2 hover:bg-gray-100 rounded-full text-gray-500"
-          onClick={handleOpen}
-          title="Upload image"
-        >
-          <Image className="w-5 h-5" />
-        </button>
-        <button
-          type="button"
-          className="p-2 -m-2 hover:bg-gray-100 rounded-full text-blue-500"
-          onClick={handleOpen}
-          title="Upload video"
-        >
-          <Video className="w-5 h-5" />
-        </button>
-      </div>
+      {!hideComposer && (
+        <div className="flex gap-3 items-center">
+          <img
+            src={currentUser?.avatar || DEFAULT_AVATAR}
+            alt={`${displayName} avatar`}
+            className="w-12 h-12 rounded-full bg-gray-200 shrink-0"
+          />
+          <button
+            type="button"
+            onClick={handleOpen}
+            className="flex-1 text-left text-gray-500 border border-gray-200 rounded-full py-3 px-4 hover:bg-gray-50"
+          >
+            Share something inspiring...
+          </button>
+          <button
+            type="button"
+            className="p-2 -m-2 hover:bg-gray-100 rounded-full text-gray-500"
+            onClick={handleOpen}
+            title="Upload image"
+          >
+            <Image className="w-5 h-5" />
+          </button>
+          <button
+            type="button"
+            className="p-2 -m-2 hover:bg-gray-100 rounded-full text-blue-500"
+            onClick={handleOpen}
+            title="Upload video"
+          >
+            <Video className="w-5 h-5" />
+          </button>
+        </div>
+      )}
 
       {showModal && (
         <>

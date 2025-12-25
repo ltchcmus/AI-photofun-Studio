@@ -5,9 +5,12 @@ import {
     Download,
     Image as ImageIcon,
     Maximize2,
+    Share2,
 } from "lucide-react";
 import { expandImage, pollTaskStatus } from "../api/aiApi";
 import { communicationApi } from "../api/communicationApi";
+import { usePosts } from "../hooks/usePosts";
+import CreatePostWidget from "../components/post/CreatePostWidget";
 
 const readFileAsDataUrl = (file) =>
     new Promise((resolve, reject) => {
@@ -20,6 +23,7 @@ const readFileAsDataUrl = (file) =>
 const ImageExpand = () => {
     const navigate = useNavigate();
     const fileInputRef = useRef(null);
+    const { createPost, currentUser } = usePosts();
 
     const [uploadedImage, setUploadedImage] = useState(null);
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -33,6 +37,7 @@ const ImageExpand = () => {
     const [processingStatus, setProcessingStatus] = useState("");
     const [result, setResult] = useState(null);
     const [error, setError] = useState("");
+    const [showShareModal, setShowShareModal] = useState(false);
 
     const canExpand = useMemo(
         () => !!uploadedImage && !processing,
@@ -136,6 +141,12 @@ const ImageExpand = () => {
         link.href = result.after;
         link.download = "expanded-image.jpg";
         link.click();
+    };
+
+    const handleShare = () => {
+        if (result?.after) {
+            setShowShareModal(true);
+        }
     };
 
     return (
@@ -274,12 +285,20 @@ const ImageExpand = () => {
                         ) : result ? (
                             <>
                                 <img src={result.after} alt="Result" className="w-full rounded-xl mb-4" />
-                                <button
-                                    onClick={handleDownload}
-                                    className="w-full py-3 rounded-xl bg-black text-white font-semibold flex items-center justify-center gap-2"
-                                >
-                                    <Download className="w-4 h-4" /> Download
-                                </button>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <button
+                                        onClick={handleDownload}
+                                        className="py-3 rounded-xl bg-black text-white font-semibold flex items-center justify-center gap-2"
+                                    >
+                                        <Download className="w-4 h-4" /> Download
+                                    </button>
+                                    <button
+                                        onClick={handleShare}
+                                        className="py-3 rounded-xl border border-gray-300 font-semibold flex items-center justify-center gap-2 hover:bg-gray-50"
+                                    >
+                                        <Share2 className="w-4 h-4" /> Share
+                                    </button>
+                                </div>
                             </>
                         ) : (
                             <div className="aspect-square border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center">
@@ -289,6 +308,19 @@ const ImageExpand = () => {
                     </div>
                 </section>
             </div>
+
+            {/* Share to Post Modal */}
+            {showShareModal && (
+                <CreatePostWidget
+                    currentUser={currentUser}
+                    onCreatePost={createPost}
+                    autoOpen={true}
+                    hideComposer={true}
+                    initialImageUrl={result?.after}
+                    initialPrompt={`🔍 Image Expand\n\nExpanded: Left ${left}px, Right ${right}px, Top ${top}px, Bottom ${bottom}px`}
+                    onClose={() => setShowShareModal(false)}
+                />
+            )}
         </div>
     );
 };

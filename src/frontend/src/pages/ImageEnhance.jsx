@@ -10,10 +10,13 @@ import {
   ArrowLeft,
   Download,
   Image as ImageIcon,
+  Share2,
   Sparkles,
 } from "lucide-react";
 import { upscaleImage, pollTaskStatus } from "../api/aiApi";
 import { communicationApi } from "../api/communicationApi";
+import { usePosts } from "../hooks/usePosts";
+import CreatePostWidget from "../components/post/CreatePostWidget";
 
 const readFileAsDataUrl = (file) =>
   new Promise((resolve, reject) => {
@@ -27,6 +30,7 @@ const ImageEnhance = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const sliderRef = useRef(null);
+  const { createPost, currentUser } = usePosts();
 
   const [uploadedImage, setUploadedImage] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
@@ -40,6 +44,7 @@ const ImageEnhance = () => {
   const [error, setError] = useState("");
   const [sliderPercent, setSliderPercent] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const canEnhance = useMemo(
     () => !!uploadedImage && !!upscale && !processing,
@@ -177,6 +182,12 @@ const ImageEnhance = () => {
 
   const handleSave = () => {
     alert("Ảnh đã được lưu vào thư viện (demo)");
+  };
+
+  const handleShare = () => {
+    if (result?.after) {
+      setShowShareModal(true);
+    }
   };
 
   const resetUpload = () => {
@@ -476,6 +487,13 @@ const ImageEnhance = () => {
                 </button>
                 <button
                   type="button"
+                  onClick={handleShare}
+                  className="w-full py-3 rounded-xl border border-gray-300 font-semibold flex items-center justify-center gap-2 hover:bg-gray-50"
+                >
+                  <Share2 className="w-4 h-4" /> Share to Post
+                </button>
+                <button
+                  type="button"
                   onClick={handleSave}
                   className="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold"
                 >
@@ -496,6 +514,19 @@ const ImageEnhance = () => {
           </div>
         </section>
       </div>
+
+      {/* Share to Post Modal */}
+      {showShareModal && (
+        <CreatePostWidget
+          currentUser={currentUser}
+          onCreatePost={createPost}
+          autoOpen={true}
+          hideComposer={true}
+          initialImageUrl={result?.after}
+          initialPrompt={`✨ Enhanced with AI Image Enhance\n\nUpscale: ${upscale}${faceCorrection ? "\nFace Correction: On" : ""}${noiseReduction ? "\nNoise Reduction: On" : ""}`}
+          onClose={() => setShowShareModal(false)}
+        />
+      )}
     </div>
   );
 };

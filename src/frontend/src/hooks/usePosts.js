@@ -278,15 +278,70 @@ export const usePosts = (options = {}) => {
     });
   }, [authUser]);
 
+  // Helper function to compress image
+  const compressImage = async (blob, maxWidth = 1920, quality = 0.8) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let { width, height } = img;
+
+        // Scale down if larger than maxWidth
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (compressedBlob) => resolve(compressedBlob),
+          "image/jpeg",
+          quality
+        );
+      };
+      img.onerror = () => resolve(blob); // Fallback to original if error
+      img.src = URL.createObjectURL(blob);
+    });
+  };
+
   const createPost = useCallback(
-    async ({ caption, prompt, image }) => {
+    async ({ caption, prompt, image, imageUrl }) => {
       const formData = new FormData();
       formData.append("caption", caption || "");
       if (prompt?.trim()) {
         formData.append("prompt", prompt.trim());
       }
+
+      // If we have an image file, use it directly
       if (image) {
         formData.append("image", image);
+      }
+      // If we have imageUrl (from AI tools), download, compress, and convert to File
+      else if (imageUrl) {
+        try {
+          console.log("📥 Downloading image from URL for post...");
+          const response = await fetch(imageUrl);
+          let blob = await response.blob();
+
+          // Compress image if it's too large (> 2MB)
+          if (blob.size > 2 * 1024 * 1024) {
+            console.log(`📦 Compressing image (${(blob.size / 1024 / 1024).toFixed(2)}MB)...`);
+            blob = await compressImage(blob, 1920, 0.75);
+            console.log(`✅ Compressed to ${(blob.size / 1024 / 1024).toFixed(2)}MB`);
+          }
+
+          const fileName = `ai-generated-${Date.now()}.jpg`;
+          const file = new File([blob], fileName, { type: "image/jpeg" });
+          formData.append("image", file);
+          console.log("✅ Image ready for upload");
+        } catch (downloadError) {
+          console.error("Failed to download image from URL:", downloadError);
+          throw new Error("Không thể tải ảnh từ URL. Vui lòng thử lại.");
+        }
       }
 
       const response = await postApi.createPost(formData);
