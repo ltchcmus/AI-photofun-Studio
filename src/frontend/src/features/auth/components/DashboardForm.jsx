@@ -31,7 +31,6 @@ export default function DashboardForm() {
               For you
               <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-black rounded-full" />
             </button>
-
           </div>
         </div>
       </header>
@@ -47,23 +46,17 @@ export default function DashboardForm() {
           />
         </section>
 
-        <section>
-          {loading && (
-            <div className="border border-gray-200 bg-gray-50 text-gray-600 text-sm rounded-xl px-4 py-3 mb-4">
-              Đang tải bài viết...
-            </div>
-          )}
+        <section className="pt-4">
           {error && (
             <div className="border border-red-200 bg-red-50 text-red-700 text-sm rounded-xl px-4 py-3 mb-4">
               {error}
             </div>
           )}
-          {!loading && !error && posts.length === 0 && (
+          {!loading && posts.length === 0 && (
             <div className="border border-gray-200 bg-gray-50 text-gray-600 text-sm rounded-xl px-4 py-5 text-center">
               Chưa có bài viết nào. Hãy là người đầu tiên chia sẻ cảm hứng!
             </div>
           )}
-
           <PostList
             posts={posts}
             userCache={userCache}
@@ -75,3 +68,4 @@ export default function DashboardForm() {
     </div>
   );
 }
+
