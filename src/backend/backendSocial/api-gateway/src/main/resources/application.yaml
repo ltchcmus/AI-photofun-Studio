@@ -22,8 +22,34 @@ spring:
       max-request-size: 10MB
   cloud:
     gateway:
+      # CORS Configuration - THIS IS THE KEY!
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          "[/**]":
+            allowedOriginPatterns:
+              - "http://localhost:*"
+              - "https://nmcnpm.lethanhcong.site:*"
+              - "https://nmcnpm-api.lethanhcong.site:*"
+              - "https://*.lethanhcong.site:*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowedHeaders: "*"
+            exposedHeaders:
+              - X-Access-Token
+              - Authorization
+              - Content-Type
+              - Set-Cookie
+            allowCredentials: true
+            maxAge: 3600
       default-filters:
         - PreserveHostHeader
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
       routes:
         - id: identity-service
           uri: ${IDENTITY_SERVICE_URL:http://localhost:8000}

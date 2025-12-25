@@ -18,8 +18,6 @@ import service.api_gateway.repository.http.HttpClientIdentity;
 public class ConfigGlobal {
 
   @Value("${config.http.identity}") String identityServiceUrl;
-  @Value("${cors.allowed.origins:http://localhost:5173,http://localhost:3000}")
-  String allowedOrigins;
 
   @Bean
   @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -29,23 +27,17 @@ public class ConfigGlobal {
 
     CorsConfiguration config = new CorsConfiguration();
 
-    // Add allowed origins from environment variable or default to localhost
-    System.out.println("🔧 CORS Configuration:");
-    System.out.println("   Raw allowedOrigins: " + allowedOrigins);
-
-    String[] origins = allowedOrigins.split(",");
-    for (String origin : origins) {
-      String trimmedOrigin = origin.trim();
-      config.addAllowedOrigin(trimmedOrigin);
-      System.out.println("   ✅ Added origin: " + trimmedOrigin);
-    }
-
+    // Allow ALL origins - same as backendAI
+    config.addAllowedOriginPattern("*");
     config.setAllowCredentials(true);
     config.addAllowedHeader("*");
     config.addAllowedMethod("*");
     config.addExposedHeader("X-Access-Token");
     config.addExposedHeader("Authorization");
     config.addExposedHeader("Content-Type");
+    config.setMaxAge(3600L);
+
+    System.out.println("✅ CORS: Allowing ALL origins with credentials");
 
     source.registerCorsConfiguration("/**", config);
 
