@@ -30,9 +30,14 @@ public class ConfigGlobal {
     CorsConfiguration config = new CorsConfiguration();
 
     // Add allowed origins from environment variable or default to localhost
+    System.out.println("🔧 CORS Configuration:");
+    System.out.println("   Raw allowedOrigins: " + allowedOrigins);
+
     String[] origins = allowedOrigins.split(",");
     for (String origin : origins) {
-      config.addAllowedOrigin(origin.trim());
+      String trimmedOrigin = origin.trim();
+      config.addAllowedOrigin(trimmedOrigin);
+      System.out.println("   ✅ Added origin: " + trimmedOrigin);
     }
 
     config.setAllowCredentials(true);
