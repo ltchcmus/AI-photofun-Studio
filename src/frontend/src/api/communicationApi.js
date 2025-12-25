@@ -2,6 +2,9 @@ import axiosClient from "./axiosClient";
 
 const BASE_URL = "/api/v1/communications";
 
+// File upload URL: production uses VITE_FILE_UPLOAD_URL, dev uses Vite proxy
+const FILE_UPLOAD_BASE_URL = import.meta.env.VITE_FILE_UPLOAD_URL || "";
+
 export const communicationApi = {
   // Conversations
   getMyConversations: () =>
@@ -32,8 +35,7 @@ export const communicationApi = {
       params: { page, size },
     }),
 
-  getGroupDetail: (groupId) =>
-    axiosClient.get(`${BASE_URL}/groups/${groupId}`),
+  getGroupDetail: (groupId) => axiosClient.get(`${BASE_URL}/groups/${groupId}`),
 
   updateGroup: (groupId, data) =>
     axiosClient.patch(`${BASE_URL}/groups/${groupId}`, data),
@@ -69,14 +71,22 @@ export const communicationApi = {
   getGroupMembers: (groupId) =>
     axiosClient.get(`${BASE_URL}/groups/${groupId}/members`),
 
-  // File Upload - Via Vite proxy to bypass CORS
+  // File Upload - Production uses VITE_FILE_UPLOAD_URL, dev uses Vite proxy
   uploadChatImage: async (file) => {
     const formData = new FormData();
-    formData.append("id", `chat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+    formData.append(
+      "id",
+      `chat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    );
     formData.append("image", file);
 
-    // Use Vite proxy: /api/file-upload -> file-service-cdal.onrender.com
-    const response = await fetch("/api/file-upload", {
+    // Production: VITE_FILE_UPLOAD_URL/api/v1/file/uploads
+    // Dev: /api/file-upload (Vite proxy rewrites to file-service-cdal.onrender.com/api/v1/file/uploads)
+    const uploadUrl = FILE_UPLOAD_BASE_URL
+      ? `${FILE_UPLOAD_BASE_URL}/api/v1/file/uploads`
+      : "/api/file-upload";
+
+    const response = await fetch(uploadUrl, {
       method: "POST",
       body: formData,
     });
@@ -91,17 +101,27 @@ export const communicationApi = {
   // Video Upload - Via Vite proxy to bypass CORS
   uploadChatVideo: async (file) => {
     const formData = new FormData();
-    const videoId = `video_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const videoId = `video_${Date.now()}_${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
     formData.append("id", videoId);
     formData.append("video", file);
 
-    console.log("📤 Uploading video:", { id: videoId, fileName: file.name, size: file.size, type: file.type });
+    console.log("📤 Uploading video:", {
+      id: videoId,
+      fileName: file.name,
+      size: file.size,
+      type: file.type,
+    });
 
     // Use Vite proxy: /api/file-service/api/v1/file/uploads-video-file -> file-service-cdal.onrender.com/api/v1/file/uploads-video-file
-    const response = await fetch("/api/file-service/api/v1/file/uploads-video-file", {
-      method: "POST",
-      body: formData,
-    });
+    const response = await fetch(
+      "/api/file-service/api/v1/file/uploads-video-file",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
 
     const responseData = await response.json();
     console.log("📥 Upload response:", response.status, responseData);

@@ -3,6 +3,9 @@ import axios from "axios";
 // Base URL for AI backend - use environment variable for production
 const AI_BASE_URL = import.meta.env.VITE_AI_API_URL || "http://localhost:9999";
 
+// File upload URL: production uses VITE_FILE_UPLOAD_URL, dev uses Vite proxy
+const FILE_UPLOAD_BASE_URL = import.meta.env.VITE_FILE_UPLOAD_URL || "";
+
 // Create a dedicated axios instance for AI API
 const aiClient = axios.create({
   baseURL: AI_BASE_URL,
@@ -182,8 +185,14 @@ export const uploadImageForAI = async (file) => {
   const formData = new FormData();
   formData.append("file", file);
 
+  // Production: VITE_FILE_UPLOAD_URL/api/v1/file/uploads
+  // Dev: /api/file-upload (Vite proxy rewrites to file-service-cdal.onrender.com/api/v1/file/uploads)
+  const uploadUrl = FILE_UPLOAD_BASE_URL
+    ? `${FILE_UPLOAD_BASE_URL}/api/v1/file/uploads`
+    : "/api/file-upload";
+
   try {
-    const response = await axios.post("/api/file-upload", formData, {
+    const response = await axios.post(uploadUrl, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
