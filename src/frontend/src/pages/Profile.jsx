@@ -34,13 +34,6 @@ const PROFILE_DEFAULTS = {
 
 const profileStats = [{ label: "Images Created", value: "128" }];
 
-const recentWorks = [
-  "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&h=600&fit=crop",
-  "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&h=600&fit=crop",
-  "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=600&h=600&fit=crop",
-  "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&h=600&fit=crop",
-];
-
 const Profile = () => {
   const navigate = useNavigate();
   const [emailVerified, setEmailVerified] = useState(false);
@@ -325,33 +318,6 @@ const Profile = () => {
               </div>
             );
           })}
-        </div>
-      </section>
-
-      <section className="bg-white border border-gray-200 rounded-2xl p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold">Recent Works</h2>
-          <button
-            type="button"
-            className="text-sm font-semibold text-blue-600 hover:text-blue-700"
-          >
-            View all
-          </button>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {recentWorks.map((url, index) => (
-            <div
-              key={url}
-              className="group relative overflow-hidden rounded-xl aspect-square"
-            >
-              <img
-                src={url}
-                alt={`Recent work ${index + 1}`}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors" />
-            </div>
-          ))}
         </div>
       </section>
 
