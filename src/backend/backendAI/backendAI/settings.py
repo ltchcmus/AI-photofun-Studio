@@ -32,7 +32,23 @@ SECRET_KEY = os.environ.get(
 )
 
 DEBUG = env_bool('DJANGO_DEBUG', True)
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',')
+
+# ALLOWED_HOSTS: support comma-separated list from env, fallback to '*' for dev
+_allowed_hosts_env = os.environ.get('DJANGO_ALLOWED_HOSTS', '')
+if _allowed_hosts_env:
+    ALLOWED_HOSTS = [h.strip() for h in _allowed_hosts_env.split(',') if h.strip()]
+else:
+    ALLOWED_HOSTS = ['*']  # Allow all in development
+
+# Always include these production domains
+PRODUCTION_HOSTS = [
+    'nmcnpm-api-ai.lethanhcong.site',
+    'localhost',
+    '127.0.0.1',
+]
+for host in PRODUCTION_HOSTS:
+    if host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(host)
 
 # URL Configuration
 APPEND_SLASH = True  # Auto-redirect URLs without trailing slash to with trailing slash
@@ -125,8 +141,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # INTERNATIONALIZATION
 # ============================================================================
 
-LANGUAGE_CODE = os.environ.get('LANGUAGE_CODE', 'en-us')
-TIME_ZONE = os.environ.get('TIME_ZONE', 'UTC')
+LANGUAGE_CODE = os.environ.get('LANGUAGE_CODE', 'en-us') or 'en-us'
+
+# TIME_ZONE must be a valid timezone string, fallback to UTC if empty/invalid
+_time_zone_env = os.environ.get('TIME_ZONE', '').strip()
+TIME_ZONE = _time_zone_env if _time_zone_env else 'UTC'
+
 USE_I18N = env_bool('USE_I18N', True)
 USE_TZ = env_bool('USE_TZ', True)
 
