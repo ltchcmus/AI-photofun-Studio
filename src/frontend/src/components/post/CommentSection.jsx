@@ -73,7 +73,9 @@ const parseApiData = (response) =>
   response?.data ||
   [];
 
-const SOCKET_URL = "ws://localhost:8003/ws";
+// WebSocket URL cho comment service (cổng 8003 local, production dùng VITE_SOCKET_COMMENT_URL + /ws)
+const WS_BASE = import.meta.env.VITE_SOCKET_COMMENT_URL || "http://localhost:8003";
+const SOCKET_URL = WS_BASE.replace(/^http/, "ws") + "/ws";
 
 export default function CommentSection({ postId }) {
   const { user } = useAuth();
