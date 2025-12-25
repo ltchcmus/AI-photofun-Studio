@@ -151,6 +151,14 @@ jobs:
             sudo docker-compose down || true
             sudo docker-compose up -d --build --force-recreate
 
+            echo "⏳ Waiting for backendAI services to be healthy..."
+            sleep 20
+
+            echo "📥 Importing prompts data into MongoDB..."
+            sudo docker exec backendai_api python import_prompts.py --file prompts.txt || echo "⚠️ Prompts import failed or already imported"
+
+            sudo docker-compose ps
+            sudo docker-compose logs --tail=30 backendAI
 
             cd $WORKSPACE/src/frontend
             rm -rf dist node_modules/.vite
