@@ -8,21 +8,21 @@ const FILE_UPLOAD_BASE_URL = import.meta.env.VITE_FILE_UPLOAD_URL || "";
 
 // Create a dedicated axios instance for AI API
 const aiClient = axios.create({
-    baseURL: AI_BASE_URL,
-    headers: {
-        "Content-Type": "application/json",
-    },
+  baseURL: AI_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 // Generate a unique session ID
 const getSessionId = () => {
-    let sessionId = localStorage.getItem("ai_session_id");
-    if (!sessionId) {
-        sessionId =
-            "web_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem("ai_session_id", sessionId);
-    }
-    return sessionId;
+  let sessionId = localStorage.getItem("ai_session_id");
+  if (!sessionId) {
+    sessionId =
+      "web_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem("ai_session_id", sessionId);
+  }
+  return sessionId;
 };
 
 /**
@@ -35,50 +35,50 @@ const getSessionId = () => {
  * @returns {Promise<object>} - The final result
  */
 export const pollTaskStatus = async (
-    taskId,
-    endpoint,
-    onStatusUpdate = () => { },
-    maxAttempts = 60,
-    interval = 3000
+  taskId,
+  endpoint,
+  onStatusUpdate = () => {},
+  maxAttempts = 60,
+  interval = 3000
 ) => {
-    const sessionId = getSessionId();
+  const sessionId = getSessionId();
 
-    for (let i = 1; i <= maxAttempts; i++) {
-        try {
-            const response = await aiClient.get(
-                `/${endpoint}/status/${taskId}/?user_id=${sessionId}`
-            );
-            const data = response.data;
-            const status = data.result?.status;
+  for (let i = 1; i <= maxAttempts; i++) {
+    try {
+      const response = await aiClient.get(
+        `/${endpoint}/status/${taskId}/?user_id=${sessionId}`
+      );
+      const data = response.data;
+      const status = data.result?.status;
 
-            onStatusUpdate(status, i, data);
+      onStatusUpdate(status, i, data);
 
-            if (status === "COMPLETED") {
-                return {
-                    success: true,
-                    imageUrl: data.result?.image_url || data.result?.output_url,
-                    data: data.result,
-                };
-            }
+      if (status === "COMPLETED") {
+        return {
+          success: true,
+          imageUrl: data.result?.image_url || data.result?.output_url,
+          data: data.result,
+        };
+      }
 
-            if (status === "FAILED") {
-                return {
-                    success: false,
-                    error: data.result?.error || "Task failed",
-                    data: data.result,
-                };
-            }
-        } catch (err) {
-            console.error(`Polling error (attempt ${i}):`, err.message);
-        }
-
-        await new Promise((resolve) => setTimeout(resolve, interval));
+      if (status === "FAILED") {
+        return {
+          success: false,
+          error: data.result?.error || "Task failed",
+          data: data.result,
+        };
+      }
+    } catch (err) {
+      console.error(`Polling error (attempt ${i}):`, err.message);
     }
 
-    return {
-        success: false,
-        error: "Timeout waiting for task completion",
-    };
+    await new Promise((resolve) => setTimeout(resolve, interval));
+  }
+
+  return {
+    success: false,
+    error: "Timeout waiting for task completion",
+  };
 };
 
 /**
@@ -90,43 +90,43 @@ export const pollTaskStatus = async (
  * @returns {Promise<object>} - Task ID and initial response
  */
 export const generateImage = async ({
-    prompt,
-    model = "realism",
-    aspectRatio = "1:1",
+  prompt,
+  model = "realism",
+  aspectRatio = "1:1",
 }) => {
-    const sessionId = getSessionId();
+  const sessionId = getSessionId();
 
-    try {
-        const response = await aiClient.post("/v1/features/image-generation/", {
-            user_id: sessionId,
-            prompt,
-            model,
-            aspect_ratio: aspectRatio,
-            session_id: sessionId,
-        });
+  try {
+    const response = await aiClient.post("/v1/features/image-generation/", {
+      user_id: sessionId,
+      prompt,
+      model,
+      aspect_ratio: aspectRatio,
+      session_id: sessionId,
+    });
 
-        const data = response.data;
-        const taskId = data.result?.task_id;
+    const data = response.data;
+    const taskId = data.result?.task_id;
 
-        if (taskId) {
-            return {
-                success: true,
-                taskId,
-                data: data.result,
-            };
-        } else {
-            return {
-                success: false,
-                error: "No task ID received",
-                data: data.result,
-            };
-        }
-    } catch (err) {
-        return {
-            success: false,
-            error: err.response?.data?.message || err.message,
-        };
+    if (taskId) {
+      return {
+        success: true,
+        taskId,
+        data: data.result,
+      };
+    } else {
+      return {
+        success: false,
+        error: "No task ID received",
+        data: data.result,
+      };
     }
+  } catch (err) {
+    return {
+      success: false,
+      error: err.response?.data?.message || err.message,
+    };
+  }
 };
 
 /**
@@ -135,44 +135,44 @@ export const generateImage = async ({
  * @returns {Promise<object>} - Result with processed image URL
  */
 export const removeBackground = async (imageUrl) => {
-    const sessionId = getSessionId();
+  const sessionId = getSessionId();
 
-    try {
-        const response = await aiClient.post("/v1/features/remove-background/", {
-            user_id: sessionId,
-            image_url: imageUrl,
-            session_id: sessionId,
-        });
+  try {
+    const response = await aiClient.post("/v1/features/remove-background/", {
+      user_id: sessionId,
+      image_url: imageUrl,
+      session_id: sessionId,
+    });
 
-        const data = response.data;
+    const data = response.data;
 
-        if (data.result?.image_url) {
-            return {
-                success: true,
-                imageUrl: data.result.image_url,
-                data: data.result,
-            };
-        } else if (data.result?.task_id) {
-            // If it returns a task ID, we need to poll
-            return {
-                success: true,
-                taskId: data.result.task_id,
-                needsPolling: true,
-                data: data.result,
-            };
-        } else {
-            return {
-                success: false,
-                error: "No result received",
-                data: data.result,
-            };
-        }
-    } catch (err) {
-        return {
-            success: false,
-            error: err.response?.data?.message || err.message,
-        };
+    if (data.result?.image_url) {
+      return {
+        success: true,
+        imageUrl: data.result.image_url,
+        data: data.result,
+      };
+    } else if (data.result?.task_id) {
+      // If it returns a task ID, we need to poll
+      return {
+        success: true,
+        taskId: data.result.task_id,
+        needsPolling: true,
+        data: data.result,
+      };
+    } else {
+      return {
+        success: false,
+        error: "No result received",
+        data: data.result,
+      };
     }
+  } catch (err) {
+    return {
+      success: false,
+      error: err.response?.data?.message || err.message,
+    };
+  }
 };
 
 /**
@@ -182,33 +182,36 @@ export const removeBackground = async (imageUrl) => {
  * @returns {Promise<object>} - Object with success and url
  */
 export const uploadImageForAI = async (file) => {
-    const formData = new FormData();
-    formData.append("file", file);
+  const formData = new FormData();
+  formData.append("file", file);
 
-    // Production: VITE_FILE_UPLOAD_URL/api/v1/file/uploads
-    // Dev: /api/file-upload (Vite proxy rewrites to file-service-cdal.onrender.com/api/v1/file/uploads)
-    const uploadUrl = FILE_UPLOAD_BASE_URL
-        ? `${FILE_UPLOAD_BASE_URL}/api/v1/file/uploads`
-        : "/api/file-upload";
+  // Production: VITE_FILE_UPLOAD_URL/api/v1/file/uploads
+  // Dev: /api/file-upload (Vite proxy rewrites to file-service-cdal.onrender.com/api/v1/file/uploads)
+  const uploadUrl = FILE_UPLOAD_BASE_URL
+    ? `${FILE_UPLOAD_BASE_URL}/api/v1/file/uploads`
+    : "/api/file-upload";
 
-    try {
-        const response = await axios.post(uploadUrl, formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        });
+  try {
+    const response = await axios.post(uploadUrl, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
-        // Adjust based on your file service response structure
-        return {
-            success: true,
-            url: response.data?.url || response.data?.file_url || response.data?.data?.url,
-        };
-    } catch (err) {
-        return {
-            success: false,
-            error: err.response?.data?.message || err.message,
-        };
-    }
+    // Adjust based on your file service response structure
+    return {
+      success: true,
+      url:
+        response.data?.url ||
+        response.data?.file_url ||
+        response.data?.data?.url,
+    };
+  } catch (err) {
+    return {
+      success: false,
+      error: err.response?.data?.message || err.message,
+    };
+  }
 };
 
 /**
@@ -219,37 +222,37 @@ export const uploadImageForAI = async (file) => {
  * @returns {Promise<object>} - Task ID for polling
  */
 export const upscaleImage = async ({ imageUrl, flavor = "photo" }) => {
-    const sessionId = getSessionId();
+  const sessionId = getSessionId();
 
-    try {
-        const response = await aiClient.post("/v1/features/upscale/", {
-            user_id: sessionId,
-            image_url: imageUrl,
-            flavor: flavor,
-        });
+  try {
+    const response = await aiClient.post("/v1/features/upscale/", {
+      user_id: sessionId,
+      image_url: imageUrl,
+      flavor: flavor,
+    });
 
-        const data = response.data;
-        const taskId = data.result?.task_id;
+    const data = response.data;
+    const taskId = data.result?.task_id;
 
-        if (taskId) {
-            return {
-                success: true,
-                taskId,
-                data: data.result,
-            };
-        } else {
-            return {
-                success: false,
-                error: "No task ID received",
-                data: data.result,
-            };
-        }
-    } catch (err) {
-        return {
-            success: false,
-            error: err.response?.data?.message || err.message,
-        };
+    if (taskId) {
+      return {
+        success: true,
+        taskId,
+        data: data.result,
+      };
+    } else {
+      return {
+        success: false,
+        error: "No task ID received",
+        data: data.result,
+      };
     }
+  } catch (err) {
+    return {
+      success: false,
+      error: err.response?.data?.message || err.message,
+    };
+  }
 };
 
 /**
@@ -262,54 +265,54 @@ export const upscaleImage = async ({ imageUrl, flavor = "photo" }) => {
  * @returns {Promise<object>} - Task ID for polling
  */
 export const reimagineImage = async ({
-    imageUrl,
-    prompt = "",
-    imagination = "subtle",
-    aspectRatio = "1:1",
+  imageUrl,
+  prompt = "",
+  imagination = "subtle",
+  aspectRatio = "1:1",
 }) => {
-    const sessionId = getSessionId();
+  const sessionId = getSessionId();
 
-    try {
-        const response = await aiClient.post("/v1/features/reimagine/", {
-            user_id: sessionId,
-            image_url: imageUrl,
-            prompt: prompt,
-            imagination: imagination,
-            aspect_ratio: aspectRatio,
-        });
+  try {
+    const response = await aiClient.post("/v1/features/reimagine/", {
+      user_id: sessionId,
+      image_url: imageUrl,
+      prompt: prompt,
+      imagination: imagination,
+      aspect_ratio: aspectRatio,
+    });
 
-        const data = response.data;
-        const taskId = data.result?.task_id;
-        const imageResult = data.result?.image_url;
+    const data = response.data;
+    const taskId = data.result?.task_id;
+    const imageResult = data.result?.image_url;
 
-        if (imageResult) {
-            // Sync response
-            return {
-                success: true,
-                imageUrl: imageResult,
-                data: data.result,
-            };
-        } else if (taskId) {
-            // Async response - needs polling
-            return {
-                success: true,
-                taskId,
-                needsPolling: true,
-                data: data.result,
-            };
-        } else {
-            return {
-                success: false,
-                error: "No result received",
-                data: data.result,
-            };
-        }
-    } catch (err) {
-        return {
-            success: false,
-            error: err.response?.data?.message || err.message,
-        };
+    if (imageResult) {
+      // Sync response
+      return {
+        success: true,
+        imageUrl: imageResult,
+        data: data.result,
+      };
+    } else if (taskId) {
+      // Async response - needs polling
+      return {
+        success: true,
+        taskId,
+        needsPolling: true,
+        data: data.result,
+      };
+    } else {
+      return {
+        success: false,
+        error: "No result received",
+        data: data.result,
+      };
     }
+  } catch (err) {
+    return {
+      success: false,
+      error: err.response?.data?.message || err.message,
+    };
+  }
 };
 
 /**
@@ -323,52 +326,52 @@ export const reimagineImage = async ({
  * @returns {Promise<object>} - Task ID for polling
  */
 export const relightImage = async ({
-    imageUrl,
-    prompt,
-    style = "standard",
-    referenceImageUrl = null,
-    lightTransferStrength = 0.8,
+  imageUrl,
+  prompt,
+  style = "standard",
+  referenceImageUrl = null,
+  lightTransferStrength = 0.8,
 }) => {
-    const sessionId = getSessionId();
+  const sessionId = getSessionId();
 
-    try {
-        const body = {
-            user_id: sessionId,
-            image_url: imageUrl,
-            prompt: prompt,
-            style: style,
-        };
+  try {
+    const body = {
+      user_id: sessionId,
+      image_url: imageUrl,
+      prompt: prompt,
+      style: style,
+    };
 
-        // Add optional reference image parameters
-        if (referenceImageUrl) {
-            body.reference_image_url = referenceImageUrl;
-            body.light_transfer_strength = lightTransferStrength;
-        }
-
-        const response = await aiClient.post("/v1/features/relight/", body);
-
-        const data = response.data;
-        const taskId = data.result?.task_id;
-
-        if (taskId) {
-            return {
-                success: true,
-                taskId,
-                data: data.result,
-            };
-        } else {
-            return {
-                success: false,
-                error: "No task ID received",
-                data: data.result,
-            };
-        }
-    } catch (err) {
-        return {
-            success: false,
-            error: err.response?.data?.message || err.message,
-        };
+    // Add optional reference image parameters
+    if (referenceImageUrl) {
+      body.reference_image_url = referenceImageUrl;
+      body.light_transfer_strength = lightTransferStrength;
     }
+
+    const response = await aiClient.post("/v1/features/relight/", body);
+
+    const data = response.data;
+    const taskId = data.result?.task_id;
+
+    if (taskId) {
+      return {
+        success: true,
+        taskId,
+        data: data.result,
+      };
+    } else {
+      return {
+        success: false,
+        error: "No task ID received",
+        data: data.result,
+      };
+    }
+  } catch (err) {
+    return {
+      success: false,
+      error: err.response?.data?.message || err.message,
+    };
+  }
 };
 
 /**
@@ -383,48 +386,48 @@ export const relightImage = async ({
  * @returns {Promise<object>} - Task ID for polling
  */
 export const expandImage = async ({
-    imageUrl,
-    prompt = "",
-    left = 100,
-    right = 100,
-    top = 50,
-    bottom = 50,
+  imageUrl,
+  prompt = "",
+  left = 100,
+  right = 100,
+  top = 50,
+  bottom = 50,
 }) => {
-    const sessionId = getSessionId();
+  const sessionId = getSessionId();
 
-    try {
-        const response = await aiClient.post("/v1/features/image-expand/", {
-            user_id: sessionId,
-            image_url: imageUrl,
-            prompt: prompt,
-            left: left,
-            right: right,
-            top: top,
-            bottom: bottom,
-        });
+  try {
+    const response = await aiClient.post("/v1/features/image-expand/", {
+      user_id: sessionId,
+      image_url: imageUrl,
+      prompt: prompt,
+      left: left,
+      right: right,
+      top: top,
+      bottom: bottom,
+    });
 
-        const data = response.data;
-        const taskId = data.result?.task_id;
+    const data = response.data;
+    const taskId = data.result?.task_id;
 
-        if (taskId) {
-            return {
-                success: true,
-                taskId,
-                data: data.result,
-            };
-        } else {
-            return {
-                success: false,
-                error: "No task ID received",
-                data: data.result,
-            };
-        }
-    } catch (err) {
-        return {
-            success: false,
-            error: err.response?.data?.message || err.message,
-        };
+    if (taskId) {
+      return {
+        success: true,
+        taskId,
+        data: data.result,
+      };
+    } else {
+      return {
+        success: false,
+        error: "No task ID received",
+        data: data.result,
+      };
     }
+  } catch (err) {
+    return {
+      success: false,
+      error: err.response?.data?.message || err.message,
+    };
+  }
 };
 
 /**
@@ -433,36 +436,36 @@ export const expandImage = async ({
  * @returns {Promise<object>} - Array of suggested prompts
  */
 export const suggestPrompts = async (query = "") => {
-    const sessionId = getSessionId();
+  const sessionId = getSessionId();
 
-    try {
-        const response = await aiClient.post("/v1/rec-prompt/suggest/", {
-            user_id: sessionId,
-            prompt: query,
-        });
+  try {
+    const response = await aiClient.post("/v1/rec-prompt/suggest/", {
+      user_id: sessionId,
+      prompt: query,
+    });
 
-        const data = response.data;
+    const data = response.data;
 
-        if (data.code === 1000 && data.result?.results) {
-            return {
-                success: true,
-                suggestions: data.result.results,
-                query: data.result.query,
-            };
-        } else {
-            return {
-                success: false,
-                error: data.message || "No suggestions found",
-                suggestions: [],
-            };
-        }
-    } catch (err) {
-        return {
-            success: false,
-            error: err.response?.data?.message || err.message,
-            suggestions: [],
-        };
+    if (data.code === 1000 && data.result?.results) {
+      return {
+        success: true,
+        suggestions: data.result.results,
+        query: data.result.query,
+      };
+    } else {
+      return {
+        success: false,
+        error: data.message || "No suggestions found",
+        suggestions: [],
+      };
     }
+  } catch (err) {
+    return {
+      success: false,
+      error: err.response?.data?.message || err.message,
+      suggestions: [],
+    };
+  }
 };
 
 /**
@@ -471,37 +474,37 @@ export const suggestPrompts = async (query = "") => {
  * @returns {Promise<object>} - Result of recording the choice
  */
 export const recordPromptChoice = async (promptText) => {
-    const sessionId = getSessionId();
+  const sessionId = getSessionId();
 
-    try {
-        const response = await aiClient.post("/v1/rec-prompt/choose/", {
-            user_id: sessionId,
-            prompt: promptText,
-        });
+  try {
+    const response = await aiClient.post("/v1/rec-prompt/choose/", {
+      user_id: sessionId,
+      prompt: promptText,
+    });
 
-        const data = response.data;
+    const data = response.data;
 
-        return {
-            success: data.code === 1000,
-            promptId: data.result?.prompt_id,
-            created: data.result?.created,
-        };
-    } catch (err) {
-        return {
-            success: false,
-            error: err.response?.data?.message || err.message,
-        };
-    }
+    return {
+      success: data.code === 1000,
+      promptId: data.result?.prompt_id,
+      created: data.result?.created,
+    };
+  } catch (err) {
+    return {
+      success: false,
+      error: err.response?.data?.message || err.message,
+    };
+  }
 };
 
 export default {
-    generateImage,
-    removeBackground,
-    upscaleImage,
-    reimagineImage,
-    relightImage,
-    expandImage,
-    pollTaskStatus,
-    uploadImageForAI,
-    getSessionId,
+  generateImage,
+  removeBackground,
+  upscaleImage,
+  reimagineImage,
+  relightImage,
+  expandImage,
+  pollTaskStatus,
+  uploadImageForAI,
+  getSessionId,
 };

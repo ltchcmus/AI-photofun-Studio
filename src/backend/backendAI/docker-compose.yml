@@ -13,9 +13,9 @@ services:
       - "9999:9999"
     environment:
       # Django Settings
-      DJANGO_DEBUG: "1"
+      DJANGO_DEBUG: "${DJANGO_DEBUG:-1}"
       DJANGO_SECRET_KEY: "${DJANGO_SECRET_KEY:-dev-secret-key-change-in-production}"
-      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,0.0.0.0"
+      DJANGO_ALLOWED_HOSTS: "${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1,0.0.0.0,nmcnpm-api-ai.lethanhcong.site}"
 
       # MongoDB (Conversations)
       MONGO_URI: "mongodb://mongo:27017"
@@ -37,6 +37,7 @@ services:
       # External APIs
       FREEPIK_API_KEY: "${FREEPIK_API_KEY}"
       GEMINI_API_KEY: "${GEMINI_API_KEY}"
+      GEMINI_API_KEYS: "${GEMINI_API_KEYS}"
       MODELSTUDIO_API_KEY: "${MODELSTUDIO_API_KEY}"
       MODELSTUDIO_API_BASE: "${MODELSTUDIO_API_BASE:-https://dashscope-intl.aliyuncs.com/api/v1}"
       FILE_SERVICE_URL: "${FILE_SERVICE_URL:-https://file-service-cdal.onrender.com}"
@@ -87,6 +88,7 @@ services:
       # External APIs
       FREEPIK_API_KEY: "${FREEPIK_API_KEY}"
       GEMINI_API_KEY: "${GEMINI_API_KEY}"
+      GEMINI_API_KEYS: "${GEMINI_API_KEYS}"
       MODELSTUDIO_API_KEY: "${MODELSTUDIO_API_KEY}"
       MODELSTUDIO_API_BASE: "${MODELSTUDIO_API_BASE:-https://dashscope-intl.aliyuncs.com/api/v1}"
       FILE_SERVICE_URL: "${FILE_SERVICE_URL:-https://file-service-cdal.onrender.com}"
