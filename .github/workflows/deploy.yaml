@@ -56,7 +56,7 @@ jobs:
           VITE_FILE_UPLOAD_URL: ${{ vars.VITE_FILE_UPLOAD_URL }}
           VITE_CHATBOT_API_URL: ${{ vars.VITE_CHATBOT_API_URL }}
           MODELSTUDIO_API_BASE: ${{ vars.MODELSTUDIO_API_BASE }}
-          FREEPIK_API_KEY: ${{ vars.FREEPIK_API_KEY }}
+          FREEPIK_API_KEY: ${{ secrets.FREEPIK_API_KEY }}
 
           # Repository Secrets
           GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
