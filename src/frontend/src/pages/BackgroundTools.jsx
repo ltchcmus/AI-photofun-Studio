@@ -13,6 +13,7 @@ import { removeBackground } from "../api/aiApi";
 import { communicationApi } from "../api/communicationApi";
 import { usePosts } from "../hooks/usePosts";
 import CreatePostWidget from "../components/post/CreatePostWidget";
+import LoadingScreen from "../components/common/LoadingScreen";
 
 const readFileAsDataUrl = (file) =>
   new Promise((resolve, reject) => {
@@ -86,7 +87,7 @@ const BackgroundTools = () => {
   const origInputRef = useRef(null);
   const bgInputRef = useRef(null);
   const origFileRef = useRef(null); // Store the original file for upload
-  const { createPost, currentUser } = usePosts();
+  const { createPost, currentUser, loading: postsLoading } = usePosts();
 
   const [option, setOption] = useState(null); // remove | color | image
   const [color, setColor] = useState("#ffffff");

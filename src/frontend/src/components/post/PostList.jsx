@@ -12,16 +12,24 @@ export default function PostList({
   }
 
   return (
-    <>
-      {posts.map((post) => (
-        <PostCard
+    <div className="space-y-4">
+      {posts.map((post, index) => (
+        <div
           key={post.id}
-          post={post}
-          authorInfo={post.userId ? userCache[post.userId] : null}
-          onLikePost={onLikePost}
-          onNavigateAiTools={onNavigateAiTools}
-        />
+          className="animate-fade-in"
+          style={{
+            animationDelay: `${index * 50}ms`,
+            animationFillMode: "both",
+          }}
+        >
+          <PostCard
+            post={post}
+            authorInfo={post.userId ? userCache[post.userId] : null}
+            onLikePost={onLikePost}
+            onNavigateAiTools={onNavigateAiTools}
+          />
+        </div>
       ))}
-    </>
+    </div>
   );
 }
