@@ -26,12 +26,13 @@ def env_int(name, default=0):
 # CORE SETTINGS
 # ============================================================================
 
-SECRET_KEY = os.environ.get(
-    'DJANGO_SECRET_KEY',
-    "django-insecure-(x2q%0-9oh7r=0klrzt0#f4^kh2rhy_ajje#uow5racu$ju^3k",
+SECRET_KEY = (
+    os.environ.get('DJANGO_SECRET_KEY')
+    or os.environ.get('SECRET_KEY')
+    or "django-insecure-(x2q%0-9oh7r=0klrzt0#f4^kh2rhy_ajje#uow5racu$ju^3k"
 )
 
-DEBUG = env_bool('DJANGO_DEBUG', True)
+DEBUG = env_bool('DJANGO_DEBUG', env_bool('DEBUG', True))
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',')
 
 # URL Configuration
@@ -51,11 +52,14 @@ INSTALLED_APPS = [
     "drf_yasg",
     "apps.conversation",
     "apps.prompt_service",
+    "apps.rec_prompt",
+    "apps.prompt_to_video",
     "apps.image_service",
     "apps.image_gallery",
     "apps.intent_router",
     "apps.image_generation",
     "apps.upscale",
+    "apps.image_to_video",
     "apps.remove_background",
     "apps.relight",
     "apps.style_transfer",
