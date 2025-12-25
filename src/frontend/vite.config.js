@@ -10,6 +10,7 @@ export default defineConfig({
       ".ngrok-free.dev",
       ".ngrok.io",
       "3.26.198.240:",
+      "nmcnpm.lethanhcong.site",
       "https://tashia-rude-subcortically.ngrok-free.dev",
     ],
     host: true,
@@ -25,8 +26,7 @@ export default defineConfig({
       "/api/file-service": {
         target: "https://file-service-cdal.onrender.com",
         changeOrigin: true,
-        rewrite: (path) =>
-          path.replace(/^\/api\/file-service/, ""),
+        rewrite: (path) => path.replace(/^\/api\/file-service/, ""),
         secure: true,
       },
       "/socket.io": {
