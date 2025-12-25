@@ -46,10 +46,9 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
-      "/api/v1/comments": {
+      "/comments": {
         target: "http://localhost:8003",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/v1/, ""),
       },
       "/api/v1": {
         target: "http://localhost:8888",
