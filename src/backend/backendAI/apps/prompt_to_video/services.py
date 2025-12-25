@@ -17,17 +17,26 @@ class ModelStudioVideoError(Exception):
 
 
 class ModelStudioVideoClient:
-    BASE_URL = os.environ.get(
-        "MODELSTUDIO_API_BASE",
-        "https://modelstudio.console.alibabacloud.com/api/v1",
-    ).rstrip("/")
-    CREATE_ENDPOINT = f"{BASE_URL}/services/aigc/video-generation/video-synthesis"
+    DEFAULT_BASE_URL = "https://dashscope-intl.aliyuncs.com/api/v1"
 
     def __init__(self):
         self.api_key = os.environ.get("MODELSTUDIO_API_KEY", "").strip()
         if not self.api_key:
             raise ModelStudioVideoError("MODELSTUDIO_API_KEY is not set")
         self.timeout = int(os.environ.get("MODELSTUDIO_TIMEOUT", "60"))
+        base_url = (
+            os.environ.get("MODELSTUDIO_API_BASE")
+            or os.environ.get("DASHSCOPE_API_BASE")
+            or self.DEFAULT_BASE_URL
+        ).rstrip("/")
+        if "modelstudio.console.alibabacloud.com" in base_url:
+            logger.warning(
+                "MODELSTUDIO_API_BASE points to console host; overriding to %s",
+                self.DEFAULT_BASE_URL,
+            )
+            base_url = self.DEFAULT_BASE_URL
+        self.base_url = base_url
+        self.create_endpoint = f"{self.base_url}/services/aigc/video-generation/video-synthesis"
 
     def _headers(self, async_enabled: bool = False) -> Dict[str, str]:
         headers = {
@@ -46,7 +55,7 @@ class ModelStudioVideoClient:
         }
         try:
             response = requests.post(
-                self.CREATE_ENDPOINT,
+                self.create_endpoint,
                 headers=self._headers(async_enabled=True),
                 json=payload,
                 timeout=self.timeout,
@@ -67,7 +76,7 @@ class ModelStudioVideoClient:
     def get_task_status(self, task_id: str) -> Tuple[str, Optional[str]]:
         try:
             response = requests.get(
-                f"{self.BASE_URL}/tasks/{task_id}",
+                f"{self.base_url}/tasks/{task_id}",
                 headers=self._headers(),
                 timeout=self.timeout,
             )
