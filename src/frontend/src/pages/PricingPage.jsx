@@ -2,24 +2,28 @@ import React, { useState } from "react";
 import { Check, Loader2, Star } from "lucide-react";
 import { useAuthContext } from "../context/AuthContext";
 
-const PAYMENT_API_URL = "https://nmcnpm-payment-service.onrender.com/payment/create-payment";
-const PAYMENT_API_KEY = "81aa801afec422868bea639e7c7bde4be900f533a4e1c755bffbb7c331c205b972a70e93bae29c79023cfe53a1fd9abd7c825cd57a1a46152fcaaacabfda350f";
+const PAYMENT_API_URL =
+  import.meta.env.VITE_PAYMENT_API_URL ||
+  "https://nmcnpm-payment-service.onrender.com/payment/create-payment";
+const PAYMENT_API_KEY =
+  import.meta.env.VITE_PAYMENT_API_KEY ||
+  "81aa801afec422868bea639e7c7bde4be900f533a4e1c755bffbb7c331c205b972a70e93bae29c79023cfe53a1fd9abd7c825cd57a1a46152fcaaacabfda350f";
 
 const PLAN_CONFIG = {
   "1_MONTH": {
     productName: "PREMIUM_ONE_MONTH",
-    price: 0,
-    amount: 0,
+    price: 500,
+    amount: 500,
     description: "Premium 1 month",
-    image: "https://via.placeholder.com/300x300.png?text=Premium"
+    image: "https://via.placeholder.com/300x300.png?text=Premium",
   },
   "6_MONTHS": {
     productName: "PREMIUM_SIX_MONTHS",
     price: 2000,
     amount: 2000,
     description: "Premium 6 months",
-    image: "https://via.placeholder.com/300x300.png?text=Premium"
-  }
+    image: "https://via.placeholder.com/300x300.png?text=Premium",
+  },
 };
 
 const createPaymentUrl = async (user, planType) => {
@@ -29,7 +33,7 @@ const createPaymentUrl = async (user, planType) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-api-key": PAYMENT_API_KEY
+      "x-api-key": PAYMENT_API_KEY,
     },
     body: JSON.stringify({
       userId: user.id,
@@ -40,8 +44,8 @@ const createPaymentUrl = async (user, planType) => {
       email: user.email,
       price: planConfig.price,
       currency: "usd",
-      quantity: 1
-    })
+      quantity: 1,
+    }),
   });
 
   if (!response.ok) {

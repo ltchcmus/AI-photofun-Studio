@@ -1,15 +1,23 @@
 import axios from "axios";
 
-const USER_ID = "4529e91d-8feb-4078-bf6d-763704af0307";
-const BEARER_TOKEN = "4529e91d-8feb-4078-bf6d-763704af0307";
+const USER_ID =
+  import.meta.env.VITE_CHATBOT_USER_ID ||
+  "4529e91d-8feb-4078-bf6d-763704af0307";
+const BEARER_TOKEN =
+  import.meta.env.VITE_CHATBOT_BEARER_TOKEN ||
+  "4529e91d-8feb-4078-bf6d-763704af0307";
+const CHATBOT_API_URL =
+  import.meta.env.VITE_CHATBOT_API_URL || "https://agent.lethanhcong.site";
+const CHATBOT_X_API_KEY =
+  import.meta.env.VITE_CHATBOT_X_API_KEY ||
+  "SQoX2lB2XEsKgaCKizTT8ALXJgwddJX8ZZANEdoYZRqxIt5SnjgbHcXj825VEvxuwUObe9ArdpAbJandPaSXN9";
 
 const chatBotClient = axios.create({
-  baseURL: "https://agent.lethanhcong.site",
+  baseURL: CHATBOT_API_URL,
   headers: {
-    "x-api-key":
-      "SQoX2lB2XEsKgaCKizTT8ALXJgwddJX8ZZANEdoYZRqxIt5SnjgbHcXj825VEvxuwUObe9ArdpAbJandPaSXN9",
-    "Authorization": `Bearer ${BEARER_TOKEN}`,
-    "userId": USER_ID,
+    "x-api-key": CHATBOT_X_API_KEY,
+    Authorization: `Bearer ${BEARER_TOKEN}`,
+    userId: USER_ID,
   },
 });
 
