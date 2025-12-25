@@ -236,11 +236,24 @@ MEDIA_ROOT = BASE_DIR / 'media'
 ML_MODELS_DIR = BASE_DIR / 'ml_models'
 
 # ==========================================================================
-# External Service URLs (configured via environment only; no extra .env files)
+# External Service URLs & API Keys
 # ==========================================================================
 # MEDIA_UPLOAD_URL: Endpoint to upload generated images (expects multipart/form-data)
 # Example expected response: { "file_url": "https://.../image.png" }
 # GEMINI_MODEL: Optional model name for prompt refinement metadata
+
+# Freepik API Key for AI image generation
+FREEPIK_API_KEY = os.environ.get('FREEPIK_API_KEY', '')
+
+# Gemini API Keys (comma-separated for rotation)
+GEMINI_API_KEYS = os.environ.get('GEMINI_API_KEYS', '')
+
+# ModelStudio API
+MODELSTUDIO_API_KEY = os.environ.get('MODELSTUDIO_API_KEY', '')
+MODELSTUDIO_API_BASE = os.environ.get('MODELSTUDIO_API_BASE', 'https://dashscope-intl.aliyuncs.com/api/v1')
+
+# File Service URL for image uploads
+FILE_SERVICE_URL = os.environ.get('FILE_SERVICE_URL', 'https://file-service-cdal.onrender.com')
 
 os.makedirs(MEDIA_ROOT, exist_ok=True)
 os.makedirs(ML_MODELS_DIR, exist_ok=True)
