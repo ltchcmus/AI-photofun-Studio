@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { MessageCircle, X, Send } from "lucide-react";
 import { useAuthContext } from "../../context/AuthContext";
 import { chatBotApi } from "../../api/chatBotApi";
+import ImageLightbox from "./ImageLightbox";
 
 const ChatBot = () => {
   const { user } = useAuthContext();
@@ -17,6 +18,7 @@ const ChatBot = () => {
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState(null);
+  const [lightboxImage, setLightboxImage] = useState(null);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -153,7 +155,9 @@ const ChatBot = () => {
                     <img
                       src={message.imageUrl}
                       alt="Bot response"
-                      className="rounded-lg mb-2 max-w-full h-auto"
+                      className="rounded-lg mb-2 max-w-full h-auto cursor-pointer hover:opacity-90 transition-opacity"
+                      onClick={() => setLightboxImage(message.imageUrl)}
+                      title="Click để xem ảnh lớn"
                     />
                   )}
                   <p className="text-sm whitespace-pre-wrap">{message.text}</p>
@@ -218,6 +222,14 @@ const ChatBot = () => {
           </form>
         </div>
       )}
+
+      {/* Image Lightbox */}
+      <ImageLightbox
+        isOpen={!!lightboxImage}
+        onClose={() => setLightboxImage(null)}
+        imageUrl={lightboxImage}
+        alt="Bot response image"
+      />
     </>
   );
 };

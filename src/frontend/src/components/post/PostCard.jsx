@@ -8,6 +8,7 @@ import {
   Crown,
 } from "lucide-react";
 import CommentSection from "./CommentSection";
+import ImageLightbox from "../common/ImageLightbox";
 
 export default function PostCard({
   post,
@@ -18,6 +19,7 @@ export default function PostCard({
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const displayName = authorInfo?.name || post.user;
   const displayAvatar = authorInfo?.avatar || post.avatar;
   const backendPostId = post?.backendId || post?.id || post?._id;
@@ -126,12 +128,16 @@ export default function PostCard({
           <p className="text-sm text-gray-800 mt-3">{post.content}</p>
 
           {post.image && !post.video && (
-            <div className="rounded-2xl overflow-hidden border border-gray-200 mt-4">
+            <div
+              className="rounded-2xl overflow-hidden border border-gray-200 mt-4 cursor-pointer"
+              onClick={() => setLightboxOpen(true)}
+            >
               <img
                 src={post.image}
                 alt={`Post by ${displayName}`}
-                className="w-full h-auto object-cover"
+                className="w-full h-auto object-cover hover:opacity-95 transition-opacity"
                 loading="lazy"
+                title="Click để xem ảnh lớn"
               />
             </div>
           )}
@@ -191,6 +197,14 @@ export default function PostCard({
           {showComments && <CommentSection postId={backendPostId} />}
         </div>
       </div>
+
+      {/* Image Lightbox */}
+      <ImageLightbox
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        imageUrl={post.image}
+        alt={`Post by ${displayName}`}
+      />
     </article>
   );
 }
