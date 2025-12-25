@@ -5,6 +5,9 @@ import LoadingScreen from "../components/common/LoadingScreen";
 import axiosClient from "../api/axiosClient";
 import SetPasswordModal from "../components/auth/SetPasswordModal";
 
+// API Gateway URL - use environment variable for production
+const API_GATEWAY = import.meta.env.VITE_API_GATEWAY || "http://localhost:8888";
+
 const GoogleLoadingPage = () => {
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
@@ -37,9 +40,9 @@ const GoogleLoadingPage = () => {
         console.log("Processing Google authentication with code...");
 
         // Call backend authentication endpoint via API Gateway (same as normal login)
-        // API Gateway is at port 8888 with prefix /api/v1
+        // API Gateway URL from environment variable
         const authResponse = await fetch(
-          `http://localhost:8888/api/v1/identity/auth/authentication?code=${code}`,
+          `${API_GATEWAY}/api/v1/identity/auth/authentication?code=${code}`,
           {
             method: "GET",
             credentials: "include", // Important: include cookies
