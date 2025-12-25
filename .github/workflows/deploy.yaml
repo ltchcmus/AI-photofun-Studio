@@ -38,7 +38,7 @@ jobs:
           TIME_ZONE: ${{ vars.TIME_ZONE }}
           USE_GPU: ${{ vars.USE_GPU }}
           USE_TZ: ${{ vars.USE_TZ }}
-          VITE_GOOGLE_CLIENT_ID: ${{ vars.VITE_GOOGLE_CLIENT_ID }}
+          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
           VITE_GOOGLE_REDIRECT_URI: ${{ vars.VITE_GOOGLE_REDIRECT_URI }}
           GOOGLE_REDIRECT_FRONTEND: ${{ vars.GOOGLE_REDIRECT_FRONTEND }}
           GOOGLE_REDIRECT_FRONTEND_FAILURE: ${{ vars.GOOGLE_REDIRECT_FRONTEND_FAILURE }}
