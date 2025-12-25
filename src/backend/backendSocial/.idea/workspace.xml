@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="740a1931-dd5b-46a1-9947-5fe7d5aa7c77" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/comments/.env.example" beforeDir="false" afterPath="$PROJECT_DIR$/comments/.env.example" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/pages/GoogleLoadingPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/pages/GoogleLoadingPage.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,7 +103,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Application.identity">
+  <component name="RunManager" selected="Application.Profile">
     <configuration name="Profile" type="Application" factoryName="Application">
       <option name="ALTERNATIVE_JRE_PATH" value="temurin-21" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
