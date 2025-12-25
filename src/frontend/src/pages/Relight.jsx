@@ -4,10 +4,13 @@ import {
     ArrowLeft,
     Download,
     Image as ImageIcon,
+    Share2,
     Sun,
 } from "lucide-react";
 import { relightImage, pollTaskStatus } from "../api/aiApi";
 import { communicationApi } from "../api/communicationApi";
+import { usePosts } from "../hooks/usePosts";
+import CreatePostWidget from "../components/post/CreatePostWidget";
 
 const readFileAsDataUrl = (file) =>
     new Promise((resolve, reject) => {
@@ -20,6 +23,7 @@ const readFileAsDataUrl = (file) =>
 const Relight = () => {
     const navigate = useNavigate();
     const fileInputRef = useRef(null);
+    const { createPost, currentUser } = usePosts();
 
     const [uploadedImage, setUploadedImage] = useState(null);
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -30,6 +34,7 @@ const Relight = () => {
     const [processingStatus, setProcessingStatus] = useState("");
     const [result, setResult] = useState(null);
     const [error, setError] = useState("");
+    const [showShareModal, setShowShareModal] = useState(false);
 
     const canRelight = useMemo(
         () => !!uploadedImage && !!prompt.trim() && !processing,
@@ -130,6 +135,12 @@ const Relight = () => {
         link.href = result.after;
         link.download = "relight-result.jpg";
         link.click();
+    };
+
+    const handleShare = () => {
+        if (result?.after) {
+            setShowShareModal(true);
+        }
     };
 
     return (
@@ -235,12 +246,20 @@ const Relight = () => {
                         ) : result ? (
                             <>
                                 <img src={result.after} alt="Result" className="w-full rounded-xl mb-4" />
-                                <button
-                                    onClick={handleDownload}
-                                    className="w-full py-3 rounded-xl bg-black text-white font-semibold flex items-center justify-center gap-2"
-                                >
-                                    <Download className="w-4 h-4" /> Download
-                                </button>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <button
+                                        onClick={handleDownload}
+                                        className="py-3 rounded-xl bg-black text-white font-semibold flex items-center justify-center gap-2"
+                                    >
+                                        <Download className="w-4 h-4" /> Download
+                                    </button>
+                                    <button
+                                        onClick={handleShare}
+                                        className="py-3 rounded-xl border border-gray-300 font-semibold flex items-center justify-center gap-2 hover:bg-gray-50"
+                                    >
+                                        <Share2 className="w-4 h-4" /> Share
+                                    </button>
+                                </div>
                             </>
                         ) : (
                             <div className="aspect-square border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center">
@@ -250,6 +269,19 @@ const Relight = () => {
                     </div>
                 </section>
             </div>
+
+            {/* Share to Post Modal */}
+            {showShareModal && (
+                <CreatePostWidget
+                    currentUser={currentUser}
+                    onCreatePost={createPost}
+                    autoOpen={true}
+                    hideComposer={true}
+                    initialImageUrl={result?.after}
+                    initialPrompt={`☀️ Relight: ${style}\n\nLighting: ${prompt}`}
+                    onClose={() => setShowShareModal(false)}
+                />
+            )}
         </div>
     );
 };

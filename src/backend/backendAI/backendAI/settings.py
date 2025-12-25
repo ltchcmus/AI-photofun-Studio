@@ -26,29 +26,14 @@ def env_int(name, default=0):
 # CORE SETTINGS
 # ============================================================================
 
-SECRET_KEY = os.environ.get(
-    'DJANGO_SECRET_KEY',
-    "django-insecure-(x2q%0-9oh7r=0klrzt0#f4^kh2rhy_ajje#uow5racu$ju^3k",
+SECRET_KEY = (
+    os.environ.get('DJANGO_SECRET_KEY')
+    or os.environ.get('SECRET_KEY')
+    or "django-insecure-(x2q%0-9oh7r=0klrzt0#f4^kh2rhy_ajje#uow5racu$ju^3k"
 )
 
 DEBUG = env_bool('DJANGO_DEBUG', True)
-
-# ALLOWED_HOSTS: support comma-separated list from env, fallback to '*' for dev
-_allowed_hosts_env = os.environ.get('DJANGO_ALLOWED_HOSTS', '')
-if _allowed_hosts_env:
-    ALLOWED_HOSTS = [h.strip() for h in _allowed_hosts_env.split(',') if h.strip()]
-else:
-    ALLOWED_HOSTS = ['*']  # Allow all in development
-
-# Always include these production domains
-PRODUCTION_HOSTS = [
-    'nmcnpm-api-ai.lethanhcong.site',
-    'localhost',
-    '127.0.0.1',
-]
-for host in PRODUCTION_HOSTS:
-    if host not in ALLOWED_HOSTS:
-        ALLOWED_HOSTS.append(host)
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',')
 
 # URL Configuration
 APPEND_SLASH = True  # Auto-redirect URLs without trailing slash to with trailing slash
@@ -67,11 +52,14 @@ INSTALLED_APPS = [
     "drf_yasg",
     "apps.conversation",
     "apps.prompt_service",
+    "apps.rec_prompt",
+    "apps.prompt_to_video",
     "apps.image_service",
     "apps.image_gallery",
     "apps.intent_router",
     "apps.image_generation",
     "apps.upscale",
+    "apps.image_to_video",
     "apps.remove_background",
     "apps.relight",
     "apps.style_transfer",

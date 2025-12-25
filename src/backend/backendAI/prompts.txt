@@ -1,0 +1,2338 @@
+Tạo ảnh một con chó Shiba đang ăn cơm trong bát.
+Tạo ảnh một con mèo đang đọc sách trên ghế sofa.
+Tạo ảnh một tô phở Việt Nam bốc khói, chụp cận cảnh.
+Tạo ảnh đường phố ban đêm trời mưa nhẹ, đèn neon.
+Tạo ảnh chân dung cô gái mặc áo dài, nền hoa sen.
+Tạo ảnh sản phẩm tai nghe không dây, nền trắng tối giản.
+Sửa ảnh này thành phong cách Ghibli (hoạt hình vẽ tay).
+Tạo ảnh một con chó Shiba phong cách Ghibli (hoạt hình vẽ tay).
+Sửa ảnh này thành phong cách màu nước pastel.
+Sửa ảnh này thành phong cách anime Nhật.
+Tăng độ sáng ảnh này, giữ màu tự nhiên.
+Giảm vùng cháy sáng và làm đều ánh sáng trong ảnh này.
+Đổi ánh sáng ảnh này sang ánh sáng hoàng hôn ấm.
+Làm rõ ảnh này: tăng độ nét và giảm nhiễu.
+Upscale ảnh này lên 4K, giữ nguyên bố cục và màu sắc.
+Làm ảnh bớt mờ, chi tiết rõ hơn, không bị bệt.
+Xóa nền ảnh này, giữ chủ thể, nền trong suốt.
+Tách nền ảnh này, giữ viền tóc/viền lông tự nhiên.
+Tái tưởng tượng ảnh này thành bối cảnh cyberpunk, giữ bố cục.
+Mở rộng ảnh này ra tỉ lệ 16:9, tự tạo thêm nền phù hợp.
+Tạo ảnh một chú Shiba đang ngủ trên ghế, ánh sáng ấm.
+Tạo ảnh một con thỏ đang cầm cà rốt, nền trắng.
+Tạo ảnh một con mèo đội nón Noel, nền đỏ.
+Tạo ảnh một chiếc bánh kem sinh nhật, nến đang cháy.
+Tạo ảnh ly trà sữa với đá, chụp cận cảnh.
+Tạo ảnh bát cơm tấm sườn bì chả, chụp từ trên xuống.
+Tạo ảnh một chiếc xe máy trên đường quê, trời xanh.
+Tạo ảnh rừng tre Việt Nam buổi sáng sớm, sương nhẹ.
+Tạo ảnh bờ biển lúc bình minh, sóng nhẹ.
+Tạo ảnh phòng làm việc tối giản, bàn gỗ, cây xanh.
+Tạo ảnh một căn bếp nhỏ sạch sẽ, ánh sáng tự nhiên.
+Tạo ảnh một chú chó đang chạy trên cỏ, đóng băng chuyển động.
+Sửa ảnh này thành phong cách hoạt hình vẽ tay kiểu Ghibli.
+Sửa ảnh này thành phong cách pixel art 16-bit.
+Sửa ảnh này thành phong cách tranh chì đen trắng.
+Sửa ảnh này thành phong cách tranh sơn dầu cổ điển.
+Sửa ảnh này thành phong cách truyện tranh châu Âu.
+Sửa ảnh này thành phong cách poster retro thập niên 80.
+Sửa ảnh này thành phong cách 3D hoạt hình dễ thương.
+Sửa ảnh này thành phong cách tối giản flat design.
+Tăng độ sáng ảnh này lên một chút, giữ màu da tự nhiên.
+Làm ảnh này sáng đều hơn, giảm bóng gắt.
+Đổi ánh sáng ảnh này sang ánh sáng studio mềm.
+Đổi ánh sáng ảnh này sang ánh sáng ban đêm có đèn đường.
+Làm ảnh này ấm hơn (tăng tông vàng) nhưng không bệt màu.
+Làm ảnh này lạnh hơn (tăng tông xanh) nhưng vẫn tự nhiên.
+Tăng tương phản nhẹ và làm rõ vùng tối trong ảnh này.
+Giảm ánh chói và làm dịu vùng sáng trong ảnh này.
+Làm rõ ảnh này cho tôi: tăng độ nét, giảm nhiễu.
+Nâng chất lượng ảnh này lên HD, không đổi màu.
+Upscale ảnh này x4, giữ chi tiết và chữ rõ.
+Làm ảnh này bớt mờ, chi tiết rõ hơn, không oversharpen.
+Giảm hạt (noise) trong ảnh này nhưng giữ chi tiết.
+Làm nét khuôn mặt trong ảnh này, giữ tự nhiên.
+Làm rõ chi tiết vải/da/kim loại trong ảnh này.
+Khử răng cưa và làm mịn viền đối tượng trong ảnh này.
+Xóa nền ảnh này, giữ chủ thể, nền trong suốt.
+Tách nền ảnh này, giữ viền tóc/viền lông tự nhiên.
+Xóa nền và thay bằng nền trắng tinh.
+Xóa nền và thay bằng nền màu xám nhạt.
+Chỉ giữ sản phẩm, bỏ toàn bộ nền và vật thể phụ.
+Tách nền và giữ bóng đổ mềm dưới chân đối tượng.
+Tái tưởng tượng ảnh này thành cảnh mùa xuân nhiều hoa, giữ bố cục.
+Tái tưởng tượng ảnh này thành cảnh trời mưa, giữ chủ thể.
+Tái tưởng tượng ảnh này thành bối cảnh tương lai, thêm đèn neon nhẹ.
+Tái tưởng tượng ảnh này thành phong cách cổ trang, giữ gương mặt.
+Mở rộng ảnh này ra tỉ lệ 16:9, tự tạo thêm nền khớp.
+Mở rộng ảnh này ra tỉ lệ 9:16, tự tạo thêm nền khớp.
+Mở rộng ảnh này sang trái và phải thêm 30%, nền liền mạch.
+Mở rộng ảnh này lên trên và dưới, thêm không gian trống tự nhiên.
+Tạo ảnh một con chó Shiba đang ăn, nền bếp sáng đơn giản.
+Tạo ảnh một chú corgi đang ngồi trên thảm, nhìn thẳng camera.
+Tạo ảnh một con mèo đang uống sữa, phong cách dễ thương.
+Tạo ảnh một chiếc bánh mì Việt Nam cận cảnh, ánh sáng tự nhiên.
+Tạo ảnh một ly cà phê đá, giọt nước đọng trên thành ly.
+Tạo ảnh một chậu cây nhỏ trên bàn làm việc, nền tối giản.
+Tạo ảnh một chiếc đồng hồ đeo tay chụp sản phẩm, nền trắng.
+Tạo ảnh một con đường làng buổi sáng, trời trong, yên bình.
+Tạo ảnh một căn phòng ngủ tối giản, ánh sáng cửa sổ.
+Tạo ảnh một bát bún bò bốc khói, chụp từ trên xuống.
+Làm rõ ảnh này cho tôi: tăng độ nét, giảm nhiễu.
+Upscale ảnh này lên 4K, giữ nguyên màu và bố cục.
+Tăng chi tiết ảnh này, không làm viền bị gắt.
+Khử nhiễu ảnh này, giữ texture tự nhiên.
+Làm sắc nét chữ trong ảnh này, không méo chữ.
+Nâng chất lượng ảnh này lên HD, giữ da mặt tự nhiên.
+Làm ảnh này bớt vỡ hạt, chi tiết rõ hơn.
+Tăng độ phân giải ảnh này, không đổi tông màu.
+Xóa nền ảnh này, giữ chủ thể, nền trong suốt.
+Tách nền ảnh này, giữ viền tóc/viền lông tự nhiên.
+Xóa nền và thay bằng nền trắng.
+Xóa nền và thay bằng nền xám nhạt.
+Chỉ giữ sản phẩm, bỏ toàn bộ nền và vật thể phụ.
+Tách nền người trong ảnh này, không lẹm tóc.
+Tách nền vật thể trong ảnh này, giữ bóng đổ mềm.
+Xóa nền ảnh này, đường viền mượt và sạch.
+Tăng độ sáng ảnh này, giữ màu tự nhiên.
+Làm ảnh này sáng đều hơn, giảm bóng gắt.
+Giảm vùng cháy sáng trong ảnh này, giữ chi tiết.
+Tăng sáng vùng tối trong ảnh này, không bệt màu.
+Đổi ánh sáng ảnh này sang ánh sáng studio mềm.
+Đổi ánh sáng ảnh này sang ánh sáng hoàng hôn ấm.
+Làm ảnh này ấm hơn một chút, vẫn tự nhiên.
+Làm ảnh này lạnh hơn một chút, vẫn tự nhiên.
+Sửa ảnh này thành phong cách Ghibli (hoạt hình vẽ tay).
+Sửa ảnh này thành phong cách anime Nhật, nét sạch.
+Sửa ảnh này thành phong cách màu nước pastel.
+Sửa ảnh này thành phong cách tranh chì đen trắng.
+Sửa ảnh này thành phong cách truyện tranh (comic).
+Sửa ảnh này thành phong cách sơn dầu cổ điển.
+Tái tưởng tượng ảnh này thành cảnh mùa đông có tuyết, giữ bố cục.
+Tái tưởng tượng ảnh này thành cảnh trời mưa, giữ chủ thể.
+Tái tưởng tượng ảnh này thành bối cảnh tương lai, thêm đèn neon nhẹ.
+Tái tưởng tượng ảnh này thành phong cách tối giản, nền sạch.
+Tái tưởng tượng ảnh này thành ảnh điện ảnh, tương phản mềm.
+Mở rộng ảnh này ra tỉ lệ 16:9, tự tạo thêm nền khớp.
+Mở rộng ảnh này ra tỉ lệ 9:16, tự tạo thêm nền khớp.
+Mở rộng ảnh này sang trái và phải, nền liền mạch tự nhiên.
+Mở rộng ảnh này lên trên và dưới, thêm không gian trống tự nhiên.
+Mở rộng ảnh này để có thêm khoảng trống đặt chữ, nền phù hợp.
+Tạo ảnh một ly cà phê trứng Hà Nội trên bàn gỗ cũ.
+Tạo ảnh phong cảnh ruộng bậc thang Mù Cang Chải mùa lúa chín.
+Tạo ảnh một chiến binh robot ngầu, phong cách Gundam, độ phân giải 8k.
+Tạo ảnh chú gấu bông đang ngồi picnic trên mặt trăng.
+Tạo ảnh món bún chả với chả nướng than hoa, chụp góc từ trên xuống.
+Tạo ảnh thiết kế nội thất phòng ngủ hiện đại, tông màu xám trắng.
+Tạo ảnh một chiếc xe máy Cub 50 chạy trên đường đèo ven biển.
+Tạo ảnh rồng vàng phương Đông bay lượn trong mây ngũ sắc.
+Tạo ảnh chân dung nam doanh nhân thành đạt, mặc vest đen, nền văn phòng kính.
+Tạo ảnh sản phẩm kem dưỡng da thiên nhiên, đặt trên bệ đá cẩm thạch và lá xanh.
+Tạo ảnh logo hình con cáo cách điệu, phong cách vector phẳng (flat design).
+Tạo ảnh thành phố Đà Nẵng về đêm với cầu Rồng phun lửa rực rỡ.
+Tạo ảnh cô gái mặc Việt phục cổ trang đứng dưới mái đình làng.
+Tạo ảnh một con mèo Ai Cập huyền bí đeo trang sức vàng.
+Tạo ảnh cánh đồng hoa hướng dương dưới ánh nắng mặt trời rực rỡ.
+Tạo ảnh mô hình 3D nhân vật game chibi dễ thương, render bằng Blender.
+Tạo ảnh tranh thủy mặc phong cảnh núi non hùng vĩ mờ sương.
+Tạo ảnh một chiếc tàu vũ trụ đang hạ cánh xuống sao Hỏa bụi đỏ.
+Tạo ảnh bàn tiệc BBQ ngoài trời với dây đèn lung linh.
+Tạo ảnh nhìn qua cửa sổ kính đọng nước mưa, thấy phố phường nhòe nhoẹt.
+Sửa ảnh này thành tranh sơn dầu phong cách cổ điển.
+Biến ảnh này thành phong cách truyện tranh Marvel, nét vẽ đậm.
+Chuyển ảnh này sang dạng phác thảo chì (sketch) đen trắng.
+Sửa ảnh chân dung này thành phong cách tượng điêu khắc Hy Lạp.
+Làm ảnh này trông như được chụp bằng máy phim Kodak cũ (vintage film).
+Biến đổi ảnh này thành phong cách Pixel Art 8-bit như game xưa.
+Sửa ảnh phong cảnh này thành tranh thêu tay truyền thống.
+Tạo hiệu ứng glitch kỹ thuật số nhiễu sóng cho bức ảnh này.
+Chuyển ánh sáng ảnh này thành ánh trăng xanh lạnh lẽo ban đêm.
+Thêm hiệu ứng ánh nắng chiếu qua kẽ lá (god rays) vào góc phải ảnh.
+Làm sáng khuôn mặt chủ thể, giữ nền tối để tạo chiều sâu (Rembrandt lighting).
+Đổi ánh sáng sang tông màu tím và hồng neon (Cyberpunk lighting).
+Cân bằng trắng lại cho ảnh này, loại bỏ màu ám vàng.
+Tăng độ tương phản và làm màu sắc rực rỡ hơn (vibrant).
+Khử nhiễu ảnh chụp đêm này (denoise), làm mịn da nhưng giữ chi tiết.
+Tăng độ chi tiết cực cao cho bộ lông thú cưng trong ảnh này.
+Phục chế ảnh cũ này: xóa vết xước, vết ố và làm nét khuôn mặt.
+Upscale ảnh logo này lên vector sắc nét, đảm bảo không bị vỡ hạt.
+Làm rõ các dòng chữ bị mờ nhòe trong tài liệu này.
+Xóa phông nền, chỉ giữ lại sản phẩm chai nước hoa.
+Thay nền ảnh này bằng bãi biển nhiệt đới mùa hè xanh ngắt.
+Tách chủ thể người ra khỏi nền phức tạp, làm nền trong suốt.
+Mở rộng ảnh này theo chiều dọc để làm hình nền điện thoại (tỉ lệ 9:16).
+Mở rộng khung cảnh xung quanh để thấy toàn bộ nội thất căn phòng.
+Tái tưởng tượng ảnh này theo phong cách hậu tận thế (post-apocalyptic), hoang tàn.
+Biến ảnh chụp thật này thành mô hình đất sét (claymation).
+Thay đổi trang phục nhân vật trong ảnh sang bộ đồ vest lịch sự.
+Làm mờ hậu cảnh (xóa phông) để nổi bật chủ thể chính.
+Chuyển ảnh này sang đen trắng nghệ thuật high-contrast.
+Tạo một phiên bản kinh dị, u ám hơn từ bức ảnh ngôi nhà này.
+Tạo ảnh gánh hàng rong bán hoa trên phố cổ Hà Nội mùa thu.
+Tạo ảnh mâm cơm gia đình ngày Tết với bánh chưng và dưa hành.
+Tạo ảnh tà áo dài trắng bay trong gió tại Cố đô Huế.
+Tạo ảnh chợ nổi Cái Răng miền Tây sông nước tấp nập thuyền bè.
+Tạo ảnh những chiếc đèn lồng Hội An lung linh trong đêm rằm.
+Tạo ảnh bác nông dân đang cấy lúa trên ruộng bậc thang xanh ngát.
+Tạo ảnh một ly nâu đá vỉa hè, hậu cảnh là xe cộ đi lại.
+Tạo ảnh chú trâu đang gặm cỏ yên bình dưới lũy tre làng.
+Tạo ảnh tháp Rùa hồ Gươm phản chiếu xuống mặt nước tĩnh lặng.
+Tạo ảnh nghệ nhân đang làm gốm Bát Tràng thủ công.
+Tạo ảnh thành phố lơ lửng trên mây, phong cách Steampunk.
+Tạo ảnh một thư viện khổng lồ với những cuốn sách bay lơ lửng.
+Tạo ảnh phi hành gia đang câu cá trên dải ngân hà.
+Tạo ảnh một khu rừng pha lê phát sáng huyền ảo ban đêm.
+Tạo ảnh chân dung người lai máy (cyborg) với linh kiện lộ ra.
+Tạo ảnh một con rồng phương Tây phun lửa thiêu rụi tòa lâu đài.
+Tạo ảnh thế giới tí hon bên trong một chai thủy tinh.
+Tạo ảnh đoàn tàu hỏa chạy xuyên qua đại dương trong suốt.
+Tạo ảnh quái vật Godzilla phiên bản dễ thương (chibi).
+Tạo ảnh một ốc đảo xanh tươi giữa sa mạc cằn cỗi.
+Tạo ảnh phòng khách phong cách Bắc Âu (Scandinavian) ngập tràn ánh sáng.
+Tạo ảnh biệt thự hiện đại có hồ bơi vô cực nhìn ra biển.
+Tạo ảnh chụp sản phẩm đồng hồ đeo tay sang trọng trên nền đá đen.
+Tạo ảnh túi xách thời trang đặt trên bục gỗ, ánh sáng studio.
+Tạo ảnh thiết kế bao bì hộp trà xanh phong cách tối giản.
+Tạo ảnh một góc làm việc (setup) với màn hình đôi và đèn LED RGB.
+Tạo ảnh phối cảnh 3D tòa nhà văn phòng kính chọc trời.
+Tạo ảnh bộ bàn ghế sofa da màu nâu cổ điển (vintage).
+Tạo ảnh món bánh ngọt Macaron nhiều màu sắc, tông màu pastel.
+Tạo ảnh giày sneaker thể thao đang bay lơ lửng, tách nền.
+Biến ảnh này thành phong cách tranh cắt giấy (paper cut art).
+Sửa ảnh này thành phong cách tranh khắc gỗ Nhật Bản (Ukiyo-e).
+Chuyển ảnh này sang phong cách Pop Art sặc sỡ kiểu Andy Warhol.
+Tạo hiệu ứng ảnh chụp bằng máy Polariod, màu film cũ.
+Biến đổi ảnh này thành phong cách kính vạn hoa (kaleidoscope).
+Làm ảnh này trông như được vẽ bằng phấn màu (pastel chalk).
+Sửa ảnh phong cảnh này thành thế giới xếp hình Lego.
+Chuyển ảnh chân dung này thành phong cách hoạt hình Disney 3D.
+Tạo hiệu ứng tranh kính nhà thờ (stained glass) cho ảnh này.
+Biến ảnh này thành bản vẽ kỹ thuật (blueprint) màu xanh.
+Xóa người đi đường ở phía sau, giữ nguyên cảnh quan.
+Xóa dây điện chằng chịt trên bầu trời trong ảnh này.
+Thay đổi bầu trời xám xịt thành bầu trời xanh mây trắng.
+Đổi màu chiếc xe trong ảnh từ đỏ sang đen nhám.
+Làm mịn da mặt và xóa vết thâm cho người mẫu trong ảnh.
+Tăng độ sắc nét cho đôi mắt và làm trắng răng.
+Chuyển ánh sáng sang tông màu điện ảnh (Teal and Orange).
+Tạo hiệu ứng sương mù mờ ảo bao phủ xung quanh.
+Mở rộng ảnh theo chiều ngang (panorama), tự điền chi tiết hợp lý.
+Upscale ảnh này lên 2x, ưu tiên khử nhiễu hạt (noise).
+Tạo ảnh vịnh Hạ Long huyền ảo trong sương sớm, nước xanh ngọc bích.
+Tạo ảnh đồi chè Cầu Đất, Đà Lạt xanh ngát dưới nắng bình minh.
+Tạo ảnh hang Sơn Đoòng với tia nắng chiếu sâu vào lòng hang.
+Tạo ảnh thác Bản Giốc hùng vĩ đổ xuống bọt tung trắng xóa.
+Tạo ảnh rừng tràm Trà Sư mùa nước nổi phủ kín bèo xanh.
+Tạo ảnh con đường lá vàng rơi lãng mạn vào mùa thu Hà Nội.
+Tạo ảnh bãi biển Phú Quốc hoang sơ với hàng dừa nghiêng bóng.
+Tạo ảnh đỉnh Fansipan mây mù bao phủ, nhìn từ cáp treo.
+Tạo ảnh một góc phố Sài Gòn xưa với xe xích lô và áo dài.
+Tạo ảnh cầu Vàng Đà Nẵng được nâng đỡ bởi bàn tay khổng lồ.
+Tạo ảnh ổ bánh mì thập cẩm Sài Gòn giòn rụm, nhân thịt nướng đầy đặn.
+Tạo ảnh gánh hàng rong bán cốm làng Vòng gói trong lá sen.
+Tạo ảnh ly trà sữa trân châu đường đen, đá lạnh hấp dẫn.
+Tạo ảnh mâm ngũ quả ngày Tết bày biện đẹp mắt trên bàn thờ.
+Tạo ảnh đĩa cơm tấm sườn bì chả bốc khói nghi ngút, mỡ hành bóng bẩy.
+Tạo ảnh cận cảnh hạt cà phê rang xay nguyên chất, khói thơm.
+Tạo ảnh một chiếc máy ảnh film cổ đặt bên cạnh cuốn sổ tay da.
+Tạo ảnh bộ sưu tập son môi cao cấp trên nền lụa đỏ sang trọng.
+Tạo ảnh chiếc bánh kem sinh nhật trang trí hoa tươi tinh tế.
+Tạo ảnh lọ hoa loa kèn trắng tinh khôi đặt bên cửa sổ gỗ.
+Tạo ảnh một thành phố dưới đáy đại dương với các tòa nhà san hô phát sáng.
+Tạo ảnh chiến binh Samurai thời hiện đại (Cyber-Samurai) đứng dưới mưa neon.
+Tạo ảnh một khu vườn treo lơ lửng giữa vũ trụ đầy sao.
+Tạo ảnh rồng lửa phương Tây đang cuộn tròn quanh ngọn tháp cổ.
+Tạo ảnh một cô gái có đôi cánh bướm khổng lồ trong rừng thần tiên.
+Tạo ảnh binh đoàn robot đang xây dựng thành phố trên sao Hỏa.
+Tạo ảnh cổng không gian (portal) mở ra một thế giới khác.
+Tạo ảnh xe mô tô phân khối lớn thiết kế từ tương lai năm 3000.
+Tạo ảnh quái vật Kraken khổng lồ đang tấn công tàu cướp biển.
+Tạo ảnh một phù thủy đang pha chế thuốc phép thuật trong nồi vạc sôi.
+Biến ảnh này thành tranh khảm Mosaic (tranh ghép gốm sứ).
+Sửa ảnh này theo phong cách phim hoạt hình Anime thập niên 90 (Retro Anime).
+Chuyển ảnh này sang phong cách tranh trừu tượng (Abstract) kiểu Picasso.
+Tạo hiệu ứng ma trận (Matrix code) màu xanh lá phủ lên ảnh.
+Biến ảnh phong cảnh này thành tranh vẽ bằng bút kim (Ink drawing) chi tiết.
+Sửa ảnh chân dung thành phong cách Low Poly (đa giác thấp) 3D.
+Tạo hiệu ứng phơi sáng kép (Double Exposure) lồng ghép rừng cây vào chân dung.
+Làm ảnh này trông như một trang truyện tranh Comic phương Tây (Comic book style).
+Biến đổi ảnh này thành phong cách tranh sơn mài truyền thống Việt Nam.
+Tạo hiệu ứng giấy cũ nhăn nheo (Old parchment texture) cho bức ảnh.
+Làm nét ảnh bị rung tay này (Deblur), phục hồi chi tiết khuôn mặt.
+Xóa hình mờ (watermark) ở góc ảnh một cách tự nhiên.
+Chuyển màu ảnh sang tông màu Pastel nhẹ nhàng, mơ mộng.
+Tăng độ bão hòa màu (Saturation) để ảnh trông tươi tắn hơn.
+Relight: Thêm ánh sáng lửa trại ấm áp chiếu từ dưới lên.
+Relight: Tạo ánh sáng ven (Rim light) để tách chủ thể khỏi nền đen.
+Thay đổi mùa trong ảnh từ mùa hè sang mùa thu lá đỏ.
+Ghép thêm bầu trời đầy sao và dải ngân hà vào ảnh chụp đêm.
+Mở rộng ảnh chân dung này thành ảnh toàn thân.
+Tự động cân chỉnh màu sắc (Auto color correction) cho ảnh bị nhạt màu.
+Tạo ảnh cà phê đường tàu Hà Nội, tàu hỏa đang chạy qua sát bàn ghế.
+Tạo ảnh lễ hội thả đèn hoa đăng trên sông Hương, Huế lung linh huyền ảo.
+Tạo ảnh những chiếc thuyền thúng tròn trên biển rừng dừa Bảy Mẫu.
+Tạo ảnh bà cụ đang phơi nhang (hương) đỏ rực rỡ ở làng nghề.
+Tạo ảnh ruộng bậc thang Mù Cang Chải mùa nước đổ lấp lánh như gương.
+Tạo ảnh góc phố cổ Hội An với giàn hoa giấy hồng rực rỡ.
+Tạo ảnh Chùa Cầu Hội An dưới ánh trăng rằm thanh tịnh.
+Tạo ảnh xe buýt 2 tầng đang chạy quanh Hồ Gươm buổi tối.
+Tạo ảnh quang cảnh cầu Rồng Đà Nẵng phun nước mát mẻ.
+Tạo ảnh Nhà thờ Đức Bà Sài Gòn dưới nắng vàng rực rỡ.
+Tạo ảnh đặc tả tay người nghệ nhân đang thêu tranh lụa tỉ mỉ.
+Tạo ảnh gánh hàng hoa loa kèn trắng xuống phố tháng Tư.
+Tạo ảnh múa lân sư rồng ngày Tết với pháo giấy đỏ bay tung tóe.
+Tạo ảnh nồi bánh chưng xanh đang luộc trên bếp củi lửa hồng.
+Tạo ảnh phong cảnh đèo Mã Pí Lèng hùng vĩ bên dòng sông Nho Quế.
+Tạo ảnh các cô gái dân tộc H'Mông mặc váy xòe sặc sỡ đi chợ phiên.
+Tạo ảnh Lăng Bác Hồ uy nghiêm trong buổi lễ thượng cờ sáng sớm.
+Tạo ảnh tháp Chàm Po Klong Garai cổ kính dưới nắng Ninh Thuận.
+Tạo ảnh làng chài Mũi Né buổi sáng sớm tấp nập thuyền bè về bến.
+Tạo ảnh một góc quán cóc vỉa hè với trà đá và kẹo lạc.
+Tạo ảnh Sài Gòn năm 2077 phong cách Cyberpunk với Bitexco phát sáng neon.
+Tạo ảnh một hòn đảo bay lơ lửng với thác nước đổ xuống mây trắng.
+Tạo ảnh chiến binh giáp sắt cưỡi rồng máy khổng lồ.
+Tạo ảnh khu rừng nấm khổng lồ phát quang sinh học trong đêm.
+Tạo ảnh phi thuyền không gian đang đáp xuống một hành tinh tím.
+Tạo ảnh người máy AI đang dạy học cho trẻ em trong lớp học tương lai.
+Tạo ảnh một thư viện ma thuật với những cuốn sách tự bay về chỗ cũ.
+Tạo ảnh ngôi nhà cây (treehouse) khổng lồ là nơi sinh sống của cả bộ lạc.
+Tạo ảnh quái vật hồ Loch Ness trồi lên mặt nước trong sương mù.
+Tạo ảnh thành phố dưới lòng đất được chiếu sáng bởi đá năng lượng.
+Tạo ảnh Samurai mèo cầm kiếm Katana đứng dưới gốc anh đào.
+Tạo ảnh một nàng tiên cá đang bơi lội trong rạn san hô cầu vồng.
+Tạo ảnh cảnh sát robot đang tuần tra đường phố đêm mưa.
+Tạo ảnh tàu ngầm thám hiểm vực sâu đại dương tăm tối.
+Tạo ảnh cổng dịch chuyển thời gian mở ra giữa quảng trường thành phố.
+Tạo ảnh một phòng thí nghiệm giả kim thuật đầy chai lọ thuốc màu sắc.
+Tạo ảnh rồng phương Đông uốn lượn quanh tòa nhà Landmark 81.
+Tạo ảnh thế giới hậu tận thế cây cối mọc trùm lên các tòa nhà đổ nát.
+Tạo ảnh phi hành gia đang uống cà phê sữa đá trên sao Hỏa.
+Tạo ảnh binh đoàn xương khô (skeleton army) trỗi dậy từ nghĩa địa.
+Tạo ảnh chụp chai bia lạnh đọng nước, nền quán bar mờ ảo.
+Tạo ảnh set mỹ phẩm chăm sóc da đặt trên bệ đá trắng và hoa lan.
+Tạo ảnh giày thể thao đang chạy trên mặt nước làm nước bắn tung tóe.
+Tạo ảnh đồng hồ thông minh hiển thị giao diện sức khỏe, nền đen tech.
+Tạo ảnh món bò bít tết (steak) nướng vừa chín tới, sốt tiêu đen.
+Tạo ảnh ly cocktail màu xanh nhiệt đới trang trí dứa và ô giấy.
+Tạo ảnh tai nghe gaming có đèn LED RGB rực rỡ trong phòng tối.
+Tạo ảnh túi xách da cao cấp đặt trên ghế nhung đỏ sang trọng.
+Tạo ảnh thiết kế logo tiệm bánh ngọt hình chiếc bánh Cupcake dễ thương.
+Tạo ảnh xe ô tô điện VinFast đang sạc tại trạm sạc năng lượng mặt trời.
+Tạo ảnh nội thất phòng bếp hiện đại với tủ bếp màu xanh pastel.
+Tạo ảnh bộ trang sức dây chuyền kim cương lấp lánh trên cổ người mẫu.
+Tạo ảnh poster quảng cáo du lịch biển mùa hè sôi động.
+Tạo ảnh cận cảnh mắt kính thời trang phản chiếu bầu trời xanh.
+Tạo ảnh bàn làm việc của lập trình viên với nhiều màn hình code.
+Tạo ảnh chó Corgi mông to đang chạy trên bãi cỏ xanh.
+Tạo ảnh mèo mướp đang cuộn tròn ngủ trong giỏ len.
+Tạo ảnh chú chó Husky ngáo ngơ đeo kính râm đi biển.
+Tạo ảnh đàn cá Koi bơi lội tung tăng trong hồ nước trong vắt.
+Tạo ảnh chim công xòe đuôi múa rực rỡ sắc màu.
+Tạo ảnh chú gấu trúc (Panda) đang ăn trúc trong rừng tre.
+Tạo ảnh hổ trắng uy nghi bước đi trong rừng tuyết.
+Tạo ảnh chú vẹt đuôi dài sặc sỡ đậu trên vai cướp biển.
+Tạo ảnh đàn bướm bay rợp trời trong thung lũng hoa.
+Tạo ảnh sư tử con đang chơi đùa với mẹ trên đồng cỏ savanna.
+Tạo ảnh chú rùa biển bơi lội giữa rạn san hô.
+Tạo ảnh chú thỏ trắng tai dài cầm củ cà rốt.
+Tạo ảnh chim đại bàng sải cánh săn mồi trên bầu trời.
+Tạo ảnh đàn chim cánh cụt đi lạch bạch trên băng.
+Tạo ảnh chú sóc nhỏ đang ôm hạt dẻ trên cành cây.
+Biến ảnh này thành phong cách tranh sơn dầu Van Gogh (Starry Night).
+Sửa ảnh này thành phong cách hoạt hình 2D phẳng (Flat Design).
+Chuyển ảnh này sang đen trắng nhưng giữ lại màu đỏ của chiếc váy (Color Splash).
+Tạo hiệu ứng ảnh cũ thập niên 80 với nhiễu hạt và ngày tháng cam.
+Biến ảnh chân dung này thành tượng sáp.
+Sửa ảnh phong cảnh này thành phong cách game Minecraft (Voxel art).
+Tạo hiệu ứng phơi sáng lâu (Long exposure) cho dòng sông mượt như lụa.
+Biến ảnh này thành bản vẽ kỹ thuật kiến trúc (Blueprint).
+Sửa ảnh này thành phong cách tranh cổ động tuyên truyền (Propaganda poster).
+Tạo hiệu ứng tan biến (Disintegration effect) cho nhân vật chính.
+Làm cho bức ảnh trông như được vẽ bằng bút bi xanh.
+Biến ảnh thành phong cách Origami (xếp giấy) Nhật Bản.
+Chuyển ảnh sang dạng lưới 3D (Wireframe).
+Tạo hiệu ứng mắt cá (Fisheye lens) cho bức ảnh này.
+Sửa ảnh này thành phong cách phim kinh dị tối tăm u ám.
+Xóa người thừa đang đi bộ phía sau lưng chủ thể.
+Xóa thùng rác ở góc trái bức ảnh.
+Xóa vết mụn và làm mịn da mặt tự nhiên.
+Thay nền trời xám xịt bằng bầu trời hoàng hôn tím mộng mơ.
+Tách nền sản phẩm, thay bằng nền màu pastel trơn.
+Mở rộng ảnh ra tỷ lệ 16:9, thêm rừng cây hai bên.
+Mở rộng phần chân dung để thấy toàn thân nhân vật.
+Relight: Chiếu ánh sáng sân khấu (Spotlight) vào ca sĩ.
+Relight: Tạo ánh sáng lửa ấm áp hắt lên khuôn mặt.
+Relight: Thêm ánh sáng đèn neon xanh từ biển hiệu cửa hàng.
+Upscale ảnh mờ này lên 4K, làm rõ chi tiết lông mi.
+Khôi phục ảnh cũ bị ố vàng và rách góc.
+Làm nét biển số xe bị mờ trong ảnh này.
+Đổi màu chiếc áo chủ thể từ trắng sang đỏ đô.
+Thêm hiệu ứng tuyết rơi lãng mạn vào bức ảnh này.
+Tạo ảnh một chú Shiba đang ăn bánh quy, nền nhà bếp sáng.
+Tạo ảnh một chú Shiba đang ăn mì, ngồi trước bàn gỗ.
+Tạo ảnh một con mèo đang nằm trong hộp carton.
+Tạo ảnh một chú corgi đang chơi bóng trên cỏ.
+Tạo ảnh một chú vịt con đang bơi trong hồ nhỏ.
+Tạo ảnh một con thỏ đang uống nước từ bát.
+Tạo ảnh một ly cacao nóng có marshmallow.
+Tạo ảnh một đĩa sushi nhiều màu, chụp cận cảnh.
+Tạo ảnh một bát bún riêu đầy topping, chụp từ trên xuống.
+Tạo ảnh một ổ bánh mì kẹp thịt, giấy gói đơn giản.
+Tạo ảnh một quán trà sữa nhỏ, ánh đèn vàng ấm.
+Tạo ảnh một chiếc laptop trên bàn làm việc tối giản.
+Tạo ảnh một cuốn sổ tay và bút, nền trắng.
+Tạo ảnh một chiếc đồng hồ để bàn, nền gỗ sáng.
+Tạo ảnh một chậu sen đá đặt cạnh cửa sổ.
+Tạo ảnh đường phố ban đêm có mưa phùn, phản chiếu đèn.
+Tạo ảnh bãi biển lúc hoàng hôn, sóng nhẹ.
+Tạo ảnh rừng thông buổi sáng có sương mù nhẹ.
+Tạo ảnh một chiếc xe đạp bên bờ tường trắng.
+Tạo ảnh một bát trái cây tươi trên bàn, ánh sáng tự nhiên.
+Sửa ảnh này thành phong cách Ghibli, màu ấm, nét vẽ tay.
+Sửa ảnh này thành phong cách Ghibli, nền mềm và dễ thương.
+Sửa ảnh này thành phong cách anime Nhật, nét sạch, màu tươi.
+Sửa ảnh này thành phong cách tranh màu nước, loang nhẹ.
+Sửa ảnh này thành phong cách tranh chì đen trắng.
+Sửa ảnh này thành phong cách sơn dầu cổ điển.
+Sửa ảnh này thành phong cách truyện tranh comic, viền rõ.
+Sửa ảnh này thành phong cách pixel art, đơn giản, dễ nhìn.
+Sửa ảnh này thành phong cách poster retro, màu hơi cũ.
+Sửa ảnh này thành phong cách 3D hoạt hình, đáng yêu.
+Tạo ảnh Shiba phong cách Ghibli đang ăn cơm.
+Tạo ảnh mèo phong cách Ghibli đang ngủ trên sofa.
+Tạo ảnh quán cà phê phong cách Ghibli, đèn vàng ấm.
+Tạo ảnh phong cảnh núi rừng phong cách Ghibli, sương nhẹ.
+Tạo ảnh bát phở phong cách minh hoạ vẽ tay.
+Tăng độ sáng ảnh này lên nhẹ, giữ màu tự nhiên.
+Làm ảnh này sáng đều, giảm vùng tối bị đen.
+Giảm cháy sáng và khôi phục chi tiết vùng sáng.
+Làm ảnh này ấm hơn một chút, ánh sáng dịu.
+Làm ảnh này lạnh hơn một chút, vẫn tự nhiên.
+Đổi ánh sáng ảnh này sang ánh sáng studio mềm.
+Đổi ánh sáng ảnh này sang ánh sáng cửa sổ buổi sáng.
+Đổi ánh sáng ảnh này sang ánh sáng hoàng hôn cam ấm.
+Đổi ánh sáng ảnh này sang ánh sáng ban đêm có đèn đường.
+Tăng độ sáng khuôn mặt, giữ nền như cũ.
+Giảm bóng gắt trên mặt, làm da nhìn tự nhiên.
+Tăng độ tương phản nhẹ nhưng không làm gắt.
+Làm rõ chi tiết trong vùng tối, không bệt màu.
+Cân bằng trắng cho ảnh này, màu nhìn đúng hơn.
+Giữ nguyên ảnh, chỉ chỉnh ánh sáng cho sáng rõ hơn.
+Làm rõ ảnh này: tăng độ nét và giảm nhiễu.
+Nâng chất lượng ảnh này lên HD, không đổi màu.
+Upscale ảnh này x2, giữ chi tiết tự nhiên.
+Upscale ảnh này x4, giảm vỡ hạt và răng cưa.
+Làm ảnh này bớt mờ, chi tiết rõ hơn.
+Khử nhiễu ảnh này nhưng giữ texture.
+Tăng độ nét cho ảnh này, không oversharpen.
+Làm rõ chữ trong ảnh này, giữ đúng hình dạng chữ.
+Tăng chi tiết tóc/lông trong ảnh này, viền mượt.
+Phục hồi chi tiết khuôn mặt, giữ tự nhiên.
+Làm ảnh này sắc nét hơn, giảm banding.
+Tăng độ phân giải ảnh này để in, không đổi bố cục.
+Cải thiện độ rõ toàn ảnh, không thêm chi tiết giả.
+Giảm nhoè chuyển động nhẹ, làm ảnh rõ hơn.
+Làm ảnh này trong hơn, giảm hạt và nhiễu màu.
+Xóa nền ảnh này, xuất nền trong suốt PNG.
+Tách nền và giữ viền tóc tự nhiên, không lẹm.
+Tách nền và giữ viền lông tự nhiên, không lẹm.
+Xóa nền và thay bằng nền trắng tinh.
+Xóa nền và thay bằng nền xám nhạt.
+Chỉ giữ chủ thể, bỏ hết đồ vật phía sau.
+Tách nền sản phẩm, giữ bóng đổ mềm dưới chân.
+Tách nền người, làm viền áo sạch và mượt.
+Xóa nền logo, giữ cạnh sắc nét.
+Tách nền món ăn, giữ mép đĩa rõ.
+Xóa nền ảnh này, làm mép cắt mượt và sạch.
+Tách nền và giữ chi tiết tóc con bay nhẹ.
+Xóa nền và giữ màu chủ thể không bị đổi.
+Tách nền, không làm mất chi tiết tay/chân.
+Xóa nền, giữ lại cả bóng đổ tự nhiên.
+Tái tưởng tượng ảnh này thành phong cách điện ảnh, màu trầm nhẹ.
+Tái tưởng tượng ảnh này thành cảnh mùa đông có tuyết.
+Tái tưởng tượng ảnh này thành cảnh mùa xuân nhiều hoa.
+Tái tưởng tượng ảnh này thành cảnh trời mưa, thêm phản chiếu.
+Tái tưởng tượng ảnh này thành bối cảnh cyberpunk, thêm neon nhẹ.
+Tái tưởng tượng ảnh này thành bối cảnh cổ điển, màu vintage.
+Tái tưởng tượng ảnh này thành không gian tối giản, nền sạch.
+Tái tưởng tượng ảnh này thành phong cách siêu thực, nhưng rõ ràng.
+Tái tưởng tượng ảnh này thành cảnh trong rừng, ánh nắng xuyên lá.
+Tái tưởng tượng ảnh này thành cảnh thành phố ban đêm, nhiều đèn.
+Mở rộng ảnh này ra tỉ lệ 16:9, nền nối liền tự nhiên.
+Mở rộng ảnh này ra tỉ lệ 9:16, tự tạo thêm nền phù hợp.
+Mở rộng ảnh này sang trái và phải, không lặp hoa văn.
+Mở rộng ảnh này lên trên, thêm bầu trời phù hợp.
+Mở rộng ảnh này xuống dưới, thêm mặt đất phù hợp.
+Mở rộng ảnh này để có thêm khoảng trống đặt chữ.
+Mở rộng ảnh này thêm 20% viền xung quanh, nền khớp.
+Mở rộng ảnh này để nhìn rộng hơn, giữ chủ thể nguyên vẹn.
+Mở rộng ảnh này, tạo tiếp nền theo đúng phối cảnh.
+Mở rộng ảnh này, không làm méo hoặc kéo giãn chủ thể.
+Tạo ảnh nữ chiến binh Viking cầm khiên đứng trên đỉnh núi tuyết.
+Tạo ảnh phù thủy bóng tối đang thi triển phép thuật màu tím.
+Tạo ảnh một người lùn (Dwarf) thợ rèn đang đúc kiếm bên lò lửa.
+Tạo ảnh tiên nữ rừng xanh (Elf) đang bắn cung, tai nhọn, tóc bạch kim.
+Tạo ảnh kỵ sĩ bóng đêm cưỡi ngựa ma, mắt rực lửa.
+Tạo ảnh một cyborg girl (người lai máy) với cánh tay robot chi tiết.
+Tạo ảnh chân dung thần Zeus uy quyền với tia sét trên tay.
+Tạo ảnh một ninja đang lướt trên mái nhà dưới ánh trăng.
+Tạo ảnh thợ săn quái vật kiểu Van Helsing với áo choàng da dài.
+Tạo ảnh một robot giúp việc gia đình thân thiện, thiết kế bo tròn.
+Tạo ảnh nhân vật game phong cách Pixel Art 16-bit đang chạy.
+Tạo ảnh rồng băng khổng lồ đang ngủ đông trong hang động.
+Tạo ảnh phượng hoàng lửa đang tái sinh từ đống tro tàn.
+Tạo ảnh quái vật người cây (Ent) khổng lồ trong rừng già.
+Tạo ảnh nàng tiên cá đang hát trên mỏm đá giữa biển khơi.
+Tạo ảnh một phi hành gia đang trồng cây trên mặt trăng.
+Tạo ảnh thần chết (Grim Reaper) cầm lưỡi hái nhưng trông dễ thương (chibi).
+Tạo ảnh một con Golem bằng đá khổng lồ bảo vệ ngôi đền cổ.
+Tạo ảnh ma cà rồng quý tộc đang cầm ly rượu vang đỏ.
+Tạo ảnh người sói đang biến hình dưới ánh trăng tròn.
+Tạo ảnh thiết kế nhân vật nam chính anime học đường, tóc xanh.
+Tạo ảnh cô gái mặc trang phục Lolita Gothic đứng giữa vườn hồng đen.
+Tạo ảnh chiến binh La Mã cổ đại trong đấu trường Colosseum.
+Tạo ảnh một hacker trùm mũ đen ngồi trước 6 màn hình máy tính.
+Tạo ảnh nữ hoàng Ai Cập Cleopatra ngồi trên ngai vàng.
+Tạo ảnh Tôn Ngộ Không đang cưỡi cân đẩu vân.
+Tạo ảnh một con unicorn (kỳ lân) cầu vồng chạy trên mây.
+Tạo ảnh quái vật Slime xanh dẻo dễ thương trong game RPG.
+Tạo ảnh một pháp sư gọi hồn (Necromancer) triệu hồi xương cốt.
+Tạo ảnh thiên thần chiến binh với đôi cánh trắng và giáp vàng.
+Tạo ảnh người ngoài hành tinh da xanh mắt to thân thiện.
+Tạo ảnh một con rồng phương Đông quấn quanh cột đình.
+Tạo ảnh hồ ly chín đuôi (Kitsune) dạng người huyền bí.
+Tạo ảnh một chú rồng con mới nở từ quả trứng nứt.
+Tạo ảnh thiết kế nhân vật phản diện đeo mặt nạ bí ẩn.
+Tạo ảnh cô gái steampunk đeo kính bảo hộ và bánh răng.
+Tạo ảnh một vị vua già nua ngồi suy tư trên ngai vàng.
+Tạo ảnh đoàn thám hiểm đang đi vào hang động đầy kho báu.
+Tạo ảnh một con Griffin (đầu đại bàng, mình sư tử) đang bay.
+Tạo ảnh nhân vật nữ xạ thủ bắn tỉa ngụy trang trong rừng.
+Tạo ảnh một con rồng nước đang bơi dưới đáy biển sâu.
+Tạo ảnh thần rừng Leshy với sừng hươu và rêu phong.
+Tạo ảnh một con chim sấm sét (Thunderbird) tạo ra bão tố.
+Tạo ảnh thợ săn tiền thưởng không gian với súng laser.
+Tạo ảnh một con robot cũ kỹ bị bỏ hoang rêu mọc đầy.
+Tạo ảnh thần tình yêu Cupid bắn mũi tên trái tim.
+Tạo ảnh một chú mèo đi hia cầm kiếm oai vệ.
+Tạo ảnh quái vật Kraken phiên bản máy móc kim loại.
+Tạo ảnh một cô gái có sừng quỷ đỏ và đuôi dài.
+Tạo ảnh thiết kế giáp trụ khoa học viễn tưởng (Sci-fi armor).
+Tạo ảnh thiết kế phòng ngủ master tông màu be, phong cách Japandi.
+Tạo ảnh phòng khách căn hộ chung cư nhỏ, nội thất thông minh.
+Tạo ảnh phối cảnh mặt tiền nhà phố hiện đại 3 tầng, nhiều cây xanh.
+Tạo ảnh biệt thự nghỉ dưỡng ven biển có hồ bơi vô cực.
+Tạo ảnh một quán cà phê sân vườn rợp bóng mát, bàn ghế gỗ.
+Tạo ảnh không gian làm việc (workspace) tối giản với iMac và cây xương rồng.
+Tạo ảnh phòng tắm sang trọng lát đá cẩm thạch đen.
+Tạo ảnh nhà bếp phong cách Farmhouse ấm cúng với tủ gỗ sồi.
+Tạo ảnh một thư viện tại gia với kệ sách cao kịch trần.
+Tạo ảnh ban công chung cư trồng nhiều hoa hồng và đèn dây.
+Tạo ảnh một căn nhà gỗ nhỏ (cabin) giữa rừng thông sương mù.
+Tạo ảnh thiết kế sảnh khách sạn 5 sao lộng lẫy đèn chùm.
+Tạo ảnh quầy bar tại gia với tủ rượu vang và ghế cao.
+Tạo ảnh phòng chơi game (gaming room) với đèn neon tím xanh.
+Tạo ảnh sân thượng (rooftop) chill ngắm hoàng hôn thành phố.
+Tạo ảnh thiết kế phòng ngủ cho bé gái tông màu hồng pastel.
+Tạo ảnh một góc thiền định yên tĩnh với nệm và lư hương.
+Tạo ảnh nhà kính trồng cây (greenhouse) ngập tràn ánh nắng.
+Tạo ảnh phối cảnh khu đô thị sinh thái nhìn từ trên cao (flycam).
+Tạo ảnh một cây cầu treo bằng gỗ bắc qua suối.
+Tạo ảnh con đường đất đỏ bazan Tây Nguyên mùa hoa dã quỳ.
+Tạo ảnh bến du thuyền sang trọng lúc bình minh.
+Tạo ảnh một ngôi chùa cổ nằm cheo leo trên vách núi.
+Tạo ảnh cánh đồng điện gió với tua bin khổng lồ xoay.
+Tạo ảnh một khu chợ đêm nhộn nhịp ánh đèn lồng.
+Tạo ảnh hồ sen vào mùa hạ hoa nở rực rỡ.
+Tạo ảnh con ngõ nhỏ rêu phong ở Huế sau cơn mưa.
+Tạo ảnh đồi cát trắng Mũi Né trải dài vô tận.
+Tạo ảnh một resort bungalow trên mặt nước kiểu Maldives.
+Tạo ảnh quang cảnh quảng trường Thời Đại (Times Square) đông đúc.
+Tạo ảnh tháp Eiffel Paris dưới bầu trời mùa thu lãng mạn.
+Tạo ảnh Vạn Lý Trường Thành uốn lượn trên núi.
+Tạo ảnh kim tự tháp Giza Ai Cập dưới nắng sa mạc gay gắt.
+Tạo ảnh đền Taj Mahal phản chiếu xuống hồ nước.
+Tạo ảnh núi Phú Sĩ Nhật Bản với hoa anh đào nở rộ.
+Tạo ảnh thành phố Venice Ý với thuyền Gondola trên kênh.
+Tạo ảnh đảo Santorini Hy Lạp với nhà trắng mái xanh.
+Tạo ảnh nhà hát Opera Sydney Úc lung linh về đêm.
+Tạo ảnh tượng Nữ thần Tự do Mỹ giữa biển khơi.
+Tạo ảnh rừng tre Arashiyama Nhật Bản xanh mát.
+Tạo ảnh cực quang (Aurora) trên bầu trời đêm Bắc Cực.
+Tạo ảnh hẻm núi Grand Canyon hùng vĩ màu đỏ gạch.
+Tạo ảnh thác nước Niagara đổ xuống ầm ầm.
+Tạo ảnh cánh đồng hoa Lavender tím ngắt ở Pháp.
+Tạo ảnh một thị trấn cổ ở Châu Âu vào mùa đông tuyết phủ.
+Tạo ảnh con đường hoa anh đào rụng đầy cánh hoa.
+Tạo ảnh một lâu đài cổ kính kiểu Disney trên đồi.
+Tạo ảnh khu ổ chuột đầy màu sắc ở Brazil.
+Tạo ảnh trạm vũ trụ quốc tế ISS nhìn xuống Trái Đất.
+Tạo ảnh một thành phố dưới lòng đại dương (Atlantis).
+Tạo ảnh chụp macro mắt của một con mèo, chi tiết mống mắt.
+Tạo ảnh chụp cận cảnh giọt sương đọng trên mạng nhện.
+Tạo ảnh chụp macro vân lá cây màu xanh nổi rõ gân.
+Tạo ảnh chụp cận cảnh bông hoa bồ công anh đang bay trong gió.
+Tạo ảnh chụp macro hạt cát đủ màu sắc trên bãi biển.
+Tạo ảnh trừu tượng: Mực màu loang trong nước (ink in water).
+Tạo ảnh trừu tượng: Khói màu cuộn xoáy nghệ thuật.
+Tạo ảnh hiệu ứng Bokeh ánh đèn thành phố mờ ảo lung linh.
+Tạo ảnh chụp phơi sáng giao thông ban đêm thành vệt sáng dài.
+Tạo ảnh chụp phản chiếu vũng nước trên đường phố sau mưa.
+Tạo ảnh chụp silhouette (bóng đen) người đi bộ dưới hoàng hôn.
+Tạo ảnh chụp tia sét đánh xuống mặt biển dữ dội.
+Tạo ảnh chụp cơn bão nhìn từ vệ tinh vũ trụ.
+Tạo ảnh chụp macro côn trùng: Chú bọ rùa đỏ trên lá xanh.
+Tạo ảnh chụp cận cảnh ngọn lửa đang cháy rực rỡ.
+Tạo ảnh chụp tinh thể băng tuyết dưới kính hiển vi.
+Tạo ảnh chụp cấu trúc tổ ong vàng óng mật.
+Tạo ảnh nghệ thuật sắp đặt hoa quả (Still life) phong cách cổ điển.
+Tạo ảnh chụp bóng đổ (shadow art) tạo hình thú vị trên tường.
+Tạo ảnh chụp đường xoắn ốc của cầu thang nhìn từ trên xuống.
+Tạo ảnh trừu tượng: Các hình khối hình học bay lơ lửng.
+Tạo ảnh chụp macro lông vũ chim công sặc sỡ.
+Tạo ảnh chụp sự bùng nổ của bột màu (color powder explosion).
+Tạo ảnh chụp cận cảnh bọt xà phòng phản chiếu cầu vồng.
+Tạo ảnh chụp vệt sao (star trail) xoay tròn trên bầu trời đêm.
+Tạo ảnh chụp nghệ thuật múa lụa dưới nước.
+Tạo ảnh chụp macro đầu bút bi đang viết mực xanh.
+Tạo ảnh chụp cận cảnh phím đàn piano đen trắng bóng loáng.
+Tạo ảnh chụp khói thuốc lá tạo hình đầu lâu nghệ thuật.
+Tạo ảnh chụp mặt nước gợn sóng khi ném viên đá.
+Tạo ảnh trừu tượng: Sóng âm thanh (sound wave) neon.
+Tạo ảnh chụp macro nhụy hoa ly vàng rực phấn.
+Tạo ảnh chụp cận cảnh mắt của một chú tắc kè hoa.
+Tạo ảnh chụp nghệ thuật sắp đặt sách cũ và nến.
+Tạo ảnh chụp phản chiếu qua quả cầu thủy tinh.
+Tạo ảnh chụp hiệu ứng Light Painting (vẽ bằng ánh sáng) trong đêm.
+Tạo ảnh chụp texture (bề mặt) tường gạch cũ rêu phong.
+Tạo ảnh chụp texture vỏ cây sần sùi chi tiết.
+Tạo ảnh chụp texture mặt trăng với các hố thiên thạch.
+Tạo ảnh chụp texture vải lụa mềm mại uốn lượn.
+Tạo ảnh chụp texture da cá sấu chân thực.
+Tạo ảnh chụp texture lông mèo mượt mà cận cảnh.
+Tạo ảnh chụp texture nước đá nứt vỡ nghệ thuật.
+Tạo ảnh chụp texture kim loại xước phay (brushed metal).
+Tạo ảnh chụp texture gỗ vân xoáy cổ thụ.
+Tạo ảnh nghệ thuật Double Exposure: Chân dung và rừng thông.
+Tạo ảnh nghệ thuật Double Exposure: Con người và thành phố.
+Tạo ảnh nghệ thuật Double Exposure: Cô gái và bầu trời sao.
+Tạo ảnh nghệ thuật cắt dán (Collage Art) siêu thực.
+Tạo ảnh ảo ảnh quang học (Optical illusion) gây lú lẫn.
+Chuyển ảnh này sang phong cách tranh cổ động Việt Nam xưa.
+Sửa ảnh này thành phong cách tranh khắc gỗ Đông Hồ.
+Biến ảnh này thành phong cách phim hoạt hình Ghibli yên bình.
+Chuyển ảnh chân dung này thành tranh vẽ chì than (Charcoal).
+Tạo hiệu ứng ảnh bị xé rách (Torn paper effect).
+Làm ảnh này trông như được in trên báo giấy cũ (Halftone).
+Biến ảnh này thành tranh thêu chữ thập (Cross-stitch).
+Sửa ảnh này thành phong cách Game Boy màn hình xanh.
+Tạo hiệu ứng mưa rơi nhòe trên kính đè lên ảnh.
+Thêm hiệu ứng tuyết rơi lãng mạn vào bức ảnh.
+Thêm hiệu ứng lá vàng rơi bay bay trong gió.
+Thêm hiệu ứng đom đóm phát sáng vào bụi cây.
+Thêm hiệu ứng sương mù dày đặc kiểu London.
+Xóa người đang đứng ở góc phải bức ảnh.
+Xóa cái cột điện chắn ngang tầm nhìn.
+Xóa vết bẩn trên áo nhân vật.
+Xóa logo thương hiệu trên sản phẩm.
+Xóa toàn bộ background, để nền trắng tinh.
+Xóa background, thay bằng nền studio màu xám.
+Tách chủ thể con mèo, ghép vào nền vũ trụ.
+Thay đổi màu tóc nhân vật từ đen sang vàng kim.
+Thay đổi màu xe ô tô từ đỏ sang xanh dương.
+Thay đổi màu mắt nhân vật thành màu đỏ.
+Thay đổi trang phục từ áo thun sang sơ mi trắng.
+Thay đổi bầu trời ban ngày thành ban đêm đầy sao.
+Relight: Tạo ánh sáng ven (rim light) màu đỏ từ bên trái.
+Relight: Tạo ánh sáng ven (rim light) màu xanh từ bên phải.
+Relight: Chiếu ánh sáng cửa sổ (window light) lên mặt.
+Relight: Tạo ánh sáng đèn đường vàng vọt ban đêm.
+Relight: Làm tối 4 góc ảnh (vignette) để tập trung vào giữa.
+Upscale ảnh này lên 2x, ưu tiên làm nét khuôn mặt.
+Upscale ảnh này lên 4x, khử nhiễu hạt (denoise) mạnh.
+Phục chế ảnh đen trắng này thành ảnh màu (Colorize).
+Làm rõ các chi tiết bị mờ (Deblur) trong ảnh chuyển động.
+Cân bằng lại bố cục ảnh (Crop) theo quy tắc 1/3.
+Xoay ảnh này nghiêng 90 độ.
+Lật ngược ảnh này theo chiều ngang (Mirror).
+Mở rộng ảnh (Outpaint) về phía trên để thấy bầu trời.
+Mở rộng ảnh (Outpaint) về phía dưới để thấy mặt đất.
+Mở rộng ảnh (Outpaint) sang hai bên tạo tỉ lệ 21:9.
+Chèn chữ 'Hello World' kiểu đèn neon vào giữa ảnh.
+Chèn khung viền (border) màu trắng kiểu ảnh Polaroid.
+Làm mờ hậu cảnh (Blur background) giả lập khẩu độ f/1.8.
+Làm mờ mặt người trong ảnh để bảo vệ danh tính.
+Tăng độ tương phản (Contrast) lên mức cao (High contrast).
+Giảm độ bão hòa (Saturation) để ảnh trông buồn hơn.
+Chỉnh tông màu ảnh sang màu nâu (Sepia) hoài cổ.
+Chỉnh tông màu ảnh sang màu xanh lạnh (Cool tone).
+Chỉnh tông màu ảnh sang màu vàng ấm (Warm tone).
+Tự động làm đẹp khuôn mặt (Auto beauty AI).
+Tạo ảnh một chú Shiba đang ăn táo, nền bếp sáng.
+Tạo ảnh một chú Shiba đang liếm kem, chụp cận cảnh.
+Tạo ảnh một chú Shiba đội khăn choàng, trời se lạnh.
+Tạo ảnh một chú Shiba ngồi trong giỏ xe đạp, phố cổ.
+Tạo ảnh một chú Shiba nằm cạnh lò sưởi, ánh đèn ấm.
+Tạo ảnh một chú Shiba đang uống nước, giọt bắn nhẹ.
+Tạo ảnh một chú Shiba đang chơi với quả bóng, sân cỏ.
+Tạo ảnh một chú Shiba đang tắm bọt, phong cách dễ thương.
+Tạo ảnh một chú Shiba đang ngáp, nền phòng khách.
+Tạo ảnh một chú Shiba đang nhìn mưa qua cửa sổ.
+Tạo ảnh một con mèo nằm trên laptop, bàn làm việc.
+Tạo ảnh một con mèo đang đuổi tia laser, phòng tối.
+Tạo ảnh một con mèo đang ngủ trong chăn, ánh sáng mềm.
+Tạo ảnh một con mèo đang ăn cá, bát sứ nhỏ.
+Tạo ảnh một con thỏ đang cầm hoa, nền pastel.
+Tạo ảnh một con chim nhỏ đứng trên cành, bokeh mịn.
+Tạo ảnh một chú nhím cầm quả dâu, nền trắng.
+Tạo ảnh một chú gấu bông trên giường, ánh sáng cửa sổ.
+Tạo ảnh một chú cáo đang đi trong rừng, nắng xuyên lá.
+Tạo ảnh một đàn cá koi trong hồ, nước trong.
+Tạo ảnh một tô phở bốc khói, chụp từ trên xuống.
+Tạo ảnh một ổ bánh mì Việt Nam, giấy gói đơn giản.
+Tạo ảnh một ly cà phê sữa đá, đá viên rõ nét.
+Tạo ảnh một đĩa cơm tấm, ánh sáng tự nhiên.
+Tạo ảnh một bát bún bò, topping đầy đủ.
+Tạo ảnh một ly trà đào, lát cam nổi.
+Tạo ảnh một chiếc bánh flan, caramel bóng.
+Tạo ảnh một đĩa sushi, màu sắc tươi.
+Tạo ảnh một nồi lẩu đang sôi, hơi nước rõ.
+Tạo ảnh một hộp quà nhỏ có nơ, nền trắng.
+Tạo ảnh một chai nước hoa, chụp sản phẩm tối giản.
+Tạo ảnh một đôi giày sneaker, nền xám nhạt.
+Tạo ảnh một chiếc đồng hồ đeo tay, ánh sáng studio.
+Tạo ảnh một chiếc điện thoại trên bàn gỗ, tối giản.
+Tạo ảnh một chiếc túi tote, nền trắng sạch.
+Tạo ảnh một chiếc tai nghe, phản chiếu nhẹ.
+Tạo ảnh một lọ kem dưỡng, nền marble.
+Tạo ảnh một cuốn sách mở, ánh nắng chiếu.
+Tạo ảnh một cây sen đá, chậu gốm nhỏ.
+Tạo ảnh một bó hoa hướng dương, nền sáng.
+Tạo ảnh một con đường làng, trời xanh.
+Tạo ảnh một góc phố đêm mưa, phản chiếu đèn.
+Tạo ảnh một bãi biển bình minh, sóng nhẹ.
+Tạo ảnh một cánh đồng lúa chín, nắng vàng.
+Tạo ảnh một quán cà phê nhỏ, đèn vàng ấm.
+Tạo ảnh một căn phòng tối giản, tông trắng.
+Tạo ảnh một cửa sổ có rèm bay, ánh sáng mềm.
+Tạo ảnh một ngọn núi xa, mây mỏng.
+Tạo ảnh một khu chợ sáng sớm, nhộn nhịp.
+Tạo ảnh một chiếc xe đạp dựa tường, tông vintage.
+Sửa ảnh này thành phong cách Ghibli, màu ấm, nét vẽ tay.
+Sửa ảnh này thành phong cách Ghibli, nền mềm và dễ thương.
+Sửa ảnh này thành phong cách anime Nhật, nét sạch.
+Sửa ảnh này thành phong cách anime chibi, đầu to dễ thương.
+Sửa ảnh này thành phong cách tranh màu nước, loang nhẹ.
+Sửa ảnh này thành phong cách pastel mềm, ít tương phản.
+Sửa ảnh này thành phong cách tranh chì, đen trắng.
+Sửa ảnh này thành phong cách sketch nhanh, nét bút rõ.
+Sửa ảnh này thành phong cách sơn dầu cổ điển.
+Sửa ảnh này thành phong cách sơn dầu hiện đại, màu đậm.
+Sửa ảnh này thành phong cách comic, viền đen rõ.
+Sửa ảnh này thành phong cách manga, screentone nhẹ.
+Sửa ảnh này thành phong cách poster retro, màu cũ.
+Sửa ảnh này thành phong cách VHS/film grain nhẹ.
+Sửa ảnh này thành phong cách neon cyberpunk.
+Sửa ảnh này thành phong cách tối giản flat design.
+Sửa ảnh này thành phong cách 3D hoạt hình, chất liệu mềm.
+Sửa ảnh này thành phong cách clay (đất sét), dễ thương.
+Sửa ảnh này thành phong cách low-poly 3D, ít mặt.
+Sửa ảnh này thành phong cách pixel art 16-bit.
+Sửa ảnh này thành phong cách pixel art 32-bit, chi tiết hơn.
+Sửa ảnh này thành phong cách isometric, góc nhìn 3/4.
+Sửa ảnh này thành phong cách paper-cut, lớp giấy rõ.
+Sửa ảnh này thành phong cách line art, nền trắng.
+Sửa ảnh này thành phong cách in lụa (screen print), ít màu.
+Sửa ảnh này thành phong cách tối tăm noir, tương phản cao.
+Sửa ảnh này thành phong cách dreamy, sương nhẹ.
+Sửa ảnh này thành phong cách ảnh cưới film, màu dịu.
+Sửa ảnh này thành phong cách màu nước Nhật (ukiyo-e).
+Sửa ảnh này thành phong cách tranh acrylic, nét cọ rõ.
+Sửa ảnh này thành phong cách gradient duotone.
+Sửa ảnh này thành phong cách holographic, ánh óng.
+Sửa ảnh này thành phong cách bút dạ marker, mảng màu rõ.
+Sửa ảnh này thành phong cách tranh phấn (chalk), nền đen.
+Sửa ảnh này thành phong cách stamp (con dấu), đơn sắc.
+Sửa ảnh này thành phong cách tạp chí thời trang, editorial.
+Sửa ảnh này thành phong cách ảnh sản phẩm cao cấp, clean.
+Sửa ảnh này thành phong cách ảnh minh hoạ sách thiếu nhi.
+Sửa ảnh này thành phong cách tranh 8-bit siêu đơn giản.
+Sửa ảnh này thành phong cách watercolor + line art.
+Tăng độ sáng ảnh này, giữ màu tự nhiên.
+Làm ảnh này sáng đều hơn, giảm bóng gắt.
+Giảm vùng cháy sáng, giữ chi tiết vùng sáng.
+Tăng sáng vùng tối, không bệt màu.
+Đổi ánh sáng sang studio mềm, da tự nhiên.
+Đổi ánh sáng sang ánh sáng cửa sổ buổi sáng.
+Đổi ánh sáng sang hoàng hôn ấm, bóng mềm.
+Đổi ánh sáng sang ban đêm có đèn đường.
+Thêm rim light nhẹ phía sau chủ thể.
+Làm ánh sáng dịu hơn, giảm tương phản gắt.
+Tăng tương phản nhẹ, ảnh rõ hơn.
+Giảm tương phản, ảnh mềm hơn.
+Cân bằng trắng cho ảnh này, màu chuẩn hơn.
+Làm ảnh này ấm hơn một chút (tông vàng).
+Làm ảnh này lạnh hơn một chút (tông xanh).
+Giảm ám vàng, trả màu trung tính.
+Giảm ám xanh, trả màu trung tính.
+Làm sáng khuôn mặt, giữ nền như cũ.
+Làm sáng nền, giữ chủ thể như cũ.
+Giảm bóng dưới mắt, vẫn tự nhiên.
+Giảm phản chiếu gắt trên trán/mũi.
+Làm ánh sáng giống ngày nhiều mây (diffused).
+Làm ánh sáng giống ánh đèn tungsten trong nhà.
+Làm ánh sáng giống ánh đèn LED trắng.
+Làm ảnh này kiểu điện ảnh, ánh sáng có chiều sâu.
+Làm nổi chủ thể bằng ánh sáng spot nhẹ.
+Giảm noise khi tăng sáng, giữ chi tiết.
+Khôi phục màu sau khi tăng sáng, không bệt.
+Làm ảnh này sáng hơn 1 mức, không đổi tông.
+Làm ảnh này tối hơn 1 mức, vẫn rõ chi tiết.
+Tăng độ rực nhẹ, không quá gắt.
+Giảm độ rực nhẹ, màu dịu hơn.
+Làm bầu trời sáng hơn, giữ mặt đất.
+Làm mặt đất sáng hơn, giữ bầu trời.
+Chỉnh ánh sáng cho ảnh này nhìn tự nhiên hơn.
+Làm rõ ảnh này: tăng độ nét và giảm nhiễu.
+Upscale ảnh này lên HD, giữ màu như cũ.
+Upscale ảnh này lên 4K, giữ bố cục.
+Upscale ảnh này x2, chi tiết tự nhiên.
+Upscale ảnh này x4, giảm vỡ hạt.
+Làm ảnh này bớt mờ, nét hơn.
+Khử nhiễu ảnh này, giữ texture.
+Tăng độ nét cạnh, không oversharpen.
+Làm rõ khuôn mặt, không bị nhựa.
+Làm rõ tóc/lông, viền mượt.
+Làm rõ chữ trong ảnh, không méo chữ.
+Tăng chi tiết vải, da, kim loại.
+Giảm banding và nén JPEG trong ảnh.
+Giảm răng cưa ở các đường chéo.
+Làm ảnh này sạch hơn, ít hạt hơn.
+Phục hồi chi tiết ảnh cũ, vẫn tự nhiên.
+Tăng độ phân giải để in, không đổi màu.
+Làm ảnh này sắc nét hơn nhưng không gắt.
+Làm ảnh này trong hơn, giảm nhiễu màu.
+Giảm nhiễu vùng tối, giữ chi tiết.
+Khôi phục chi tiết vùng sáng bị bệt.
+Làm nét nhẹ toàn ảnh, không đổi bố cục.
+Tăng clarity nhẹ, giữ mịn da.
+Tăng micro-detail nhẹ, vẫn tự nhiên.
+Làm rõ đường viền sản phẩm, sạch.
+Làm rõ logo/nhãn, cạnh sắc.
+Upscale ảnh phong cảnh, tăng chi tiết lá cây.
+Upscale ảnh đồ ăn, làm rõ kết cấu.
+Upscale ảnh đêm, giảm noise mạnh.
+Upscale ảnh này, giữ màu trung tính.
+Xóa nền ảnh này, nền trong suốt PNG.
+Tách nền, giữ viền tóc tự nhiên.
+Tách nền, giữ viền lông tự nhiên.
+Xóa nền và thay bằng nền trắng tinh.
+Xóa nền và thay bằng nền xám nhạt.
+Chỉ giữ chủ thể, bỏ hết nền phía sau.
+Tách nền sản phẩm, cạnh sạch và sắc.
+Tách nền người, không lẹm tay/chân.
+Tách nền vật thể, không mất chi tiết nhỏ.
+Xóa nền logo, giữ cạnh vuông vức.
+Tách nền món ăn, giữ mép đĩa rõ.
+Xóa nền và giữ bóng đổ mềm riêng.
+Xóa nền và làm viền cắt mượt.
+Tách nền, không đổi màu chủ thể.
+Tách nền và làm sạch rìa còn sót.
+Xóa nền nền trời, giữ cây và nhà.
+Tách nền xe, giữ gương và nan hoa.
+Xóa nền kính, giữ viền trong suốt tự nhiên.
+Tách nền tóc xoăn, giữ sợi tóc mảnh.
+Tách nền thú cưng, giữ lông tơ.
+Xóa nền và để nền trong suốt, không viền trắng.
+Tách nền và căn giữa chủ thể.
+Tách nền và chừa padding 10% quanh chủ thể.
+Tách nền, bỏ vật thể phụ xung quanh.
+Xóa nền và thay bằng nền màu be nhạt.
+Tái tưởng tượng ảnh này thành cảnh mùa đông có tuyết.
+Tái tưởng tượng ảnh này thành cảnh mùa xuân nhiều hoa.
+Tái tưởng tượng ảnh này thành cảnh trời mưa, có phản chiếu.
+Tái tưởng tượng ảnh này thành bối cảnh cyberpunk, neon nhẹ.
+Tái tưởng tượng ảnh này thành bối cảnh cổ điển vintage.
+Tái tưởng tượng ảnh này thành phong cách tối giản, nền sạch.
+Tái tưởng tượng ảnh này thành cảnh rừng, nắng xuyên lá.
+Tái tưởng tượng ảnh này thành cảnh biển, gió nhẹ.
+Tái tưởng tượng ảnh này thành studio chụp sản phẩm sạch.
+Tái tưởng tượng ảnh này thành vibe điện ảnh, màu trầm.
+Mở rộng ảnh này ra tỉ lệ 16:9, nền nối liền.
+Mở rộng ảnh này ra tỉ lệ 9:16, nền nối liền.
+Mở rộng ảnh này ra tỉ lệ 1:1, giữ chủ thể.
+Mở rộng ảnh này thêm viền 15% xung quanh.
+Mở rộng ảnh này sang trái và phải, không lặp pattern.
+Mở rộng ảnh này lên trên, thêm bầu trời phù hợp.
+Mở rộng ảnh này xuống dưới, thêm mặt đất phù hợp.
+Mở rộng ảnh này để có chỗ đặt chữ ở bên phải.
+Mở rộng ảnh này để có chỗ đặt chữ ở bên trên.
+Mở rộng ảnh này và giữ phối cảnh tự nhiên.
+Tạo ảnh chân dung cô gái mặc áo dài cách tân màu đỏ rực rỡ.
+Tạo ảnh một chàng trai đang chơi đàn guitar acoustic bên đống lửa trại.
+Tạo ảnh người mẫu nữ mặc váy dạ hội lấp lánh đi trên thảm đỏ.
+Tạo ảnh chụp cận cảnh đôi mắt xanh biếc của một em bé phương Tây.
+Tạo ảnh cụ già đang ngồi đọc báo giấy buổi sáng trong công viên.
+Tạo ảnh nhóm bạn trẻ đang nướng thịt BBQ ngoài trời vui vẻ.
+Tạo ảnh một vận động viên bơi lội đang sải tay dưới nước.
+Tạo ảnh cô gái đang tập Yoga tư thế cái cây trên đỉnh núi.
+Tạo ảnh một lập trình viên đang code trong phòng tối với đèn LED tím.
+Tạo ảnh bác sĩ đang phẫu thuật tập trung cao độ trong phòng mổ.
+Tạo ảnh lính cứu hỏa đang dập tắt đám cháy lớn dũng cảm.
+Tạo ảnh cảnh sát giao thông đang điều tiết xe cộ dưới trời mưa.
+Tạo ảnh cô giáo đang giảng bài say sưa trên bục giảng.
+Tạo ảnh một họa sĩ đang vẽ tranh phong cảnh bên bờ hồ.
+Tạo ảnh nhiếp ảnh gia đang cầm máy ảnh chụp chim chóc.
+Tạo ảnh một DJ đang chơi nhạc sôi động trong quán bar.
+Tạo ảnh vũ công ballet đang múa trên sân khấu ánh sáng mờ ảo.
+Tạo ảnh một phi công đang ngồi trong buồng lái máy bay chiến đấu.
+Tạo ảnh thợ làm bánh đang trang trí chiếc bánh kem khổng lồ.
+Tạo ảnh một barista đang đổ hình trái tim lên ly Latte Art.
+Tạo ảnh mùa đông Hà Nội với cây bàng lá đỏ và sương mù.
+Tạo ảnh đường phố Sài Gòn ngập nước sau cơn mưa rào mùa hạ.
+Tạo ảnh cơn bão tuyết trắng xóa phủ kín ngôi nhà gỗ.
+Tạo ảnh sa mạc Sahara nắng cháy với đoàn lạc đà đi qua.
+Tạo ảnh rừng mưa nhiệt đới Amazon rậm rạp và ẩm ướt.
+Tạo ảnh một hòn đảo nhiệt đới với bão đang kéo đến đen kịt trời.
+Tạo ảnh cầu vồng đôi xuất hiện sau cơn mưa trên cánh đồng.
+Tạo ảnh bầu trời hoàng hôn màu tím hồng lãng mạn trên biển.
+Tạo ảnh đêm trăng tròn sáng vằng vặc chiếu xuống mặt hồ yên ả.
+Tạo ảnh bình minh trên đỉnh núi mây luồn tuyệt đẹp.
+Tạo ảnh sấm sét rạch ngang bầu trời đêm thành phố.
+Tạo ảnh cánh đồng hoa cải vàng rực rỡ trong nắng xuân.
+Tạo ảnh mùa thu lá phong đỏ rực ở Canada.
+Tạo ảnh hoa anh đào rơi lả tả trong gió xuân Nhật Bản.
+Tạo ảnh một ngày nắng đẹp trời xanh mây trắng trên bãi cỏ.
+Tạo ảnh sương mù dày đặc bao phủ thành phố London.
+Tạo ảnh một đêm đầy sao băng rơi trên bầu trời.
+Tạo ảnh hiện tượng nhật thực toàn phần che khuất mặt trời.
+Tạo ảnh sóng thần khổng lồ đang ập vào bờ biển (phim thảm họa).
+Tạo ảnh núi lửa đang phun trào dung nham đỏ rực.
+Tạo ảnh phong cách thập niên 1920 với váy flapper và xe cổ.
+Tạo ảnh phong cách thập niên 1980 với quần ống loe và đài cassette.
+Tạo ảnh Sài Gòn những năm 1990 với xe Cub và áo sơ mi trắng.
+Tạo ảnh chiến binh La Mã cổ đại đang dàn trận.
+Tạo ảnh cao bồi miền Tây nước Mỹ đang cưỡi ngựa bắn súng.
+Tạo ảnh một geisha Nhật Bản đang rót trà đạo.
+Tạo ảnh hoàng đế Trung Hoa đang ngồi trên ngai vàng rồng.
+Tạo ảnh nữ hoàng Victoria trong cung điện hoàng gia Anh.
+Tạo ảnh một hiệp sĩ trung cổ mặc giáp sắt toàn thân.
+Tạo ảnh cướp biển vùng Caribbean đang tìm kho báu.
+Tạo ảnh người tiền sử đang nhóm lửa trong hang động.
+Tạo ảnh phi hành gia đầu tiên đặt chân lên mặt trăng.
+Tạo ảnh khung cảnh chợ Bến Thành tấp nập những năm 1960.
+Tạo ảnh những chiếc xe điện leng keng ở Hà Nội thời bao cấp.
+Tạo ảnh thiếu nữ mặc yếm đào bên hồ sen cổ truyền.
+Tạo ảnh ông đồ già viết thư pháp ngày Tết.
+Tạo ảnh đoàn quân Tây Sơn áo vải cờ đào hành quân.
+Tạo ảnh khung cảnh làng quê Việt Nam yên bình với cây đa bến nước.
+Tạo ảnh lễ hội đấu bò tót sôi động ở Tây Ban Nha.
+Tạo ảnh lễ hội Carnival sặc sỡ sắc màu ở Brazil.
+Tạo ảnh một con mèo đang đeo kính thực tế ảo VR.
+Tạo ảnh chó Pug mặc bộ đồ phi hành gia béo ú.
+Tạo ảnh chuột Hamster đang lái chiếc xe ô tô đồ chơi tí hon.
+Tạo ảnh một con gấu Bắc Cực đang uống Coca Cola trên băng.
+Tạo ảnh đàn chim cánh cụt đang trượt tuyết vui nhộn.
+Tạo ảnh khủng long T-Rex đang cố gắng thắt cà vạt.
+Tạo ảnh một con lười (Sloth) đang làm nhân viên văn phòng chậm chạp.
+Tạo ảnh chú ếch xanh đang cầm ô lá sen đi dưới mưa.
+Tạo ảnh cá mập đang cười nhe răng hài hước.
+Tạo ảnh một con gà trống đang gáy chào mặt trời mọc trên hàng rào.
+Tạo ảnh đàn kiến đang xây dựng lâu đài cát.
+Tạo ảnh một con ong đang lấy mật trên bông hoa hướng dương.
+Tạo ảnh bọ ngựa đang múa võ kungfu.
+Tạo ảnh chú nhím xù lông đang cuộn tròn dễ thương.
+Tạo ảnh hươu cao cổ đang ăn lá cây trên cao.
+Tạo ảnh voi con đang phun nước nghịch ngợm.
+Tạo ảnh khỉ con đang đu dây trong rừng rậm.
+Tạo ảnh một con cáo tuyết trắng muốt nằm ngủ.
+Tạo ảnh cú mèo đang đậu trên cành cây khô ban đêm.
+Tạo ảnh đại bàng đang sải cánh săn mồi dũng mãnh.
+Tạo ảnh thiết kế logo quán trà sữa hình ly trà cute.
+Tạo ảnh thiết kế banner quảng cáo sale 50% thời trang.
+Tạo ảnh thiết kế poster phim kinh dị với bàn tay máu.
+Tạo ảnh thiết kế bìa sách tiểu thuyết lãng mạn.
+Tạo ảnh thiết kế card visit cho giám đốc công ty công nghệ.
+Tạo ảnh thiết kế giao diện ứng dụng nghe nhạc hiện đại (UI/UX).
+Tạo ảnh thiết kế bao bì hộp đựng giày sneaker cực chất.
+Tạo ảnh thiết kế áo thun in hình graphic đường phố.
+Tạo ảnh thiết kế backdrop sự kiện tiệc cưới sang trọng.
+Tạo ảnh thiết kế menu nhà hàng món Âu cổ điển.
+Tạo ảnh chụp món Sushi Nhật Bản bày trên thuyền gỗ.
+Tạo ảnh chụp ly bia tươi sủi bọt mát lạnh.
+Tạo ảnh chụp đĩa mì Ý sốt bò bằm Spaghetti hấp dẫn.
+Tạo ảnh chụp cái bánh Burger khổng lồ nhiều tầng phô mai.
+Tạo ảnh chụp ly kem tươi nhiều màu sắc topping.
+Tạo ảnh chụp set trà chiều kiểu Anh sang chảnh.
+Tạo ảnh chụp món Phở bò tái lăn hành lá xanh mướt.
+Tạo ảnh chụp mâm cơm niêu cá kho tộ dân dã.
+Tạo ảnh chụp ly cà phê Capuchino có hình lá dương xỉ.
+Tạo ảnh chụp rổ trái cây nhiệt đới tươi ngon (xoài, chôm chôm).
+Biến ảnh này thành tranh vẽ phấn màu trên bảng đen.
+Sửa ảnh này thành phong cách tranh cổ động Liên Xô cũ.
+Chuyển ảnh này sang phong cách Cyberpunk 2077 neon tím.
+Biến ảnh chân dung thành nhân vật hoạt hình Simpson vàng khè.
+Tạo hiệu ứng ảnh bị nhiễu sóng TV (glitch effect) cực mạnh.
+Biến ảnh phong cảnh thành thế giới kẹo ngọt (Candy land).
+Sửa ảnh này thành phong cách phim đen trắng Noir trinh thám.
+Tạo hiệu ứng tranh vẽ bằng cà phê (Coffee painting).
+Biến ảnh này thành hình xăm nghệ thuật trên da (Tattoo style).
+Chuyển ảnh này sang phong cách tranh kính màu nhà thờ.
+Xóa nếp nhăn trên trán và khóe mắt cho mẫu.
+Làm trắng da và xóa tàn nhang tự nhiên.
+Tô son đỏ cho môi và đánh má hồng nhẹ.
+Đổi màu tóc sang màu bạch kim khói (platinum).
+Làm thon gọn khuôn mặt V-line và nâng mũi.
+Xóa quầng thâm mắt và làm sáng tròng mắt.
+Chỉnh sửa body thon gọn, kéo dài chân.
+Thêm râu quai nón nam tính cho khuôn mặt nam.
+Đeo thêm kính râm thời trang vào ảnh chân dung.
+Đổi màu mắt sang màu xanh dương lai tây.
+Xóa người đi xe máy ở background.
+Xóa thùng rác bên lề đường.
+Xóa dây điện chằng chịt trên trời.
+Xóa logo watermark ở góc ảnh.
+Xóa vết bẩn trên tường nhà.
+Xóa chiếc xe ô tô đang đậu chắn cửa.
+Xóa con chó đang chạy trong công viên.
+Xóa đám mây đen trên bầu trời.
+Xóa vết xước trên mặt bàn gỗ.
+Xóa cái ghế trống bên cạnh.
+Thay nền trời thành bầu trời đầy sao lấp lánh.
+Thay nền thành bãi biển Maldives xanh ngắt.
+Thay nền thành đường phố Tokyo sầm uất.
+Thay nền thành rừng thông Đà Lạt thơ mộng.
+Thay nền thành tường gạch trắng studio tối giản.
+Thay nền thành vũ trụ bao la huyền bí.
+Thay nền thành sân khấu ca nhạc hoành tráng.
+Thay nền thành thư viện sách cổ kính.
+Thay nền thành cánh đồng hoa Lavender tím.
+Thay nền thành bức tường Graffiti đầy màu sắc.
+Tạo ánh sáng vàng ấm áp của nến.
+Tạo ánh sáng xanh lạnh lẽo của đèn huỳnh quang.
+Tạo ánh sáng đỏ rực của đèn báo động.
+Chiếu ánh sáng spotlight vào giữa ảnh.
+Tạo bóng đổ dài của buổi chiều tà.
+Thêm ánh sáng phản chiếu từ mặt nước lên trần nhà.
+Tạo hiệu ứng ánh sáng disco nhiều màu quay cuồng.
+Làm sáng bừng cả căn phòng tối.
+Tạo ánh sáng ven tóc (hair light) óng ả.
+Giảm độ sáng background để nổi bật chủ thể.
+Upscale ảnh này lên 4K sắc nét từng chi tiết.
+Khử nhiễu ảnh chụp đêm bị noise hạt mè.
+Làm nét ảnh bị rung tay khi chụp.
+Phục hồi ảnh cũ bị ố vàng và rách nát.
+Tăng độ phân giải cho ảnh avatar nhỏ xíu.
+Làm mịn ảnh bị vỡ hạt pixel (pixelated).
+Cân bằng trắng lại cho ảnh bị ám xanh.
+Chỉnh lại độ nghiêng đường chân trời cho thẳng.
+Crop ảnh theo tỉ lệ vuông 1:1 để đăng Instagram.
+Crop ảnh theo tỉ lệ 16:9 để làm hình nền máy tính.
+Mở rộng ảnh ra hai bên để thêm không gian thở.
+Mở rộng ảnh lên trên để thấy ngọn cây.
+Mở rộng ảnh xuống dưới để thấy đôi giày.
+Vẽ thêm cánh rừng rậm rạp xung quanh ngôi nhà.
+Vẽ thêm biển cả mênh mông xung quanh con thuyền.
+Vẽ thêm bầu trời galaxy trên đầu phi hành gia.
+Vẽ thêm đám đông khán giả đang cổ vũ phía dưới.
+Vẽ thêm cái bàn làm việc đầy đủ vật dụng.
+Vẽ thêm đôi cánh thiên thần sau lưng cô gái.
+Hoàn thiện nửa khuôn mặt bị cắt mất.
+Chèn chữ "Happy New Year" pháo hoa rực rỡ.
+Chèn chữ "Sale Off" màu đỏ nổi bật.
+Chèn phụ đề phim (subtitle) màu trắng viền đen bên dưới.
+Chèn khung ảnh vintage kiểu Polaroid.
+Chèn sticker hình trái tim bay bay.
+Chèn logo công ty vào góc phải bên trên.
+Chèn ngày tháng chụp ảnh phong cách máy film cũ.
+Chèn hiệu ứng tuyết rơi phủ lên chữ.
+Chèn chữ ký nghệ thuật vào góc ảnh.
+Chèn watermark trong suốt bảo vệ bản quyền.
+Tạo ảnh ảo giác quang học vòng xoáy đen trắng.
+Tạo ảnh mô hình kiến trúc cắt lớp (Section view).
+Tạo ảnh bản đồ kho báu cũ kỹ bị cháy sém.
+Tạo ảnh thư pháp chữ "Tâm" mực tàu giấy đỏ.
+Tạo ảnh sơ đồ tư duy (Mindmap) về kế hoạch marketing.
+Tạo ảnh biểu đồ cột tăng trưởng kinh tế 3D.
+Tạo ảnh chụp X-quang bộ xương bàn tay.
+Tạo ảnh nhiệt (Thermal camera) của một con mèo.
+Tạo ảnh nhìn qua ống nhòm quân sự (Binoculars view).
+Tạo ảnh nhìn qua ống kính ngắm bắn tỉa (Sniper scope).
+Tạo ảnh một con Shiba đang ăn trong bát, nền bếp đơn giản.
+Tạo ảnh một con Shiba đang uống nước, chụp cận cảnh.
+Tạo ảnh một con Shiba đang nằm ngủ trên thảm, ánh sáng ấm.
+Tạo ảnh một con Shiba đang chạy trên cỏ, đóng băng chuyển động.
+Tạo ảnh một con Shiba đang đội mũ len, nền mùa đông.
+Tạo ảnh một con Shiba đang ngồi trên ghế sofa, nhìn thẳng.
+Tạo ảnh một con Shiba đang cắn xương đồ chơi, nền trắng.
+Tạo ảnh một con Shiba đang ngáp, ánh sáng cửa sổ.
+Tạo ảnh một con Shiba đang chơi bóng, sân vườn.
+Tạo ảnh một con Shiba đang tắm bọt, phong cách dễ thương.
+Tạo ảnh một con mèo đang ngủ trên sách, nền tối giản.
+Tạo ảnh một con mèo đang ăn cá, bát sứ nhỏ.
+Tạo ảnh một con mèo đang nhìn ra cửa sổ trời mưa.
+Tạo ảnh một con mèo đang nằm trong hộp carton.
+Tạo ảnh một con mèo đang chơi len, nền phòng khách.
+Tạo ảnh một con thỏ đang cầm cà rốt, nền pastel.
+Tạo ảnh một chú vịt con đang bơi trong hồ nhỏ.
+Tạo ảnh một chú nhím cầm quả dâu, nền trắng.
+Tạo ảnh một con chim sẻ trên cành cây, bokeh nhẹ.
+Tạo ảnh một đàn cá koi trong hồ, nước trong.
+Tạo ảnh một tô phở bốc khói, chụp từ trên xuống.
+Tạo ảnh một bát bún bò bốc khói, chụp cận cảnh.
+Tạo ảnh một đĩa cơm tấm đầy đủ, ánh sáng tự nhiên.
+Tạo ảnh một ổ bánh mì Việt Nam, giấy gói đơn giản.
+Tạo ảnh một ly cà phê sữa đá, giọt nước đọng.
+Tạo ảnh một ly trà đào, lát cam nổi, nền sáng.
+Tạo ảnh một chiếc bánh flan caramel bóng, chụp cận.
+Tạo ảnh một đĩa sushi nhiều màu, nền tối giản.
+Tạo ảnh một nồi lẩu đang sôi, hơi nước rõ.
+Tạo ảnh một hộp quà có nơ, nền trắng sạch.
+Tạo ảnh một chai nước hoa chụp sản phẩm, nền trắng.
+Tạo ảnh một đôi giày sneaker chụp sản phẩm, nền xám nhạt.
+Tạo ảnh một chiếc đồng hồ đeo tay, ánh sáng studio mềm.
+Tạo ảnh một chiếc tai nghe đặt trên acrylic trong suốt, nền trắng.
+Tạo ảnh một lọ kem dưỡng da, nền marble, tối giản.
+Tạo ảnh một chiếc điện thoại trên bàn gỗ, bố cục sạch.
+Tạo ảnh một laptop mở trên bàn làm việc, có cây xanh.
+Tạo ảnh một cuốn sổ tay và bút, nền trắng tối giản.
+Tạo ảnh một chậu sen đá cạnh cửa sổ, ánh sáng tự nhiên.
+Tạo ảnh một bó hoa hướng dương, nền sáng, chi tiết cao.
+Tạo ảnh một góc quán cà phê, đèn vàng ấm, vibe yên bình.
+Tạo ảnh đường phố ban đêm trời mưa, phản chiếu đèn neon.
+Tạo ảnh một con hẻm nhỏ Sài Gòn, buổi sáng sớm.
+Tạo ảnh một cánh đồng lúa chín, nắng vàng nhẹ.
+Tạo ảnh một bãi biển lúc bình minh, sóng nhẹ.
+Tạo ảnh một rừng thông có sương mù, ánh sáng mềm.
+Tạo ảnh một con đường làng, trời xanh, yên tĩnh.
+Tạo ảnh một căn phòng ngủ tối giản, tông trắng.
+Tạo ảnh một căn bếp nhỏ sạch sẽ, ánh sáng cửa sổ.
+Tạo ảnh một chiếc xe đạp dựa tường trắng, phong cách vintage.
+Tạo ảnh một chiếc ghế gỗ đơn, nền trắng, chụp sản phẩm.
+Tạo ảnh một chiếc cốc sứ trên bàn gỗ, hơi nước nhẹ.
+Tạo ảnh một chiếc máy ảnh film trên bàn, nền tối giản.
+Tạo ảnh một chiếc vali du lịch, nền trắng, ánh sáng mềm.
+Tạo ảnh một chiếc áo khoác treo trên móc, nền sáng.
+Tạo ảnh một chiếc mũ lưỡi trai chụp sản phẩm, nền sạch.
+Tạo ảnh một chai nước khoáng có đá, chụp cận.
+Tạo ảnh một đĩa trái cây tươi, ánh sáng tự nhiên.
+Làm rõ ảnh này cho tôi: tăng độ nét, giảm nhiễu.
+Upscale ảnh này lên 4K, giữ nguyên màu sắc.
+Upscale ảnh này x2, chi tiết tự nhiên.
+Upscale ảnh này x4, giảm vỡ hạt JPEG.
+Khử nhiễu ảnh này, giữ texture tự nhiên.
+Làm ảnh này bớt mờ, rõ chi tiết hơn.
+Tăng độ phân giải ảnh này để in, không đổi bố cục.
+Làm rõ chữ trong ảnh này, không méo chữ.
+Tăng độ nét khuôn mặt, không bị nhựa.
+Tăng chi tiết tóc/lông, viền mượt.
+Giảm răng cưa ở đường chéo, ảnh sạch hơn.
+Giảm banding, tăng độ trong của ảnh.
+Làm ảnh đêm này sạch hạt hơn, vẫn rõ chi tiết.
+Tăng độ sắc nét sản phẩm, cạnh sạch.
+Giảm nhiễu màu, giữ màu trung tính.
+Làm ảnh này nét hơn nhưng không oversharpen.
+Khôi phục chi tiết vùng tối, không bệt.
+Khôi phục chi tiết vùng sáng, không cháy.
+Làm ảnh này rõ hơn, giữ tông màu gốc.
+Nâng chất lượng ảnh này lên HD, không đổi màu.
+Tăng clarity nhẹ, giữ mịn da.
+Giảm blur nhẹ do rung tay, ảnh rõ hơn.
+Làm ảnh này trong hơn, giảm hạt.
+Upscale ảnh phong cảnh này, tăng chi tiết lá cây.
+Upscale ảnh đồ ăn này, làm rõ kết cấu.
+Upscale ảnh sản phẩm này, làm rõ nhãn.
+Giảm noise nhưng giữ nét viền.
+Làm rõ mắt và lông mày, vẫn tự nhiên.
+Làm sắc nét chi tiết vải, không gắt.
+Làm rõ chi tiết kim loại, không tạo viền halo.
+Làm ảnh này sạch hơn, ít artefact nén.
+Upscale ảnh này, giữ màu da tự nhiên.
+Upscale ảnh này, giữ cân bằng trắng.
+Tăng độ phân giải, không thêm chi tiết giả.
+Làm ảnh cũ này rõ hơn, giảm xước nhẹ.
+Làm rõ ảnh này, ưu tiên chi tiết nhỏ.
+Upscale ảnh này để đăng mạng, nhìn nét hơn.
+Làm ảnh này sắc nét đồng đều, không gắt.
+Làm ảnh này rõ ràng hơn, giảm mờ nền.
+Khử nhiễu mạnh vùng tối, giữ chi tiết.
+Xóa nền ảnh này, giữ chủ thể, nền trong suốt.
+Tách nền ảnh này, giữ viền tóc tự nhiên.
+Tách nền ảnh này, giữ viền lông tự nhiên.
+Xóa nền và thay bằng nền trắng.
+Xóa nền và thay bằng nền xám nhạt.
+Chỉ giữ sản phẩm, bỏ toàn bộ nền phía sau.
+Tách nền người, không lẹm tay và tóc.
+Xóa nền logo, giữ cạnh sắc nét.
+Tách nền món ăn, giữ mép đĩa rõ.
+Xóa nền và giữ bóng đổ mềm dưới chân.
+Xóa nền, tránh viền trắng quanh chủ thể.
+Tách nền, làm mép cắt mượt và sạch.
+Xóa nền, giữ màu chủ thể không bị đổi.
+Tách nền tóc xoăn, giữ sợi tóc mảnh.
+Tách nền thú cưng, giữ lông tơ.
+Tách nền kính, giữ độ trong và phản chiếu.
+Tách nền sản phẩm bóng, giữ phản sáng tự nhiên.
+Xóa nền và căn giữa chủ thể.
+Xóa nền và chừa viền an toàn 10% quanh chủ thể.
+Tách nền, bỏ vật thể phụ xung quanh.
+Xóa nền nền trời, giữ cây và nhà.
+Tách nền xe, giữ nan hoa rõ.
+Tách nền giày, giữ dây giày không mất chi tiết.
+Tách nền túi xách, giữ quai và mép sạch.
+Tách nền chai nước, giữ nắp và nhãn rõ.
+Tách nền áo quần, giữ viền vải tự nhiên.
+Tách nền đồ trang sức, giữ chi tiết nhỏ.
+Tách nền đồng hồ, giữ kim và mặt số rõ.
+Tách nền tai nghe, giữ lỗ loa rõ.
+Tách nền ly thủy tinh, giữ viền kính.
+Tách nền, loại bỏ halo quanh tóc.
+Tách nền, làm mịn viền mà không mất chi tiết.
+Xóa nền và tạo nền trong suốt PNG.
+Tách nền, giữ bóng đổ tách riêng.
+Tách nền, không làm răng cưa viền.
+Xóa nền và làm sạch phần còn sót ở rìa.
+Tách nền, ưu tiên chi tiết nhỏ như lông mi.
+Xóa nền, giữ cả tay cầm và dây đeo.
+Tách nền, giữ texture vải và lông.
+Xóa nền, nền trong suốt, không viền màu.
+Tăng độ sáng ảnh này, giữ màu tự nhiên.
+Làm ảnh này sáng đều hơn, giảm bóng gắt.
+Giảm vùng cháy sáng, giữ chi tiết vùng sáng.
+Tăng sáng vùng tối, không bệt màu.
+Đổi ánh sáng sang ánh sáng studio mềm.
+Đổi ánh sáng sang ánh sáng cửa sổ buổi sáng.
+Đổi ánh sáng sang hoàng hôn ấm, bóng mềm.
+Đổi ánh sáng sang ban đêm có đèn đường.
+Thêm rim light nhẹ phía sau chủ thể.
+Làm ánh sáng dịu hơn, giảm tương phản gắt.
+Tăng tương phản nhẹ để ảnh rõ hơn.
+Giảm tương phản để ảnh mềm hơn.
+Cân bằng trắng cho ảnh này, màu chuẩn hơn.
+Làm ảnh này ấm hơn một chút.
+Làm ảnh này lạnh hơn một chút.
+Giảm ám vàng, trả màu trung tính.
+Giảm ám xanh, trả màu trung tính.
+Làm sáng khuôn mặt, giữ nền như cũ.
+Làm sáng nền, giữ chủ thể như cũ.
+Giảm bóng dưới mắt, vẫn tự nhiên.
+Giảm phản chiếu gắt trên trán và mũi.
+Làm ánh sáng kiểu ngày nhiều mây.
+Làm ánh sáng kiểu đèn tungsten trong nhà.
+Làm ánh sáng kiểu đèn LED trắng.
+Chỉnh ánh sáng ảnh này nhìn tự nhiên hơn.
+Tăng độ sáng lên 1 mức, không đổi tông.
+Giảm độ sáng xuống 1 mức, vẫn rõ chi tiết.
+Tăng độ rực nhẹ, không quá gắt.
+Giảm độ rực nhẹ, màu dịu hơn.
+Làm nổi chủ thể bằng spot light nhẹ.
+Sửa ảnh này thành phong cách Ghibli, nét vẽ tay, màu ấm.
+Sửa ảnh này thành phong cách anime Nhật, nét sạch.
+Sửa ảnh này thành phong cách chibi dễ thương.
+Sửa ảnh này thành phong cách tranh màu nước pastel.
+Sửa ảnh này thành phong cách tranh chì đen trắng.
+Sửa ảnh này thành phong cách sơn dầu cổ điển.
+Sửa ảnh này thành phong cách manga, screentone nhẹ.
+Sửa ảnh này thành phong cách comic, viền rõ.
+Sửa ảnh này thành phong cách retro thập niên 80.
+Sửa ảnh này thành phong cách film, hạt nhẹ.
+Sửa ảnh này thành phong cách noir, tương phản cao.
+Sửa ảnh này thành phong cách 3D hoạt hình, chất liệu mềm.
+Sửa ảnh này thành phong cách clay (đất sét) dễ thương.
+Sửa ảnh này thành phong cách low-poly 3D.
+Sửa ảnh này thành phong cách pixel art 16-bit.
+Sửa ảnh này thành phong cách isometric 3/4.
+Sửa ảnh này thành phong cách paper-cut nhiều lớp giấy.
+Sửa ảnh này thành phong cách line art, nền trắng.
+Sửa ảnh này thành phong cách screen print ít màu.
+Sửa ảnh này thành phong cách minh họa sách thiếu nhi.
+Tái tưởng tượng ảnh này thành cảnh mùa đông có tuyết.
+Tái tưởng tượng ảnh này thành cảnh mùa xuân nhiều hoa.
+Tái tưởng tượng ảnh này thành cảnh trời mưa có phản chiếu.
+Tái tưởng tượng ảnh này thành bối cảnh cyberpunk, neon nhẹ.
+Tái tưởng tượng ảnh này thành vibe điện ảnh, màu trầm.
+Mở rộng ảnh này ra tỉ lệ 16:9, nền nối liền tự nhiên.
+Mở rộng ảnh này ra tỉ lệ 9:16, nền nối liền tự nhiên.
+Mở rộng ảnh này ra tỉ lệ 1:1, giữ chủ thể nguyên vẹn.
+Mở rộng ảnh này thêm viền 15% xung quanh, nền khớp.
+Mở rộng ảnh này để có khoảng trống đặt chữ, nền phù hợp.
+Mở rộng ảnh này sang trái và phải, không lặp hoa văn.
+Mở rộng ảnh này lên trên và xuống dưới, giữ phối cảnh tự nhiên.
+Tạo ảnh con bọ ngựa phong lan màu hồng đang ngụy trang trên hoa.
+Tạo ảnh đàn sứa biển phát quang lấp lánh trong đêm tối dưới đại dương.
+Tạo ảnh một chú tắc kè hoa đang đổi màu rực rỡ trên cành cây khô.
+Tạo ảnh chim hồng hạc đứng một chân giữa hồ nước phẳng lặng.
+Tạo ảnh một con nhện công xòe đuôi múa nhiều màu sắc sặc sỡ.
+Tạo ảnh cá ngựa đang bám vào rạn san hô đầy màu sắc.
+Tạo ảnh một con tôm hùm đất màu xanh ngọc bích quý hiếm.
+Tạo ảnh chú lười ba ngón đang treo ngược mình trên cành cây.
+Tạo ảnh một con rái cá biển đang nằm ngửa đập vỏ sò trên bụng.
+Tạo ảnh đàn cá chuồn đang bay là đà trên mặt biển xanh.
+Tạo ảnh một con quạ đen đậu trên đầu lâu trong đêm trăng.
+Tạo ảnh chuột túi Kangaroo đang đấm bốc trên đồng cỏ Úc.
+Tạo ảnh một con tê tê cuộn tròn mình lại như quả bóng.
+Tạo ảnh chim bói cá lao xuống nước bắt mồi tung bọt trắng xóa.
+Tạo ảnh một con bọ cánh cứng kim loại óng ánh như vàng thật.
+Tạo ảnh ốc sên đang bò chậm chạp trên lá khoai nước sau mưa.
+Tạo ảnh đàn đom đóm bay lập lòe trong rừng tre ban đêm.
+Tạo ảnh một con bạch tuộc khổng lồ đang mở nắp rương kho báu.
+Tạo ảnh cá lồng đèn dưới biển sâu với cái miệng đầy răng nhọn.
+Tạo ảnh một con kỳ nhông Axolotl màu hồng dễ thương trong bể kính.
+Tạo ảnh chú vượn cáo đuôi khoang đang trố mắt nhìn ngạc nhiên.
+Tạo ảnh một con dơi đang treo ngược mình ngủ trong hang đá.
+Tạo ảnh chim công trắng xòe đuôi múa kiêu sa như công chúa.
+Tạo ảnh đàn cá heo đang nhảy múa tung hứng quả bóng.
+Tạo ảnh một con bọ cạp đen giơ cao cái đuôi nọc độc đe dọa.
+Biến ảnh này thành tranh sơn mài cẩn vỏ trứng và dát vàng.
+Sửa ảnh này thành phong cách tranh dân gian Đông Hồ gà lợn.
+Tạo ảnh phong cảnh làm từ đất sét nặn thủ công tỉ mỉ.
+Biến ảnh chân dung thành tranh thêu tay trên nền vải lụa.
+Tạo ảnh mô hình thành phố làm hoàn toàn bằng giấy bìa các tông.
+Sửa ảnh này thành phong cách tranh cắt giấy nhiều lớp tạo chiều sâu.
+Tạo ảnh phong cách rối nước Việt Nam trên sân khấu đình làng.
+Biến ảnh này thành tranh khắc gỗ với các đường nét gồ ghề.
+Tạo ảnh chân dung làm từ các sợi len đan móc nhiều màu.
+Sửa ảnh này thành phong cách tranh kính ghép mảnh màu sắc rực rỡ.
+Tạo ảnh phong cảnh nhìn như được vẽ bằng phấn màu trên đường phố.
+Biến ảnh này thành bức tượng tạc từ đá cẩm thạch trắng.
+Tạo ảnh mô hình đồ chơi lắp ghép bằng nhựa khối vuông.
+Sửa ảnh này thành tranh vẽ bằng mực tàu đen trắng loang lổ.
+Tạo ảnh phong cách tranh cát nghệ thuật trong lọ thủy tinh.
+Biến ảnh này thành hình ảnh phản chiếu trong giọt nước.
+Tạo ảnh phong cách dệt thổ cẩm với hoa văn hình học.
+Sửa ảnh này thành tranh vẽ bằng sáp màu của trẻ con ngộ nghĩnh.
+Tạo ảnh chân dung được ghép từ hàng ngàn hạt cà phê.
+Biến ảnh phong cảnh thành thế giới làm bằng kẹo dẻo và bánh ngọt.
+Tạo ảnh mô hình nhà cửa làm từ que kem gỗ.
+Sửa ảnh này thành phong cách in lưới trên vải bố thô.
+Tạo ảnh hiệu ứng như nhìn qua kính vạn hoa nhiều màu.
+Biến ảnh này thành bức phù điêu chạm khắc trên gỗ hương.
+Tạo ảnh phong cách tranh cổ động với màu sắc tương phản mạnh.
+Tạo ảnh một chiến binh mặc giáp vảy cá cưỡi ngựa sắt.
+Tạo ảnh rồng thời Lý uốn lượn mềm mại trên mây ngũ sắc.
+Tạo ảnh ông bụt râu trắng xóa hiện lên từ làn khói hương.
+Tạo ảnh cô tấm bước ra từ quả thị vàng thơm ngát.
+Tạo ảnh thánh gióng cưỡi ngựa sắt nhổ tre đánh giặc.
+Tạo ảnh con nghê đá ngồi canh cổng đình làng uy nghiêm.
+Tạo ảnh rùa vàng ngậm gươm báu lặn xuống hồ nước xanh.
+Tạo ảnh chàng thạch sanh đang đánh nhau với chăn tinh khổng lồ.
+Tạo ảnh công chúa thủy cung cưỡi trên lưng cá chép vàng.
+Tạo ảnh người lính chì dũng cảm đứng một chân canh gác.
+Tạo ảnh bà chúa tuyết ngồi trên xe trượt tuyết do tuần lộc kéo.
+Tạo ảnh thần đèn màu xanh bay ra từ cây đèn dầu cũ kỹ.
+Tạo ảnh người gỗ mũi dài đang nói dối làm mũi dài ra.
+Tạo ảnh cô bé quàng khăn đỏ đang đi trong rừng gặp chó sói.
+Tạo ảnh ngôi nhà bánh gừng phủ đầy kem tuyết trắng.
+Tạo ảnh hạt đậu thần mọc cao vút lên tận trời xanh.
+Tạo ảnh thảm bay thần kỳ bay lượn trên sa mạc cát vàng.
+Tạo ảnh người khổng lồ một mắt đang canh giữ kho báu.
+Tạo ảnh tiên nữ cánh chuồn chuồn đang bay giữa vườn hoa.
+Tạo ảnh một con phượng hoàng lửa đang tái sinh từ đống tro tàn.
+Làm cho ánh sáng trong ảnh trở nên ấm áp như nắng chiều.
+Chuyển ánh sáng sang tông màu xanh lạnh lẽo của đêm trăng.
+Tạo bóng đổ dài của hàng cây in trên mặt đường.
+Làm sáng khuôn mặt và làm mờ bớt khung cảnh xung quanh.
+Thêm hiệu ứng sương mù mờ ảo bao phủ thung lũng.
+Làm cho bức ảnh trông cũ kỹ với các vết xước và ố vàng.
+Tăng độ sắc nét cho các chi tiết nhỏ trên cánh hoa.
+Làm mịn làn da và xóa các vết thâm nám tự nhiên.
+Đổi màu chiếc áo từ màu đỏ sang màu xanh dương nhạt.
+Xóa người đang đi bộ ở phía xa trong bức ảnh.
+Tách hình con mèo ra khỏi nền và ghép vào nền vũ trụ.
+Mở rộng bức ảnh sang hai bên để thấy thêm cánh rừng.
+Vẽ thêm một bầu trời đầy sao lấp lánh vào ảnh ban đêm.
+Làm cho nước trong hồ trở nên trong veo nhìn thấy đáy.
+Thêm hiệu ứng mưa rơi rả rích buồn bã vào bức ảnh.
+Tạo hiệu ứng tia nắng mặt trời chiếu xuyên qua kẽ lá.
+Làm cho bức ảnh rực rỡ màu sắc hơn mức bình thường.
+Chuyển bức ảnh sang màu đen trắng nghệ thuật tương phản cao.
+Tạo hiệu ứng nhòe mờ do chuyển động nhanh của xe cộ.
+Làm cho đôi mắt trong ảnh sáng long lanh và có hồn hơn.
+Thêm một chiếc mũ len dễ thương lên đầu chú chó.
+Vẽ thêm đôi cánh thiên thần màu trắng sau lưng em bé.
+Thay nền tường gạch cũ bằng nền giấy dán tường hoa văn.
+Xóa sợi dây điện vắt ngang bầu trời trong xanh.
+Làm cho món ăn trong ảnh trông ngon miệng và nóng hổi hơn.
+Điều chỉnh lại đường chân trời cho thẳng hàng ngay ngắn.
+Tạo hiệu ứng phản chiếu bóng người xuống mặt nước hồ.
+Làm cho bông hoa ở tiền cảnh nổi bật hẳn lên so với nền.
+Thêm hiệu ứng tuyết rơi lãng mạn vào bức ảnh mùa đông.
+Phục hồi lại màu sắc tươi tắn cho bức ảnh cũ bị phai màu.
+Tạo ảnh một con rồng được tạo hình từ những đám mây trắng trên bầu trời xanh.
+Tạo ảnh một con voi khổng lồ có lông dài rậm rạp đi trong bão tuyết.
+Tạo ảnh đàn cá chép bơi lội trong hồ nước trong vắt nhìn thấy đáy.
+Tạo ảnh một con chim đại bàng được làm hoàn toàn bằng kim loại sáng bóng.
+Tạo ảnh ngôi nhà nấm khổng lồ nằm giữa khu rừng già bí ẩn.
+Tạo ảnh một chiếc thuyền buồm đang lướt trên biển mây bồng bềnh.
+Tạo ảnh con mèo đang ngồi câu cá bên bờ sông thơ mộng.
+Tạo ảnh một người tuyết đang đeo khăn quàng cổ màu đỏ giữa trời đông.
+Tạo ảnh đàn bướm phát sáng bay quanh một cái cây cổ thụ ban đêm.
+Tạo ảnh một thành phố nằm trong quả cầu thủy tinh tuyết rơi.
+Tạo ảnh con rùa đang cõng cả một hòn đảo trên lưng.
+Tạo ảnh một chú robot bằng gỗ đang tưới hoa trong vườn.
+Tạo ảnh chiếc đồng hồ cát với cát bên trong là những ngôi sao nhỏ.
+Tạo ảnh một con phượng hoàng được kết từ hàng ngàn bông hoa rực rỡ.
+Tạo ảnh chú chó đang đeo kính râm nằm tắm nắng trên bãi biển.
+Tạo ảnh một thư viện sách nằm trong hốc cây sồi già.
+Tạo ảnh con hươu sao có bộ gạc phát ra ánh sáng lung linh.
+Tạo ảnh một chiếc xe đạp cũ chở đầy hoa cúc họa mi trắng.
+Tạo ảnh ngôi làng của những người tí hon nằm dưới tán lá dương xỉ.
+Tạo ảnh một con cá voi đang bay lượn trên bầu trời đầy sao.
+Tạo ảnh bữa tiệc trà của những chú thỏ trắng trong rừng.
+Tạo ảnh một lâu đài cát khổng lồ và tinh xảo trên bờ biển.
+Tạo ảnh con nhện đang dệt tấm mạng bằng tơ vàng óng ánh.
+Tạo ảnh một chiếc dương cầm cũ đặt giữa cánh đồng cỏ hoang.
+Tạo ảnh người nông dân đang gặt lúa vàng trên ruộng bậc thang.
+Tạo ảnh một cô gái đang thả đèn hoa đăng xuống dòng sông đêm.
+Tạo ảnh chú bé chăn trâu đang thổi sáo trên lưng trâu.
+Tạo ảnh gánh hàng rong bán tào phớ dưới gốc cây đa làng.
+Tạo ảnh một mâm cỗ trung thu với bánh nướng và lồng đèn ông sao.
+Tạo ảnh những chiếc nón lá bay lơ lửng tạo thành hình bản đồ.
+Tạo ảnh con thuyền nan nhỏ bé giữa dòng sông nước chảy xiết.
+Tạo ảnh một bếp lửa hồng ấm áp với nồi ngô luộc bốc khói.
+Tạo ảnh giàn mướp hương sai trĩu quả bên hiên nhà tranh.
+Tạo ảnh một chú gà con mới nở đang ngơ ngác nhìn thế giới.
+Tạo ảnh đàn vịt đang bơi lội tung tăng trong ao sen.
+Tạo ảnh con chuồn chuồn ớt đậu trên cành tre khô.
+Tạo ảnh một chú dế mèn đang gảy đàn violin dưới ánh trăng.
+Tạo ảnh đàn kiến đang khiêng một miếng bánh quy lớn về tổ.
+Tạo ảnh con bọ rùa đỏ chấm đen đang bò trên lá cỏ ướt sương.
+Tạo ảnh một con ốc mượn hồn đang bò trên bãi cát trắng.
+Tạo ảnh bầy khỉ đang chuyền cành trong rừng rậm nhiệt đới.
+Tạo ảnh một con trăn gấm đang cuộn mình ngủ trên cành cây.
+Tạo ảnh chú sóc bay đang lượn từ cây này sang cây khác.
+Tạo ảnh con tê giác đang đầm mình trong vũng bùn mát lạnh.
+Tạo ảnh đàn ngựa hoang đang phi nước đại trên thảo nguyên xanh.
+Tạo ảnh một con lạc đà đang đi qua đồi cát sa mạc nóng bỏng.
+Tạo ảnh chú gấu trúc đỏ đang ăn lá trúc ngon lành.
+Tạo ảnh con lửng mật đang đào hang tìm kiếm thức ăn.
+Tạo ảnh bầy chim hải âu đang bay lượn trên mặt biển sóng vỗ.
+Tạo ảnh một con sứa khổng lồ trôi lơ lửng như chiếc dù.
+Biến ảnh này thành tranh vẽ bằng những hạt gạo rang nhiều màu.
+Sửa ảnh này thành phong cách tranh khắc trên lá cây khô.
+Tạo ảnh chân dung được tạo thành từ những mảng màu nước loang lổ.
+Biến ảnh phong cảnh thành bức tranh thêu chữ thập đều đặn.
+Sửa ảnh này thành phong cách hình dán sticker viền trắng.
+Tạo ảnh mô hình món ăn làm từ vải nỉ mềm mại.
+Biến ảnh này thành bức tranh được xếp từ những viên sỏi đá.
+Sửa ảnh này thành phong cách bản vẽ thiết kế trên giấy xanh.
+Tạo ảnh chân dung nhìn như được tạc từ một khúc gỗ sần sùi.
+Biến ảnh phong cảnh thành thế giới đồ chơi bằng nhựa dẻo.
+Sửa ảnh này thành phong cách tranh in dấu vân tay ngộ nghĩnh.
+Tạo ảnh ngôi nhà bánh kẹo với mái làm bằng sô cô la.
+Biến ảnh này thành hình ảnh phản chiếu trong mắt côn trùng.
+Sửa ảnh này thành phong cách tranh vẽ phấn trên vỉa hè.
+Tạo ảnh một rừng cây được làm từ dây đồng và hạt cườm.
+Biến ảnh này thành bức phù điêu đắp nổi bằng xi măng.
+Sửa ảnh này thành phong cách phim hoạt hình bóng đổ đen trắng.
+Tạo ảnh chân dung được ghép từ những mảnh báo cũ xé vụn.
+Biến ảnh phong cảnh thành bức tranh sơn dầu nét cọ dày.
+Sửa ảnh này thành phong cách hình vẽ trong hang động thời tiền sử.
+Tạo ảnh một con rồng phương Tây đang phun lửa dữ dội.
+Tạo ảnh nàng tiên cá đang chải tóc bằng lược vỏ sò.
+Tạo ảnh một người khổng lồ đá đang ngủ say thành ngọn núi.
+Tạo ảnh chiếc thảm bay thần kỳ chở hai người bay qua thành phố.
+Tạo ảnh cây đậu thần mọc cao xuyên qua các tầng mây.
+Tạo ảnh một con kỳ lân trắng có sừng xoắn ốc tuyệt đẹp.
+Tạo ảnh bà phù thủy đang khuấy nồi thuốc độc màu xanh lá.
+Tạo ảnh một con ma vui vẻ đang bay lượn trong lâu đài hoang.
+Tạo ảnh chiếc gương thần đang hiển thị khuôn mặt người nói.
+Tạo ảnh một cỗ xe bí ngô lộng lẫy do chuột kéo.
+Tạo ảnh chàng hoàng tử đang chiến đấu với quái vật nhiều đầu.
+Tạo ảnh cô bé lọ lem đang chạy vội đánh rơi chiếc giày thủy tinh.
+Tạo ảnh ngôi nhà biết đi bằng chân gà trong rừng rậm.
+Tạo ảnh một con chim phượng hoàng lửa tái sinh từ tro tàn.
+Tạo ảnh thần đèn khổng lồ bay ra từ chiếc đèn dầu cũ.
+Tạo ảnh một nàng công chúa đang ngủ trong lồng kính hoa hồng.
+Tạo ảnh chú mèo đi hia cầm kiếm đứng hiên ngang.
+Tạo ảnh cậu bé người gỗ mũi dài đang nói chuyện với dế mèn.
+Tạo ảnh một vùng đất kẹo ngọt với sông sô cô la và cây kẹo mút.
+Tạo ảnh đoàn tàu hỏa chạy bằng hơi nước bay trên bầu trời.
+Làm cho bức ảnh sáng bừng lên như đang giữa trưa hè.
+Chuyển tông màu của ảnh sang màu nâu đỏ hoài cổ.
+Làm mờ hậu cảnh để làm nổi bật bông hoa ở phía trước.
+Xóa người đang đứng ở góc trái bức ảnh đi.
+Thay nền trời xám xịt bằng bầu trời xanh mây trắng.
+Thêm hiệu ứng tuyết rơi lãng mạn vào bức ảnh mùa đông.
+Làm cho làn da người mẫu trở nên mịn màng không tì vết.
+Đổi màu chiếc ô tô từ màu đỏ sang màu đen sang trọng.
+Làm nét lại bức ảnh bị rung tay mờ nhòe.
+Tăng độ tươi của màu sắc để bức ảnh rực rỡ hơn.
+Biến bức ảnh chụp ban ngày thành cảnh ban đêm lung linh.
+Thêm ánh sáng đèn đường vàng vọt vào cảnh phố đêm.
+Xóa sợi dây điện chằng chịt trên bầu trời.
+Làm cho đôi mắt trong ảnh sáng lên và có hồn hơn.
+Thêm một chiếc cầu vồng rực rỡ sau cơn mưa.
+Tách hình con chó ra và ghép vào nền công viên xanh.
+Mở rộng khung hình để nhìn thấy toàn bộ ngôi nhà.
+Phục hồi lại bức ảnh cũ bị rách góc và phai màu.
+Làm trắng răng và xóa nếp nhăn cho người trong ảnh.
+Chèn thêm chữ Chúc Mừng Năm Mới pháo hoa rực rỡ.
+Tạo hiệu ứng bóng đổ tự nhiên cho vật thể trong ảnh.
+Làm cho mặt nước trong hồ phẳng lặng như tờ giấy.
+Thêm hiệu ứng sương mù mờ ảo bao phủ ngọn núi.
+Chuyển bức ảnh sang màu đen trắng nghệ thuật.
+Tạo hiệu ứng ánh nắng chiếu xuyên qua kẽ lá cây.
+Làm cho mái tóc người mẫu trở nên bồng bềnh óng ả.
+Xóa vết bẩn trên tường và làm sạch nền nhà.
+Thay đổi trang phục của nhân vật sang bộ váy dạ hội.
+Thêm một đàn chim bồ câu đang bay lên trời.
+Tạo hiệu ứng phản chiếu của thành phố xuống mặt sông.
+Tạo ảnh cận cảnh mắt của một con chuồn chuồn nhìn rõ lưới mắt.
+Tạo ảnh chụp những giọt sương đọng trên mạng nhện buổi sáng.
+Tạo ảnh chụp cận cảnh nhụy hoa dâm bụt vàng rực.
+Tạo ảnh chụp vân gỗ sần sùi của một cây cổ thụ ngàn năm.
+Tạo ảnh chụp những hạt cát li ti nhiều màu trên bãi biển.
+Tạo ảnh chụp cận cảnh lông vũ sặc sỡ của chim công.
+Tạo ảnh chụp bong bóng xà phòng phản chiếu bảy sắc cầu vồng.
+Tạo ảnh chụp những viên đá lạnh đang tan chảy trong ly nước.
+Tạo ảnh chụp cận cảnh đầu ngòi bút máy đang viết mực xanh.
+Tạo ảnh chụp bề mặt gồ ghề của vỏ quả dứa.
+Tạo ảnh chụp những tia lửa bắn ra khi hàn kim loại.
+Tạo ảnh chụp khói hương trầm bay là là nghệ thuật.
+Tạo ảnh chụp những giọt nước mưa rơi trên kính cửa sổ.
+Tạo ảnh chụp cận cảnh mắt của một chú mèo con ngây thơ.
+Tạo ảnh chụp những đường vân trên một chiếc lá khô mùa thu.
+Tạo ảnh chụp cấu trúc tổ ong hình lục giác đều tăm tắp.
+Tạo ảnh chụp những hạt bụi bay trong luồng ánh sáng nắng.
+Tạo ảnh chụp cận cảnh vảy cá lấp lánh ánh bạc.
+Tạo ảnh chụp bề mặt xốp mềm của một chiếc bánh bông lan.
+Tạo ảnh chụp những sợi tơ tằm óng ả trong kén tằm.
+Tạo ảnh thiết kế bao bì hộp trà sen phong cách cung đình.
+Tạo ảnh thiết kế áp phích quảng cáo du lịch biển mùa hè.
+Tạo ảnh thiết kế logo tiệm bánh mì truyền thống Việt Nam.
+Tạo ảnh thiết kế bìa sách truyện cổ tích dân gian.
+Tạo ảnh thiết kế thiệp cưới in hình hoa sen thanh tao.
+Tạo ảnh thiết kế thực đơn quán cà phê phong cách bao cấp.
+Tạo ảnh thiết kế nhãn mác chai nước mắm truyền thống.
+Tạo ảnh thiết kế bảng hiệu cửa hàng thời trang thủ công.
+Tạo ảnh thiết kế vé mời tham dự triển lãm tranh lụa.
+Tạo ảnh thiết kế giao diện ứng dụng đặt món ăn thuần Việt.
+Tạo ảnh thiết kế bao lì xì tết in hình con giáp.
+Tạo ảnh thiết kế phông nền sân khấu lễ hội trăng rằm.
+Tạo ảnh thiết kế áo thun in hình danh lam thắng cảnh.
+Tạo ảnh thiết kế tờ rơi quảng cáo khóa học làm gốm.
+Tạo ảnh thiết kế danh thiếp cho nghệ nhân điêu khắc gỗ.
+Tạo ảnh thiết kế lịch để bàn chủ đề ẩm thực đường phố.
+Tạo ảnh thiết kế túi giấy thân thiện môi trường in họa tiết tre.
+Tạo ảnh thiết kế tem thư in hình các loài hoa đặc hữu.
+Tạo ảnh thiết kế băng rôn cổ động bảo vệ môi trường biển.
+Tạo ảnh thiết kế bìa tạp chí thời trang áo dài đương đại.
+Tạo ảnh món bún riêu cua đồng màu sắc hấp dẫn.
+Tạo ảnh một mẹt bún đậu mắm tôm đầy đặn ngon mắt.
+Tạo ảnh đĩa nem rán giòn rụm chấm nước mắm chua ngọt.
+Tạo ảnh bát phở bò tái chín bốc khói nghi ngút thơm lừng.
+Tạo ảnh gỏi cuốn tôm thịt tươi ngon với rau sống xanh mướt.
+Tạo ảnh món cá kho tộ màu cánh gián đậm đà hương vị.
+Tạo ảnh đĩa bánh cuốn nóng tráng mỏng rắc hành phi thơm.
+Tạo ảnh ly chè ba màu ngọt mát giải nhiệt mùa hè.
+Tạo ảnh món xôi xéo vàng ươm gói trong lá sen xanh.
+Tạo ảnh đĩa nộm đu đủ bò khô chua cay mặn ngọt.
+Tạo ảnh món chả cá Lã Vọng nướng trên than hoa.
+Tạo ảnh bát canh chua cá lóc miền Tây đậm đà.
+Tạo ảnh món bánh xèo vàng giòn rụm nhân tôm thịt giá đỗ.
+Tạo ảnh ly cà phê trứng béo ngậy thơm lừng góc phố cổ.
+Tạo ảnh đĩa cơm tấm sườn bì chả mỡ hành hấp dẫn.
+Tạo ảnh món mì quảng tôm thịt với bánh đa giòn tan.
+Tạo ảnh bát bún bò Huế cay nồng hương vị sả ớt.
+Tạo ảnh món hủ tiếu nam vang nước dùng ngọt thanh.
+Tạo ảnh đĩa bánh bột lọc trong veo nhìn thấy nhân tôm đỏ.
+Tạo ảnh món lẩu mắm miền Tây với đủ loại rau đồng nội.
+Tạo ảnh chú chó mực đang nằm canh cổng nhà.
+Tạo ảnh con mèo tam thể đang bắt bướm trong vườn.
+Tạo ảnh đàn gà con lông vàng óng đi theo mẹ tìm mồi.
+Tạo ảnh con trâu già đang gặm cỏ bên bờ đê yên bình.
+Tạo ảnh đàn lợn con đang bú sữa mẹ trong chuồng.
+Tạo ảnh chú bò sữa đang gặm cỏ trên cánh đồng xanh.
+Tạo ảnh con dê núi đang leo trèo trên vách đá dựng đứng.
+Tạo ảnh đàn ngỗng trắng đang bơi lội trên dòng sông quê.
+Tạo ảnh chú thỏ trắng đang ăn củ cà rốt đỏ tươi.
+Tạo ảnh con chuột lang đang chạy trên vòng quay đồ chơi.
+Tạo ảnh một ngôi sao băng vụt sáng trên bầu trời đêm.
+Tạo ảnh mặt trăng tròn vành vạnh chiếu sáng cánh rừng.
+Tạo ảnh những đám mây ngũ sắc rực rỡ lúc hoàng hôn.
+Tạo ảnh cầu vồng kép xuất hiện sau cơn mưa rào lớn.
+Tạo ảnh sương mù dày đặc bao phủ cả thành phố buổi sáng.
+Tạo ảnh những tia sét đánh xuống mặt biển dữ dội.
+Tạo ảnh bầu trời đầy sao lung linh không một gợn mây.
+Tạo ảnh hiện tượng nhật thực khi mặt trăng che khuất mặt trời.
+Tạo ảnh cơn lốc xoáy khổng lồ đang di chuyển trên cánh đồng.
+Tạo ảnh mưa đá rơi trắng xóa cả một vùng sân vườn.
+Tạo ảnh một chó Shiba đang ăn trong bát, nền trắng tối giản, chụp cận cảnh.
+Tạo ảnh một corgi đang ăn trái cây, nền xám nhạt, chụp toàn thân.
+Tạo ảnh một mèo tam thể đang uống nước, nền pastel, góc nhìn từ trên xuống.
+Tạo ảnh một mèo Bengal đang liếm kem, nền studio sạch, ánh sáng tự nhiên.
+Tạo ảnh một cáo đỏ đang ngủ cuộn tròn, nền bếp sáng, ánh sáng studio mềm.
+Tạo ảnh một gấu trúc đỏ đang chạy trên cỏ, nền phòng khách ấm, độ sâu trường ảnh nông.
+Tạo ảnh một capybara đang nhảy qua vũng nước, nền rừng có nắng xuyên lá, màu trung tính.
+Tạo ảnh một tê tê đang ngồi nhìn ra cửa sổ trời mưa, nền biển xanh trong, màu rực nhẹ.
+Tạo ảnh một nhím đang đứng dưới đèn neon ban đêm, nền đêm mưa phản chiếu, chi tiết cao.
+Tạo ảnh một lười (sloth) đang bơi trong nước trong, nền sa mạc hoàng hôn, vibe điện ảnh.
+Tạo ảnh một meerkat đang bay qua bầu trời, nền băng tuyết, chụp cận cảnh.
+Tạo ảnh một alpaca đang lặn dưới biển, nền thành phố tương lai, chụp toàn thân.
+Tạo ảnh một hươu cao cổ đang leo lên cành cây, nền đồng cỏ rộng, góc nhìn từ trên xuống.
+Tạo ảnh một báo tuyết đang trốn trong hộp carton, nền vũ trụ sao, ánh sáng tự nhiên.
+Tạo ảnh một hải cẩu đang đội khăn choàng, nền hồ nước trong, ánh sáng studio mềm.
+Tạo ảnh một sư tử biển đang cầm một bông hoa, nền trắng tối giản, độ sâu trường ảnh nông.
+Tạo ảnh một cá heo đang chơi với quả bóng, nền xám nhạt, màu trung tính.
+Tạo ảnh một cá voi lưng gù đang đọc sách, nền pastel, màu rực nhẹ.
+Tạo ảnh một cá mập đang tạo dáng chụp chân dung cận mặt, nền studio sạch, chi tiết cao.
+Tạo ảnh một cá đuối manta đang chụp kiểu ảnh sản phẩm, nền bếp sáng, vibe điện ảnh.
+Tạo ảnh một bạch tuộc đang ăn trong bát, nền phòng khách ấm, chụp cận cảnh.
+Tạo ảnh một mực nang đang ăn trái cây, nền rừng có nắng xuyên lá, chụp toàn thân.
+Tạo ảnh một cá ngựa đang uống nước, nền biển xanh trong, góc nhìn từ trên xuống.
+Tạo ảnh một sứa phát sáng đang liếm kem, nền đêm mưa phản chiếu, ánh sáng tự nhiên.
+Tạo ảnh một rùa biển đang ngủ cuộn tròn, nền sa mạc hoàng hôn, ánh sáng studio mềm.
+Tạo ảnh một cá koi đang chạy trên cỏ, nền băng tuyết, độ sâu trường ảnh nông.
+Tạo ảnh một cá betta đang nhảy qua vũng nước, nền thành phố tương lai, màu trung tính.
+Tạo ảnh một ếch cây đang ngồi nhìn ra cửa sổ trời mưa, nền đồng cỏ rộng, màu rực nhẹ.
+Tạo ảnh một kỳ giông axolotl đang đứng dưới đèn neon ban đêm, nền vũ trụ sao, chi tiết cao.
+Tạo ảnh một tắc kè hoa đang bơi trong nước trong, nền hồ nước trong, vibe điện ảnh.
+Tạo ảnh một rồng Komodo đang bay qua bầu trời, nền trắng tối giản, chụp cận cảnh.
+Tạo ảnh một rắn ngô đang lặn dưới biển, nền xám nhạt, chụp toàn thân.
+Tạo ảnh một cú mèo đang leo lên cành cây, nền pastel, góc nhìn từ trên xuống.
+Tạo ảnh một đại bàng đang trốn trong hộp carton, nền studio sạch, ánh sáng tự nhiên.
+Tạo ảnh một chim ruồi đang đội khăn choàng, nền bếp sáng, ánh sáng studio mềm.
+Tạo ảnh một hồng hạc đang cầm một bông hoa, nền phòng khách ấm, độ sâu trường ảnh nông.
+Tạo ảnh một chim cánh cụt đang chơi với quả bóng, nền rừng có nắng xuyên lá, màu trung tính.
+Tạo ảnh một chim công đang đọc sách, nền biển xanh trong, màu rực nhẹ.
+Tạo ảnh một toucan đang tạo dáng chụp chân dung cận mặt, nền đêm mưa phản chiếu, chi tiết cao.
+Tạo ảnh một bọ ngựa đang chụp kiểu ảnh sản phẩm, nền sa mạc hoàng hôn, vibe điện ảnh.
+Tạo ảnh một chuồn chuồn đang ăn trong bát, nền băng tuyết, chụp cận cảnh.
+Tạo ảnh một bươm bướm đang ăn trái cây, nền thành phố tương lai, chụp toàn thân.
+Tạo ảnh một bọ cánh cứng đang uống nước, nền đồng cỏ rộng, góc nhìn từ trên xuống.
+Tạo ảnh một nhện đang liếm kem, nền vũ trụ sao, ánh sáng tự nhiên.
+Tạo ảnh một bọ cạp đang ngủ cuộn tròn, nền hồ nước trong, ánh sáng studio mềm.
+Tạo ảnh một ốc sên đang chạy trên cỏ, nền trắng tối giản, độ sâu trường ảnh nông.
+Tạo ảnh một cua đang nhảy qua vũng nước, nền xám nhạt, màu trung tính.
+Tạo ảnh một tôm hùm đang ngồi nhìn ra cửa sổ trời mưa, nền pastel, màu rực nhẹ.
+Tạo ảnh một sao biển đang đứng dưới đèn neon ban đêm, nền studio sạch, chi tiết cao.
+Tạo ảnh một san hô đang bơi trong nước trong, nền bếp sáng, vibe điện ảnh.
+Sửa ảnh này thành phong cách Ghibli (vẽ tay), giữ bố cục và màu tổng thể.
+Sửa ảnh này thành phong cách anime Nhật, giữ chủ thể rõ ràng.
+Sửa ảnh này thành phong cách chibi dễ thương, giữ gương mặt giống ảnh gốc.
+Sửa ảnh này thành phong cách tranh màu nước pastel, giữ chi tiết quan trọng.
+Sửa ảnh này thành phong cách sơn dầu cổ điển, giữ ánh sáng gần như cũ.
+Sửa ảnh này thành phong cách Impressionism, giữ bố cục và màu tổng thể.
+Sửa ảnh này thành phong cách Cubism, giữ chủ thể rõ ràng.
+Sửa ảnh này thành phong cách Surrealism, giữ gương mặt giống ảnh gốc.
+Sửa ảnh này thành phong cách Expressionism, giữ chi tiết quan trọng.
+Sửa ảnh này thành phong cách Fauvism, giữ ánh sáng gần như cũ.
+Sửa ảnh này thành phong cách Art Nouveau, giữ bố cục và màu tổng thể.
+Sửa ảnh này thành phong cách Art Deco, giữ chủ thể rõ ràng.
+Sửa ảnh này thành phong cách Bauhaus, giữ gương mặt giống ảnh gốc.
+Sửa ảnh này thành phong cách Pop Art, giữ chi tiết quan trọng.
+Sửa ảnh này thành phong cách Minimalism, giữ ánh sáng gần như cũ.
+Sửa ảnh này thành phong cách noir đen-trắng, giữ bố cục và màu tổng thể.
+Sửa ảnh này thành phong cách cyberpunk neon, giữ chủ thể rõ ràng.
+Sửa ảnh này thành phong cách vaporwave, giữ gương mặt giống ảnh gốc.
+Sửa ảnh này thành phong cách synthwave, giữ chi tiết quan trọng.
+Sửa ảnh này thành phong cách poster retro 80s, giữ ánh sáng gần như cũ.
+Sửa ảnh này thành phong cách line art nền trắng, giữ bố cục và màu tổng thể.
+Sửa ảnh này thành phong cách pixel art 16-bit, giữ chủ thể rõ ràng.
+Sửa ảnh này thành phong cách voxel 3D, giữ gương mặt giống ảnh gốc.
+Sửa ảnh này thành phong cách low-poly 3D, giữ chi tiết quan trọng.
+Sửa ảnh này thành phong cách clay (đất sét), giữ ánh sáng gần như cũ.
+Sửa ảnh này thành phong cách paper-cut (cắt giấy), giữ bố cục và màu tổng thể.
+Sửa ảnh này thành phong cách woodcut (khắc gỗ), giữ chủ thể rõ ràng.
+Sửa ảnh này thành phong cách linocut, giữ gương mặt giống ảnh gốc.
+Sửa ảnh này thành phong cách risograph, giữ chi tiết quan trọng.
+Sửa ảnh này thành phong cách cyanotype xanh dương, giữ ánh sáng gần như cũ.
+Sửa ảnh này thành phong cách stained glass (kính màu), giữ bố cục và màu tổng thể.
+Sửa ảnh này thành phong cách mosaic (khảm), giữ chủ thể rõ ràng.
+Sửa ảnh này thành phong cách sumi-e (mực tàu), giữ gương mặt giống ảnh gốc.
+Sửa ảnh này thành phong cách ukiyo-e, giữ chi tiết quan trọng.
+Sửa ảnh này thành phong cách ảnh điện ảnh (cinematic), giữ ánh sáng gần như cũ.
+Sửa ảnh này thành phong cách ảnh macro siêu cận, giữ bố cục và màu tổng thể.
+Sửa ảnh này thành phong cách tilt-shift (mô hình), giữ chủ thể rõ ràng.
+Sửa ảnh này thành phong cách isometric 3/4, giữ gương mặt giống ảnh gốc.
+Sửa ảnh này thành phong cách flat vector, giữ chi tiết quan trọng.
+Sửa ảnh này thành phong cách gradient mesh, giữ ánh sáng gần như cũ.
+Tái tưởng tượng ảnh này thành cảnh mùa đông có tuyết, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh mùa xuân nhiều hoa, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh trời mưa có phản chiếu, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành bối cảnh cyberpunk neon nhẹ, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành bối cảnh cổ điển vintage, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành bối cảnh tối giản nền sạch, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh dưới nước, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh trên sao Hỏa, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh rừng mưa nhiệt đới, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh sa mạc hoàng hôn, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh thần thoại, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh khoa học viễn tưởng, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh cổ tích, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh thành phố ban đêm, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh bình minh, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh hoàng hôn, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh sương mù, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh lễ hội đèn lồng, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh tuyết rơi ban đêm, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh rừng tre, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh biển nhiệt đới, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh bão cát, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh dưới hang động phát sáng, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh bầu trời sao, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh trên mây, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh đồng cỏ rộng, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh bãi đá ven biển, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh phố cổ yên tĩnh, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh chợ đêm, giữ chủ thể và bố cục chính.
+Tái tưởng tượng ảnh này thành cảnh studio chụp sản phẩm, giữ chủ thể và bố cục chính.Tạo ảnh một con rồng được tạo hình từ những đám mây trắng trên bầu trời xanh.
+Tạo ảnh một con voi khổng lồ có lông dài rậm rạp đi trong bão tuyết.
+Tạo ảnh đàn cá chép bơi lội trong hồ nước trong vắt nhìn thấy đáy.
+Tạo ảnh một con chim đại bàng được làm hoàn toàn bằng kim loại sáng bóng.
+Tạo ảnh ngôi nhà nấm khổng lồ nằm giữa khu rừng già bí ẩn.
+Tạo ảnh một chiếc thuyền buồm đang lướt trên biển mây bồng bềnh.
+Tạo ảnh con mèo đang ngồi câu cá bên bờ sông thơ mộng.
+Tạo ảnh một người tuyết đang đeo khăn quàng cổ màu đỏ giữa trời đông.
+Tạo ảnh đàn bướm phát sáng bay quanh một cái cây cổ thụ ban đêm.
+Tạo ảnh một thành phố nằm trong quả cầu thủy tinh tuyết rơi.
+Tạo ảnh con rùa đang cõng cả một hòn đảo trên lưng.
+Tạo ảnh một chú robot bằng gỗ đang tưới hoa trong vườn.
+Tạo ảnh chiếc đồng hồ cát với cát bên trong là những ngôi sao nhỏ.
+Tạo ảnh một con phượng hoàng được kết từ hàng ngàn bông hoa rực rỡ.
+Tạo ảnh chú chó đang đeo kính râm nằm tắm nắng trên bãi biển.
+Tạo ảnh một thư viện sách nằm trong hốc cây sồi già.
+Tạo ảnh con hươu sao có bộ gạc phát ra ánh sáng lung linh.
+Tạo ảnh một chiếc xe đạp cũ chở đầy hoa cúc họa mi trắng.
+Tạo ảnh ngôi làng của những người tí hon nằm dưới tán lá dương xỉ.
+Tạo ảnh một con cá voi đang bay lượn trên bầu trời đầy sao.
+Tạo ảnh bữa tiệc trà của những chú thỏ trắng trong rừng.
+Tạo ảnh một lâu đài cát khổng lồ và tinh xảo trên bờ biển.
+Tạo ảnh con nhện đang dệt tấm mạng bằng tơ vàng óng ánh.
+Tạo ảnh một chiếc dương cầm cũ đặt giữa cánh đồng cỏ hoang.
+Tạo ảnh người nông dân đang gặt lúa vàng trên ruộng bậc thang.
+Tạo ảnh một cô gái đang thả đèn hoa đăng xuống dòng sông đêm.
+Tạo ảnh chú bé chăn trâu đang thổi sáo trên lưng trâu.
+Tạo ảnh gánh hàng rong bán tào phớ dưới gốc cây đa làng.
+Tạo ảnh một mâm cỗ trung thu với bánh nướng và lồng đèn ông sao.
+Tạo ảnh những chiếc nón lá bay lơ lửng tạo thành hình bản đồ.
+Tạo ảnh con thuyền nan nhỏ bé giữa dòng sông nước chảy xiết.
+Tạo ảnh một bếp lửa hồng ấm áp với nồi ngô luộc bốc khói.
+Tạo ảnh giàn mướp hương sai trĩu quả bên hiên nhà tranh.
+Tạo ảnh một chú gà con mới nở đang ngơ ngác nhìn thế giới.
+Tạo ảnh đàn vịt đang bơi lội tung tăng trong ao sen.
+Tạo ảnh con chuồn chuồn ớt đậu trên cành tre khô.
+Tạo ảnh một chú dế mèn đang gảy đàn violin dưới ánh trăng.
+Tạo ảnh đàn kiến đang khiêng một miếng bánh quy lớn về tổ.
+Tạo ảnh con bọ rùa đỏ chấm đen đang bò trên lá cỏ ướt sương.
+Tạo ảnh một con ốc mượn hồn đang bò trên bãi cát trắng.
+Tạo ảnh bầy khỉ đang chuyền cành trong rừng rậm nhiệt đới.
+Tạo ảnh một con trăn gấm đang cuộn mình ngủ trên cành cây.
+Tạo ảnh chú sóc bay đang lượn từ cây này sang cây khác.
+Tạo ảnh con tê giác đang đầm mình trong vũng bùn mát lạnh.
+Tạo ảnh đàn ngựa hoang đang phi nước đại trên thảo nguyên xanh.
+Tạo ảnh một con lạc đà đang đi qua đồi cát sa mạc nóng bỏng.
+Tạo ảnh chú gấu trúc đỏ đang ăn lá trúc ngon lành.
+Tạo ảnh con lửng mật đang đào hang tìm kiếm thức ăn.
+Tạo ảnh bầy chim hải âu đang bay lượn trên mặt biển sóng vỗ.
+Tạo ảnh một con sứa khổng lồ trôi lơ lửng như chiếc dù.
+Biến ảnh này thành tranh vẽ bằng những hạt gạo rang nhiều màu.
+Sửa ảnh này thành phong cách tranh khắc trên lá cây khô.
+Tạo ảnh chân dung được tạo thành từ những mảng màu nước loang lổ.
+Biến ảnh phong cảnh thành bức tranh thêu chữ thập đều đặn.
+Sửa ảnh này thành phong cách hình dán sticker viền trắng.
+Tạo ảnh mô hình món ăn làm từ vải nỉ mềm mại.
+Biến ảnh này thành bức tranh được xếp từ những viên sỏi đá.
+Sửa ảnh này thành phong cách bản vẽ thiết kế trên giấy xanh.
+Tạo ảnh chân dung nhìn như được tạc từ một khúc gỗ sần sùi.
+Biến ảnh phong cảnh thành thế giới đồ chơi bằng nhựa dẻo.
+Sửa ảnh này thành phong cách tranh in dấu vân tay ngộ nghĩnh.
+Tạo ảnh ngôi nhà bánh kẹo với mái làm bằng sô cô la.
+Biến ảnh này thành hình ảnh phản chiếu trong mắt côn trùng.
+Sửa ảnh này thành phong cách tranh vẽ phấn trên vỉa hè.
+Tạo ảnh một rừng cây được làm từ dây đồng và hạt cườm.
+Biến ảnh này thành bức phù điêu đắp nổi bằng xi măng.
+Sửa ảnh này thành phong cách phim hoạt hình bóng đổ đen trắng.
+Tạo ảnh chân dung được ghép từ những mảnh báo cũ xé vụn.
+Biến ảnh phong cảnh thành bức tranh sơn dầu nét cọ dày.
+Sửa ảnh này thành phong cách hình vẽ trong hang động thời tiền sử.
+Tạo ảnh một con rồng phương Tây đang phun lửa dữ dội.
+Tạo ảnh nàng tiên cá đang chải tóc bằng lược vỏ sò.
+Tạo ảnh một người khổng lồ đá đang ngủ say thành ngọn núi.
+Tạo ảnh chiếc thảm bay thần kỳ chở hai người bay qua thành phố.
+Tạo ảnh cây đậu thần mọc cao xuyên qua các tầng mây.
+Tạo ảnh một con kỳ lân trắng có sừng xoắn ốc tuyệt đẹp.
+Tạo ảnh bà phù thủy đang khuấy nồi thuốc độc màu xanh lá.
+Tạo ảnh một con ma vui vẻ đang bay lượn trong lâu đài hoang.
+Tạo ảnh chiếc gương thần đang hiển thị khuôn mặt người nói.
+Tạo ảnh một cỗ xe bí ngô lộng lẫy do chuột kéo.
+Tạo ảnh chàng hoàng tử đang chiến đấu với quái vật nhiều đầu.
+Tạo ảnh cô bé lọ lem đang chạy vội đánh rơi chiếc giày thủy tinh.
+Tạo ảnh ngôi nhà biết đi bằng chân gà trong rừng rậm.
+Tạo ảnh một con chim phượng hoàng lửa tái sinh từ tro tàn.
+Tạo ảnh thần đèn khổng lồ bay ra từ chiếc đèn dầu cũ.
+Tạo ảnh một nàng công chúa đang ngủ trong lồng kính hoa hồng.
+Tạo ảnh chú mèo đi hia cầm kiếm đứng hiên ngang.
+Tạo ảnh cậu bé người gỗ mũi dài đang nói chuyện với dế mèn.
+Tạo ảnh một vùng đất kẹo ngọt với sông sô cô la và cây kẹo mút.
+Tạo ảnh đoàn tàu hỏa chạy bằng hơi nước bay trên bầu trời.
+Làm cho bức ảnh sáng bừng lên như đang giữa trưa hè.
+Chuyển tông màu của ảnh sang màu nâu đỏ hoài cổ.
+Làm mờ hậu cảnh để làm nổi bật bông hoa ở phía trước.
+Xóa người đang đứng ở góc trái bức ảnh đi.
+Thay nền trời xám xịt bằng bầu trời xanh mây trắng.
+Thêm hiệu ứng tuyết rơi lãng mạn vào bức ảnh mùa đông.
+Làm cho làn da người mẫu trở nên mịn màng không tì vết.
+Đổi màu chiếc ô tô từ màu đỏ sang màu đen sang trọng.
+Làm nét lại bức ảnh bị rung tay mờ nhòe.
+Tăng độ tươi của màu sắc để bức ảnh rực rỡ hơn.
+Biến bức ảnh chụp ban ngày thành cảnh ban đêm lung linh.
+Thêm ánh sáng đèn đường vàng vọt vào cảnh phố đêm.
+Xóa sợi dây điện chằng chịt trên bầu trời.
+Làm cho đôi mắt trong ảnh sáng lên và có hồn hơn.
+Thêm một chiếc cầu vồng rực rỡ sau cơn mưa.
+Tách hình con chó ra và ghép vào nền công viên xanh.
+Mở rộng khung hình để nhìn thấy toàn bộ ngôi nhà.
+Phục hồi lại bức ảnh cũ bị rách góc và phai màu.
+Làm trắng răng và xóa nếp nhăn cho người trong ảnh.
+Chèn thêm chữ Chúc Mừng Năm Mới pháo hoa rực rỡ.
+Tạo hiệu ứng bóng đổ tự nhiên cho vật thể trong ảnh.
+Làm cho mặt nước trong hồ phẳng lặng như tờ giấy.
+Thêm hiệu ứng sương mù mờ ảo bao phủ ngọn núi.
+Chuyển bức ảnh sang màu đen trắng nghệ thuật.
+Tạo hiệu ứng ánh nắng chiếu xuyên qua kẽ lá cây.
+Làm cho mái tóc người mẫu trở nên bồng bềnh óng ả.
+Xóa vết bẩn trên tường và làm sạch nền nhà.
+Thay đổi trang phục của nhân vật sang bộ váy dạ hội.
+Thêm một đàn chim bồ câu đang bay lên trời.
+Tạo hiệu ứng phản chiếu của thành phố xuống mặt sông.
+Tạo ảnh cận cảnh mắt của một con chuồn chuồn nhìn rõ lưới mắt.
+Tạo ảnh chụp những giọt sương đọng trên mạng nhện buổi sáng.
+Tạo ảnh chụp cận cảnh nhụy hoa dâm bụt vàng rực.
+Tạo ảnh chụp vân gỗ sần sùi của một cây cổ thụ ngàn năm.
+Tạo ảnh chụp những hạt cát li ti nhiều màu trên bãi biển.
+Tạo ảnh chụp cận cảnh lông vũ sặc sỡ của chim công.
+Tạo ảnh chụp bong bóng xà phòng phản chiếu bảy sắc cầu vồng.
+Tạo ảnh chụp những viên đá lạnh đang tan chảy trong ly nước.
+Tạo ảnh chụp cận cảnh đầu ngòi bút máy đang viết mực xanh.
+Tạo ảnh chụp bề mặt gồ ghề của vỏ quả dứa.
+Tạo ảnh chụp những tia lửa bắn ra khi hàn kim loại.
+Tạo ảnh chụp khói hương trầm bay là là nghệ thuật.
+Tạo ảnh chụp những giọt nước mưa rơi trên kính cửa sổ.
+Tạo ảnh chụp cận cảnh mắt của một chú mèo con ngây thơ.
+Tạo ảnh chụp những đường vân trên một chiếc lá khô mùa thu.
+Tạo ảnh chụp cấu trúc tổ ong hình lục giác đều tăm tắp.
+Tạo ảnh chụp những hạt bụi bay trong luồng ánh sáng nắng.
+Tạo ảnh chụp cận cảnh vảy cá lấp lánh ánh bạc.
+Tạo ảnh chụp bề mặt xốp mềm của một chiếc bánh bông lan.
+Tạo ảnh chụp những sợi tơ tằm óng ả trong kén tằm.
+Tạo ảnh thiết kế bao bì hộp trà sen phong cách cung đình.
+Tạo ảnh thiết kế áp phích quảng cáo du lịch biển mùa hè.
+Tạo ảnh thiết kế logo tiệm bánh mì truyền thống Việt Nam.
+Tạo ảnh thiết kế bìa sách truyện cổ tích dân gian.
+Tạo ảnh thiết kế thiệp cưới in hình hoa sen thanh tao.
+Tạo ảnh thiết kế thực đơn quán cà phê phong cách bao cấp.
+Tạo ảnh thiết kế nhãn mác chai nước mắm truyền thống.
+Tạo ảnh thiết kế bảng hiệu cửa hàng thời trang thủ công.
+Tạo ảnh thiết kế vé mời tham dự triển lãm tranh lụa.
+Tạo ảnh thiết kế giao diện ứng dụng đặt món ăn thuần Việt.
+Tạo ảnh thiết kế bao lì xì tết in hình con giáp.
+Tạo ảnh thiết kế phông nền sân khấu lễ hội trăng rằm.
+Tạo ảnh thiết kế áo thun in hình danh lam thắng cảnh.
+Tạo ảnh thiết kế tờ rơi quảng cáo khóa học làm gốm.
+Tạo ảnh thiết kế danh thiếp cho nghệ nhân điêu khắc gỗ.
+Tạo ảnh thiết kế lịch để bàn chủ đề ẩm thực đường phố.
+Tạo ảnh thiết kế túi giấy thân thiện môi trường in họa tiết tre.
+Tạo ảnh thiết kế tem thư in hình các loài hoa đặc hữu.
+Tạo ảnh thiết kế băng rôn cổ động bảo vệ môi trường biển.
+Tạo ảnh thiết kế bìa tạp chí thời trang áo dài đương đại.
+Tạo ảnh món bún riêu cua đồng màu sắc hấp dẫn.
+Tạo ảnh một mẹt bún đậu mắm tôm đầy đặn ngon mắt.
+Tạo ảnh đĩa nem rán giòn rụm chấm nước mắm chua ngọt.
+Tạo ảnh bát phở bò tái chín bốc khói nghi ngút thơm lừng.
+Tạo ảnh gỏi cuốn tôm thịt tươi ngon với rau sống xanh mướt.
+Tạo ảnh món cá kho tộ màu cánh gián đậm đà hương vị.
+Tạo ảnh đĩa bánh cuốn nóng tráng mỏng rắc hành phi thơm.
+Tạo ảnh ly chè ba màu ngọt mát giải nhiệt mùa hè.
+Tạo ảnh món xôi xéo vàng ươm gói trong lá sen xanh.
+Tạo ảnh đĩa nộm đu đủ bò khô chua cay mặn ngọt.
+Tạo ảnh món chả cá Lã Vọng nướng trên than hoa.
+Tạo ảnh bát canh chua cá lóc miền Tây đậm đà.
+Tạo ảnh món bánh xèo vàng giòn rụm nhân tôm thịt giá đỗ.
+Tạo ảnh ly cà phê trứng béo ngậy thơm lừng góc phố cổ.
+Tạo ảnh đĩa cơm tấm sườn bì chả mỡ hành hấp dẫn.
+Tạo ảnh món mì quảng tôm thịt với bánh đa giòn tan.
+Tạo ảnh bát bún bò Huế cay nồng hương vị sả ớt.
+Tạo ảnh món hủ tiếu nam vang nước dùng ngọt thanh.
+Tạo ảnh đĩa bánh bột lọc trong veo nhìn thấy nhân tôm đỏ.
+Tạo ảnh món lẩu mắm miền Tây với đủ loại rau đồng nội.
+Tạo ảnh chú chó mực đang nằm canh cổng nhà.
+Tạo ảnh con mèo tam thể đang bắt bướm trong vườn.
+Tạo ảnh đàn gà con lông vàng óng đi theo mẹ tìm mồi.
+Tạo ảnh con trâu già đang gặm cỏ bên bờ đê yên bình.
+Tạo ảnh đàn lợn con đang bú sữa mẹ trong chuồng.
+Tạo ảnh chú bò sữa đang gặm cỏ trên cánh đồng xanh.
+Tạo ảnh con dê núi đang leo trèo trên vách đá dựng đứng.
+Tạo ảnh đàn ngỗng trắng đang bơi lội trên dòng sông quê.
+Tạo ảnh chú thỏ trắng đang ăn củ cà rốt đỏ tươi.Tạo ảnh một con rồng được tạo hình từ những đám mây trắng trên bầu trời xanh.
+Tạo ảnh một con voi khổng lồ có lông dài rậm rạp đi trong bão tuyết.
+Tạo ảnh đàn cá chép bơi lội trong hồ nước trong vắt nhìn thấy đáy.
+Tạo ảnh một con chim đại bàng được làm hoàn toàn bằng kim loại sáng bóng.
+Tạo ảnh ngôi nhà nấm khổng lồ nằm giữa khu rừng già bí ẩn.
+Tạo ảnh một chiếc thuyền buồm đang lướt trên biển mây bồng bềnh.
+Tạo ảnh con mèo đang ngồi câu cá bên bờ sông thơ mộng.
+Tạo ảnh một người tuyết đang đeo khăn quàng cổ màu đỏ giữa trời đông.
+Tạo ảnh đàn bướm phát sáng bay quanh một cái cây cổ thụ ban đêm.
+Tạo ảnh một thành phố nằm trong quả cầu thủy tinh tuyết rơi.
+Tạo ảnh con rùa đang cõng cả một hòn đảo trên lưng.
+Tạo ảnh một chú robot bằng gỗ đang tưới hoa trong vườn.
+Tạo ảnh chiếc đồng hồ cát với cát bên trong là những ngôi sao nhỏ.
+Tạo ảnh một con phượng hoàng được kết từ hàng ngàn bông hoa rực rỡ.
+Tạo ảnh chú chó đang đeo kính râm nằm tắm nắng trên bãi biển.
+Tạo ảnh một thư viện sách nằm trong hốc cây sồi già.
+Tạo ảnh con hươu sao có bộ gạc phát ra ánh sáng lung linh.
+Tạo ảnh một chiếc xe đạp cũ chở đầy hoa cúc họa mi trắng.
+Tạo ảnh ngôi làng của những người tí hon nằm dưới tán lá dương xỉ.
+Tạo ảnh một con cá voi đang bay lượn trên bầu trời đầy sao.
+Tạo ảnh bữa tiệc trà của những chú thỏ trắng trong rừng.
+Tạo ảnh một lâu đài cát khổng lồ và tinh xảo trên bờ biển.
+Tạo ảnh con nhện đang dệt tấm mạng bằng tơ vàng óng ánh.
+Tạo ảnh một chiếc dương cầm cũ đặt giữa cánh đồng cỏ hoang.
+Tạo ảnh người nông dân đang gặt lúa vàng trên ruộng bậc thang.
+Tạo ảnh một cô gái đang thả đèn hoa đăng xuống dòng sông đêm.
+Tạo ảnh chú bé chăn trâu đang thổi sáo trên lưng trâu.
+Tạo ảnh gánh hàng rong bán tào phớ dưới gốc cây đa làng.
+Tạo ảnh một mâm cỗ trung thu với bánh nướng và lồng đèn ông sao.
+Tạo ảnh những chiếc nón lá bay lơ lửng tạo thành hình bản đồ.
+Tạo ảnh con thuyền nan nhỏ bé giữa dòng sông nước chảy xiết.
+Tạo ảnh một bếp lửa hồng ấm áp với nồi ngô luộc bốc khói.
+Tạo ảnh giàn mướp hương sai trĩu quả bên hiên nhà tranh.
+Tạo ảnh một chú gà con mới nở đang ngơ ngác nhìn thế giới.
+Tạo ảnh đàn vịt đang bơi lội tung tăng trong ao sen.
+Tạo ảnh con chuồn chuồn ớt đậu trên cành tre khô.
+Tạo ảnh một chú dế mèn đang gảy đàn violin dưới ánh trăng.
+Tạo ảnh đàn kiến đang khiêng một miếng bánh quy lớn về tổ.
+Tạo ảnh con bọ rùa đỏ chấm đen đang bò trên lá cỏ ướt sương.
+Tạo ảnh một con ốc mượn hồn đang bò trên bãi cát trắng.
+Tạo ảnh bầy khỉ đang chuyền cành trong rừng rậm nhiệt đới.
+Tạo ảnh một con trăn gấm đang cuộn mình ngủ trên cành cây.
+Tạo ảnh chú sóc bay đang lượn từ cây này sang cây khác.
+Tạo ảnh con tê giác đang đầm mình trong vũng bùn mát lạnh.
+Tạo ảnh đàn ngựa hoang đang phi nước đại trên thảo nguyên xanh.
+Tạo ảnh một con lạc đà đang đi qua đồi cát sa mạc nóng bỏng.
+Tạo ảnh chú gấu trúc đỏ đang ăn lá trúc ngon lành.
+Tạo ảnh con lửng mật đang đào hang tìm kiếm thức ăn.
+Tạo ảnh bầy chim hải âu đang bay lượn trên mặt biển sóng vỗ.
+Tạo ảnh một con sứa khổng lồ trôi lơ lửng như chiếc dù.
+Biến ảnh này thành tranh vẽ bằng những hạt gạo rang nhiều màu.
+Sửa ảnh này thành phong cách tranh khắc trên lá cây khô.
+Tạo ảnh chân dung được tạo thành từ những mảng màu nước loang lổ.
+Biến ảnh phong cảnh thành bức tranh thêu chữ thập đều đặn.
+Sửa ảnh này thành phong cách hình dán sticker viền trắng.
+Tạo ảnh mô hình món ăn làm từ vải nỉ mềm mại.
+Biến ảnh này thành bức tranh được xếp từ những viên sỏi đá.
+Sửa ảnh này thành phong cách bản vẽ thiết kế trên giấy xanh.
+Tạo ảnh chân dung nhìn như được tạc từ một khúc gỗ sần sùi.
+Biến ảnh phong cảnh thành thế giới đồ chơi bằng nhựa dẻo.
+Sửa ảnh này thành phong cách tranh in dấu vân tay ngộ nghĩnh.
+Tạo ảnh ngôi nhà bánh kẹo với mái làm bằng sô cô la.
+Biến ảnh này thành hình ảnh phản chiếu trong mắt côn trùng.
+Sửa ảnh này thành phong cách tranh vẽ phấn trên vỉa hè.
+Tạo ảnh một rừng cây được làm từ dây đồng và hạt cườm.
+Biến ảnh này thành bức phù điêu đắp nổi bằng xi măng.
+Sửa ảnh này thành phong cách phim hoạt hình bóng đổ đen trắng.
+Tạo ảnh chân dung được ghép từ những mảnh báo cũ xé vụn.
+Biến ảnh phong cảnh thành bức tranh sơn dầu nét cọ dày.
+Sửa ảnh này thành phong cách hình vẽ trong hang động thời tiền sử.
+Tạo ảnh một con rồng phương Tây đang phun lửa dữ dội.
+Tạo ảnh nàng tiên cá đang chải tóc bằng lược vỏ sò.
+Tạo ảnh một người khổng lồ đá đang ngủ say thành ngọn núi.
+Tạo ảnh chiếc thảm bay thần kỳ chở hai người bay qua thành phố.
+Tạo ảnh cây đậu thần mọc cao xuyên qua các tầng mây.
+Tạo ảnh một con kỳ lân trắng có sừng xoắn ốc tuyệt đẹp.
+Tạo ảnh bà phù thủy đang khuấy nồi thuốc độc màu xanh lá.
+Tạo ảnh một con ma vui vẻ đang bay lượn trong lâu đài hoang.
+Tạo ảnh chiếc gương thần đang hiển thị khuôn mặt người nói.
+Tạo ảnh một cỗ xe bí ngô lộng lẫy do chuột kéo.
+Tạo ảnh chàng hoàng tử đang chiến đấu với quái vật nhiều đầu.
+Tạo ảnh cô bé lọ lem đang chạy vội đánh rơi chiếc giày thủy tinh.
+Tạo ảnh ngôi nhà biết đi bằng chân gà trong rừng rậm.
+Tạo ảnh một con chim phượng hoàng lửa tái sinh từ tro tàn.
+Tạo ảnh thần đèn khổng lồ bay ra từ chiếc đèn dầu cũ.
+Tạo ảnh một nàng công chúa đang ngủ trong lồng kính hoa hồng.
+Tạo ảnh chú mèo đi hia cầm kiếm đứng hiên ngang.
+Tạo ảnh cậu bé người gỗ mũi dài đang nói chuyện với dế mèn.
+Tạo ảnh một vùng đất kẹo ngọt với sông sô cô la và cây kẹo mút.
+Tạo ảnh đoàn tàu hỏa chạy bằng hơi nước bay trên bầu trời.
+Làm cho bức ảnh sáng bừng lên như đang giữa trưa hè.
+Chuyển tông màu của ảnh sang màu nâu đỏ hoài cổ.
+Làm mờ hậu cảnh để làm nổi bật bông hoa ở phía trước.
+Xóa người đang đứng ở góc trái bức ảnh đi.
+Thay nền trời xám xịt bằng bầu trời xanh mây trắng.
+Thêm hiệu ứng tuyết rơi lãng mạn vào bức ảnh mùa đông.
+Làm cho làn da người mẫu trở nên mịn màng không tì vết.
+Đổi màu chiếc ô tô từ màu đỏ sang màu đen sang trọng.
+Làm nét lại bức ảnh bị rung tay mờ nhòe.
+Tăng độ tươi của màu sắc để bức ảnh rực rỡ hơn.
+Biến bức ảnh chụp ban ngày thành cảnh ban đêm lung linh.
+Thêm ánh sáng đèn đường vàng vọt vào cảnh phố đêm.
+Xóa sợi dây điện chằng chịt trên bầu trời.
+Làm cho đôi mắt trong ảnh sáng lên và có hồn hơn.
+Thêm một chiếc cầu vồng rực rỡ sau cơn mưa.
+Tách hình con chó ra và ghép vào nền công viên xanh.
+Mở rộng khung hình để nhìn thấy toàn bộ ngôi nhà.
+Phục hồi lại bức ảnh cũ bị rách góc và phai màu.
+Làm trắng răng và xóa nếp nhăn cho người trong ảnh.
+Chèn thêm chữ Chúc Mừng Năm Mới pháo hoa rực rỡ.
+Tạo hiệu ứng bóng đổ tự nhiên cho vật thể trong ảnh.
+Làm cho mặt nước trong hồ phẳng lặng như tờ giấy.
+Thêm hiệu ứng sương mù mờ ảo bao phủ ngọn núi.
+Chuyển bức ảnh sang màu đen trắng nghệ thuật.
+Tạo hiệu ứng ánh nắng chiếu xuyên qua kẽ lá cây.
+Làm cho mái tóc người mẫu trở nên bồng bềnh óng ả.
+Xóa vết bẩn trên tường và làm sạch nền nhà.
+Thay đổi trang phục của nhân vật sang bộ váy dạ hội.
+Thêm một đàn chim bồ câu đang bay lên trời.
+Tạo hiệu ứng phản chiếu của thành phố xuống mặt sông.
+Tạo ảnh cận cảnh mắt của một con chuồn chuồn nhìn rõ lưới mắt.
+Tạo ảnh chụp những giọt sương đọng trên mạng nhện buổi sáng.
+Tạo ảnh chụp cận cảnh nhụy hoa dâm bụt vàng rực.
+Tạo ảnh chụp vân gỗ sần sùi của một cây cổ thụ ngàn năm.
+Tạo ảnh chụp những hạt cát li ti nhiều màu trên bãi biển.
+Tạo ảnh chụp cận cảnh lông vũ sặc sỡ của chim công.
+Tạo ảnh chụp bong bóng xà phòng phản chiếu bảy sắc cầu vồng.
+Tạo ảnh chụp những viên đá lạnh đang tan chảy trong ly nước.
+Tạo ảnh chụp cận cảnh đầu ngòi bút máy đang viết mực xanh.
+Tạo ảnh chụp bề mặt gồ ghề của vỏ quả dứa.
+Tạo ảnh chụp những tia lửa bắn ra khi hàn kim loại.
+Tạo ảnh chụp khói hương trầm bay là là nghệ thuật.
+Tạo ảnh chụp những giọt nước mưa rơi trên kính cửa sổ.
+Tạo ảnh chụp cận cảnh mắt của một chú mèo con ngây thơ.
+Tạo ảnh chụp những đường vân trên một chiếc lá khô mùa thu.
+Tạo ảnh chụp cấu trúc tổ ong hình lục giác đều tăm tắp.
+Tạo ảnh chụp những hạt bụi bay trong luồng ánh sáng nắng.
+Tạo ảnh chụp cận cảnh vảy cá lấp lánh ánh bạc.
+Tạo ảnh chụp bề mặt xốp mềm của một chiếc bánh bông lan.
+Tạo ảnh chụp những sợi tơ tằm óng ả trong kén tằm.
+Tạo ảnh thiết kế bao bì hộp trà sen phong cách cung đình.
+Tạo ảnh thiết kế áp phích quảng cáo du lịch biển mùa hè.
+Tạo ảnh thiết kế logo tiệm bánh mì truyền thống Việt Nam.
+Tạo ảnh thiết kế bìa sách truyện cổ tích dân gian.
+Tạo ảnh thiết kế thiệp cưới in hình hoa sen thanh tao.
+Tạo ảnh thiết kế thực đơn quán cà phê phong cách bao cấp.
+Tạo ảnh thiết kế nhãn mác chai nước mắm truyền thống.
+Tạo ảnh thiết kế bảng hiệu cửa hàng thời trang thủ công.
+Tạo ảnh thiết kế vé mời tham dự triển lãm tranh lụa.
+Tạo ảnh thiết kế giao diện ứng dụng đặt món ăn thuần Việt.
+Tạo ảnh thiết kế bao lì xì tết in hình con giáp.
+Tạo ảnh thiết kế phông nền sân khấu lễ hội trăng rằm.
+Tạo ảnh thiết kế áo thun in hình danh lam thắng cảnh.
+Tạo ảnh thiết kế tờ rơi quảng cáo khóa học làm gốm.
+Tạo ảnh thiết kế danh thiếp cho nghệ nhân điêu khắc gỗ.
+Tạo ảnh thiết kế lịch để bàn chủ đề ẩm thực đường phố.
+Tạo ảnh thiết kế túi giấy thân thiện môi trường in họa tiết tre.
+Tạo ảnh thiết kế tem thư in hình các loài hoa đặc hữu.
+Tạo ảnh thiết kế băng rôn cổ động bảo vệ môi trường biển.
+Tạo ảnh thiết kế bìa tạp chí thời trang áo dài đương đại.
+Tạo ảnh món bún riêu cua đồng màu sắc hấp dẫn.
+Tạo ảnh một mẹt bún đậu mắm tôm đầy đặn ngon mắt.
+Tạo ảnh đĩa nem rán giòn rụm chấm nước mắm chua ngọt.
+Tạo ảnh bát phở bò tái chín bốc khói nghi ngút thơm lừng.
+Tạo ảnh gỏi cuốn tôm thịt tươi ngon với rau sống xanh mướt.
+Tạo ảnh món cá kho tộ màu cánh gián đậm đà hương vị.
+Tạo ảnh đĩa bánh cuốn nóng tráng mỏng rắc hành phi thơm.
+Tạo ảnh ly chè ba màu ngọt mát giải nhiệt mùa hè.
+Tạo ảnh món xôi xéo vàng ươm gói trong lá sen xanh.
+Tạo ảnh đĩa nộm đu đủ bò khô chua cay mặn ngọt.
+Tạo ảnh món chả cá Lã Vọng nướng trên than hoa.
+Tạo ảnh bát canh chua cá lóc miền Tây đậm đà.
+Tạo ảnh món bánh xèo vàng giòn rụm nhân tôm thịt giá đỗ.
+Tạo ảnh ly cà phê trứng béo ngậy thơm lừng góc phố cổ.
+Tạo ảnh đĩa cơm tấm sườn bì chả mỡ hành hấp dẫn.
+Tạo ảnh món mì quảng tôm thịt với bánh đa giòn tan.
+Tạo ảnh bát bún bò Huế cay nồng hương vị sả ớt.
+Tạo ảnh món hủ tiếu nam vang nước dùng ngọt thanh.
+Tạo ảnh đĩa bánh bột lọc trong veo nhìn thấy nhân tôm đỏ.
+Tạo ảnh món lẩu mắm miền Tây với đủ loại rau đồng nội.
+Tạo ảnh chú chó mực đang nằm canh cổng nhà.
+Tạo ảnh con mèo tam thể đang bắt bướm trong vườn.
+Tạo ảnh đàn gà con lông vàng óng đi theo mẹ tìm mồi.
+Tạo ảnh con trâu già đang gặm cỏ bên bờ đê yên bình.
+Tạo ảnh đàn lợn con đang bú sữa mẹ trong chuồng.
+Tạo ảnh chú bò sữa đang gặm cỏ trên cánh đồng xanh.
+Tạo ảnh con dê núi đang leo trèo trên vách đá dựng đứng.
+Tạo ảnh đàn ngỗng trắng đang bơi lội trên dòng sông quê.
+Tạo ảnh chú thỏ trắng đang ăn củ cà rốt đỏ tươi.
+Tạo ảnh con chuột lang đang chạy trên vòng quay đồ chơi.
+Tạo ảnh một ngôi sao băng vụt sáng trên bầu trời đêm.
+Tạo ảnh mặt trăng tròn vành vạnh chiếu sáng cánh rừng.
+Tạo ảnh những đám mây ngũ sắc rực rỡ lúc hoàng hôn.
+Tạo ảnh cầu vồng kép xuất hiện sau cơn mưa rào lớn.
+Tạo ảnh sương mù dày đặc bao phủ cả thành phố buổi sáng.
+Tạo ảnh những tia sét đánh xuống mặt biển dữ dội.
+Tạo ảnh bầu trời đầy sao lung linh không một gợn mây.
+Tạo ảnh hiện tượng nhật thực khi mặt trăng che khuất mặt trời.
+Tạo ảnh cơn lốc xoáy khổng lồ đang di chuyển trên cánh đồng.
+Tạo ảnh mưa đá rơi trắng xóa cả một vùng sân vườn.
+Tạo ảnh con chuột lang đang chạy trên vòng quay đồ chơi.
+Tạo ảnh một ngôi sao băng vụt sáng trên bầu trời đêm.
+Tạo ảnh mặt trăng tròn vành vạnh chiếu sáng cánh rừng.
+Tạo ảnh những đám mây ngũ sắc rực rỡ lúc hoàng hôn.
+Tạo ảnh cầu vồng kép xuất hiện sau cơn mưa rào lớn.
+Tạo ảnh sương mù dày đặc bao phủ cả thành phố buổi sáng.
+Tạo ảnh những tia sét đánh xuống mặt biển dữ dội.
+Tạo ảnh bầu trời đầy sao lung linh không một gợn mây.
+Tạo ảnh hiện tượng nhật thực khi mặt trăng che khuất mặt trời.
+Tạo ảnh cơn lốc xoáy khổng lồ đang di chuyển trên cánh đồng.
+Tạo ảnh mưa đá rơi trắng xóa cả một vùng sân vườn.
+Tăng độ sáng ảnh này, giữ màu tự nhiên.
+Làm ảnh này sáng đều hơn, giảm bóng gắt.
+Giảm vùng cháy sáng, khôi phục chi tiết vùng sáng.
+Tăng sáng vùng tối, không bệt màu.
+Đổi ánh sáng sang ánh sáng studio mềm.
+Đổi ánh sáng sang ánh sáng cửa sổ buổi sáng.
+Đổi ánh sáng sang hoàng hôn ấm, bóng mềm.
+Đổi ánh sáng sang ban đêm có đèn đường.
+Thêm rim light nhẹ phía sau chủ thể.
+Cân bằng trắng cho ảnh này, màu chuẩn hơn.
+Làm ảnh này ấm hơn một chút.
+Làm ảnh này lạnh hơn một chút.
+Giảm ám vàng, trả màu trung tính.
+Giảm ám xanh, trả màu trung tính.
+Làm sáng khuôn mặt, giữ nền như cũ.
+Làm ánh sáng dịu hơn, giảm tương phản gắt.
+Tăng tương phản nhẹ để ảnh rõ hơn.
+Giảm tương phản để ảnh mềm hơn.
+Làm ảnh này sáng hơn 1 mức, không đổi tông.
+Làm ảnh này tối hơn 1 mức, vẫn rõ chi tiết.
+Tăng độ rực nhẹ, không quá gắt.
+Giảm độ rực nhẹ, màu dịu hơn.
+Giảm phản chiếu gắt trên trán/mũi.
+Làm ánh sáng kiểu ngày nhiều mây (diffused).
+Làm ánh sáng kiểu đèn tungsten trong nhà.
+Làm rõ ảnh này: tăng độ nét và giảm nhiễu.
+Upscale ảnh này lên HD, giữ nguyên màu sắc.
+Upscale ảnh này lên 4K, giữ bố cục.
+Upscale ảnh này x2, chi tiết tự nhiên.
+Upscale ảnh này x4, giảm vỡ hạt JPEG.
+Khử nhiễu ảnh này, giữ texture tự nhiên.
+Làm ảnh này bớt mờ, rõ chi tiết hơn.
+Tăng độ phân giải ảnh này để in, không đổi bố cục.
+Làm rõ chữ trong ảnh này, không méo chữ.
+Tăng độ nét khuôn mặt, không bị nhựa.
+Tăng chi tiết tóc/lông, viền mượt.
+Giảm răng cưa ở các đường chéo, ảnh sạch hơn.
+Giảm banding và artefact nén trong ảnh này.
+Upscale ảnh đêm này, giảm noise mạnh.
+Upscale ảnh phong cảnh này, tăng chi tiết lá cây.
+Upscale ảnh đồ ăn này, làm rõ kết cấu.
+Upscale ảnh sản phẩm này, làm rõ nhãn.
+Tăng clarity nhẹ, giữ mịn da.
+Giảm nhiễu vùng tối, giữ chi tiết.
+Khôi phục chi tiết vùng sáng bị bệt.
+Làm ảnh này sắc nét hơn nhưng không gắt.
+Làm ảnh này trong hơn, giảm nhiễu màu.
+Làm rõ viền đối tượng, cạnh sạch.
+Giảm rung/nhòe nhẹ, ảnh rõ hơn.
+Nâng chất lượng ảnh cũ này, vẫn tự nhiên.
+Xóa nền ảnh này, giữ chủ thể, nền trong suốt (PNG).
+Tách nền ảnh này, giữ viền tóc tự nhiên, không lẹm.
+Tách nền ảnh này, giữ viền lông tự nhiên, không lẹm.
+Xóa nền và thay bằng nền trắng tinh.
+Xóa nền và thay bằng nền xám nhạt.
+Chỉ giữ sản phẩm, bỏ toàn bộ nền phía sau.
+Tách nền người, không lẹm tay/chân.
+Xóa nền logo, giữ cạnh sắc nét.
+Tách nền món ăn, giữ mép đĩa rõ.
+Xóa nền và giữ bóng đổ mềm tự nhiên.
+Xóa nền, tránh viền trắng quanh chủ thể.
+Tách nền tóc xoăn, giữ sợi tóc mảnh.
+Tách nền thú cưng, giữ lông tơ.
+Tách nền kính/thuỷ tinh, giữ độ trong tự nhiên.
+Tách nền và căn giữa chủ thể.
+Mở rộng ảnh này ra tỉ lệ 16:9, nền nối liền tự nhiên.
+Mở rộng ảnh này ra tỉ lệ 9:16, nền nối liền tự nhiên.
+Mở rộng ảnh này ra tỉ lệ 1:1, giữ chủ thể nguyên vẹn.
+Mở rộng ảnh này thêm viền 15% xung quanh, nền khớp.
+Mở rộng ảnh này để có khoảng trống đặt chữ, nền phù hợp.
+Mở rộng ảnh này sang trái và phải, không lặp hoa văn.
+Mở rộng ảnh này lên trên, thêm bầu trời phù hợp.
+Mở rộng ảnh này xuống dưới, thêm mặt đất phù hợp.
+Mở rộng ảnh này theo đúng phối cảnh, không kéo giãn chủ thể.
+Mở rộng ảnh này, tự tạo tiếp nền và ánh sáng cho khớp.
+Mở rộng ảnh này để tạo bố cục thoáng hơn, giữ chủ thể.
+Mở rộng ảnh này thêm 20% ở bốn phía, nền liền mạch.
+Mở rộng ảnh này để đặt logo ở góc phải, nền sạch.
+Mở rộng ảnh này để có nhiều không gian âm (negative space).
+Mở rộng ảnh này và giữ đường chân trời tự nhiên.
+Tạo ảnh một cái cây khổng lồ mọc ra những bóng đèn phát sáng thay vì quả.
+Tạo ảnh cầu thang xoắn ốc dẫn thẳng lên mặt trăng tròn vành vạnh.
+Tạo ảnh một cuốn sách đang mở ra và nước biển chảy tràn ra từ trang sách.
+Tạo ảnh ngôi nhà nhỏ nằm lọt thỏm bên trong một chiếc bóng đèn sợi đốt.
+Tạo ảnh một đoàn tàu hỏa đang chạy trên đường ray uốn lượn giữa không trung.
+Tạo ảnh người đàn ông đang cầm chiếc ô che mưa bằng đám mây xám.
+Tạo ảnh một con cá vàng đang bơi lội trong không khí giữa rừng cây.
+Tạo ảnh chiếc đồng hồ quả lắc đang tan chảy như sáp nến trên cành cây.
+Tạo ảnh một cô gái có mái tóc dài biến thành dòng thác nước chảy xuống.
+Tạo ảnh hươu cao cổ đang ăn đám mây trắng trên bầu trời xanh.
+Tạo ảnh một bàn cờ vua khổng lồ với các quân cờ là người thật.
+Tạo ảnh chiếc thuyền giấy nhỏ bé đang lênh đênh trên dải ngân hà.
+Tạo ảnh một khu rừng mà lá cây đều là những cánh bướm nhiều màu.
+Tạo ảnh người khổng lồ đang dùng núi lửa làm nồi nấu súp.
+Tạo ảnh một phi hành gia đang ngồi câu sao bên bờ vũ trụ.
+Tạo ảnh cánh cửa gỗ cũ kỹ mở ra một thế giới đầy hoa hồng đỏ.
+Tạo ảnh một con mèo đang chơi đàn piano giữa cánh đồng hoa oải hương.
+Tạo ảnh những quả khinh khí cầu hình trái cây bay rợp trời.
+Tạo ảnh một thành phố được xây dựng trên lưng con rùa biển khổng lồ.
+Tạo ảnh chiếc xe buýt trường học đang bay bằng những quả bóng bay.
+Tạo ảnh các em bé đang chơi trò rồng rắn lên mây ở sân đình.
+Tạo ảnh cụ bà miệng nhai trầu móm mém cười hiền hậu.
+Tạo ảnh nhóm trẻ con đang thả diều trên triền đê lộng gió.
+Tạo ảnh người thợ đang đan giỏ tre thủ công tỉ mỉ.
+Tạo ảnh gánh hàng hoa quả tươi ngon của cô bán hàng rong.
+Tạo ảnh các cụ già đang tập dưỡng sinh buổi sáng bên hồ.
+Tạo ảnh một lớp học vùng cao với mái lá đơn sơ.
+Tạo ảnh người ngư dân đang tung chài bắt cá lúc bình minh vàng rực.
+Tạo ảnh cô gái dân tộc đang dệt vải thổ cẩm bên khung cửi.
+Tạo ảnh cảnh phơi lúa vàng ươm trên sân gạch ngày mùa.
+Tạo ảnh những chiếc thuyền thúng nằm nghỉ ngơi trên bãi cát trắng.
+Tạo ảnh một quán trà đá vỉa hè với điếu cày và kẹo lạc.
+Tạo ảnh cảnh kẹt xe giờ tan tầm ở ngã tư đường phố.
+Tạo ảnh phiên chợ nổi miền tây tấp nập thuyền bè buôn bán.
+Tạo ảnh người nông dân đang gánh muối trên cánh đồng muối trắng tinh.
+Tạo ảnh lũ trẻ đang tắm mưa vui vẻ dưới máng nước mái hiên.
+Tạo ảnh bữa cơm tất niên sum họp gia đình ấm cúng.
+Tạo ảnh người thợ cắt tóc vỉa hè dưới bóng cây mát.
+Tạo ảnh cảnh gói bánh chưng xanh ngày tết cổ truyền.
+Tạo ảnh những chiếc đèn lồng đỏ treo cao trước cổng chùa.
+Biến ảnh này thành tranh vẽ bằng bút bi mực xanh trên giấy vở.
+Sửa ảnh này thành phong cách tranh cổ động cũ kỹ thập niên 70.
+Tạo ảnh chân dung được ghép từ những mảnh gốm sứ vỡ.
+Biến ảnh phong cảnh thành bức tranh thêu tay tỉ mỉ từng mũi kim.
+Sửa ảnh này thành phong cách truyện tranh đen trắng nét đậm.
+Tạo ảnh mô hình món ăn làm từ sáp nến trông y như thật.
+Biến ảnh này thành hình ảnh phản chiếu qua đáy chai thủy tinh.
+Sửa ảnh này thành phong cách tranh vẽ bằng màu sáp dầu rực rỡ.
+Tạo ảnh chân dung nhìn như được khắc trên một đồng xu kim loại.
+Biến ảnh phong cảnh thành thế giới xếp hình từ các khối gỗ vuông.
+Sửa ảnh này thành phong cách tranh in trên giấy báo cũ ố vàng.
+Tạo ảnh một rừng cây được làm từ kim loại rỉ sét nghệ thuật.
+Biến ảnh này thành bức tượng đúc bằng đồng đen bóng loáng.
+Sửa ảnh này thành phong cách phim hoạt hình rối bóng.
+Tạo ảnh chân dung được tạo thành từ khói thuốc bay lơ lửng.
+Biến ảnh phong cảnh thành bức tranh cát nhiều màu trong lọ.
+Sửa ảnh này thành phong cách hình vẽ phấn trắng trên bảng đen.
+Tạo ảnh một con rồng được kết từ hoa và lá cây tươi.
+Biến ảnh này thành hình ảnh nhìn qua kính lúp phóng to.
+Sửa ảnh này thành phong cách tranh sơn dầu vẽ bằng dao bay.
+Tạo ảnh một con ngựa có cánh trắng muốt đang bay qua cầu vồng.
+Tạo ảnh người máy khổng lồ đang bảo vệ thành phố khỏi quái vật.
+Tạo ảnh một nàng tiên nhỏ đang ngủ trong bông hoa sen.
+Tạo ảnh chiếc gương thần kỳ hiện lên hình ảnh tương lai.
+Tạo ảnh một con rồng đất đang cuộn mình quanh tháp rùa.
+Tạo ảnh binh đoàn đất nung đang sống dậy và di chuyển.
+Tạo ảnh một con phượng hoàng băng giá tỏa ra hơi lạnh.
+Tạo ảnh khu rừng thần tiên với nấm khổng lồ và đom đóm.
+Tạo ảnh một con tàu ma cũ nát đang lướt trên mặt biển sương mù.
+Tạo ảnh người sói đang hú dưới ánh trăng tròn vành vạnh.
+Tạo ảnh một con ma cà rồng quý tộc trong lâu đài cổ.
+Tạo ảnh chiếc đũa thần đang phát ra tia sáng phép thuật.
+Tạo ảnh một quyển sách phép thuật cổ xưa đang tự lật trang.
+Tạo ảnh viên ngọc rồng phát sáng lấp lánh trên bệ đá.
+Tạo ảnh một con quái vật hồ nước đang nhô đầu lên mặt nước.
+Tạo ảnh chiến binh vũ trụ đang cầm kiếm ánh sáng màu đỏ.
+Tạo ảnh một hành tinh lạ với cây cối màu tím và bầu trời xanh lá.
+Tạo ảnh người ngoài hành tinh đang bắt tay với con người.
+Tạo ảnh cỗ máy thời gian đang đưa người đi về quá khứ.
+Tạo ảnh một thành phố dưới lòng đất với ánh sáng nhân tạo.
+Làm cho bức ảnh trông buồn bã với tông màu xanh xám.
+Chuyển ánh sáng trong ảnh thành màu vàng ấm áp của hoàng hôn.
+Thêm hiệu ứng ánh nắng chiếu xuyên qua cửa sổ vào phòng.
+Làm mờ phông nền để làm nổi bật chiếc xe ô tô.
+Xóa bớt những người thừa đang đi lại trong công viên.
+Thay bầu trời đang mưa bằng bầu trời nắng đẹp rực rỡ.
+Thêm hiệu ứng tuyết rơi vào bức ảnh chụp mùa hè.
+Làm cho da mặt người mẫu trắng hồng và mịn màng hơn.
+Đổi màu chiếc váy từ màu đen sang màu đỏ tươi.
+Làm rõ nét các dòng chữ bị mờ trên tấm biển hiệu.
+Tăng độ tương phản để bức ảnh trông ấn tượng hơn.
+Biến bức ảnh màu thành ảnh đen trắng nghệ thuật.
+Thêm ánh sáng đèn neon màu hồng vào khung cảnh ban đêm.
+Xóa vết rách và nếp gấp trên bức ảnh cũ kỹ.
+Làm cho đôi mắt của chú mèo sáng lên trong đêm.
+Thêm một đàn chim én đang bay lượn trên bầu trời xuân.
+Tách hình chiếc bánh kem ra và đặt lên bàn gỗ.
+Mở rộng bức ảnh lên phía trên để thấy ngọn tháp.
+Phục hồi màu sắc cho bức ảnh đen trắng đã cũ.
+Làm thon gọn vóc dáng người mẫu trong ảnh toàn thân.
+Chèn chữ Chúc Mừng Sinh Nhật với bóng bay nhiều màu.
+Tạo hiệu ứng bóng đổ của cây cối lên mặt đường.
+Làm cho mặt hồ nước gợn sóng lăn tăn nhẹ nhàng.
+Thêm hiệu ứng sương mù dày đặc vào cảnh rừng núi.
+Chuyển bức ảnh sang tông màu phim nhựa cổ điển.
+Tạo hiệu ứng tia sáng mặt trời tỏa ra từ sau đám mây.
+Làm cho mái tóc trở nên dày và bồng bềnh hơn.
+Xóa chiếc xe máy đang đỗ chắn trước cửa nhà.
+Thay đổi bộ quần áo đang mặc thành bộ vest lịch lãm.
+Thêm một bó hoa hồng đỏ thắm vào tay cô gái.
+Tạo ảnh chụp cận cảnh những hạt mưa đọng trên cửa kính.
+Tạo ảnh chụp những sợi lông tơ trên quả đào hồng phấn.
+Tạo ảnh chụp cận cảnh mắt của một con tắc kè hoa đổi màu.
+Tạo ảnh chụp những đường vân tay rõ nét trên ngón tay.
+Tạo ảnh chụp cận cảnh nhụy hoa hướng dương vàng rực.
+Tạo ảnh chụp những bọt khí li ti trong ly nước ngọt có ga.
+Tạo ảnh chụp cận cảnh đầu kim tiêm sắc nhọn.
+Tạo ảnh chụp bề mặt sần sùi của vỏ quả cam sành.
+Tạo ảnh chụp những hạt phấn hoa bay trong không khí.
+Tạo ảnh chụp cận cảnh chân của một con kiến đang bò.
+Tạo ảnh chụp những vết nứt trên mặt đất khô cằn.
+Tạo ảnh chụp cận cảnh sợi dây tóc bóng đèn đang phát sáng.
+Tạo ảnh chụp những hạt muối trắng tinh khôi lấp lánh.
+Tạo ảnh chụp cận cảnh rêu xanh mọc trên đá ẩm ướt.
+Tạo ảnh chụp những đường gân trên cánh của con chuồn chuồn.
+Tạo ảnh chụp cận cảnh ngọn lửa nến đang cháy lung linh.
+Tạo ảnh chụp những giọt cà phê đang nhỏ xuống ly.
+Tạo ảnh chụp cận cảnh kết cấu của một miếng bọt biển.
+Tạo ảnh chụp những sợi len đan vào nhau ấm áp.
+Tạo ảnh chụp cận cảnh đầu ngòi bút chì đang viết trên giấy.
+Tạo ảnh món bò kho chấm bánh mì nóng hổi vừa thổi vừa ăn.
+Tạo ảnh đĩa mực chiên giòn chấm tương ớt cay nồng.
+Tạo ảnh nồi lẩu thái chua cay bốc khói với tôm và ngao.
+Tạo ảnh món gà luộc lá chanh da vàng óng đẹp mắt.
+Tạo ảnh đĩa rau muống xào tỏi xanh mướt giòn ngon.
+Tạo ảnh bát canh cua rau đay mồng tơi giải nhiệt mùa hè.
+Tạo ảnh món thịt kho tàu với trứng vịt màu cánh gián.
+Tạo ảnh đĩa tôm hấp bia đỏ au hấp dẫn.
+Tạo ảnh món nem lụi nướng than hoa thơm lừng.
+Tạo ảnh bát cháo sườn quẩy nóng hổi buổi sáng mùa đông.
+Tạo ảnh món bánh mì chảo đầy ắp pate và trứng ốp la.
+Tạo ảnh ly sinh tố bơ xanh mát béo ngậy.
+Tạo ảnh đĩa hoa quả dầm sữa chua mát lạnh.
+Tạo ảnh món ốc luộc lá chanh chấm nước mắm gừng.
+Tạo ảnh bát bún ốc chuối đậu vàng ươm nghệ.
+Tạo ảnh món chè trôi nước cốt dừa trắng ngần.
+Tạo ảnh đĩa bánh da lợn nhiều lớp màu sắc dẻo thơm.
+Tạo ảnh món xôi gấc đỏ tươi may mắn ngày lễ tết.
+Tạo ảnh bát phở gà ta da giòn thịt ngọt.
+Tạo ảnh món bánh tráng trộn Sài Gòn đầy đủ topping.
+Tạo ảnh chú chim cánh cụt đang trượt băng ngã nhào.
+Tạo ảnh con mèo đang cố chui vào chiếc hộp quá nhỏ.
+Tạo ảnh chó bull mặt xệ đang ngủ ngáy khò khò.
+Tạo ảnh một con khỉ đang soi gương và làm mặt xấu.
+Tạo ảnh chú vẹt đang tập tạ trông rất hài hước.
+Tạo ảnh con rùa đang chạy đua với con thỏ (và thắng).
+Tạo ảnh chú chó đang đeo cà vạt và ngồi làm việc văn phòng.
+Tạo ảnh một con gà trống đang đeo tai nghe nhạc sành điệu.
+Tạo ảnh mèo con đang rình bắt con chuột đồ chơi.
+Tạo ảnh chú heo con đang tắm bùn vui vẻ.
+Tạo ảnh con sóc đang ôm hạt dẻ ngủ gật trên cành cây.
+Tạo ảnh chú vịt bầu đang dẫn đàn con đi qua đường.
+Tạo ảnh con trăn đang quấn quanh cành cây tạo hình trái tim.
+Tạo ảnh chú gấu bắc cực đang che ô đi dưới nắng.
+Tạo ảnh con chuột túi đang địu con đi siêu thị.
+Tạo ảnh một con ếch đang ngồi thiền trên lá sen.
+Tạo ảnh chú chó đang cầm micro hát karaoke say sưa.
+Tạo ảnh mèo và chó đang ôm nhau ngủ tình cảm.
+Tạo ảnh con cá sấu đang đánh răng buổi sáng.
+Tạo ảnh chú hươu cao cổ đang thắt nơ ở cổ.
+Tạo ảnh một cơn bão cát khổng lồ đang ập đến thành phố.
+Tạo ảnh cầu vồng ban đêm dưới ánh trăng huyền ảo.
+Tạo ảnh mưa sao băng rực rỡ trên bầu trời sa mạc.
+Tạo ảnh hiện tượng cực quang màu xanh lá cây nhảy múa.
+Tạo ảnh một ngọn núi lửa đang phun khói trắng lên trời.
+Tạo ảnh sóng biển phát sáng màu xanh dương trong đêm.
+Tạo ảnh rừng cây lá đỏ rực rỡ vào mùa thu.
+Tạo ảnh cánh đồng hoa hướng dương trải dài vô tận.
+Tạo ảnh thác nước đóng băng thành cột băng trắng xóa.
+Tạo ảnh bầu trời màu tím hồng trước khi bão đến.

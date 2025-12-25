@@ -4,11 +4,14 @@ import {
   ArrowLeft,
   Download,
   Image as ImageIcon,
+  Share2,
   Sparkles,
   Wand2,
 } from "lucide-react";
 import { reimagineImage, pollTaskStatus } from "../api/aiApi";
 import { communicationApi } from "../api/communicationApi";
+import { usePosts } from "../hooks/usePosts";
+import CreatePostWidget from "../components/post/CreatePostWidget";
 
 const stylePresets = [
   {
@@ -70,6 +73,7 @@ const randomResultUrl = () =>
 const StyleTransfer = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
+  const { createPost, currentUser } = usePosts();
 
   const [uploadedImage, setUploadedImage] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
@@ -83,6 +87,7 @@ const StyleTransfer = () => {
   const [processingStatus, setProcessingStatus] = useState("");
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const canTransfer = useMemo(
     () => !!uploadedImage && !!selectedStyle && !processing,
@@ -241,7 +246,9 @@ const StyleTransfer = () => {
   };
 
   const handleShare = () => {
-    alert("Tính năng chia sẻ sẽ có sau.");
+    if (result?.styled) {
+      setShowShareModal(true);
+    }
   };
 
   const handleSave = () => {
@@ -542,6 +549,19 @@ const StyleTransfer = () => {
           </div>
         </section>
       </div>
+
+      {/* Share to Post Modal */}
+      {showShareModal && (
+        <CreatePostWidget
+          currentUser={currentUser}
+          onCreatePost={createPost}
+          autoOpen={true}
+          hideComposer={true}
+          initialImageUrl={result?.styled}
+          initialPrompt={`🎨 Style Transfer: ${selectedStyle}\n\nStrength: ${strength}%\nResolution: ${resolution}\nDetail: ${detailLevel}`}
+          onClose={() => setShowShareModal(false)}
+        />
+      )}
     </div>
   );
 };

@@ -1,7 +1,9 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Download, Image, Share2, Sparkles } from "lucide-react";
-import { generateImage, pollTaskStatus } from "../api/aiApi";
+import { generateImage, pollTaskStatus, suggestPrompts, recordPromptChoice } from "../api/aiApi";
+import { usePosts } from "../hooks/usePosts";
+import CreatePostWidget from "../components/post/CreatePostWidget";
 
 const readFileAsDataUrl = (file) =>
   new Promise((resolve, reject) => {
@@ -14,6 +16,7 @@ const readFileAsDataUrl = (file) =>
 const TextToImage = () => {
   const navigate = useNavigate();
   const uploadInputRef = useRef(null);
+  const { createPost, currentUser } = usePosts();
 
   const [prompt, setPrompt] = useState("");
   const [uploadedImage, setUploadedImage] = useState(null);
@@ -24,16 +27,81 @@ const TextToImage = () => {
   const [taskStatus, setTaskStatus] = useState("");
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
+  const [showShareModal, setShowShareModal] = useState(false);
+
+  // Prompt suggestions state
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+  const suggestionTimeoutRef = useRef(null);
+  const promptInputRef = useRef(null);
 
   const charCount = useMemo(() => prompt.length, [prompt]);
 
+  // Fetch suggestions when prompt changes (with debounce)
+  const fetchSuggestions = useCallback(async (query) => {
+    setLoadingSuggestions(true);
+    try {
+      const result = await suggestPrompts(query || "");
+      if (result.success && result.suggestions.length > 0) {
+        setSuggestions(result.suggestions);
+        setShowSuggestions(true);
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    } catch (err) {
+      console.error('Error fetching suggestions:', err);
+    } finally {
+      setLoadingSuggestions(false);
+    }
+  }, []);
+
+  // Fetch popular suggestions on focus if prompt is empty
+  const handlePromptFocus = () => {
+    if (suggestions.length > 0) {
+      setShowSuggestions(true);
+    } else {
+      // Fetch popular prompts when focused with empty input
+      fetchSuggestions(prompt);
+    }
+  };
+
   const handlePromptChange = (event) => {
-    setPrompt(event.target.value.slice(0, 1000));
+    const value = event.target.value.slice(0, 1000);
+    setPrompt(value);
+
+    // Debounce suggestion fetch
+    if (suggestionTimeoutRef.current) {
+      clearTimeout(suggestionTimeoutRef.current);
+    }
+    suggestionTimeoutRef.current = setTimeout(() => {
+      fetchSuggestions(value);
+    }, 300);
+  };
+
+  const handleSelectSuggestion = (suggestion) => {
+    setPrompt(suggestion.text);
+    setShowSuggestions(false);
+    setSuggestions([]);
   };
 
   const handleClearPrompt = () => {
     setPrompt("");
+    setSuggestions([]);
+    setShowSuggestions(false);
   };
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (promptInputRef.current && !promptInputRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleFilePick = async (files) => {
     if (!files || !files.length) return;
@@ -79,6 +147,14 @@ const TextToImage = () => {
     setLoading(true);
     setResult(null);
     setTaskStatus("Đang khởi tạo...");
+    setShowSuggestions(false);
+
+    // Record the prompt choice for improving suggestions
+    try {
+      await recordPromptChoice(prompt.trim());
+    } catch (err) {
+      console.error('Failed to record prompt choice:', err);
+    }
 
     try {
       // Step 1: Submit generation request
@@ -146,16 +222,8 @@ const TextToImage = () => {
   };
 
   const handleShare = () => {
-    if (navigator.share && result?.imageUrl) {
-      navigator.share({
-        title: "AI Generated Image",
-        text: result.prompt,
-        url: result.imageUrl,
-      }).catch(() => { });
-    } else {
-      // Copy URL to clipboard
-      navigator.clipboard?.writeText(result?.imageUrl || "");
-      alert("Link đã được sao chép vào clipboard!");
+    if (result?.imageUrl) {
+      setShowShareModal(true);
     }
   };
 
@@ -189,13 +257,35 @@ const TextToImage = () => {
             >
               Your Prompt
             </label>
-            <textarea
-              id="prompt"
-              value={prompt}
-              onChange={handlePromptChange}
-              placeholder="Describe what you want to create..."
-              className="w-full border border-gray-300 rounded-2xl p-4 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent min-h-[140px] text-sm"
-            />
+            <div className="relative" ref={promptInputRef}>
+              <textarea
+                id="prompt"
+                value={prompt}
+                onChange={handlePromptChange}
+                onFocus={handlePromptFocus}
+                placeholder="Describe what you want to create..."
+                className="w-full border border-gray-300 rounded-2xl p-4 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent min-h-[140px] text-sm"
+              />
+
+              {/* Suggestions Dropdown */}
+              {showSuggestions && suggestions.length > 0 && (
+                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-auto">
+                  {loadingSuggestions && (
+                    <div className="px-4 py-2 text-sm text-gray-500">Đang tải gợi ý...</div>
+                  )}
+                  {suggestions.map((suggestion) => (
+                    <button
+                      key={suggestion.id}
+                      type="button"
+                      onClick={() => handleSelectSuggestion(suggestion)}
+                      className="w-full px-4 py-3 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors"
+                    >
+                      <p className="text-sm text-gray-800">{suggestion.text}</p>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             <div className="flex items-center justify-between text-xs text-gray-500 mt-2">
               <span>
                 Character count: <strong>{charCount}</strong>/1000
@@ -412,6 +502,19 @@ const TextToImage = () => {
           )}
         </section>
       </div>
+
+      {/* Share to Post Modal */}
+      {showShareModal && (
+        <CreatePostWidget
+          currentUser={currentUser}
+          onCreatePost={createPost}
+          autoOpen={true}
+          hideComposer={true}
+          initialImageUrl={result?.imageUrl}
+          initialPrompt={`🎨 Created with AI Text-to-Image\n\nPrompt: ${result?.prompt || prompt}`}
+          onClose={() => setShowShareModal(false)}
+        />
+      )}
     </div>
   );
 };

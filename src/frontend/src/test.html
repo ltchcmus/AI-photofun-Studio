@@ -3,19 +3,559 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Test Stripe Checkout</title>
+    <title>Test APIs - AI Photo Fun Studio</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            margin-top: 0;
+            color: #444;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-success {
+            background: #16a34a;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #15803d;
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            white-space: pre-wrap;
+            font-family: 'Consolas', monospace;
+            font-size: 13px;
+            max-height: 400px;
+            overflow: auto;
+        }
+
+        .result.success {
+            background: #d1fae5;
+            border-color: #a7f3d0;
+        }
+
+        .result.error {
+            background: #fee2e2;
+            border-color: #fecaca;
+        }
+
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .suggestion-item {
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .suggestion-item:hover {
+            background: #c7d2fe;
+        }
+
+        .suggestion-score {
+            font-size: 11px;
+            color: #6366f1;
+            margin-left: 5px;
+        }
+
+        .config-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+    </style>
 </head>
 
-<body style="text-align:center; margin-top:40px; font-family: Arial">
+<body>
 
-    <h2>Demo Stripe Checkout</h2>
+    <h1>🧪 Test APIs - AI Photo Fun Studio</h1>
 
-    <button id="payBtn" style="padding:12px; font-size:18px;">
-        Thanh toán $20
-    </button>
+    <!-- Config Section -->
+    <div class="section">
+        <h2>⚙️ Configuration</h2>
+        <div class="config-row">
+            <div class="form-group">
+                <label>AI Backend URL</label>
+                <input type="text" id="aiBackendUrl" value="http://localhost:9999" />
+            </div>
+            <div class="form-group">
+                <label>User ID</label>
+                <input type="text" id="userId" value="test-user-001" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Rec Prompt Suggest Section -->
+    <div class="section">
+        <h2>🔮 Rec Prompt - Suggest</h2>
+        <p>Gợi ý prompt dựa trên query và lịch sử người dùng</p>
+
+        <div class="form-group">
+            <label>Query (để trống để lấy gợi ý phổ biến)</label>
+            <input type="text" id="suggestQuery" placeholder="sunset, portrait, landscape..." />
+        </div>
+
+        <button class="btn-primary" onclick="testSuggest()">
+            🔍 Get Suggestions
+        </button>
+
+        <div id="suggestResult" class="result" style="display: none;"></div>
+
+        <div id="suggestItems" class="suggestions"></div>
+    </div>
+
+    <!-- Rec Prompt Choose Section -->
+    <div class="section">
+        <h2>✅ Rec Prompt - Choose</h2>
+        <p>Ghi nhận prompt được chọn để cải thiện gợi ý</p>
+
+        <div class="form-group">
+            <label>Prompt Text</label>
+            <input type="text" id="choosePrompt" placeholder="Enter the chosen prompt..." />
+        </div>
+
+        <button class="btn-success" onclick="testChoose()">
+            ✅ Record Choice
+        </button>
+
+        <div id="chooseResult" class="result" style="display: none;"></div>
+    </div>
+
+    <!-- Prompt to Video Section -->
+    <div class="section">
+        <h2>🎬 Prompt to Video</h2>
+        <p>Tạo video từ mô tả text</p>
+
+        <div class="form-group">
+            <label>Prompt</label>
+            <textarea id="p2vPrompt"
+                placeholder="Một chú mèo đang chạy trên cánh đồng hoa">Một chú mèo đang chạy trên cánh đồng hoa với nền bầu trời xanh</textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Model</label>
+            <select id="p2vModel" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                <option value="wan2.6-t2v">wan2.6-t2v (Mặc định)</option>
+            </select>
+        </div>
+
+        <button class="btn-primary" onclick="testPromptToVideo()">
+            🎬 Tạo Video
+        </button>
+        <button class="btn-success" onclick="pollP2VStatus()" id="p2vPollBtn" style="display: none; margin-left: 10px;">
+            🔄 Poll Status
+        </button>
+
+        <div id="p2vResult" class="result" style="display: none;"></div>
+        <div id="p2vVideo" style="margin-top: 15px;"></div>
+    </div>
+
+    <!-- Image to Video Section -->
+    <div class="section">
+        <h2>🖼️➡️🎬 Image to Video</h2>
+        <p>Chuyển ảnh thành video động</p>
+
+        <div class="form-group">
+            <label>Image URL</label>
+            <input type="text" id="i2vImageUrl" placeholder="https://example.com/image.jpg" />
+        </div>
+
+        <div class="form-group">
+            <label>Prompt (mô tả chuyển động)</label>
+            <textarea id="i2vPrompt"
+                placeholder="Chủ thể đang di chuyển nhẹ nhàng">Chủ thể đang cử động nhẹ nhàng, gió thổi qua</textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Model</label>
+            <select id="i2vModel" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                <option value="wan2.6-i2v">wan2.6-i2v (Mặc định)</option>
+                <option value="wan2.2-i2v-plus">wan2.2-i2v-plus</option>
+                <option value="wan2.5-i2v-preview">wan2.5-i2v-preview</option>
+                <option value="wan2.2-i2v-flash">wan2.2-i2v-flash</option>
+                <option value="wan2.1-i2v-turbo">wan2.1-i2v-turbo</option>
+                <option value="wan2.1-i2v-plus">wan2.1-i2v-plus</option>
+            </select>
+        </div>
+
+        <button class="btn-primary" onclick="testImageToVideo()">
+            🎬 Chuyển đổi
+        </button>
+        <button class="btn-success" onclick="pollI2VStatus()" id="i2vPollBtn" style="display: none; margin-left: 10px;">
+            🔄 Poll Status
+        </button>
+
+        <div id="i2vResult" class="result" style="display: none;"></div>
+        <div id="i2vVideo" style="margin-top: 15px;"></div>
+    </div>
+
+    <!-- Payment Section -->
+    <div class="section">
+        <h2>💳 Payment - Stripe Checkout</h2>
+        <p>Test thanh toán qua Stripe</p>
+
+        <button class="btn-primary" onclick="testPayment()">
+            💳 Thanh toán $20
+        </button>
+
+        <div id="paymentResult" class="result" style="display: none;"></div>
+    </div>
 
     <script>
-        document.getElementById("payBtn").addEventListener("click", async () => {
+        // Store task IDs for polling
+        let p2vTaskId = null;
+        let i2vTaskId = null;
+
+        function getConfig() {
+            return {
+                aiBackendUrl: document.getElementById('aiBackendUrl').value.trim(),
+                userId: document.getElementById('userId').value.trim() || 'test-user-001'
+            };
+        }
+
+        async function testSuggest() {
+            const config = getConfig();
+            const query = document.getElementById('suggestQuery').value.trim();
+            const resultEl = document.getElementById('suggestResult');
+            const itemsEl = document.getElementById('suggestItems');
+
+            resultEl.style.display = 'block';
+            resultEl.className = 'result';
+            resultEl.textContent = 'Loading...';
+            itemsEl.innerHTML = '';
+
+            try {
+                const res = await fetch(`${config.aiBackendUrl}/v1/rec-prompt/suggest`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: config.userId,
+                        prompt: query
+                    })
+                });
+
+                const data = await res.json();
+                console.log('Suggest Response:', data);
+
+                resultEl.className = 'result success';
+                resultEl.textContent = JSON.stringify(data, null, 2);
+
+                // Display suggestions as clickable items
+                if (data.result?.results) {
+                    itemsEl.innerHTML = data.result.results.map(item =>
+                        `<div class="suggestion-item" onclick="selectSuggestion('${item.text.replace(/'/g, "\\'")}')">
+                            ${item.text}
+                            <span class="suggestion-score">(${item.score.toFixed(3)})</span>
+                        </div>`
+                    ).join('');
+                }
+            } catch (err) {
+                console.error(err);
+                resultEl.className = 'result error';
+                resultEl.textContent = 'Error: ' + err.message;
+            }
+        }
+
+        function selectSuggestion(text) {
+            document.getElementById('choosePrompt').value = text;
+            document.getElementById('suggestQuery').value = text;
+        }
+
+        async function testChoose() {
+            const config = getConfig();
+            const promptText = document.getElementById('choosePrompt').value.trim();
+            const resultEl = document.getElementById('chooseResult');
+
+            if (!promptText) {
+                alert('Vui lòng nhập prompt!');
+                return;
+            }
+
+            resultEl.style.display = 'block';
+            resultEl.className = 'result';
+            resultEl.textContent = 'Loading...';
+
+            try {
+                const res = await fetch(`${config.aiBackendUrl}/v1/rec-prompt/choose`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: config.userId,
+                        prompt: promptText
+                    })
+                });
+
+                const data = await res.json();
+                console.log('Choose Response:', data);
+
+                resultEl.className = 'result success';
+                resultEl.textContent = JSON.stringify(data, null, 2);
+            } catch (err) {
+                console.error(err);
+                resultEl.className = 'result error';
+                resultEl.textContent = 'Error: ' + err.message;
+            }
+        }
+
+        // ========== Prompt to Video ==========
+        async function testPromptToVideo() {
+            const config = getConfig();
+            const prompt = document.getElementById('p2vPrompt').value.trim();
+            const model = document.getElementById('p2vModel').value;
+            const resultEl = document.getElementById('p2vResult');
+
+            if (!prompt) {
+                alert('Vui lòng nhập prompt!');
+                return;
+            }
+
+            resultEl.style.display = 'block';
+            resultEl.className = 'result';
+            resultEl.textContent = 'Starting video generation...';
+            document.getElementById('p2vVideo').innerHTML = '';
+
+            try {
+                const res = await fetch(`${config.aiBackendUrl}/v1/features/prompt-to-video/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: config.userId,
+                        prompt: prompt,
+                        model: model
+                    })
+                });
+
+                const data = await res.json();
+                console.log('Prompt to Video Response:', data);
+
+                if (data.code === 1000 && data.result?.task_id) {
+                    p2vTaskId = data.result.task_id;
+                    resultEl.className = 'result success';
+                    resultEl.textContent = `Task started!\nTask ID: ${p2vTaskId}\n\nClick "Poll Status" to check progress.\n\n` + JSON.stringify(data, null, 2);
+                    document.getElementById('p2vPollBtn').style.display = 'inline-block';
+                } else {
+                    resultEl.className = 'result error';
+                    resultEl.textContent = JSON.stringify(data, null, 2);
+                }
+            } catch (err) {
+                console.error(err);
+                resultEl.className = 'result error';
+                resultEl.textContent = 'Error: ' + err.message;
+            }
+        }
+
+        async function pollP2VStatus() {
+            if (!p2vTaskId) {
+                alert('No task ID. Start a video generation first.');
+                return;
+            }
+
+            const config = getConfig();
+            const resultEl = document.getElementById('p2vResult');
+
+            resultEl.textContent = 'Polling status...';
+
+            try {
+                const res = await fetch(`${config.aiBackendUrl}/v1/features/prompt-to-video/status/${p2vTaskId}/?user_id=${config.userId}`);
+                const data = await res.json();
+                console.log('P2V Status:', data);
+
+                resultEl.className = 'result success';
+                resultEl.textContent = JSON.stringify(data, null, 2);
+
+                // Check if video is ready
+                const videoUrl = data.result?.video_url || data.result?.uploaded_urls?.[0];
+                if (videoUrl) {
+                    document.getElementById('p2vVideo').innerHTML = `
+                        <video controls width="100%" style="border-radius: 8px;">
+                            <source src="${videoUrl}" type="video/mp4">
+                        </video>
+                        <p><a href="${videoUrl}" target="_blank">Download Video</a></p>
+                    `;
+                }
+            } catch (err) {
+                console.error(err);
+                resultEl.className = 'result error';
+                resultEl.textContent = 'Error: ' + err.message;
+            }
+        }
+
+        // ========== Image to Video ==========
+        async function testImageToVideo() {
+            const config = getConfig();
+            const imageUrl = document.getElementById('i2vImageUrl').value.trim();
+            const prompt = document.getElementById('i2vPrompt').value.trim();
+            const model = document.getElementById('i2vModel').value;
+            const resultEl = document.getElementById('i2vResult');
+
+            if (!imageUrl) {
+                alert('Vui lòng nhập Image URL!');
+                return;
+            }
+            if (!prompt) {
+                alert('Vui lòng nhập prompt!');
+                return;
+            }
+
+            resultEl.style.display = 'block';
+            resultEl.className = 'result';
+            resultEl.textContent = 'Starting image to video conversion...';
+            document.getElementById('i2vVideo').innerHTML = '';
+
+            try {
+                const res = await fetch(`${config.aiBackendUrl}/v1/features/image-to-video/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: config.userId,
+                        image_url: imageUrl,
+                        prompt: prompt,
+                        model: model
+                    })
+                });
+
+                const data = await res.json();
+                console.log('Image to Video Response:', data);
+
+                if (data.code === 1000 && data.result?.task_id) {
+                    i2vTaskId = data.result.task_id;
+                    resultEl.className = 'result success';
+                    resultEl.textContent = `Task started!\nTask ID: ${i2vTaskId}\n\nClick "Poll Status" to check progress.\n\n` + JSON.stringify(data, null, 2);
+                    document.getElementById('i2vPollBtn').style.display = 'inline-block';
+                } else {
+                    resultEl.className = 'result error';
+                    resultEl.textContent = JSON.stringify(data, null, 2);
+                }
+            } catch (err) {
+                console.error(err);
+                resultEl.className = 'result error';
+                resultEl.textContent = 'Error: ' + err.message;
+            }
+        }
+
+        async function pollI2VStatus() {
+            if (!i2vTaskId) {
+                alert('No task ID. Start a conversion first.');
+                return;
+            }
+
+            const config = getConfig();
+            const resultEl = document.getElementById('i2vResult');
+
+            resultEl.textContent = 'Polling status...';
+
+            try {
+                const res = await fetch(`${config.aiBackendUrl}/v1/features/image-to-video/status/${i2vTaskId}/?user_id=${config.userId}`);
+                const data = await res.json();
+                console.log('I2V Status:', data);
+
+                resultEl.className = 'result success';
+                resultEl.textContent = JSON.stringify(data, null, 2);
+
+                // Check if video is ready
+                const videoUrl = data.result?.video_url || data.result?.uploaded_urls?.[0];
+                if (videoUrl) {
+                    document.getElementById('i2vVideo').innerHTML = `
+                        <video controls width="100%" style="border-radius: 8px;">
+                            <source src="${videoUrl}" type="video/mp4">
+                        </video>
+                        <p><a href="${videoUrl}" target="_blank">Download Video</a></p>
+                    `;
+                }
+            } catch (err) {
+                console.error(err);
+                resultEl.className = 'result error';
+                resultEl.textContent = 'Error: ' + err.message;
+            }
+        }
+
+        async function testPayment() {
+            const resultEl = document.getElementById('paymentResult');
+            resultEl.style.display = 'block';
+            resultEl.className = 'result';
+            resultEl.textContent = 'Loading...';
+
             try {
                 const res = await fetch(
                     "https://nmcnpm-payment-service.onrender.com/payment/create-payment",
@@ -26,12 +566,12 @@
                             "x-api-key": "81aa801afec422868bea639e7c7bde4be900f533a4e1c755bffbb7c331c205b972a70e93bae29c79023cfe53a1fd9abd7c825cd57a1a46152fcaaacabfda350f"
                         },
                         body: JSON.stringify({
-                            userId: "8cf89cd2-28a3-4bce-b538-cb361d030c04", // thay userId
+                            userId: "8cf89cd2-28a3-4bce-b538-cb361d030c04",
                             productName: "PREMIUM_ONE_MONTH",
-                            amount: 2000, // $20.00
+                            amount: 2000,
                             description: "Premium 1 month",
                             image: "https://via.placeholder.com/300x300.png?text=Premium",
-                            email: "user@example.com", // thay email user
+                            email: "user@example.com",
                             price: 2000,
                             currency: "usd",
                             quantity: 1
@@ -40,18 +580,25 @@
                 );
 
                 const data = await res.json();
-                console.log("Response:", data);
+                console.log("Payment Response:", data);
 
                 if (data?.result?.url) {
-                    window.location.href = data.result.url;
+                    resultEl.className = 'result success';
+                    resultEl.textContent = 'Redirect URL: ' + data.result.url + '\n\nFull Response:\n' + JSON.stringify(data, null, 2);
+
+                    if (confirm('Mở trang thanh toán?')) {
+                        window.location.href = data.result.url;
+                    }
                 } else {
-                    alert("Không lấy được URL thanh toán");
+                    resultEl.className = 'result error';
+                    resultEl.textContent = 'Không lấy được URL thanh toán\n\n' + JSON.stringify(data, null, 2);
                 }
             } catch (err) {
                 console.error(err);
-                alert("Có lỗi xảy ra, xem console");
+                resultEl.className = 'result error';
+                resultEl.textContent = 'Error: ' + err.message;
             }
-        });
+        }
     </script>
 
 </body>

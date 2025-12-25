@@ -15,6 +15,8 @@ import PhotoRestore from "../pages/PhotoRestore";
 import StyleTransfer from "../pages/StyleTransfer";
 import Relight from "../pages/Relight";
 import ImageExpand from "../pages/ImageExpand";
+import ImageToVideo from "../pages/ImageToVideo";
+import PromptToVideo from "../pages/PromptToVideo";
 import Notifications from "../pages/Notifications";
 import MessagesPage from "../pages/MessagesPage";
 import Profile from "../pages/Profile";
@@ -78,6 +80,8 @@ function AppRoutes() {
         <Route path="/style-transfer" element={<StyleTransfer />} />
         <Route path="/relight" element={<Relight />} />
         <Route path="/image-expand" element={<ImageExpand />} />
+        <Route path="/image-to-video" element={<ImageToVideo />} />
+        <Route path="/prompt-to-video" element={<PromptToVideo />} />
         <Route path="/activity" element={<Notifications />} />
         <Route path="/messages" element={<MessagesPage />} />
         <Route path="/profile" element={<Profile />} />
