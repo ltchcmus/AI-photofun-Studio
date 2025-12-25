@@ -107,13 +107,20 @@ jobs:
 
             echo "Deploying backendSocial..."
             cd $WORKSPACE/src/backend/backendSocial
-            export GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
-            export CORS_ALLOWED_ORIGINS="http://localhost:5173,http://localhost:3000,https://nmcnpm.lethanhcong.site:46337,$CORS_ORIGINS"
-            export COOKIE_SECURE=true
-            export COOKIE_SAME_SITE=None
-            export REDIRECT_AFTER_LOGIN_GOOGLE_FRONTEND=$GOOGLE_REDIRECT_FRONTEND
-            export REDIRECT_AFTER_LOGIN_GOOGLE_FRONTEND_FAILURE=$GOOGLE_REDIRECT_FRONTEND_FAILURE
-            export REDIRECT_URI=$GOOGLE_REDIRECT_FRONTEND
+
+            # Create .env file for docker-compose to read
+            cat > .env << EOF
+            GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
+            CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000,https://nmcnpm.lethanhcong.site:46337,$CORS_ORIGINS
+            COOKIE_SECURE=true
+            COOKIE_SAME_SITE=None
+            REDIRECT_AFTER_LOGIN_GOOGLE_FRONTEND=$GOOGLE_REDIRECT_FRONTEND
+            REDIRECT_AFTER_LOGIN_GOOGLE_FRONTEND_FAILURE=$GOOGLE_REDIRECT_FRONTEND_FAILURE
+            REDIRECT_URI=$GOOGLE_REDIRECT_FRONTEND
+            EOF
+
+            echo "🔧 Environment variables for backendSocial:"
+            cat .env
 
             sudo docker-compose down || true
             sudo docker-compose up -d --build --force-recreate
