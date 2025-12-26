@@ -21,7 +21,7 @@ import CreatePostWidget from "../components/post/CreatePostWidget";
 import { communicationApi } from "../api/communicationApi";
 import { usePosts } from "../hooks/usePosts";
 
-const AI_BACKEND_URL = import.meta.env.VITE_AI_BACKEND_URL || "http://localhost:9999/api/v1";
+const AI_BACKEND_URL = import.meta.env.VITE_AI_BACKEND_URL || "https://nmcnpm-api-ai.lethanhcong.site:46337/api/v1";
 
 const AIChat = () => {
     const navigate = useNavigate();
