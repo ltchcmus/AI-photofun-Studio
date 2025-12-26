@@ -388,7 +388,7 @@ main() {
     
     # Test 1 is OPTIONAL now - can use EXISTING_IMAGE_URL instead
     # Uncomment to generate new image (costs API credits):
-    # test_image_generation
+    test_image_generation
     
     # Check if we have an image to work with (either generated or existing URL)
     if [ -z "$GENERATED_MESSAGE_ID" ] && [ -z "$EXISTING_IMAGE_URL" ]; then
@@ -411,7 +411,7 @@ main() {
     # test_reimagine
     # test_relight
     # test_image_expand
-    test_style_transfer
+    # test_style_transfer
     
     # Display final conversation
     echo "════════════════════════════════════════════════════════════════════════════════"

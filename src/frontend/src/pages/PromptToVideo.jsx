@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Download, Film, Play, Share2, Video } from "lucide-react";
-import { suggestPrompts, recordPromptChoice } from "../api/aiApi";
+import { suggestPrompts, recordPromptChoice, generateVideoFromPrompt, pollVideoTaskStatus } from "../api/aiApi";
 
 // Models for Prompt to Video (Text to Video)
 const PROMPT_TO_VIDEO_MODELS = [
@@ -11,9 +11,6 @@ const PROMPT_TO_VIDEO_MODELS = [
     { value: "wan2.1-t2v-plus", label: "wan2.1-t2v-plus", description: "Phiên bản Plus cũ" },
     { value: "wan2.1-t2v-turbo", label: "wan2.1-t2v-turbo", description: "Turbo - nhanh nhất" },
 ];
-
-// AI Backend URL - use environment variable for production
-const AI_BACKEND_URL = import.meta.env.VITE_AI_API_URL || "http://localhost:9999";
 
 const PromptToVideo = () => {
     const navigate = useNavigate();
@@ -33,16 +30,6 @@ const PromptToVideo = () => {
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [loadingSuggestions, setLoadingSuggestions] = useState(false);
-
-    // Get session ID for API calls
-    const getSessionId = () => {
-        let sessionId = localStorage.getItem("ai_session_id");
-        if (!sessionId) {
-            sessionId = "web_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
-            localStorage.setItem("ai_session_id", sessionId);
-        }
-        return sessionId;
-    };
 
     // Fetch suggestions
     const fetchSuggestions = useCallback(async (query) => {
@@ -103,29 +90,21 @@ const PromptToVideo = () => {
 
     // Poll for task status
     const pollStatus = useCallback(async (id) => {
-        try {
-            const res = await fetch(
-                `${AI_BACKEND_URL}/v1/features/prompt-to-video/status/${id}/?user_id=${getSessionId()}`
-            );
-            const data = await res.json();
+        const result = await pollVideoTaskStatus(
+            id,
+            "prompt-to-video",
+            (status) => setTaskStatus(status || "Đang xử lý..."),
+            1 // Only poll once, will be called again by interval
+        );
 
-            const status = data.result?.status;
-            setTaskStatus(status || "Đang xử lý...");
-
-            if (status === "COMPLETED" || status === "SUCCEEDED") {
-                const video = data.result?.video_url || data.result?.uploaded_urls?.[0];
-                if (video) {
-                    setVideoUrl(video);
-                    setLoading(false);
-                    if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
-                }
-            } else if (status === "FAILED") {
-                setError(data.result?.error || "Tạo video thất bại. Vui lòng thử lại.");
-                setLoading(false);
-                if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
-            }
-        } catch (err) {
-            console.error("Poll error:", err);
+        if (result.success) {
+            setVideoUrl(result.videoUrl);
+            setLoading(false);
+            if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+        } else if (result.error && !result.error.includes("Timeout")) {
+            setError(result.error);
+            setLoading(false);
+            if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
         }
     }, []);
 
@@ -150,36 +129,24 @@ const PromptToVideo = () => {
             console.error('Failed to record prompt choice:', err);
         }
 
-        try {
-            const res = await fetch(`${AI_BACKEND_URL}/v1/features/prompt-to-video/`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    user_id: getSessionId(),
-                    prompt: prompt.trim(),
-                    model: model,
-                }),
-            });
+        const result = await generateVideoFromPrompt({
+            prompt: prompt.trim(),
+            model: model,
+        });
 
-            const data = await res.json();
+        if (result.success && result.taskId) {
+            setTaskId(result.taskId);
+            setTaskStatus("Đang tạo video...");
 
-            if (data.code === 1000 && data.result?.task_id) {
-                setTaskId(data.result.task_id);
-                setTaskStatus("Đang tạo video...");
+            // Start polling
+            pollIntervalRef.current = setInterval(() => {
+                pollStatus(result.taskId);
+            }, 3000);
 
-                // Start polling
-                pollIntervalRef.current = setInterval(() => {
-                    pollStatus(data.result.task_id);
-                }, 3000);
-
-                // Initial poll
-                setTimeout(() => pollStatus(data.result.task_id), 1000);
-            } else {
-                setError(data.message || "Không thể tạo video. Vui lòng thử lại.");
-                setLoading(false);
-            }
-        } catch (err) {
-            setError("Lỗi kết nối: " + err.message);
+            // Initial poll
+            setTimeout(() => pollStatus(result.taskId), 1000);
+        } else {
+            setError(result.error || "Không thể tạo video. Vui lòng thử lại.");
             setLoading(false);
         }
     };

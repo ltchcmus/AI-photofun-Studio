@@ -14,6 +14,33 @@ const aiClient = axios.create({
   },
 });
 
+import rateLimiter from "../utils/rateLimiter";
+
+aiClient.interceptors.request.use(
+  async (config) => {
+    // Wait for rate limit slot
+    await rateLimiter.waitForSlot();
+
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+aiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Surface 401 so callers can redirect to login if needed
+      console.warn("Unauthorized request", error.response?.data);
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Generate a unique session ID
 const getSessionId = () => {
   let sessionId = localStorage.getItem("ai_session_id");
@@ -23,6 +50,41 @@ const getSessionId = () => {
     localStorage.setItem("ai_session_id", sessionId);
   }
   return sessionId;
+};
+
+// Get the authenticated user ID from JWT token or localStorage
+const getUserId = () => {
+  // First, try to get from cached user data
+  const cachedUser = localStorage.getItem("user");
+  if (cachedUser) {
+    try {
+      const userData = JSON.parse(cachedUser);
+      if (userData?.id) {
+        return userData.id;
+      }
+    } catch (e) {
+      console.warn("Failed to parse cached user data");
+    }
+  }
+
+  // If no cached user, try to decode JWT token
+  const token = localStorage.getItem("token");
+  if (token) {
+    try {
+      // JWT tokens have 3 parts separated by dots: header.payload.signature
+      const payload = token.split('.')[1];
+      if (payload) {
+        const decodedPayload = JSON.parse(atob(payload));
+        // Common JWT claims for user ID: sub, userId, user_id, id
+        return decodedPayload.sub || decodedPayload.userId || decodedPayload.user_id || decodedPayload.id;
+      }
+    } catch (e) {
+      console.warn("Failed to decode JWT token");
+    }
+  }
+
+  // Fallback to session ID if no user is authenticated
+  return null;
 };
 
 /**
@@ -41,12 +103,20 @@ export const pollTaskStatus = async (
   maxAttempts = 60,
   interval = 3000
 ) => {
+  const userId = getUserId();
   const sessionId = getSessionId();
+
+  if (!userId) {
+    return {
+      success: false,
+      error: "Vui lòng đăng nhập để sử dụng tính năng này.",
+    };
+  }
 
   for (let i = 1; i <= maxAttempts; i++) {
     try {
       const response = await aiClient.get(
-        `/${endpoint}/status/${taskId}/?user_id=${sessionId}`
+        `/${endpoint}/status/${taskId}/?user_id=${userId}`
       );
       const data = response.data;
       const status = data.result?.status;
@@ -94,11 +164,19 @@ export const generateImage = async ({
   model = "realism",
   aspectRatio = "1:1",
 }) => {
+  const userId = getUserId();
   const sessionId = getSessionId();
+
+  if (!userId) {
+    return {
+      success: false,
+      error: "Vui lòng đăng nhập để sử dụng tính năng này.",
+    };
+  }
 
   try {
     const response = await aiClient.post("/v1/features/image-generation/", {
-      user_id: sessionId,
+      user_id: userId,
       prompt,
       model,
       aspect_ratio: aspectRatio,
@@ -135,11 +213,19 @@ export const generateImage = async ({
  * @returns {Promise<object>} - Result with processed image URL
  */
 export const removeBackground = async (imageUrl) => {
+  const userId = getUserId();
   const sessionId = getSessionId();
+
+  if (!userId) {
+    return {
+      success: false,
+      error: "Vui lòng đăng nhập để sử dụng tính năng này.",
+    };
+  }
 
   try {
     const response = await aiClient.post("/v1/features/remove-background/", {
-      user_id: sessionId,
+      user_id: userId,
       image_url: imageUrl,
       session_id: sessionId,
     });
@@ -222,11 +308,19 @@ export const uploadImageForAI = async (file) => {
  * @returns {Promise<object>} - Task ID for polling
  */
 export const upscaleImage = async ({ imageUrl, flavor = "photo" }) => {
+  const userId = getUserId();
   const sessionId = getSessionId();
+
+  if (!userId) {
+    return {
+      success: false,
+      error: "Vui lòng đăng nhập để sử dụng tính năng này.",
+    };
+  }
 
   try {
     const response = await aiClient.post("/v1/features/upscale/", {
-      user_id: sessionId,
+      user_id: userId,
       image_url: imageUrl,
       flavor: flavor,
     });
@@ -270,11 +364,19 @@ export const reimagineImage = async ({
   imagination = "subtle",
   aspectRatio = "1:1",
 }) => {
+  const userId = getUserId();
   const sessionId = getSessionId();
+
+  if (!userId) {
+    return {
+      success: false,
+      error: "Vui lòng đăng nhập để sử dụng tính năng này.",
+    };
+  }
 
   try {
     const response = await aiClient.post("/v1/features/reimagine/", {
-      user_id: sessionId,
+      user_id: userId,
       image_url: imageUrl,
       prompt: prompt,
       imagination: imagination,
@@ -332,11 +434,19 @@ export const relightImage = async ({
   referenceImageUrl = null,
   lightTransferStrength = 0.8,
 }) => {
+  const userId = getUserId();
   const sessionId = getSessionId();
+
+  if (!userId) {
+    return {
+      success: false,
+      error: "Vui lòng đăng nhập để sử dụng tính năng này.",
+    };
+  }
 
   try {
     const body = {
-      user_id: sessionId,
+      user_id: userId,
       image_url: imageUrl,
       prompt: prompt,
       style: style,
@@ -393,11 +503,19 @@ export const expandImage = async ({
   top = 50,
   bottom = 50,
 }) => {
+  const userId = getUserId();
   const sessionId = getSessionId();
+
+  if (!userId) {
+    return {
+      success: false,
+      error: "Vui lòng đăng nhập để sử dụng tính năng này.",
+    };
+  }
 
   try {
     const response = await aiClient.post("/v1/features/image-expand/", {
-      user_id: sessionId,
+      user_id: userId,
       image_url: imageUrl,
       prompt: prompt,
       left: left,
@@ -436,11 +554,20 @@ export const expandImage = async ({
  * @returns {Promise<object>} - Array of suggested prompts
  */
 export const suggestPrompts = async (query = "") => {
+  const userId = getUserId();
   const sessionId = getSessionId();
+
+  if (!userId) {
+    return {
+      success: false,
+      error: "Vui lòng đăng nhập để sử dụng tính năng này.",
+      suggestions: [],
+    };
+  }
 
   try {
     const response = await aiClient.post("/v1/rec-prompt/suggest/", {
-      user_id: sessionId,
+      user_id: userId,
       prompt: query,
     });
 
@@ -474,11 +601,19 @@ export const suggestPrompts = async (query = "") => {
  * @returns {Promise<object>} - Result of recording the choice
  */
 export const recordPromptChoice = async (promptText) => {
+  const userId = getUserId();
   const sessionId = getSessionId();
+
+  if (!userId) {
+    return {
+      success: false,
+      error: "Vui lòng đăng nhập để sử dụng tính năng này.",
+    };
+  }
 
   try {
     const response = await aiClient.post("/v1/rec-prompt/choose/", {
-      user_id: sessionId,
+      user_id: userId,
       prompt: promptText,
     });
 
@@ -497,6 +632,178 @@ export const recordPromptChoice = async (promptText) => {
   }
 };
 
+/**
+ * Generate video from text prompt
+ * @param {object} params - Generation parameters
+ * @param {string} params.prompt - Text prompt for video generation
+ * @param {string} params.model - Model to use (e.g., "wan2.6-t2v")
+ * @returns {Promise<object>} - Task ID and initial response
+ */
+export const generateVideoFromPrompt = async ({
+  prompt,
+  model = "wan2.6-t2v",
+}) => {
+  const userId = getUserId();
+  const sessionId = getSessionId();
+
+  if (!userId) {
+    return {
+      success: false,
+      error: "Vui lòng đăng nhập để sử dụng tính năng này.",
+    };
+  }
+
+  try {
+    const response = await aiClient.post("/v1/features/prompt-to-video/", {
+      user_id: userId,
+      prompt: prompt.trim(),
+      model: model,
+      session_id: sessionId,
+    });
+
+    const data = response.data;
+    const taskId = data.result?.task_id;
+
+    if (taskId) {
+      return {
+        success: true,
+        taskId,
+        data: data.result,
+      };
+    } else {
+      return {
+        success: false,
+        error: "No task ID received",
+        data: data.result,
+      };
+    }
+  } catch (err) {
+    return {
+      success: false,
+      error: err.response?.data?.message || err.message,
+    };
+  }
+};
+
+/**
+ * Generate video from image
+ * @param {object} params - Generation parameters
+ * @param {string} params.imageUrl - URL of the image to animate
+ * @param {string} params.prompt - Optional text prompt for animation guidance
+ * @param {string} params.model - Model to use (e.g., "wan2.6-i2v")
+ * @returns {Promise<object>} - Task ID and initial response
+ */
+export const generateVideoFromImage = async ({
+  imageUrl,
+  prompt = "",
+  model = "wan2.6-i2v",
+}) => {
+  const userId = getUserId();
+  const sessionId = getSessionId();
+
+  if (!userId) {
+    return {
+      success: false,
+      error: "Vui lòng đăng nhập để sử dụng tính năng này.",
+    };
+  }
+
+  try {
+    const response = await aiClient.post("/v1/features/image-to-video/", {
+      user_id: userId,
+      image_url: imageUrl,
+      prompt: prompt.trim(),
+      model: model,
+      session_id: sessionId,
+    });
+
+    const data = response.data;
+    const taskId = data.result?.task_id;
+
+    if (taskId) {
+      return {
+        success: true,
+        taskId,
+        data: data.result,
+      };
+    } else {
+      return {
+        success: false,
+        error: "No task ID received",
+        data: data.result,
+      };
+    }
+  } catch (err) {
+    return {
+      success: false,
+      error: err.response?.data?.message || err.message,
+    };
+  }
+};
+
+/**
+ * Poll for video task status
+ * @param {string} taskId - The task ID to poll
+ * @param {string} feature - Feature name: "prompt-to-video" or "image-to-video"
+ * @param {function} onStatusUpdate - Callback for status updates
+ * @param {number} maxAttempts - Maximum polling attempts (default: 60)
+ * @param {number} interval - Polling interval in ms (default: 3000)
+ * @returns {Promise<object>} - The final result
+ */
+export const pollVideoTaskStatus = async (
+  taskId,
+  feature = "prompt-to-video",
+  onStatusUpdate = () => {},
+  maxAttempts = 60,
+  interval = 3000
+) => {
+  const userId = getUserId();
+
+  if (!userId) {
+    return {
+      success: false,
+      error: "Vui lòng đăng nhập để sử dụng tính năng này.",
+    };
+  }
+
+  for (let i = 1; i <= maxAttempts; i++) {
+    try {
+      const response = await aiClient.get(
+        `/v1/features/${feature}/status/${taskId}/?user_id=${userId}`
+      );
+      const data = response.data;
+      const status = data.result?.status;
+
+      onStatusUpdate(status, i, data);
+
+      if (status === "COMPLETED" || status === "SUCCEEDED") {
+        return {
+          success: true,
+          videoUrl: data.result?.video_url || data.result?.uploaded_urls?.[0],
+          data: data.result,
+        };
+      }
+
+      if (status === "FAILED") {
+        return {
+          success: false,
+          error: data.result?.error || "Task failed",
+          data: data.result,
+        };
+      }
+    } catch (err) {
+      console.error(`Polling error (attempt ${i}):`, err.message);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, interval));
+  }
+
+  return {
+    success: false,
+    error: "Timeout waiting for task completion",
+  };
+};
+
 export default {
   generateImage,
   removeBackground,
@@ -507,4 +814,8 @@ export default {
   pollTaskStatus,
   uploadImageForAI,
   getSessionId,
+  getUserId,
+  generateVideoFromPrompt,
+  generateVideoFromImage,
+  pollVideoTaskStatus,
 };

@@ -59,6 +59,12 @@ export const AuthProvider = ({ children }) => {
       setUser(normalized);
       setIsAuthenticated(Boolean(normalized));
       setError("");
+      
+      // Store user data in localStorage for AI API to use
+      if (normalized?.id) {
+        localStorage.setItem("user", JSON.stringify(normalized));
+      }
+      
       return normalized;
     } catch (hydrateError) {
       console.error("Failed to hydrate user", hydrateError);
@@ -133,6 +139,7 @@ export const AuthProvider = ({ children }) => {
       console.error("Failed to logout", logoutError);
     } finally {
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
       setUser(null);
       setIsAuthenticated(false);
       setError("");

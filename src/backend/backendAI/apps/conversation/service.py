@@ -9,6 +9,8 @@ from apps.image_service.celery_tasks import generate_image_task
 from .celery_tasks import finalize_conversation_task
 from celery import chain
 from core import ResponseFormatter
+from core.token_client import token_client
+from core.exceptions import InsufficientTokensError, TokenServiceError
 
 logger = logging.getLogger(__name__)
 
@@ -69,6 +71,30 @@ def process_message(session_id, message):
     
     Returns minimal status and request IDs, while storing messages with status updates.
     """
+    # Extract user_id for token check
+    convo = get_conversation(session_id)
+    user_id = convo.get('user_id') if convo else None
+    
+    if not user_id:
+        logger.error(f"No user_id found for session {session_id}")
+        return ResponseFormatter.error(message="Session not found or invalid", status_code=400)
+    
+    # Check token balance (minimum 10 tokens required)
+    MIN_TOKENS_REQUIRED = 10
+    try:
+        balance = token_client.get_user_tokens(user_id)
+        if balance < MIN_TOKENS_REQUIRED:
+            logger.warning(f"User {user_id} has insufficient tokens: {balance} < {MIN_TOKENS_REQUIRED}")
+            return ResponseFormatter.error(
+                message=f"Insufficient tokens. You have {balance} tokens, but need at least {MIN_TOKENS_REQUIRED} to process this request.",
+                status_code=402  # Payment Required
+            )
+        logger.info(f"User {user_id} has sufficient tokens: {balance} >= {MIN_TOKENS_REQUIRED}")
+    except TokenServiceError as e:
+        logger.error(f"Token service error: {str(e)}")
+        # Allow processing to continue if token service is down (graceful degradation)
+        logger.warning("Token service unavailable, allowing request to proceed")
+    
     # Store user message
     user_msg = dict(message)
     user_msg["created_at"] = timezone.now()
@@ -78,7 +104,6 @@ def process_message(session_id, message):
     sys_message_id = str(uuid.uuid4())
 
     # Get conversation context
-    convo = get_conversation(session_id)
     context_images = []
     
     # Priority 1: Direct image_url from request (for quick testing with existing images)

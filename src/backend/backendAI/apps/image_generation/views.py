@@ -9,8 +9,7 @@ from core import APIResponse
 from .serializers import ImageGenerationInputSerializer
 from .services import ImageGenerationService, ImageGenerationError
 from .celery_tasks import generate_image_task
-from core.token_decorators import require_tokens
-from core.token_costs import TOKEN_COSTS
+from core.token_decorators import track_processing_time
 from core.image_input_handler import ImageInputHandler
 from apps.prompt_service.services import PromptService
 from apps.image_gallery.services import image_gallery_service
@@ -27,7 +26,7 @@ class ImageGenerationView(APIView):
     Use case: User clicks "Generate Image" button directly, không qua chat
     """
     
-    @require_tokens(cost=TOKEN_COSTS['image_generation'], feature='image_generation')
+    @track_processing_time(feature='image_generation', min_required_tokens=10)
     def post(self, request):
         """
         Generate image từ prompt

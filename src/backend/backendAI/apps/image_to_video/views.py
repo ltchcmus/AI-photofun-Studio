@@ -2,20 +2,26 @@ import logging
 
 from rest_framework import status
 from rest_framework.views import APIView
+from django.utils.decorators import method_decorator
 
 from core import APIResponse
+from core.token_decorators import track_processing_time
+from core.auth import require_role
 from .serializers import ImageToVideoRequestSerializer
 from .services import ModelStudioVideoError, ImageToVideoService
 
 logger = logging.getLogger(__name__)
 
 
+@method_decorator(require_role('ADMIN', 'PREMIUM'), name='dispatch')
 class ImageToVideoView(APIView):
     """
     Direct image-to-video endpoint
     POST /v1/features/image-to-video/
+    Requires: ADMIN or PREMIUM role
     """
 
+    @track_processing_time(feature='image_to_video', min_required_tokens=20)
     def post(self, request):
         serializer = ImageToVideoRequestSerializer(data=request.data)
         if not serializer.is_valid():
@@ -57,10 +63,12 @@ class ImageToVideoView(APIView):
             )
 
 
+@method_decorator(require_role('ADMIN', 'PREMIUM'), name='dispatch')
 class ImageToVideoStatusView(APIView):
     """
     Poll image-to-video task status
     GET /v1/features/image-to-video/status/<task_id>/?user_id=xxx
+    Requires: ADMIN or PREMIUM role
     """
 
     def get(self, request, task_id):

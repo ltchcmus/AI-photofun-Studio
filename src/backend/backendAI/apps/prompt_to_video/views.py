@@ -2,20 +2,26 @@ import logging
 
 from rest_framework import status
 from rest_framework.views import APIView
+from django.utils.decorators import method_decorator
 
 from core import APIResponse
+from core.token_decorators import track_processing_time
+from core.auth import require_role
 from .serializers import PromptToVideoRequestSerializer
 from .services import ModelStudioVideoError, PromptToVideoService
 
 logger = logging.getLogger(__name__)
 
 
+@method_decorator(require_role('ADMIN', 'PREMIUM'), name='dispatch')
 class PromptToVideoView(APIView):
     """
     Direct prompt-to-video endpoint
     POST /v1/features/prompt-to-video/
+    Requires: ADMIN or PREMIUM role
     """
 
+    @track_processing_time(feature='prompt_to_video', min_required_tokens=20)
     def post(self, request):
         serializer = PromptToVideoRequestSerializer(data=request.data)
         if not serializer.is_valid():
@@ -50,10 +56,12 @@ class PromptToVideoView(APIView):
             )
 
 
+@method_decorator(require_role('ADMIN', 'PREMIUM'), name='dispatch')
 class PromptToVideoStatusView(APIView):
     """
     Poll prompt-to-video task status
     GET /v1/features/prompt-to-video/status/<task_id>/?user_id=xxx
+    Requires: ADMIN or PREMIUM role
     """
 
     def get(self, request, task_id):
