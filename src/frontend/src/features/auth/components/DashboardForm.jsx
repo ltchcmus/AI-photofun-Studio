@@ -1,13 +1,20 @@
 import React from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import CreatePostWidget from "../../../components/post/CreatePostWidget";
 import PostList from "../../../components/post/PostList";
 import { usePosts } from "../../../hooks/usePosts";
 
 export default function DashboardForm() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const shouldOpenCreateModal = searchParams.get("create") === "true";
+
+  // Nhận video URL và prompt từ ImageToVideo page khi share
+  const shareVideo = location.state?.shareVideo;
+  const initialVideoUrl = shareVideo?.videoUrl || null;
+  const initialPrompt = shareVideo?.prompt || "";
+  const autoOpenForShare = Boolean(shareVideo);
 
   const {
     posts,
@@ -21,6 +28,14 @@ export default function DashboardForm() {
   } = usePosts();
 
   const goToAiTools = () => navigate("/ai-tools");
+
+  // Clear location state after reading
+  const handleCloseModal = () => {
+    if (shareVideo) {
+      // Clear state to prevent re-opening on refresh
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  };
 
   return (
     <div className="h-full w-full">
@@ -42,7 +57,10 @@ export default function DashboardForm() {
             onCreatePost={createPost}
             onCreateVideoPost={createVideoPost}
             onNavigateAiTools={goToAiTools}
-            autoOpen={shouldOpenCreateModal}
+            autoOpen={shouldOpenCreateModal || autoOpenForShare}
+            initialVideoUrl={initialVideoUrl}
+            initialPrompt={initialPrompt}
+            onClose={handleCloseModal}
           />
         </section>
 

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Download, Film, Play, Video } from "lucide-react";
+import { ArrowLeft, Download, Film, Play, Share2, Video } from "lucide-react";
 import { suggestPrompts, recordPromptChoice } from "../api/aiApi";
 
 // Models for Prompt to Video (Text to Video)
@@ -217,6 +217,20 @@ const PromptToVideo = () => {
         if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
     };
 
+    // Share video to feed
+    const handleShare = () => {
+        if (!videoUrl) return;
+        // Navigate to dashboard with video URL and prompt pre-filled
+        navigate("/dashboard", {
+            state: {
+                shareVideo: {
+                    videoUrl: videoUrl,
+                    prompt: prompt,
+                }
+            }
+        });
+    };
+
     return (
         <div className="space-y-8">
             <header className="flex items-center justify-between gap-4 border border-gray-200 rounded-2xl px-4 py-3 bg-white shadow-sm">
@@ -348,7 +362,7 @@ const PromptToVideo = () => {
                             </div>
 
                             <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-3 gap-3">
                                     <button
                                         type="button"
                                         onClick={handleDownload}
@@ -358,10 +372,17 @@ const PromptToVideo = () => {
                                     </button>
                                     <button
                                         type="button"
+                                        onClick={handleShare}
+                                        className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 text-white font-semibold hover:from-pink-700 hover:to-purple-700"
+                                    >
+                                        <Share2 className="w-4 h-4" /> Chia Sẻ
+                                    </button>
+                                    <button
+                                        type="button"
                                         onClick={handleReset}
                                         className="flex items-center justify-center gap-2 py-3 rounded-xl border border-gray-300 font-semibold hover:bg-gray-50"
                                     >
-                                        Tạo Video Mới
+                                        Tạo Mới
                                     </button>
                                 </div>
                             </div>

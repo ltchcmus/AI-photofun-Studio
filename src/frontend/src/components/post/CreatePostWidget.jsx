@@ -13,6 +13,7 @@ export default function CreatePostWidget({
   onNavigateAiTools,
   autoOpen = false,
   initialImageUrl = null,
+  initialVideoUrl = null,
   initialPrompt = "",
   onClose = null,
   hideComposer = false,
@@ -49,18 +50,22 @@ export default function CreatePostWidget({
   }, [autoOpen]);
 
   // Pre-fill data from AI tools
-  // isFromAiTools = true khi có initialPrompt hoặc initialImageUrl từ AI tools
-  const isFromAiTools = Boolean(initialPrompt || initialImageUrl);
+  // isFromAiTools = true khi có initialPrompt hoặc initialImageUrl hoặc initialVideoUrl từ AI tools
+  const isFromAiTools = Boolean(initialPrompt || initialImageUrl || initialVideoUrl);
 
   useEffect(() => {
     if (initialImageUrl) {
       setImagePreview(initialImageUrl);
       setPostType("image");
     }
+    if (initialVideoUrl) {
+      setVideoPreview(initialVideoUrl);
+      setPostType("video");
+    }
     if (initialPrompt) {
       setPrompt(initialPrompt);
     }
-  }, [initialImageUrl, initialPrompt]);
+  }, [initialImageUrl, initialVideoUrl, initialPrompt]);
 
   const resetForm = () => {
     setCaption("");
@@ -147,8 +152,8 @@ export default function CreatePostWidget({
 
   const handleSubmit = async () => {
     if (submitting) return;
-    // Allow post with imagePreview URL (from AI tools) even without imageFile
-    if (!caption && !imageFile && !videoFile && !imagePreview) {
+    // Allow post with imagePreview/videoPreview URL (from AI tools) even without file
+    if (!caption && !imageFile && !videoFile && !imagePreview && !videoPreview) {
       setError("Vui lòng nhập nội dung hoặc chọn ảnh/video.");
       return;
     }
@@ -159,9 +164,14 @@ export default function CreatePostWidget({
       // Sử dụng prompt mặc định nếu không có prompt (khi tự upload)
       const finalPrompt = prompt.trim() || DEFAULT_PROMPT;
 
-      if (postType === "video" && videoFile) {
-        // Create video post
-        await onCreateVideoPost({ caption, prompt: finalPrompt, video: videoFile });
+      if (postType === "video" && (videoFile || videoPreview)) {
+        // Create video post - pass videoUrl if no file (from AI tools)
+        await onCreateVideoPost({
+          caption,
+          prompt: finalPrompt,
+          video: videoFile,
+          videoUrl: !videoFile && videoPreview ? videoPreview : undefined
+        });
       } else {
         // Create image post - pass imageUrl if no file (from AI tools)
         await onCreatePost({

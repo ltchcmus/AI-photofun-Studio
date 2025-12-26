@@ -371,23 +371,32 @@ export const usePosts = (options = {}) => {
   );
 
   const createVideoPost = useCallback(
-    async ({ caption, prompt, video }) => {
-      // Step 1: Upload video to file service to get URL
-      console.log("📤 Uploading video to file service...");
-      const uploadResult = await communicationApi.uploadChatVideo(video);
-      const videoUrl = uploadResult.result?.videoUrl || uploadResult.videoUrl;
+    async ({ caption, prompt, video, videoUrl: existingVideoUrl }) => {
+      let finalVideoUrl = existingVideoUrl;
 
-      if (!videoUrl) {
-        throw new Error("Không thể upload video");
+      // Nếu có video file, upload lên trước
+      if (video && !existingVideoUrl) {
+        // Step 1: Upload video to file service to get URL
+        console.log("📤 Uploading video to file service...");
+        const uploadResult = await communicationApi.uploadChatVideo(video);
+        finalVideoUrl = uploadResult.result?.videoUrl || uploadResult.videoUrl;
+
+        if (!finalVideoUrl) {
+          throw new Error("Không thể upload video");
+        }
+        console.log("✅ Video uploaded:", finalVideoUrl);
       }
-      console.log("✅ Video uploaded:", videoUrl);
+
+      if (!finalVideoUrl) {
+        throw new Error("Không có video URL");
+      }
 
       // Step 2: Create video post with the URL
       const formData = new FormData();
       formData.append("caption", caption || "");
       // API yêu cầu prompt bắt buộc, luôn gửi prompt
       formData.append("prompt", prompt || "");
-      formData.append("videoUrl", videoUrl);
+      formData.append("videoUrl", finalVideoUrl);
 
       const response = await postApi.createVideoPost(formData);
       const result =
