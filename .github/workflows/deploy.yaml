@@ -82,6 +82,14 @@ jobs:
           VITE_CHATBOT_BEARER_TOKEN: ${{ secrets.VITE_CHATBOT_BEARER_TOKEN }}
           VITE_CHATBOT_USER_ID: ${{ secrets.VITE_CHATBOT_USER_ID }}
           VITE_CHATBOT_X_API_KEY: ${{ secrets.VITE_CHATBOT_X_API_KEY }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          JWT_ALGORITHM: ${{ secrets.JWT_ALGORITHM }}
+          JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
+          JWT_AUDIENCE: ${{ secrets.JWT_AUDIENCE }}
+          TOKEN_SERVICE_URL: ${{ secrets.TOKEN_SERVICE_URL }}
+          TOKEN_API_KEY_1: ${{ secrets.TOKEN_API_KEY_1 }}
+          TOKEN_API_KEY_2: ${{ secrets.TOKEN_API_KEY_2 }}
+          TOKEN_SERVICE_TIMEOUT: ${{ secrets.TOKEN_SERVICE_TIMEOUT }}
 
         uses: appleboy/ssh-action@v0.1.6
         with:
@@ -152,7 +160,17 @@ jobs:
             GPU_DEVICE_ID=$GPU_DEVICE_ID
             MODELSTUDIO_API_KEY=$MODELSTUDIO_API_KEY
             MODELSTUDIO_API_BASE=$MODELSTUDIO_API_BASE
+            JWT_SECRET_KEY=$JWT_SECRET_KEY
+            JWT_ALGORITHM=$JWT_ALGORITHM
+            JWT_ISSUER=$JWT_ISSUER
+            JWT_AUDIENCE=$JWT_AUDIENCE
+            TOKEN_SERVICE_URL=$TOKEN_SERVICE_URL
+            TOKEN_API_KEY_1=$TOKEN_API_KEY_1
+            TOKEN_API_KEY_2=$TOKEN_API_KEY_2
+            TOKEN_SERVICE_TIMEOUT=$TOKEN_SERVICE_TIMEOUT
             EOF
+
+
             sudo docker-compose down || true
             sudo docker-compose up -d --build --force-recreate
             sleep 10
