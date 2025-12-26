@@ -711,23 +711,35 @@ const MessagesPage = () => {
   }, [messages]);
 
   // Handle share to group from AI tools
-  const hasSentShareRef = useRef(false);
+  // Track which groupId we've already sent to, to prevent duplicate sends
+  const sentShareGroupIdRef = useRef(null);
 
   useEffect(() => {
     if (!pendingShareMedia || !groups.length || !socketRef.current || !socketConnected) return;
-    if (hasSentShareRef.current) return; // Prevent duplicate sends
+
+    // Prevent duplicate sends by checking if we've already sent to this specific group with this media
+    const shareKey = `${pendingShareMedia.groupId}_${pendingShareMedia.mediaUrl}`;
+    if (sentShareGroupIdRef.current === shareKey) return;
 
     const targetGroup = groups.find(g => g.groupId === pendingShareMedia.groupId);
     if (targetGroup) {
-      hasSentShareRef.current = true; // Mark as sent
+      // Mark as sent immediately with the specific key
+      sentShareGroupIdRef.current = shareKey;
 
       // Select the target group
       setActiveChat(targetGroup);
       setActiveTab("groups");
 
-      // Wait a bit for chat to be selected then send the media
+      // Send the media after a short delay
       const sendMedia = async () => {
         await new Promise(resolve => setTimeout(resolve, 500));
+
+        // Double-check we still have socket connection before sending
+        if (!socketRef.current || !socketConnected) {
+          console.warn("⚠️ Socket disconnected, cannot send shared media");
+          sentShareGroupIdRef.current = null; // Reset so user can retry
+          return;
+        }
 
         const messageData = {
           senderId: user.id,
@@ -754,11 +766,6 @@ const MessagesPage = () => {
         // Clear pending and location state
         setPendingShareMedia(null);
         navigate("/messages", { replace: true, state: {} });
-
-        // Reset the ref after a delay
-        setTimeout(() => {
-          hasSentShareRef.current = false;
-        }, 1000);
       };
 
       sendMedia();
