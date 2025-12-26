@@ -12,11 +12,13 @@ import {
   Image as ImageIcon,
   Share2,
   Sparkles,
+  Users,
 } from "lucide-react";
 import { upscaleImage, pollTaskStatus } from "../api/aiApi";
 import { communicationApi } from "../api/communicationApi";
 import { usePosts } from "../hooks/usePosts";
 import CreatePostWidget from "../components/post/CreatePostWidget";
+import ShareToGroupModal from "../components/common/ShareToGroupModal";
 
 const readFileAsDataUrl = (file) =>
   new Promise((resolve, reject) => {
@@ -45,6 +47,7 @@ const ImageEnhance = () => {
   const [sliderPercent, setSliderPercent] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showShareToGroup, setShowShareToGroup] = useState(false);
 
   const canEnhance = useMemo(
     () => !!uploadedImage && !!upscale && !processing,
@@ -485,17 +488,26 @@ const ImageEnhance = () => {
                 >
                   <Download className="w-4 h-4" /> Download
                 </button>
-                <button
-                  type="button"
-                  onClick={handleShare}
-                  className="w-full py-3 rounded-xl border border-gray-300 font-semibold flex items-center justify-center gap-2 hover:bg-gray-50"
-                >
-                  <Share2 className="w-4 h-4" /> Share to Post
-                </button>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={handleShare}
+                    className="py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold flex items-center justify-center gap-2"
+                  >
+                    <Share2 className="w-4 h-4" /> Đăng Feed
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowShareToGroup(true)}
+                    className="py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold flex items-center justify-center gap-2"
+                  >
+                    <Users className="w-4 h-4" /> Gửi Nhóm
+                  </button>
+                </div>
                 <button
                   type="button"
                   onClick={handleSave}
-                  className="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold"
+                  className="w-full py-3 rounded-xl bg-gray-100 hover:bg-gray-200 font-semibold"
                 >
                   Save to Library
                 </button>
@@ -527,6 +539,15 @@ const ImageEnhance = () => {
           onClose={() => setShowShareModal(false)}
         />
       )}
+
+      {/* Share to Group Modal */}
+      <ShareToGroupModal
+        isOpen={showShareToGroup}
+        onClose={() => setShowShareToGroup(false)}
+        mediaUrl={result?.after}
+        isVideo={false}
+        prompt={`Image Enhance: ${upscale} upscale`}
+      />
     </div>
   );
 };

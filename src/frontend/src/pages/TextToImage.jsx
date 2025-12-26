@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Download, Image, Share2, Sparkles } from "lucide-react";
+import { ArrowLeft, Download, Image, Share2, Sparkles, Users } from "lucide-react";
 import { generateImage, pollTaskStatus, suggestPrompts, recordPromptChoice } from "../api/aiApi";
 import { usePosts } from "../hooks/usePosts";
 import CreatePostWidget from "../components/post/CreatePostWidget";
+import ShareToGroupModal from "../components/common/ShareToGroupModal";
 
 const readFileAsDataUrl = (file) =>
   new Promise((resolve, reject) => {
@@ -28,6 +29,7 @@ const TextToImage = () => {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showShareToGroup, setShowShareToGroup] = useState(false);
 
   // Prompt suggestions state
   const [suggestions, setSuggestions] = useState([]);
@@ -423,7 +425,7 @@ const TextToImage = () => {
                 </div>
               </div>
               <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="grid grid-cols-3 gap-3 mb-4">
                   <button
                     type="button"
                     onClick={handleDownload}
@@ -434,15 +436,22 @@ const TextToImage = () => {
                   <button
                     type="button"
                     onClick={handleShare}
-                    className="flex items-center justify-center gap-2 py-3 rounded-xl border border-gray-300 font-semibold"
+                    className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold"
                   >
-                    <Share2 className="w-4 h-4" /> Share
+                    <Share2 className="w-4 h-4" /> Đăng Feed
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowShareToGroup(true)}
+                    className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold"
+                  >
+                    <Users className="w-4 h-4" /> Gửi Nhóm
                   </button>
                 </div>
                 <button
                   type="button"
                   onClick={handleSave}
-                  className="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold"
+                  className="w-full py-3 rounded-xl bg-gray-100 hover:bg-gray-200 font-semibold"
                 >
                   Save to Library
                 </button>
@@ -515,6 +524,15 @@ const TextToImage = () => {
           onClose={() => setShowShareModal(false)}
         />
       )}
+
+      {/* Share to Group Modal */}
+      <ShareToGroupModal
+        isOpen={showShareToGroup}
+        onClose={() => setShowShareToGroup(false)}
+        mediaUrl={result?.imageUrl}
+        isVideo={false}
+        prompt={result?.prompt || prompt}
+      />
     </div>
   );
 };

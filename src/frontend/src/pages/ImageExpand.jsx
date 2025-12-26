@@ -6,11 +6,13 @@ import {
     Image as ImageIcon,
     Maximize2,
     Share2,
+    Users,
 } from "lucide-react";
 import { expandImage, pollTaskStatus } from "../api/aiApi";
 import { communicationApi } from "../api/communicationApi";
 import { usePosts } from "../hooks/usePosts";
 import CreatePostWidget from "../components/post/CreatePostWidget";
+import ShareToGroupModal from "../components/common/ShareToGroupModal";
 
 const readFileAsDataUrl = (file) =>
     new Promise((resolve, reject) => {
@@ -38,6 +40,7 @@ const ImageExpand = () => {
     const [result, setResult] = useState(null);
     const [error, setError] = useState("");
     const [showShareModal, setShowShareModal] = useState(false);
+    const [showShareToGroup, setShowShareToGroup] = useState(false);
 
     const canExpand = useMemo(
         () => !!uploadedImage && !processing,
@@ -294,9 +297,15 @@ const ImageExpand = () => {
                                     </button>
                                     <button
                                         onClick={handleShare}
-                                        className="py-3 rounded-xl border border-gray-300 font-semibold flex items-center justify-center gap-2 hover:bg-gray-50"
+                                        className="py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold flex items-center justify-center gap-2"
                                     >
-                                        <Share2 className="w-4 h-4" /> Share
+                                        <Share2 className="w-4 h-4" /> Đăng Feed
+                                    </button>
+                                    <button
+                                        onClick={() => setShowShareToGroup(true)}
+                                        className="py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold flex items-center justify-center gap-2 col-span-2"
+                                    >
+                                        <Users className="w-4 h-4" /> Gửi Nhóm
                                     </button>
                                 </div>
                             </>
@@ -321,6 +330,15 @@ const ImageExpand = () => {
                     onClose={() => setShowShareModal(false)}
                 />
             )}
+
+            {/* Share to Group Modal */}
+            <ShareToGroupModal
+                isOpen={showShareToGroup}
+                onClose={() => setShowShareToGroup(false)}
+                mediaUrl={result?.after}
+                isVideo={false}
+                prompt={`Image Expand: L${left} R${right} T${top} B${bottom}px`}
+            />
         </div>
     );
 };

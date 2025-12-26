@@ -6,12 +6,14 @@ import {
   Image as ImageIcon,
   Share2,
   Sparkles,
+  Users,
   Wand2,
 } from "lucide-react";
 import { reimagineImage, pollTaskStatus } from "../api/aiApi";
 import { communicationApi } from "../api/communicationApi";
 import { usePosts } from "../hooks/usePosts";
 import CreatePostWidget from "../components/post/CreatePostWidget";
+import ShareToGroupModal from "../components/common/ShareToGroupModal";
 
 const stylePresets = [
   {
@@ -88,6 +90,7 @@ const StyleTransfer = () => {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showShareToGroup, setShowShareToGroup] = useState(false);
 
   const canTransfer = useMemo(
     () => !!uploadedImage && !!selectedStyle && !processing,
@@ -508,18 +511,25 @@ const StyleTransfer = () => {
                   >
                     <Download className="w-4 h-4" /> Download Image
                   </button>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-3 gap-3">
                     <button
                       type="button"
                       onClick={handleShare}
-                      className="py-3 rounded-xl border border-gray-200 font-semibold"
+                      className="py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold flex items-center justify-center gap-2"
                     >
-                      Share
+                      <Share2 className="w-4 h-4" /> Đăng Feed
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowShareToGroup(true)}
+                      className="py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold flex items-center justify-center gap-2"
+                    >
+                      <Users className="w-4 h-4" /> Gửi Nhóm
                     </button>
                     <button
                       type="button"
                       onClick={handleSave}
-                      className="py-3 rounded-xl bg-blue-600 text-white font-semibold"
+                      className="py-3 rounded-xl bg-gray-100 hover:bg-gray-200 font-semibold"
                     >
                       Save
                     </button>
@@ -562,6 +572,15 @@ const StyleTransfer = () => {
           onClose={() => setShowShareModal(false)}
         />
       )}
+
+      {/* Share to Group Modal */}
+      <ShareToGroupModal
+        isOpen={showShareToGroup}
+        onClose={() => setShowShareToGroup(false)}
+        mediaUrl={result?.styled}
+        isVideo={false}
+        prompt={`Style Transfer: ${selectedStyle} - Strength: ${strength}%`}
+      />
     </div>
   );
 };

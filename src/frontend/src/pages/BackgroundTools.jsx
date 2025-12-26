@@ -8,12 +8,14 @@ import {
   Share2,
   Sparkles,
   Trash2,
+  Users,
 } from "lucide-react";
 import { removeBackground } from "../api/aiApi";
 import { communicationApi } from "../api/communicationApi";
 import { usePosts } from "../hooks/usePosts";
 import CreatePostWidget from "../components/post/CreatePostWidget";
 import LoadingScreen from "../components/common/LoadingScreen";
+import ShareToGroupModal from "../components/common/ShareToGroupModal";
 
 const readFileAsDataUrl = (file) =>
   new Promise((resolve, reject) => {
@@ -100,6 +102,7 @@ const BackgroundTools = () => {
   // Store the removed background image for compositing
   const [removedBgData, setRemovedBgData] = useState(null);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showShareToGroup, setShowShareToGroup] = useState(false);
 
   const handleFileSelection = useCallback(async (files, type) => {
     if (!files || !files.length) return;
@@ -456,24 +459,31 @@ const BackgroundTools = () => {
           </button>
 
           {resultData && !processing && (
-            <div className="mt-4 grid grid-cols-3 gap-3">
+            <div className="mt-4 grid grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={handleDownload}
-                className="flex items-center justify-center gap-2 py-2 border border-gray-300 rounded-xl text-sm font-semibold"
+                className="flex items-center justify-center gap-2 py-2 bg-black text-white rounded-xl text-sm font-semibold"
               >
                 <Download className="w-4 h-4" /> Download
               </button>
               <button
                 type="button"
                 onClick={handleShare}
-                className="flex items-center justify-center gap-2 py-2 border border-gray-300 rounded-xl text-sm font-semibold hover:bg-gray-50"
+                className="flex items-center justify-center gap-2 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl text-sm font-semibold"
               >
-                <Share2 className="w-4 h-4" /> Share
+                <Share2 className="w-4 h-4" /> Đăng Feed
               </button>
               <button
                 type="button"
-                className="flex items-center justify-center gap-2 py-2 bg-blue-600 text-white rounded-xl text-sm font-semibold"
+                onClick={() => setShowShareToGroup(true)}
+                className="flex items-center justify-center gap-2 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl text-sm font-semibold"
+              >
+                <Users className="w-4 h-4" /> Gửi Nhóm
+              </button>
+              <button
+                type="button"
+                className="flex items-center justify-center gap-2 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl text-sm font-semibold"
                 onClick={() => alert("Đã lưu vào thư viện (demo)")}
               >
                 <Save className="w-4 h-4" /> Save
@@ -504,6 +514,15 @@ const BackgroundTools = () => {
           onClose={() => setShowShareModal(false)}
         />
       )}
+
+      {/* Share to Group Modal */}
+      <ShareToGroupModal
+        isOpen={showShareToGroup}
+        onClose={() => setShowShareToGroup(false)}
+        mediaUrl={resultData}
+        isVideo={false}
+        prompt={`Background Tools: ${getOptionLabel()}`}
+      />
     </div>
   );
 };

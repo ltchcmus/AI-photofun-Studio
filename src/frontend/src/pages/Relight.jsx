@@ -6,11 +6,13 @@ import {
     Image as ImageIcon,
     Share2,
     Sun,
+    Users,
 } from "lucide-react";
 import { relightImage, pollTaskStatus } from "../api/aiApi";
 import { communicationApi } from "../api/communicationApi";
 import { usePosts } from "../hooks/usePosts";
 import CreatePostWidget from "../components/post/CreatePostWidget";
+import ShareToGroupModal from "../components/common/ShareToGroupModal";
 
 const readFileAsDataUrl = (file) =>
     new Promise((resolve, reject) => {
@@ -35,6 +37,7 @@ const Relight = () => {
     const [result, setResult] = useState(null);
     const [error, setError] = useState("");
     const [showShareModal, setShowShareModal] = useState(false);
+    const [showShareToGroup, setShowShareToGroup] = useState(false);
 
     const canRelight = useMemo(
         () => !!uploadedImage && !!prompt.trim() && !processing,
@@ -255,9 +258,15 @@ const Relight = () => {
                                     </button>
                                     <button
                                         onClick={handleShare}
-                                        className="py-3 rounded-xl border border-gray-300 font-semibold flex items-center justify-center gap-2 hover:bg-gray-50"
+                                        className="py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold flex items-center justify-center gap-2"
                                     >
-                                        <Share2 className="w-4 h-4" /> Share
+                                        <Share2 className="w-4 h-4" /> Đăng Feed
+                                    </button>
+                                    <button
+                                        onClick={() => setShowShareToGroup(true)}
+                                        className="py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold flex items-center justify-center gap-2 col-span-2"
+                                    >
+                                        <Users className="w-4 h-4" /> Gửi Nhóm
                                     </button>
                                 </div>
                             </>
@@ -282,6 +291,15 @@ const Relight = () => {
                     onClose={() => setShowShareModal(false)}
                 />
             )}
+
+            {/* Share to Group Modal */}
+            <ShareToGroupModal
+                isOpen={showShareToGroup}
+                onClose={() => setShowShareToGroup(false)}
+                mediaUrl={result?.after}
+                isVideo={false}
+                prompt={`Relight: ${style} - ${prompt}`}
+            />
         </div>
     );
 };
