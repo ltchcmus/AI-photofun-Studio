@@ -89,6 +89,8 @@ const MessagesPage = () => {
   const socketRef = useRef(null);
   const imageInputRef = useRef(null);
   const videoInputRef = useRef(null);
+  // Track recently sent messages to prevent duplicates from socket echo
+  const recentlySentMessagesRef = useRef(new Set());
 
   // Fetch conversations from API
   const fetchConversations = useCallback(async () => {
@@ -582,7 +584,14 @@ const MessagesPage = () => {
 
       // Add message to current chat if it matches
       // Skip if sender is current user (already added locally when sending)
-      if (activeChat?.groupId === data.groupId && data.senderId !== user.id) {
+      // Use String() to ensure consistent comparison (handles string vs number mismatch)
+      const isSelf = String(data.senderId) === String(user.id);
+
+      // Also check if this message was recently sent by us (to catch echoed messages)
+      const messageKey = `${data.groupId}_${data.message}_${data.senderId}`;
+      const isRecentlySent = recentlySentMessagesRef.current.has(messageKey);
+
+      if (activeChat?.groupId === data.groupId && !isSelf && !isRecentlySent) {
         // Get sender info from cache or fetch
         let senderInfo = userCache[data.senderId];
         if (!senderInfo) {
@@ -748,6 +757,14 @@ const MessagesPage = () => {
           isImage: !pendingShareMedia.isVideo,
           isVideo: pendingShareMedia.isVideo,
         };
+
+        // Track this message to prevent duplicate from socket echo
+        const messageKey = `${messageData.groupId}_${messageData.message}_${messageData.senderId}`;
+        recentlySentMessagesRef.current.add(messageKey);
+        // Clean up after 5 seconds to prevent memory leak
+        setTimeout(() => {
+          recentlySentMessagesRef.current.delete(messageKey);
+        }, 5000);
 
         socketRef.current.emit("sendMessageToGroup", messageData);
         console.log("📤 Sent shared media to group:", messageData);
@@ -922,6 +939,11 @@ const MessagesPage = () => {
         isImage: false,
       };
 
+      // Track this message to prevent duplicate from socket echo
+      const messageKey = `${messageData.groupId}_${messageData.message}_${messageData.senderId}`;
+      recentlySentMessagesRef.current.add(messageKey);
+      setTimeout(() => recentlySentMessagesRef.current.delete(messageKey), 5000);
+
       socketRef.current.emit("sendMessageToGroup", messageData);
       console.log("📤 Sent group message:", messageData);
     } else {
@@ -992,6 +1014,12 @@ const MessagesPage = () => {
           message: imageUrl,
           isImage: true,
         };
+
+        // Track this message to prevent duplicate from socket echo
+        const messageKey = `${messageData.groupId}_${messageData.message}_${messageData.senderId}`;
+        recentlySentMessagesRef.current.add(messageKey);
+        setTimeout(() => recentlySentMessagesRef.current.delete(messageKey), 5000);
+
         socketRef.current.emit("sendMessageToGroup", messageData);
       } else {
         const messageData = {
@@ -1069,6 +1097,12 @@ const MessagesPage = () => {
           isImage: false,
           isVideo: true,
         };
+
+        // Track this message to prevent duplicate from socket echo
+        const messageKey = `${messageData.groupId}_${messageData.message}_${messageData.senderId}`;
+        recentlySentMessagesRef.current.add(messageKey);
+        setTimeout(() => recentlySentMessagesRef.current.delete(messageKey), 5000);
+
         socketRef.current.emit("sendMessageToGroup", messageData);
       } else {
         const messageData = {
