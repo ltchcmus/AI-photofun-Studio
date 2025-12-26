@@ -1,14 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Heart,
   Loader2,
   MoreHorizontal,
   Send,
   Smile,
   Edit2,
   Trash2,
-  MessageCircle,
-  X,
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { commentApi } from "../../api/commentApi";
@@ -23,9 +20,9 @@ const buildCurrentUser = (user) => ({
   avatar: user?.avatar || user?.avatarUrl || DEFAULT_AVATAR,
   isPremium: Boolean(
     user?.isPremium ||
-      user?.premium ||
-      user?.premiumOneMonth ||
-      user?.premiumSixMonths
+    user?.premium ||
+    user?.premiumOneMonth ||
+    user?.premiumSixMonths
   ),
 });
 
@@ -59,9 +56,9 @@ const extractUserInfo = (payload) => ({
     DEFAULT_AVATAR,
   isPremium: Boolean(
     payload?.isPremium ||
-      payload?.premium ||
-      payload?.premiumOneMonth ||
-      payload?.premiumSixMonths
+    payload?.premium ||
+    payload?.premiumOneMonth ||
+    payload?.premiumSixMonths
   ),
 });
 
@@ -86,8 +83,7 @@ export default function CommentSection({ postId }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editContent, setEditContent] = useState("");
-  const [replyingToId, setReplyingToId] = useState(null);
-  const [replyContent, setReplyContent] = useState("");
+
   const [menuOpenId, setMenuOpenId] = useState(null);
   const socketRef = useRef(null);
 
@@ -157,8 +153,8 @@ export default function CommentSection({ postId }) {
         if (isMounted) {
           setError(
             fetchError?.response?.data?.message ||
-              fetchError?.message ||
-              "Không thể tải bình luận"
+            fetchError?.message ||
+            "Không thể tải bình luận"
           );
         }
       } finally {
@@ -257,10 +253,10 @@ export default function CommentSection({ postId }) {
                 prev.map((c) =>
                   c.id === payload.id
                     ? {
-                        ...c,
-                        content: payload.content,
-                        time: formatRelativeTime(payload.updatedAt),
-                      }
+                      ...c,
+                      content: payload.content,
+                      time: formatRelativeTime(payload.updatedAt),
+                    }
                     : c
                 )
               );
@@ -352,27 +348,15 @@ export default function CommentSection({ postId }) {
       console.error("Failed to create comment", createError);
       setError(
         createError?.response?.data?.message ||
-          createError?.message ||
-          "Không thể gửi bình luận"
+        createError?.message ||
+        "Không thể gửi bình luận"
       );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const toggleLike = (commentId) => {
-    setComments((prev) =>
-      prev.map((comment) =>
-        comment.id === commentId
-          ? {
-              ...comment,
-              isLiked: !comment.isLiked,
-              likes: Math.max(0, comment.likes + (comment.isLiked ? -1 : 1)),
-            }
-          : comment
-      )
-    );
-  };
+
 
   const handleEditComment = (comment) => {
     setEditingCommentId(comment.id);
@@ -420,52 +404,7 @@ export default function CommentSection({ postId }) {
     }
   };
 
-  const handleReply = (commentId) => {
-    setReplyingToId(commentId);
-    setReplyContent("");
-    setMenuOpenId(null);
-  };
 
-  const handleSendReply = async (parentCommentId) => {
-    if (!replyContent.trim() || !postId || !currentUser.id) return;
-
-    setIsSubmitting(true);
-    setError("");
-
-    try {
-      const payload = {
-        postId,
-        userId: currentUser.id,
-        userName: currentUser.name,
-        content: replyContent,
-        parentId: parentCommentId,
-      };
-
-      const response = await commentApi.createComment(payload);
-      const created = parseApiData(response);
-
-      const normalized = {
-        id: created?.id || created?._id || String(Date.now()),
-        userId: currentUser.id,
-        user: currentUser,
-        content: created?.content || replyContent,
-        time: formatRelativeTime(
-          created?.createdAt || new Date().toISOString()
-        ),
-        likes: created?.likes ?? 0,
-        isLiked: false,
-      };
-
-      setComments((prev) => [...prev, normalized]);
-      setReplyingToId(null);
-      setReplyContent("");
-    } catch (replyError) {
-      console.error("Failed to send reply", replyError);
-      setError("Không thể gửi trả lời");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   if (!postId) {
     return (
@@ -507,20 +446,18 @@ export default function CommentSection({ postId }) {
           comments.map((comment) => (
             <div
               key={comment.id}
-              className={`flex gap-3 rounded-xl p-3 transition-all ${
-                comment.isNew
+              className={`flex gap-3 rounded-xl p-3 transition-all ${comment.isNew
                   ? "bg-green-50 border-2 border-green-200"
                   : "bg-gray-50/70"
-              }`}
+                }`}
             >
               <img
                 src={comment.user.avatar}
                 alt={comment.user.name}
-                className={`h-10 w-10 rounded-full object-cover ${
-                  comment.user.isPremium
+                className={`h-10 w-10 rounded-full object-cover ${comment.user.isPremium
                     ? "ring-2 ring-yellow-400 ring-offset-2"
                     : ""
-                }`}
+                  }`}
               />
               <div className="flex-1">
                 <div className="flex items-center gap-2">
@@ -573,30 +510,8 @@ export default function CommentSection({ postId }) {
                   <p className="mt-1 text-gray-700">{comment.content}</p>
                 )}
 
-                <div className="mt-2 flex items-center gap-4 text-xs text-gray-500">
-                  <button
-                    type="button"
-                    onClick={() => toggleLike(comment.id)}
-                    className={`flex items-center gap-1 transition-colors hover:text-red-500 ${
-                      comment.isLiked ? "text-red-500" : ""
-                    }`}
-                  >
-                    <Heart
-                      className={`h-4 w-4 ${
-                        comment.isLiked ? "fill-red-500 text-red-500" : ""
-                      }`}
-                    />
-                    {comment.likes > 0 ? `${comment.likes} thích` : "Thích"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleReply(comment.id)}
-                    className="flex items-center gap-1 text-gray-500 transition-colors hover:text-blue-500"
-                  >
-                    <MessageCircle className="h-4 w-4" />
-                    Trả lời
-                  </button>
-                  {comment.userId === currentUser.id && (
+                {comment.userId === currentUser.id && (
+                  <div className="mt-2 flex items-center gap-4 text-xs text-gray-500">
                     <div className="relative">
                       <button
                         type="button"
@@ -630,64 +545,10 @@ export default function CommentSection({ postId }) {
                         </div>
                       )}
                     </div>
-                  )}
-                </div>
-
-                {replyingToId === comment.id && (
-                  <div className="mt-3 flex gap-2">
-                    <img
-                      src={currentUser.avatar}
-                      alt={currentUser.name}
-                      className="h-8 w-8 rounded-full object-cover"
-                    />
-                    <div className="flex-1">
-                      <textarea
-                        value={replyContent}
-                        onChange={(e) => setReplyContent(e.target.value)}
-                        placeholder="Viết trả lời..."
-                        className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                        rows={2}
-                      />
-                      <div className="mt-2 flex gap-2">
-                        <button
-                          type="button"
-                          onClick={() => handleSendReply(comment.id)}
-                          disabled={isSubmitting || !replyContent.trim()}
-                          className="rounded-lg bg-blue-600 px-3 py-1 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
-                        >
-                          {isSubmitting ? (
-                            <Loader2 className="h-3 w-3 animate-spin" />
-                          ) : (
-                            "Gửi"
-                          )}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setReplyingToId(null);
-                            setReplyContent("");
-                          }}
-                          className="rounded-lg bg-gray-300 px-3 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-400"
-                        >
-                          Hủy
-                        </button>
-                      </div>
-                    </div>
                   </div>
                 )}
               </div>
-              <button
-                type="button"
-                onClick={() => toggleLike(comment.id)}
-                className="self-start rounded-full p-1 text-gray-300 transition hover:bg-red-50 hover:text-red-500"
-                aria-label="Toggle comment like"
-              >
-                <Heart
-                  className={`h-4 w-4 ${
-                    comment.isLiked ? "fill-red-500 text-red-500" : ""
-                  }`}
-                />
-              </button>
+
             </div>
           ))}
       </div>
