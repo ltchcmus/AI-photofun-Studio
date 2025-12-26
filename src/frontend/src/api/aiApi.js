@@ -1,11 +1,29 @@
 import axios from "axios";
 import rateLimiter from "../utils/rateLimiter";
 import tokenManager from "./tokenManager";
+
 // Base URL for AI backend - use environment variable for production
 const AI_BASE_URL = import.meta.env.VITE_AI_API_URL || "http://localhost:9999";
+const API_GATEWAY = import.meta.env.VITE_API_GATEWAY || "";
 
 // File upload URL: production uses VITE_FILE_UPLOAD_URL, dev uses Vite proxy
 const FILE_UPLOAD_BASE_URL = import.meta.env.VITE_FILE_UPLOAD_URL || "";
+
+// Token refresh state (shared with aiClient)
+let isRefreshing = false;
+let failedQueue = [];
+
+// Process queued requests after token refresh
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
 
 // Create a dedicated axios instance for AI API
 const aiClient = axios.create({
@@ -14,12 +32,14 @@ const aiClient = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+// Request interceptor with rate limiting + auth token
 aiClient.interceptors.request.use(
   async (config) => {
     // Wait for rate limit slot
     await rateLimiter.waitForSlot();
 
-    // Get token from memory instead of localStorage
+    // Get token from memory
     const token = tokenManager.getToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -29,13 +49,68 @@ aiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Response interceptor with auto token refresh
 aiClient.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Surface 401 so callers can redirect to login if needed
-      console.warn("Unauthorized request", error.response?.data);
+  async (error) => {
+    const originalRequest = error.config;
+
+    // Handle 401 Unauthorized - try to refresh token
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        // If already refreshing, queue this request
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return aiClient(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        // Call refresh endpoint - uses HttpOnly cookie
+        const refreshResponse = await axios.get(
+          `${API_GATEWAY}/api/v1/identity/auth/refresh-token`,
+          { withCredentials: true }
+        );
+
+        const newAccessToken =
+          refreshResponse.data?.result?.accessToken ||
+          (typeof refreshResponse.data?.result === "string"
+            ? refreshResponse.data.result
+            : null);
+
+        if (newAccessToken) {
+          tokenManager.setToken(newAccessToken);
+          processQueue(null, newAccessToken);
+
+          // Retry original request with new token
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+          return aiClient(originalRequest);
+        } else {
+          throw new Error("No access token in refresh response");
+        }
+      } catch (refreshError) {
+        // Refresh failed - clear token
+        processQueue(refreshError, null);
+        tokenManager.clearToken();
+        console.warn("AI API: Token refresh failed");
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
     }
+
+    // Log 401s
+    if (error.response?.status === 401) {
+      console.warn("AI API: Unauthorized request", error.response?.data);
+    }
+
     return Promise.reject(error);
   }
 );
