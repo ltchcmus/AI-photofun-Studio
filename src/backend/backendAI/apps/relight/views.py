@@ -6,8 +6,7 @@ from rest_framework import status
 from core import APIResponse
 from .serializers import RelightInputSerializer
 from .services import RelightService, RelightError
-from core.token_decorators import require_tokens
-from core.token_costs import TOKEN_COSTS
+from core.token_decorators import track_processing_time
 from core.image_input_handler import ImageInputHandler
 import logging
 
@@ -17,7 +16,7 @@ logger = logging.getLogger(__name__)
 class RelightView(APIView):
     """Relight image - POST /v1/features/relight/"""
     
-    @require_tokens(cost=TOKEN_COSTS['relight'], feature='relight')
+    @track_processing_time(feature='relight', min_required_tokens=8)
     def post(self, request):
         serializer = RelightInputSerializer(data=request.data)
         if not serializer.is_valid():
