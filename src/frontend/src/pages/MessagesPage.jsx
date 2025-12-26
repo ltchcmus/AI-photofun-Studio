@@ -27,7 +27,7 @@ import io from "socket.io-client";
 import { useAuth } from "../hooks/useAuth";
 import { communicationApi } from "../api/communicationApi";
 import { userApi } from "../api/userApi";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import VideoCallModal from "../components/common/VideoCallModal";
 import IncomingCallModal from "../components/common/IncomingCallModal";
 import { stopCall } from "../api/call-video";
@@ -41,12 +41,16 @@ const MessagesPage = () => {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Share to group from AI tools
+  const shareToGroup = location.state?.shareToGroup;
 
   // State
   const [conversations, setConversations] = useState([]);
   const [groups, setGroups] = useState([]); // My groups (joined)
   const [exploreGroups, setExploreGroups] = useState([]); // All groups (for explore)
-  const [activeTab, setActiveTab] = useState("direct"); // "direct", "groups", or "explore"
+  const [activeTab, setActiveTab] = useState(shareToGroup ? "groups" : "direct"); // Auto switch to groups if sharing
   const [activeChat, setActiveChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
@@ -54,6 +58,7 @@ const MessagesPage = () => {
   const [newGroupName, setNewGroupName] = useState("");
   const [loading, setLoading] = useState(true);
   const [socketConnected, setSocketConnected] = useState(false);
+  const [pendingShareMedia, setPendingShareMedia] = useState(shareToGroup || null); // Media waiting to be sent
 
   // Group Management State
   const [showGroupInfo, setShowGroupInfo] = useState(false);
@@ -704,6 +709,70 @@ const MessagesPage = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Handle share to group from AI tools
+  useEffect(() => {
+    if (!pendingShareMedia || !groups.length || !socketRef.current || !socketConnected) return;
+
+    const targetGroup = groups.find(g => g.groupId === pendingShareMedia.groupId);
+    if (targetGroup) {
+      // Select the target group
+      setActiveChat(targetGroup);
+      setActiveTab("groups");
+
+      // Wait a bit for chat to be selected then send the media
+      const sendMedia = async () => {
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        const messageData = {
+          senderId: user.id,
+          groupId: pendingShareMedia.groupId,
+          message: pendingShareMedia.mediaUrl,
+          isImage: !pendingShareMedia.isVideo,
+          isVideo: pendingShareMedia.isVideo,
+        };
+
+        socketRef.current.emit("sendMessageToGroup", messageData);
+        console.log("📤 Sent shared media to group:", messageData);
+
+        // Add to local messages
+        const newMsg = {
+          id: Date.now(),
+          sender: "me",
+          text: pendingShareMedia.mediaUrl,
+          isImage: !pendingShareMedia.isVideo,
+          isVideo: pendingShareMedia.isVideo,
+          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        };
+        setMessages(prev => [...prev, newMsg]);
+
+        // Send additional text message if provided
+        if (pendingShareMedia.message) {
+          const textMessageData = {
+            senderId: user.id,
+            groupId: pendingShareMedia.groupId,
+            message: pendingShareMedia.message,
+            isImage: false,
+          };
+          socketRef.current.emit("sendMessageToGroup", textMessageData);
+
+          const textMsg = {
+            id: Date.now() + 1,
+            sender: "me",
+            text: pendingShareMedia.message,
+            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          };
+          setMessages(prev => [...prev, textMsg]);
+        }
+
+        // Clear pending and location state
+        setPendingShareMedia(null);
+        navigate("/messages", { replace: true, state: {} });
+      };
+
+      sendMedia();
+    }
+  }, [pendingShareMedia, groups, socketConnected, user?.id, navigate]);
 
   // Handle video call
   const handleStartVideoCall = () => {

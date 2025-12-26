@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Download, Film, Play, Share2, Video } from "lucide-react";
+import { ArrowLeft, Download, Film, Play, Share2, Users, Video } from "lucide-react";
 import { suggestPrompts, recordPromptChoice } from "../api/aiApi";
+import ShareToGroupModal from "../components/common/ShareToGroupModal";
 
 // Models for Prompt to Video (Text to Video)
 const PROMPT_TO_VIDEO_MODELS = [
@@ -33,6 +34,7 @@ const PromptToVideo = () => {
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+    const [showShareToGroup, setShowShareToGroup] = useState(false);
 
     // Get session ID for API calls
     const getSessionId = () => {
@@ -232,193 +234,211 @@ const PromptToVideo = () => {
     };
 
     return (
-        <div className="space-y-8">
-            <header className="flex items-center justify-between gap-4 border border-gray-200 rounded-2xl px-4 py-3 bg-white shadow-sm">
-                <button
-                    type="button"
-                    onClick={() => navigate(-1)}
-                    className="flex items-center gap-2 text-gray-600 hover:text-gray-900 text-sm font-semibold"
-                >
-                    <ArrowLeft className="w-4 h-4" /> Back
-                </button>
-                <h1 className="text-lg md:text-xl font-bold flex items-center gap-2">
-                    <Video className="w-5 h-5 text-pink-500" /> Prompt to Video
-                </h1>
-                <div className="text-xs text-gray-400">Beta</div>
-            </header>
+        <>
+            <div className="space-y-8">
+                <header className="flex items-center justify-between gap-4 border border-gray-200 rounded-2xl px-4 py-3 bg-white shadow-sm">
+                    <button
+                        type="button"
+                        onClick={() => navigate(-1)}
+                        className="flex items-center gap-2 text-gray-600 hover:text-gray-900 text-sm font-semibold"
+                    >
+                        <ArrowLeft className="w-4 h-4" /> Back
+                    </button>
+                    <h1 className="text-lg md:text-xl font-bold flex items-center gap-2">
+                        <Video className="w-5 h-5 text-pink-500" /> Prompt to Video
+                    </h1>
+                    <div className="text-xs text-gray-400">Beta</div>
+                </header>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Left Column - Input */}
-                <section className="space-y-6">
-                    {/* Prompt */}
-                    <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                        <h2 className="text-xl font-bold mb-4">Mô Tả Video</h2>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {/* Left Column - Input */}
+                    <section className="space-y-6">
+                        {/* Prompt */}
+                        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                            <h2 className="text-xl font-bold mb-4">Mô Tả Video</h2>
 
-                        <div className="space-y-4">
-                            <div className="relative" ref={promptInputRef}>
-                                <label className="block text-sm font-semibold mb-2">Prompt</label>
-                                <textarea
-                                    value={prompt}
-                                    onChange={handlePromptChange}
-                                    onFocus={handlePromptFocus}
-                                    placeholder="Mô tả video bạn muốn tạo, ví dụ: Một chú mèo đang chạy trên cánh đồng hoa với bầu trời xanh..."
-                                    className="w-full border border-gray-300 rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-pink-500 min-h-[150px] text-sm"
-                                />
+                            <div className="space-y-4">
+                                <div className="relative" ref={promptInputRef}>
+                                    <label className="block text-sm font-semibold mb-2">Prompt</label>
+                                    <textarea
+                                        value={prompt}
+                                        onChange={handlePromptChange}
+                                        onFocus={handlePromptFocus}
+                                        placeholder="Mô tả video bạn muốn tạo, ví dụ: Một chú mèo đang chạy trên cánh đồng hoa với bầu trời xanh..."
+                                        className="w-full border border-gray-300 rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-pink-500 min-h-[150px] text-sm"
+                                    />
 
-                                {/* Suggestions Dropdown */}
-                                {showSuggestions && suggestions.length > 0 && (
-                                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-auto">
-                                        {loadingSuggestions && (
-                                            <div className="px-4 py-2 text-sm text-gray-500">Đang tải gợi ý...</div>
-                                        )}
-                                        {suggestions.map((suggestion) => (
-                                            <button
-                                                key={suggestion.id}
-                                                type="button"
-                                                onClick={() => handleSelectSuggestion(suggestion)}
-                                                className="w-full px-4 py-3 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors"
-                                            >
-                                                <p className="text-sm text-gray-800">{suggestion.text}</p>
-                                            </button>
+                                    {/* Suggestions Dropdown */}
+                                    {showSuggestions && suggestions.length > 0 && (
+                                        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-auto">
+                                            {loadingSuggestions && (
+                                                <div className="px-4 py-2 text-sm text-gray-500">Đang tải gợi ý...</div>
+                                            )}
+                                            {suggestions.map((suggestion) => (
+                                                <button
+                                                    key={suggestion.id}
+                                                    type="button"
+                                                    onClick={() => handleSelectSuggestion(suggestion)}
+                                                    className="w-full px-4 py-3 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors"
+                                                >
+                                                    <p className="text-sm text-gray-800">{suggestion.text}</p>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-semibold mb-2">Model</label>
+                                    <select
+                                        value={model}
+                                        onChange={(e) => setModel(e.target.value)}
+                                        className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm bg-white"
+                                    >
+                                        {PROMPT_TO_VIDEO_MODELS.map((m) => (
+                                            <option key={m.value} value={m.value}>
+                                                {m.label} - {m.description}
+                                            </option>
                                         ))}
-                                    </div>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        {error && (
+                            <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-600 text-sm">
+                                {error}
+                            </div>
+                        )}
+
+                        {!videoUrl && (
+                            <button
+                                type="button"
+                                onClick={handleGenerate}
+                                disabled={loading || !prompt.trim()}
+                                className="w-full py-4 rounded-2xl bg-gradient-to-r from-pink-600 to-purple-600 text-white font-semibold text-lg flex items-center justify-center gap-2 hover:from-pink-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                            >
+                                {loading ? (
+                                    <>
+                                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                        {taskStatus || "Đang xử lý..."}
+                                    </>
+                                ) : (
+                                    <>
+                                        <Play className="w-5 h-5" /> Tạo Video
+                                    </>
                                 )}
-                            </div>
+                            </button>
+                        )}
+                    </section>
 
-                            <div>
-                                <label className="block text-sm font-semibold mb-2">Model</label>
-                                <select
-                                    value={model}
-                                    onChange={(e) => setModel(e.target.value)}
-                                    className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm bg-white"
-                                >
-                                    {PROMPT_TO_VIDEO_MODELS.map((m) => (
-                                        <option key={m.value} value={m.value}>
-                                            {m.label} - {m.description}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    {error && (
-                        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-600 text-sm">
-                            {error}
-                        </div>
-                    )}
-
-                    {!videoUrl && (
-                        <button
-                            type="button"
-                            onClick={handleGenerate}
-                            disabled={loading || !prompt.trim()}
-                            className="w-full py-4 rounded-2xl bg-gradient-to-r from-pink-600 to-purple-600 text-white font-semibold text-lg flex items-center justify-center gap-2 hover:from-pink-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                        >
-                            {loading ? (
-                                <>
-                                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                    {taskStatus || "Đang xử lý..."}
-                                </>
-                            ) : (
-                                <>
-                                    <Play className="w-5 h-5" /> Tạo Video
-                                </>
-                            )}
-                        </button>
-                    )}
-                </section>
-
-                {/* Right Column - Result */}
-                <section className="space-y-6">
-                    {loading && !videoUrl && (
-                        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                            <div className="aspect-video rounded-2xl bg-gray-50 flex flex-col items-center justify-center">
-                                <div className="w-16 h-16 border-4 border-gray-200 border-t-pink-500 rounded-full animate-spin mb-4" />
-                                <p className="font-semibold text-gray-700">Đang tạo video...</p>
-                                <p className="text-sm text-gray-500">{taskStatus}</p>
-                                {taskId && (
-                                    <p className="text-xs text-gray-400 mt-2">Task ID: {taskId}</p>
-                                )}
-                            </div>
-                        </div>
-                    )}
-
-                    {videoUrl && (
-                        <>
+                    {/* Right Column - Result */}
+                    <section className="space-y-6">
+                        {loading && !videoUrl && (
                             <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                                <h2 className="text-lg font-bold mb-4">Video Đã Tạo</h2>
-                                <div className="aspect-video rounded-2xl bg-black overflow-hidden">
-                                    <video
-                                        controls
-                                        autoPlay
-                                        loop
-                                        className="w-full h-full object-contain"
-                                    >
-                                        <source src={videoUrl} type="video/mp4" />
-                                        Trình duyệt không hỗ trợ video.
-                                    </video>
+                                <div className="aspect-video rounded-2xl bg-gray-50 flex flex-col items-center justify-center">
+                                    <div className="w-16 h-16 border-4 border-gray-200 border-t-pink-500 rounded-full animate-spin mb-4" />
+                                    <p className="font-semibold text-gray-700">Đang tạo video...</p>
+                                    <p className="text-sm text-gray-500">{taskStatus}</p>
+                                    {taskId && (
+                                        <p className="text-xs text-gray-400 mt-2">Task ID: {taskId}</p>
+                                    )}
                                 </div>
                             </div>
+                        )}
 
-                            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                                <div className="grid grid-cols-3 gap-3">
-                                    <button
-                                        type="button"
-                                        onClick={handleDownload}
-                                        className="flex items-center justify-center gap-2 py-3 rounded-xl bg-black text-white font-semibold hover:bg-gray-800"
-                                    >
-                                        <Download className="w-4 h-4" /> Tải Xuống
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={handleShare}
-                                        className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 text-white font-semibold hover:from-pink-700 hover:to-purple-700"
-                                    >
-                                        <Share2 className="w-4 h-4" /> Chia Sẻ
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={handleReset}
-                                        className="flex items-center justify-center gap-2 py-3 rounded-xl border border-gray-300 font-semibold hover:bg-gray-50"
-                                    >
-                                        Tạo Mới
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                                <h3 className="font-bold mb-3">Chi Tiết</h3>
-                                <div className="space-y-2 text-sm">
-                                    <div>
-                                        <span className="text-gray-500">Model: </span>
-                                        <span className="font-medium">{model}</span>
+                        {videoUrl && (
+                            <>
+                                <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                                    <h2 className="text-lg font-bold mb-4">Video Đã Tạo</h2>
+                                    <div className="aspect-video rounded-2xl bg-black overflow-hidden">
+                                        <video
+                                            controls
+                                            autoPlay
+                                            loop
+                                            className="w-full h-full object-contain"
+                                        >
+                                            <source src={videoUrl} type="video/mp4" />
+                                            Trình duyệt không hỗ trợ video.
+                                        </video>
                                     </div>
-                                    <div>
-                                        <span className="text-gray-500">Prompt: </span>
-                                        <span className="font-medium">{prompt}</span>
+                                </div>
+
+                                <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <button
+                                            type="button"
+                                            onClick={handleDownload}
+                                            className="flex items-center justify-center gap-2 py-3 rounded-xl bg-black text-white font-semibold hover:bg-gray-800"
+                                        >
+                                            <Download className="w-4 h-4" /> Tải Xuống
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={handleShare}
+                                            className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 text-white font-semibold hover:from-pink-700 hover:to-purple-700"
+                                        >
+                                            <Share2 className="w-4 h-4" /> Đăng Feed
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowShareToGroup(true)}
+                                            className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold hover:from-blue-700 hover:to-cyan-700"
+                                        >
+                                            <Users className="w-4 h-4" /> Gửi Nhóm
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={handleReset}
+                                            className="flex items-center justify-center gap-2 py-3 rounded-xl border border-gray-300 font-semibold hover:bg-gray-50"
+                                        >
+                                            Tạo Mới
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                                    <h3 className="font-bold mb-3">Chi Tiết</h3>
+                                    <div className="space-y-2 text-sm">
+                                        <div>
+                                            <span className="text-gray-500">Model: </span>
+                                            <span className="font-medium">{model}</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-gray-500">Prompt: </span>
+                                            <span className="font-medium">{prompt}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
+                        )}
+
+                        {!loading && !videoUrl && (
+                            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                                <div className="aspect-video border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center">
+                                    <div className="text-center p-8">
+                                        <Video className="w-12 h-12 mx-auto text-gray-400 mb-3" />
+                                        <p className="font-semibold text-gray-700 mb-1">Chưa có video</p>
+                                        <p className="text-sm text-gray-500">
+                                            Nhập mô tả video và nhấn "Tạo Video"
+                                        </p>
                                     </div>
                                 </div>
                             </div>
-                        </>
-                    )}
-
-                    {!loading && !videoUrl && (
-                        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                            <div className="aspect-video border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center">
-                                <div className="text-center p-8">
-                                    <Video className="w-12 h-12 mx-auto text-gray-400 mb-3" />
-                                    <p className="font-semibold text-gray-700 mb-1">Chưa có video</p>
-                                    <p className="text-sm text-gray-500">
-                                        Nhập mô tả video và nhấn "Tạo Video"
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </section>
+                        )}
+                    </section>
+                </div>
             </div>
-        </div>
+
+            {/* Share to Group Modal */}
+            <ShareToGroupModal
+                isOpen={showShareToGroup}
+                onClose={() => setShowShareToGroup(false)}
+                mediaUrl={videoUrl}
+                isVideo={true}
+                prompt={prompt}
+            />
+        </>
     );
 };
 
