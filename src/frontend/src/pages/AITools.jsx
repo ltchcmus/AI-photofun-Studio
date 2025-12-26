@@ -13,7 +13,6 @@ const CreateWithAI = () => {
       icon: <MessageCircle className="w-7 h-7 text-purple-500" />,
       title: "AI Chat",
       description: "Chat với AI để tạo và chỉnh sửa ảnh tự động",
-      featured: true,
     },
     {
       id: "generate",
@@ -150,8 +149,8 @@ const CreateWithAI = () => {
                 key={tool.id}
                 onClick={() => handleSelectTool(tool)}
                 className={`w-full rounded-2xl p-5 transition-all text-left flex items-center gap-4 ${tool.featured
-                    ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
-                    : "bg-white border border-gray-200 hover:bg-gray-50"
+                  ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                  : "bg-white border border-gray-200 hover:bg-gray-50"
                   }`}
               >
                 <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${tool.featured ? "bg-white/20" : "bg-gray-100"
