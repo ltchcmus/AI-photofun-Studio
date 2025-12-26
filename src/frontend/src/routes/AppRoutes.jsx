@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
@@ -59,9 +59,30 @@ const RedirectIfAuthenticated = ({ children }) => {
 
 function AppRoutes() {
   const { loading } = useAuthContext();
+  const [showLoading, setShowLoading] = useState(true);
+  const [fadeOut, setFadeOut] = useState(false);
 
-  if (loading) {
-    return <LoadingScreen />;
+  useEffect(() => {
+    if (!loading && showLoading) {
+      // Start fade out animation
+      setFadeOut(true);
+      // After fade animation completes, hide loading screen
+      const timer = setTimeout(() => {
+        setShowLoading(false);
+      }, 300); // 300ms fade out
+      return () => clearTimeout(timer);
+    }
+  }, [loading, showLoading]);
+
+  // Show loading screen with fade-out when transitioning
+  if (showLoading) {
+    return (
+      <div
+        className={`transition-opacity duration-300 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}
+      >
+        <LoadingScreen />
+      </div>
+    );
   }
 
   return (

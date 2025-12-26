@@ -76,9 +76,9 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // On mount, try to restore session using refresh token (HttpOnly cookie)
-  // Use minimum loading time to prevent flash
+  // Use minimum loading time to prevent flash of login page
   useEffect(() => {
-    const MIN_LOADING_TIME = 500; // Minimum time to show loading screen (ms)
+    const MIN_LOADING_TIME = 800; // Minimum time to show loading screen (ms)
     const startTime = Date.now();
 
     const initializeAuth = async () => {
@@ -92,16 +92,16 @@ export const AuthProvider = ({ children }) => {
         // Refresh failed - user needs to login again
         console.log("Session expired or not logged in");
         localStorage.removeItem("user");
-      } finally {
-        // Ensure loading screen shows for at least MIN_LOADING_TIME
-        // This prevents jarring flash of login page
-        const elapsed = Date.now() - startTime;
-        const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsed);
-
-        setTimeout(() => {
-          setLoading(false);
-        }, remainingTime);
       }
+
+      // Ensure loading screen shows for at least MIN_LOADING_TIME
+      // This prevents jarring flash of login page
+      const elapsed = Date.now() - startTime;
+      const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsed);
+
+      // Use a promise to wait for remaining time before setting loading to false
+      await new Promise(resolve => setTimeout(resolve, remainingTime));
+      setLoading(false);
     };
 
     initializeAuth();
