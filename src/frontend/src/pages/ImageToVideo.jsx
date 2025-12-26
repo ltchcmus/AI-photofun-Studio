@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Download, Film, Image, Play, Share2, Upload, Users } from "lucide-react";
+import { ArrowLeft, Download, Film, Image, Play, Share2, Upload } from "lucide-react";
 import { communicationApi } from "../api/communicationApi";
-import ShareToGroupModal from "../components/common/ShareToGroupModal";
+import { generateVideoFromImage, pollVideoTaskStatus } from "../api/aiApi";
 
 // Models for Image to Video
 const IMAGE_TO_VIDEO_MODELS = [
@@ -13,9 +13,6 @@ const IMAGE_TO_VIDEO_MODELS = [
     { value: "wan2.1-i2v-turbo", label: "wan2.1-i2v-turbo", description: "Turbo - nhanh nhất" },
     { value: "wan2.1-i2v-plus", label: "wan2.1-i2v-plus", description: "Phiên bản Plus cũ" },
 ];
-
-// AI Backend URL - use environment variable for production
-const AI_BACKEND_URL = import.meta.env.VITE_AI_API_URL || "http://localhost:9999";
 
 const ImageToVideo = () => {
     const navigate = useNavigate();
@@ -33,17 +30,6 @@ const ImageToVideo = () => {
     const [videoUrl, setVideoUrl] = useState(null);
     const [error, setError] = useState("");
     const [dragOver, setDragOver] = useState(false);
-    const [showShareToGroup, setShowShareToGroup] = useState(false);
-
-    // Get session ID for API calls
-    const getSessionId = () => {
-        let sessionId = localStorage.getItem("ai_session_id");
-        if (!sessionId) {
-            sessionId = "web_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
-            localStorage.setItem("ai_session_id", sessionId);
-        }
-        return sessionId;
-    };
 
     // Handle file upload
     const handleFileUpload = async (file) => {
@@ -103,29 +89,21 @@ const ImageToVideo = () => {
 
     // Poll for task status
     const pollStatus = useCallback(async (id) => {
-        try {
-            const res = await fetch(
-                `${AI_BACKEND_URL}/v1/features/image-to-video/status/${id}/?user_id=${getSessionId()}`
-            );
-            const data = await res.json();
+        const result = await pollVideoTaskStatus(
+            id,
+            "image-to-video",
+            (status) => setTaskStatus(status || "Đang xử lý..."),
+            1 // Only poll once, will be called again by interval
+        );
 
-            const status = data.result?.status;
-            setTaskStatus(status || "Đang xử lý...");
-
-            if (status === "COMPLETED" || status === "SUCCEEDED") {
-                const video = data.result?.video_url || data.result?.uploaded_urls?.[0];
-                if (video) {
-                    setVideoUrl(video);
-                    setLoading(false);
-                    if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
-                }
-            } else if (status === "FAILED") {
-                setError(data.result?.error || "Tạo video thất bại. Vui lòng thử lại.");
-                setLoading(false);
-                if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
-            }
-        } catch (err) {
-            console.error("Poll error:", err);
+        if (result.success) {
+            setVideoUrl(result.videoUrl);
+            setLoading(false);
+            if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+        } else if (result.error && !result.error.includes("Timeout")) {
+            setError(result.error);
+            setLoading(false);
+            if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
         }
     }, []);
 
@@ -146,37 +124,25 @@ const ImageToVideo = () => {
         setTaskId(null);
         setTaskStatus("Đang khởi tạo...");
 
-        try {
-            const res = await fetch(`${AI_BACKEND_URL}/v1/features/image-to-video/`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    user_id: getSessionId(),
-                    image_url: imageUrl,
-                    prompt: prompt.trim(),
-                    model: model,
-                }),
-            });
+        const result = await generateVideoFromImage({
+            imageUrl: imageUrl,
+            prompt: prompt.trim(),
+            model: model,
+        });
 
-            const data = await res.json();
+        if (result.success && result.taskId) {
+            setTaskId(result.taskId);
+            setTaskStatus("Đang tạo video...");
 
-            if (data.code === 1000 && data.result?.task_id) {
-                setTaskId(data.result.task_id);
-                setTaskStatus("Đang tạo video...");
+            // Start polling
+            pollIntervalRef.current = setInterval(() => {
+                pollStatus(result.taskId);
+            }, 3000);
 
-                // Start polling
-                pollIntervalRef.current = setInterval(() => {
-                    pollStatus(data.result.task_id);
-                }, 3000);
-
-                // Initial poll
-                setTimeout(() => pollStatus(data.result.task_id), 1000);
-            } else {
-                setError(data.message || "Không thể tạo video. Vui lòng thử lại.");
-                setLoading(false);
-            }
-        } catch (err) {
-            setError("Lỗi kết nối: " + err.message);
+            // Initial poll
+            setTimeout(() => pollStatus(result.taskId), 1000);
+        } else {
+            setError(result.error || "Không thể tạo video. Vui lòng thử lại.");
             setLoading(false);
         }
     };
@@ -231,265 +197,248 @@ const ImageToVideo = () => {
     };
 
     return (
-        <>
-            <div className="space-y-8">
-                <header className="flex items-center justify-between gap-4 border border-gray-200 rounded-2xl px-4 py-3 bg-white shadow-sm">
-                    <button
-                        type="button"
-                        onClick={() => navigate(-1)}
-                        className="flex items-center gap-2 text-gray-600 hover:text-gray-900 text-sm font-semibold"
-                    >
-                        <ArrowLeft className="w-4 h-4" /> Back
-                    </button>
-                    <h1 className="text-lg md:text-xl font-bold flex items-center gap-2">
-                        <Film className="w-5 h-5 text-purple-500" /> Image to Video
-                    </h1>
-                    <div className="text-xs text-gray-400">Beta</div>
-                </header>
+        <div className="space-y-8">
+            <header className="flex items-center justify-between gap-4 border border-gray-200 rounded-2xl px-4 py-3 bg-white shadow-sm">
+                <button
+                    type="button"
+                    onClick={() => navigate(-1)}
+                    className="flex items-center gap-2 text-gray-600 hover:text-gray-900 text-sm font-semibold"
+                >
+                    <ArrowLeft className="w-4 h-4" /> Back
+                </button>
+                <h1 className="text-lg md:text-xl font-bold flex items-center gap-2">
+                    <Film className="w-5 h-5 text-purple-500" /> Image to Video
+                </h1>
+                <div className="text-xs text-gray-400">Beta</div>
+            </header>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Left Column - Input */}
-                    <section className="space-y-6">
-                        {/* Image Upload */}
-                        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                            <h2 className="text-xl font-bold mb-4">Upload Ảnh Gốc</h2>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Left Column - Input */}
+                <section className="space-y-6">
+                    {/* Image Upload */}
+                    <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                        <h2 className="text-xl font-bold mb-4">Upload Ảnh Gốc</h2>
 
-                            <div
-                                className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-colors ${dragOver
-                                    ? "border-purple-400 bg-purple-50"
-                                    : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
-                                    }`}
-                                onClick={() => uploadInputRef.current?.click()}
-                                onDrop={handleDrop}
-                                onDragOver={handleDragOver}
-                                onDragLeave={handleDragLeave}
-                            >
-                                {uploading ? (
-                                    <div className="py-4">
-                                        <div className="w-8 h-8 border-2 border-gray-300 border-t-purple-500 rounded-full animate-spin mx-auto mb-2" />
-                                        <p className="text-gray-600">Đang upload...</p>
-                                    </div>
-                                ) : uploadedPreview ? (
-                                    <div className="relative">
-                                        <img
-                                            src={uploadedPreview}
-                                            alt="Preview"
-                                            className="max-h-48 mx-auto rounded-lg"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleReset();
-                                            }}
-                                            className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-xs"
-                                        >
-                                            Xóa
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <>
-                                        <Upload className="w-12 h-12 mx-auto mb-3 text-gray-400" />
-                                        <p className="text-gray-600 font-medium">Kéo thả ảnh vào đây</p>
-                                        <p className="text-xs text-gray-500 mb-4">hoặc click để chọn file</p>
-                                        <button
-                                            type="button"
-                                            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-semibold"
-                                        >
-                                            Chọn Ảnh
-                                        </button>
-                                    </>
-                                )}
-                                <input
-                                    ref={uploadInputRef}
-                                    type="file"
-                                    accept="image/*"
-                                    className="hidden"
-                                    onChange={handleFileChange}
-                                />
-                            </div>
-
-                            {/* Or URL input */}
-                            <div className="mt-4">
-                                <label className="block text-sm font-semibold mb-2">
-                                    Hoặc nhập URL ảnh
-                                </label>
-                                <input
-                                    type="text"
-                                    value={imageUrl}
-                                    onChange={(e) => setImageUrl(e.target.value)}
-                                    placeholder="https://example.com/image.jpg"
-                                    className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
-                                />
-                            </div>
-                        </div>
-
-                        {/* Prompt & Model */}
-                        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                            <h2 className="text-xl font-bold mb-4">Mô Tả Chuyển Động</h2>
-
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-semibold mb-2">Prompt</label>
-                                    <textarea
-                                        value={prompt}
-                                        onChange={(e) => setPrompt(e.target.value)}
-                                        placeholder="Mô tả cách bạn muốn ảnh chuyển động, ví dụ: Chủ thể đang cử động nhẹ nhàng, gió thổi qua tóc..."
-                                        className="w-full border border-gray-300 rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-purple-500 min-h-[100px] text-sm"
+                        <div
+                            className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-colors ${dragOver
+                                ? "border-purple-400 bg-purple-50"
+                                : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+                                }`}
+                            onClick={() => uploadInputRef.current?.click()}
+                            onDrop={handleDrop}
+                            onDragOver={handleDragOver}
+                            onDragLeave={handleDragLeave}
+                        >
+                            {uploading ? (
+                                <div className="py-4">
+                                    <div className="w-8 h-8 border-2 border-gray-300 border-t-purple-500 rounded-full animate-spin mx-auto mb-2" />
+                                    <p className="text-gray-600">Đang upload...</p>
+                                </div>
+                            ) : uploadedPreview ? (
+                                <div className="relative">
+                                    <img
+                                        src={uploadedPreview}
+                                        alt="Preview"
+                                        className="max-h-48 mx-auto rounded-lg"
                                     />
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-semibold mb-2">Model</label>
-                                    <select
-                                        value={model}
-                                        onChange={(e) => setModel(e.target.value)}
-                                        className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm bg-white"
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleReset();
+                                        }}
+                                        className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-xs"
                                     >
-                                        {IMAGE_TO_VIDEO_MODELS.map((m) => (
-                                            <option key={m.value} value={m.value}>
-                                                {m.label} - {m.description}
-                                            </option>
-                                        ))}
-                                    </select>
+                                        Xóa
+                                    </button>
+                                </div>
+                            ) : (
+                                <>
+                                    <Upload className="w-12 h-12 mx-auto mb-3 text-gray-400" />
+                                    <p className="text-gray-600 font-medium">Kéo thả ảnh vào đây</p>
+                                    <p className="text-xs text-gray-500 mb-4">hoặc click để chọn file</p>
+                                    <button
+                                        type="button"
+                                        className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-semibold"
+                                    >
+                                        Chọn Ảnh
+                                    </button>
+                                </>
+                            )}
+                            <input
+                                ref={uploadInputRef}
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={handleFileChange}
+                            />
+                        </div>
+
+                        {/* Or URL input */}
+                        <div className="mt-4">
+                            <label className="block text-sm font-semibold mb-2">
+                                Hoặc nhập URL ảnh
+                            </label>
+                            <input
+                                type="text"
+                                value={imageUrl}
+                                onChange={(e) => setImageUrl(e.target.value)}
+                                placeholder="https://example.com/image.jpg"
+                                className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Prompt & Model */}
+                    <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                        <h2 className="text-xl font-bold mb-4">Mô Tả Chuyển Động</h2>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-semibold mb-2">Prompt</label>
+                                <textarea
+                                    value={prompt}
+                                    onChange={(e) => setPrompt(e.target.value)}
+                                    placeholder="Mô tả cách bạn muốn ảnh chuyển động, ví dụ: Chủ thể đang cử động nhẹ nhàng, gió thổi qua tóc..."
+                                    className="w-full border border-gray-300 rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-purple-500 min-h-[100px] text-sm"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-semibold mb-2">Model</label>
+                                <select
+                                    value={model}
+                                    onChange={(e) => setModel(e.target.value)}
+                                    className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm bg-white"
+                                >
+                                    {IMAGE_TO_VIDEO_MODELS.map((m) => (
+                                        <option key={m.value} value={m.value}>
+                                            {m.label} - {m.description}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    {error && (
+                        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-600 text-sm">
+                            {error}
+                        </div>
+                    )}
+
+                    {!videoUrl && (
+                        <button
+                            type="button"
+                            onClick={handleGenerate}
+                            disabled={loading || !imageUrl}
+                            className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-lg flex items-center justify-center gap-2 hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                        >
+                            {loading ? (
+                                <>
+                                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                    {taskStatus || "Đang xử lý..."}
+                                </>
+                            ) : (
+                                <>
+                                    <Play className="w-5 h-5" /> Tạo Video
+                                </>
+                            )}
+                        </button>
+                    )}
+                </section>
+
+                {/* Right Column - Result */}
+                <section className="space-y-6">
+                    {loading && !videoUrl && (
+                        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                            <div className="aspect-video rounded-2xl bg-gray-50 flex flex-col items-center justify-center">
+                                <div className="w-16 h-16 border-4 border-gray-200 border-t-purple-500 rounded-full animate-spin mb-4" />
+                                <p className="font-semibold text-gray-700">Đang tạo video...</p>
+                                <p className="text-sm text-gray-500">{taskStatus}</p>
+                                {taskId && (
+                                    <p className="text-xs text-gray-400 mt-2">Task ID: {taskId}</p>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {videoUrl && (
+                        <>
+                            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                                <h2 className="text-lg font-bold mb-4">Video Đã Tạo</h2>
+                                <div className="aspect-video rounded-2xl bg-black overflow-hidden">
+                                    <video
+                                        controls
+                                        autoPlay
+                                        loop
+                                        className="w-full h-full object-contain"
+                                    >
+                                        <source src={videoUrl} type="video/mp4" />
+                                        Trình duyệt không hỗ trợ video.
+                                    </video>
+                                </div>
+                            </div>
+
+                            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                                <div className="grid grid-cols-3 gap-3">
+                                    <button
+                                        type="button"
+                                        onClick={handleDownload}
+                                        className="flex items-center justify-center gap-2 py-3 rounded-xl bg-black text-white font-semibold hover:bg-gray-800"
+                                    >
+                                        <Download className="w-4 h-4" /> Tải Xuống
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleShare}
+                                        className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:from-purple-700 hover:to-pink-700"
+                                    >
+                                        <Share2 className="w-4 h-4" /> Chia Sẻ
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleReset}
+                                        className="flex items-center justify-center gap-2 py-3 rounded-xl border border-gray-300 font-semibold hover:bg-gray-50"
+                                    >
+                                        Tạo Mới
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                                <h3 className="font-bold mb-3">Chi Tiết</h3>
+                                <div className="space-y-2 text-sm">
+                                    <div>
+                                        <span className="text-gray-500">Model: </span>
+                                        <span className="font-medium">{model}</span>
+                                    </div>
+                                    <div>
+                                        <span className="text-gray-500">Prompt: </span>
+                                        <span className="font-medium">{prompt}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
+
+                    {!loading && !videoUrl && (
+                        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                            <div className="aspect-video border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center">
+                                <div className="text-center p-8">
+                                    <Film className="w-12 h-12 mx-auto text-gray-400 mb-3" />
+                                    <p className="font-semibold text-gray-700 mb-1">Chưa có video</p>
+                                    <p className="text-sm text-gray-500">
+                                        Upload ảnh, nhập mô tả chuyển động và nhấn "Tạo Video"
+                                    </p>
                                 </div>
                             </div>
                         </div>
-
-                        {error && (
-                            <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-600 text-sm">
-                                {error}
-                            </div>
-                        )}
-
-                        {!videoUrl && (
-                            <button
-                                type="button"
-                                onClick={handleGenerate}
-                                disabled={loading || !imageUrl}
-                                className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-lg flex items-center justify-center gap-2 hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                            >
-                                {loading ? (
-                                    <>
-                                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                        {taskStatus || "Đang xử lý..."}
-                                    </>
-                                ) : (
-                                    <>
-                                        <Play className="w-5 h-5" /> Tạo Video
-                                    </>
-                                )}
-                            </button>
-                        )}
-                    </section>
-
-                    {/* Right Column - Result */}
-                    <section className="space-y-6">
-                        {loading && !videoUrl && (
-                            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                                <div className="aspect-video rounded-2xl bg-gray-50 flex flex-col items-center justify-center">
-                                    <div className="w-16 h-16 border-4 border-gray-200 border-t-purple-500 rounded-full animate-spin mb-4" />
-                                    <p className="font-semibold text-gray-700">Đang tạo video...</p>
-                                    <p className="text-sm text-gray-500">{taskStatus}</p>
-                                    {taskId && (
-                                        <p className="text-xs text-gray-400 mt-2">Task ID: {taskId}</p>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-
-                        {videoUrl && (
-                            <>
-                                <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                                    <h2 className="text-lg font-bold mb-4">Video Đã Tạo</h2>
-                                    <div className="aspect-video rounded-2xl bg-black overflow-hidden">
-                                        <video
-                                            controls
-                                            autoPlay
-                                            loop
-                                            className="w-full h-full object-contain"
-                                        >
-                                            <source src={videoUrl} type="video/mp4" />
-                                            Trình duyệt không hỗ trợ video.
-                                        </video>
-                                    </div>
-                                </div>
-
-                                <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <button
-                                            type="button"
-                                            onClick={handleDownload}
-                                            className="flex items-center justify-center gap-2 py-3 rounded-xl bg-black text-white font-semibold hover:bg-gray-800"
-                                        >
-                                            <Download className="w-4 h-4" /> Tải Xuống
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={handleShare}
-                                            className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:from-purple-700 hover:to-pink-700"
-                                        >
-                                            <Share2 className="w-4 h-4" /> Đăng Feed
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowShareToGroup(true)}
-                                            className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold hover:from-blue-700 hover:to-cyan-700"
-                                        >
-                                            <Users className="w-4 h-4" /> Gửi Nhóm
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={handleReset}
-                                            className="flex items-center justify-center gap-2 py-3 rounded-xl border border-gray-300 font-semibold hover:bg-gray-50"
-                                        >
-                                            Tạo Mới
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                                    <h3 className="font-bold mb-3">Chi Tiết</h3>
-                                    <div className="space-y-2 text-sm">
-                                        <div>
-                                            <span className="text-gray-500">Model: </span>
-                                            <span className="font-medium">{model}</span>
-                                        </div>
-                                        <div>
-                                            <span className="text-gray-500">Prompt: </span>
-                                            <span className="font-medium">{prompt}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </>
-                        )}
-
-                        {!loading && !videoUrl && (
-                            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                                <div className="aspect-video border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center">
-                                    <div className="text-center p-8">
-                                        <Film className="w-12 h-12 mx-auto text-gray-400 mb-3" />
-                                        <p className="font-semibold text-gray-700 mb-1">Chưa có video</p>
-                                        <p className="text-sm text-gray-500">
-                                            Upload ảnh, nhập mô tả chuyển động và nhấn "Tạo Video"
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </section>
-                </div>
+                    )}
+                </section>
             </div>
-
-            {/* Share to Group Modal */}
-            <ShareToGroupModal
-                isOpen={showShareToGroup}
-                onClose={() => setShowShareToGroup(false)}
-                mediaUrl={videoUrl}
-                isVideo={true}
-                prompt={prompt}
-            />
-        </>);
+        </div>
+    );
 };
 
 export default ImageToVideo;
