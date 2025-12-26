@@ -1,6 +1,164 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
+
+// Error Alert Component with professional styling
+const ErrorAlert = ({ message, onClose }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [isLeaving, setIsLeaving] = useState(false);
+
+  const handleClose = useCallback(() => {
+    setIsLeaving(true);
+    setTimeout(() => onClose(), 300);
+  }, [onClose]);
+
+  useEffect(() => {
+    // Trigger enter animation
+    const showTimer = setTimeout(() => setIsVisible(true), 10);
+
+    // Auto dismiss after 5 seconds
+    const dismissTimer = setTimeout(() => {
+      handleClose();
+    }, 5000);
+
+    return () => {
+      clearTimeout(showTimer);
+      clearTimeout(dismissTimer);
+    };
+  }, [handleClose]);
+
+  // Categorize error for better user experience
+  const getErrorDetails = (errorMessage) => {
+    const lowerMessage = errorMessage.toLowerCase();
+
+    if (lowerMessage.includes("password") || lowerMessage.includes("incorrect") || lowerMessage.includes("wrong")) {
+      return {
+        title: "Incorrect Credentials",
+        description: "The password you entered is incorrect. Please try again.",
+        icon: "lock"
+      };
+    }
+    if (lowerMessage.includes("user") || lowerMessage.includes("not found") || lowerMessage.includes("exist")) {
+      return {
+        title: "Account Not Found",
+        description: "No account found with this username or email.",
+        icon: "user"
+      };
+    }
+    if (lowerMessage.includes("network") || lowerMessage.includes("connection") || lowerMessage.includes("timeout")) {
+      return {
+        title: "Connection Error",
+        description: "Unable to connect to server. Please check your internet connection.",
+        icon: "wifi"
+      };
+    }
+    if (lowerMessage.includes("blocked") || lowerMessage.includes("locked") || lowerMessage.includes("suspended")) {
+      return {
+        title: "Account Locked",
+        description: "Your account has been temporarily locked. Please try again later.",
+        icon: "shield"
+      };
+    }
+    if (lowerMessage.includes("too many") || lowerMessage.includes("rate limit")) {
+      return {
+        title: "Too Many Attempts",
+        description: "You've made too many login attempts. Please wait a moment.",
+        icon: "clock"
+      };
+    }
+
+    return {
+      title: "Login Failed",
+      description: errorMessage,
+      icon: "alert"
+    };
+  };
+
+  const errorDetails = getErrorDetails(message);
+
+  const renderIcon = () => {
+    const iconClass = "w-6 h-6 text-red-500";
+    switch (errorDetails.icon) {
+      case "lock":
+        return (
+          <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+        );
+      case "user":
+        return (
+          <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        );
+      case "wifi":
+        return (
+          <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
+          </svg>
+        );
+      case "shield":
+        return (
+          <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        );
+      case "clock":
+        return (
+          <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        );
+      default:
+        return (
+          <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        );
+    }
+  };
+
+  return (
+    <div
+      className={`mb-5 overflow-hidden rounded-xl border border-red-200 bg-gradient-to-r from-red-50 to-rose-50 shadow-lg transition-all duration-300 ease-out ${isVisible && !isLeaving
+        ? "opacity-100 translate-y-0"
+        : "opacity-0 -translate-y-2"
+        }`}
+    >
+      <div className="relative p-4">
+        {/* Progress bar for auto-dismiss */}
+        <div className="absolute top-0 left-0 h-1 bg-red-400 animate-shrink-width rounded-t-xl" />
+
+        <div className="flex items-start gap-3">
+          {/* Icon */}
+          <div className="flex-shrink-0 p-2 bg-red-100 rounded-lg">
+            {renderIcon()}
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 min-w-0">
+            <h4 className="text-sm font-semibold text-red-800 mb-0.5">
+              {errorDetails.title}
+            </h4>
+            <p className="text-sm text-red-600 leading-relaxed">
+              {errorDetails.description}
+            </p>
+          </div>
+
+          {/* Close button */}
+          <button
+            onClick={handleClose}
+            className="flex-shrink-0 p-1 text-red-400 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +168,7 @@ const LoginForm = () => {
   });
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [shakeInputs, setShakeInputs] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -19,6 +178,8 @@ const LoginForm = () => {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+    // Clear error when user starts typing
+    if (error) setError("");
   };
 
   const handleSubmit = async (e) => {
@@ -28,15 +189,20 @@ const LoginForm = () => {
 
     try {
       await login(formData.usernameOrEmail, formData.password);
+      // Only keep submitting true when successful - will navigate away
       navigate("/home");
     } catch (submitError) {
+      // Immediately stop submitting so error is visible
+      setSubmitting(false);
+
       const message =
         submitError?.response?.data?.message ||
         submitError?.message ||
         "An error occurred during login";
       setError(message);
-    } finally {
-      setSubmitting(false);
+      // Trigger shake animation on inputs
+      setShakeInputs(true);
+      setTimeout(() => setShakeInputs(false), 500);
     }
   };
 
@@ -77,6 +243,11 @@ const LoginForm = () => {
             <p className="text-gray-500 text-sm">Login to your account</p>
           </div>
 
+          {/* Error Alert */}
+          {error && (
+            <ErrorAlert message={error} onClose={() => setError("")} />
+          )}
+
           {/* Form */}
           <div className="mb-6">
             {/* Username */}
@@ -91,7 +262,8 @@ const LoginForm = () => {
                   value={formData.usernameOrEmail}
                   onChange={handleChange}
                   placeholder="Enter your username or email"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm transition-all outline-none focus:border-black focus:ring-4 focus:ring-black/10"
+                  className={`w-full px-4 py-3 border-2 rounded-xl text-sm transition-all outline-none focus:border-black focus:ring-4 focus:ring-black/10 ${error ? "border-red-300 bg-red-50/50" : "border-gray-200"
+                    } ${shakeInputs ? "animate-shake" : ""}`}
                 />
               </div>
 
@@ -106,16 +278,10 @@ const LoginForm = () => {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Enter your password"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm transition-all outline-none focus:border-black focus:ring-4 focus:ring-black/10"
+                  className={`w-full px-4 py-3 border-2 rounded-xl text-sm transition-all outline-none focus:border-black focus:ring-4 focus:ring-black/10 ${error ? "border-red-300 bg-red-50/50" : "border-gray-200"
+                    } ${shakeInputs ? "animate-shake" : ""}`}
                 />
               </div>
-
-              {/* Error message */}
-              {error && (
-                <div className="mb-4 text-red-500 text-sm text-center">
-                  {error}
-                </div>
-              )}
 
               {/* Remember & Forgot */}
               <div className="flex justify-between items-center mb-6">

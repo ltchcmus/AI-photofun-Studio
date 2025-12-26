@@ -59,12 +59,12 @@ export const AuthProvider = ({ children }) => {
       setUser(normalized);
       setIsAuthenticated(Boolean(normalized));
       setError("");
-      
+
       // Store user data in localStorage for AI API to use
       if (normalized?.id) {
         localStorage.setItem("user", JSON.stringify(normalized));
       }
-      
+
       return normalized;
     } catch (hydrateError) {
       console.error("Failed to hydrate user", hydrateError);
@@ -91,11 +91,15 @@ export const AuthProvider = ({ children }) => {
 
   const login = useCallback(
     async (username, password) => {
-      setLoading(true);
+      // Don't use global loading state here as it causes full-screen LoadingScreen
+      // which hides the login form and error messages
       setError("");
       try {
         await authApi.login(username, password);
+        // Only set loading true after successful API call, before hydrating user
+        setLoading(true);
         const currentUser = await hydrateUser();
+        setLoading(false);
         return currentUser;
       } catch (loginError) {
         console.error("Failed to login", loginError);
@@ -105,15 +109,13 @@ export const AuthProvider = ({ children }) => {
           "Đăng nhập thất bại"
         );
         throw loginError;
-      } finally {
-        setLoading(false);
       }
     },
     [hydrateUser]
   );
 
   const register = useCallback(async (payload) => {
-    setLoading(true);
+    // Don't use global loading state here 
     setError("");
     try {
       const response = await authApi.register(payload);
@@ -126,8 +128,6 @@ export const AuthProvider = ({ children }) => {
         "Đăng ký thất bại"
       );
       throw registerError;
-    } finally {
-      setLoading(false);
     }
   }, []);
 
