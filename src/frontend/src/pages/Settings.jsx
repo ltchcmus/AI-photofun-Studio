@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Coins,
   KeyRound,
@@ -7,18 +7,30 @@ import {
   ShieldCheck,
   Sparkles,
   Trash2,
+  Crown,
 } from "lucide-react";
-
-const DEFAULT_PLAN = {
-  currentPlan: "Free",
-  nextPlan: "Premium",
-  tokenBalance: 120,
-  dailyLimit: 200,
-};
+import { useAuth } from "../hooks/useAuth";
+import { userApi } from "../api/userApi";
 
 const Settings = () => {
-  const planInfo = useMemo(() => DEFAULT_PLAN, []);
-  const planIsPremium = planInfo.currentPlan?.toLowerCase() === "premium";
+  const { user } = useAuth();
+
+  // Xác định trạng thái premium và loại gói
+  const isPremiumOneMonth = Boolean(user?.premiumOneMonth);
+  const isPremiumSixMonths = Boolean(user?.premiumSixMonths);
+  const isPremium = isPremiumOneMonth || isPremiumSixMonths || Boolean(user?.isPremium || user?.premium);
+
+  // Xác định tên gói hiện tại
+  const currentPlanName = useMemo(() => {
+    if (isPremiumSixMonths) return "Premium 6 tháng";
+    if (isPremiumOneMonth) return "Premium 1 tháng";
+    if (isPremium) return "Premium";
+    return "Free";
+  }, [isPremiumOneMonth, isPremiumSixMonths, isPremium]);
+
+  const tokenBalance = user?.tokens ?? 0;
+  const dailyLimit = isPremium ? 500 : 200; // Premium có giới hạn cao hơn
+  const tokenUsagePercent = dailyLimit ? Math.min(tokenBalance / dailyLimit, 1) * 100 : 0;
 
   const accountActions = [
     {
@@ -38,15 +50,23 @@ const Settings = () => {
     },
   ];
 
-  const socialProviders = [
-    { id: "google", name: "Google", status: "Đã liên kết" },
-    { id: "facebook", name: "Facebook", status: "Chưa liên kết" },
-    { id: "apple", name: "Apple", status: "Chưa liên kết" },
-  ];
+  // Trạng thái liên kết Google (dựa vào xác minh email)
+  const [googleLinked, setGoogleLinked] = useState(false);
 
-  const tokenUsagePercent = planInfo.dailyLimit
-    ? Math.min(planInfo.tokenBalance / planInfo.dailyLimit, 1) * 100
-    : 0;
+  useEffect(() => {
+    const checkGoogleLinkStatus = async () => {
+      try {
+        const response = await userApi.checkVerifyStatus();
+        const isVerified = response.data?.result ?? false;
+        setGoogleLinked(isVerified);
+      } catch (error) {
+        console.error("Failed to check Google link status:", error);
+        setGoogleLinked(false);
+      }
+    };
+    checkGoogleLinkStatus();
+  }, []);
+
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -112,21 +132,14 @@ const Settings = () => {
               </div>
             </div>
             <div className="flex flex-wrap gap-3">
-              {socialProviders.map((provider) => {
-                const isLinked = provider.status === "Đã liên kết";
-                return (
-                  <span
-                    key={provider.id}
-                    className={`px-3 py-1.5 rounded-full text-sm font-medium border ${
-                      isLinked
-                        ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                        : "border-gray-200 bg-gray-50 text-gray-600"
-                    }`}
-                  >
-                    {provider.name} — {provider.status}
-                  </span>
-                );
-              })}
+              <span
+                className={`px-3 py-1.5 rounded-full text-sm font-medium border ${googleLinked
+                    ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                    : "border-gray-200 bg-gray-50 text-gray-600"
+                  }`}
+              >
+                Google — {googleLinked ? "Đã liên kết" : "Chưa liên kết"}
+              </span>
             </div>
           </div>
 
@@ -144,6 +157,7 @@ const Settings = () => {
               </div>
               <button
                 type="button"
+                onClick={() => alert("Tính năng này chưa được hỗ trợ")}
                 className="px-4 py-2 rounded-lg border border-red-200 text-sm font-semibold text-red-600 hover:bg-white"
               >
                 Xóa tài khoản
@@ -153,84 +167,68 @@ const Settings = () => {
         </div>
       </section>
 
-      <section className="bg-white border border-gray-200 rounded-2xl p-6 space-y-5">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-lg font-semibold">Gói dịch vụ</h2>
-          <p className="text-sm text-gray-500">
-            Theo dõi gói hiện tại và dung lượng token trong ngày.
-          </p>
-        </div>
+      {isPremium && (
+        <section className="bg-white border border-gray-200 rounded-2xl p-6 space-y-5">
+          <div className="flex flex-col gap-1">
+            <h2 className="text-lg font-semibold flex items-center gap-2">
+              <Crown className="w-5 h-5 text-yellow-500" />
+              Gói dịch vụ Premium
+            </h2>
+            <p className="text-sm text-gray-500">
+              Thông tin gói Premium hiện tại của bạn.
+            </p>
+          </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="border border-gray-100 rounded-xl p-5 space-y-4">
-            <div className="flex items-center gap-3">
-              <span className="p-2 rounded-full bg-purple-50 text-purple-600">
-                <Sparkles className="w-5 h-5" />
-              </span>
-              <div>
-                <p className="text-sm text-gray-500">Gói hiện tại</p>
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl font-bold">
-                    {planInfo.currentPlan || "Free"}
-                  </span>
-                  <span
-                    className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
-                      planIsPremium
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-gray-100 text-gray-600"
-                    }`}
-                  >
-                    {planIsPremium ? "Premium" : "Free"}
-                  </span>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="border border-yellow-200 rounded-xl p-5 space-y-4 bg-gradient-to-br from-yellow-50 to-orange-50">
+              <div className="flex items-center gap-3">
+                <span className="p-2 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
+                  <Crown className="w-5 h-5" />
+                </span>
+                <div>
+                  <p className="text-sm text-gray-500">Gói hiện tại</p>
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
+                      {currentPlanName}
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
+                      {isPremiumSixMonths ? "6 THÁNG" : isPremiumOneMonth ? "1 THÁNG" : "PRO"}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <p className="text-sm text-gray-500">
-              {planIsPremium
-                ? "Bạn đang mở khóa toàn bộ bộ công cụ cao cấp."
-                : "Nâng cấp để sử dụng không giới hạn và thêm token."}
-            </p>
-            <button
-              type="button"
-              className="w-full px-4 py-2 rounded-lg bg-black text-white font-semibold hover:bg-gray-900"
-            >
-              {planIsPremium ? "Quản lý gói" : "Nâng cấp lên Premium"}
-            </button>
-          </div>
-
-          <div className="border border-gray-100 rounded-xl p-5 space-y-4">
-            <div className="flex items-center gap-3">
-              <span className="p-2 rounded-full bg-emerald-50 text-emerald-600">
-                <Coins className="w-5 h-5" />
-              </span>
-              <div>
-                <p className="text-sm text-gray-500">Số dư token trong ngày</p>
-                <h3 className="text-3xl font-bold">
-                  {planInfo.tokenBalance}
-                  <span className="text-base font-normal text-gray-500 ml-2">
-                    token
-                  </span>
-                </h3>
-              </div>
-            </div>
-            <div>
-              <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
-                <div
-                  className="h-full bg-emerald-500 rounded-full"
-                  style={{ width: `${tokenUsagePercent}%` }}
-                />
-              </div>
-              <p className="text-xs text-gray-500 mt-2">
-                {planInfo.tokenBalance} / {planInfo.dailyLimit} token hôm nay
+              <p className="text-sm text-gray-600">
+                {isPremiumSixMonths
+                  ? "Bạn đang sử dụng gói Premium 6 tháng với đầy đủ tính năng cao cấp."
+                  : isPremiumOneMonth
+                    ? "Bạn đang sử dụng gói Premium 1 tháng với đầy đủ tính năng cao cấp."
+                    : "Bạn đang mở khóa toàn bộ bộ công cụ cao cấp."}
               </p>
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <ShieldCheck className="w-4 h-4" />
-              Token sẽ được làm mới vào 0h hằng ngày.
+
+            <div className="border border-gray-100 rounded-xl p-5 space-y-4">
+              <div className="flex items-center gap-3">
+                <span className="p-2 rounded-full bg-emerald-50 text-emerald-600">
+                  <Coins className="w-5 h-5" />
+                </span>
+                <div>
+                  <p className="text-sm text-gray-500">Số dư token trong tháng</p>
+                  <h3 className="text-3xl font-bold">
+                    {tokenBalance}
+                    <span className="text-base font-normal text-gray-500 ml-2">
+                      token
+                    </span>
+                  </h3>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <ShieldCheck className="w-4 h-4" />
+                Token sẽ được làm mới vào ngày đầu tiên tháng sau.
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 };
