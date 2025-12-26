@@ -17,6 +17,7 @@ import Relight from "../pages/Relight";
 import ImageExpand from "../pages/ImageExpand";
 import ImageToVideo from "../pages/ImageToVideo";
 import PromptToVideo from "../pages/PromptToVideo";
+import AIChat from "../pages/AIChat";
 import Notifications from "../pages/Notifications";
 import MessagesPage from "../pages/MessagesPage";
 import Profile from "../pages/Profile";
@@ -83,6 +84,7 @@ function AppRoutes() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/ai-tools" element={<AITools />} />
+        <Route path="/ai-chat" element={<AIChat />} />
         <Route path="/background-tools" element={<BackgroundTools />} />
         <Route path="/text-to-image" element={<TextToImage />} />
         <Route path="/face-swap" element={<FaceSwap />} />

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Sparkles, Wand2, Zap, Image as ImageIcon, Sun, Maximize2, Film, Video } from "lucide-react";
+import { ArrowLeft, Sparkles, Wand2, Zap, Image as ImageIcon, Sun, Maximize2, Film, Video, MessageCircle } from "lucide-react";
 
 const CreateWithAI = () => {
   const [currentView, setCurrentView] = useState("tool-selection");
@@ -8,6 +8,13 @@ const CreateWithAI = () => {
   const navigate = useNavigate();
 
   const tools = [
+    {
+      id: "ai-chat",
+      icon: <MessageCircle className="w-7 h-7 text-purple-500" />,
+      title: "AI Chat",
+      description: "Chat với AI để tạo và chỉnh sửa ảnh tự động",
+      featured: true,
+    },
     {
       id: "generate",
       icon: <Sparkles className="w-7 h-7 text-purple-500" />,
@@ -59,6 +66,10 @@ const CreateWithAI = () => {
   ];
 
   const handleSelectTool = (tool) => {
+    if (tool.id === "ai-chat") {
+      navigate("/ai-chat");
+      return;
+    }
     if (tool.id === "generate") {
       navigate("/text-to-image");
       return;
@@ -138,14 +149,31 @@ const CreateWithAI = () => {
               <button
                 key={tool.id}
                 onClick={() => handleSelectTool(tool)}
-                className="w-full bg-white border border-gray-200 rounded-2xl p-5 hover:bg-gray-50 transition-colors text-left flex items-center gap-4"
+                className={`w-full rounded-2xl p-5 transition-all text-left flex items-center gap-4 ${tool.featured
+                    ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                    : "bg-white border border-gray-200 hover:bg-gray-50"
+                  }`}
               >
-                <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center shrink-0">
-                  {tool.icon}
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${tool.featured ? "bg-white/20" : "bg-gray-100"
+                  }`}>
+                  {tool.featured ? (
+                    <span className="text-white">{tool.icon}</span>
+                  ) : (
+                    tool.icon
+                  )}
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-base">{tool.title}</h3>
-                  <p className="text-gray-600 text-sm">{tool.description}</p>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-semibold text-base">{tool.title}</h3>
+                    {tool.featured && (
+                      <span className="px-2 py-0.5 bg-white/20 text-white text-xs font-medium rounded-full">
+                        ✨ NEW
+                      </span>
+                    )}
+                  </div>
+                  <p className={tool.featured ? "text-white/80 text-sm" : "text-gray-600 text-sm"}>
+                    {tool.description}
+                  </p>
                 </div>
               </button>
             ))}
