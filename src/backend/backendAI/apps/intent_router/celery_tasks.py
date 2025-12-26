@@ -73,6 +73,13 @@ def route_to_ai_feature_task(self, refined_prompt_result: dict) -> tuple:
     Returns:
         Tuple of (wrapped_refined_prompt, feature_result_dict)
     """
+    import time
+    from core.token_client import token_client
+    from core.exceptions import TokenServiceError
+    
+    # Start timing for token deduction
+    start_time = time.time()
+    
     try:
         logger.warning("="*80)
         logger.warning(f"[IntentRouter] TASK CALLED! Task ID: {self.request.id}")
@@ -416,3 +423,47 @@ def route_to_ai_feature_task(self, refined_prompt_result: dict) -> tuple:
         return wrapped_refined_prompt, ResponseFormatter.error(
             message=f"Feature execution error: {str(e)}"
         )
+    finally:
+        # Deduct tokens based on processing time (regardless of success/failure)
+        processing_time = time.time() - start_time
+        tokens_to_deduct = token_client.calculate_tokens_from_processing_time(processing_time)
+        
+        # Extract user_id from context (session_id is used as user_id in conversation)
+        try:
+            # Get the actual user_id from the conversation
+            from apps.conversation.models import get_conversations_collection
+            context = refined_prompt_result.get('context', {})
+            session_id = context.get('session_id')
+            
+            if session_id:
+                conversations = get_conversations_collection()
+                convo = conversations.find_one({'session_id': session_id})
+                if convo:
+                    actual_user_id = convo.get('user_id')
+                    if actual_user_id:
+                        token_client.deduct_tokens(
+                            user_id=actual_user_id,
+                            amount=tokens_to_deduct,
+                            reason=f"conversation_{intent}",
+                            metadata={
+                                'processing_time': processing_time,
+                                'intent': intent,
+                                'session_id': session_id
+                            }
+                        )
+                        logger.info(
+                            f"[IntentRouter] Deducted {tokens_to_deduct} tokens from user {actual_user_id} "
+                            f"for {intent} (processing time: {processing_time:.2f}s)"
+                        )
+                    else:
+                        logger.warning(f"[IntentRouter] No user_id in conversation {session_id}")
+                else:
+                    logger.warning(f"[IntentRouter] Conversation {session_id} not found")
+            else:
+                logger.warning("[IntentRouter] No session_id in context, skipping token deduction")
+        except TokenServiceError as e:
+            logger.error(f"[IntentRouter] Token deduction failed: {str(e)}")
+            # Don't fail the task if token deduction fails
+        except Exception as e:
+            logger.error(f"[IntentRouter] Error during token deduction: {str(e)}", exc_info=True)
+

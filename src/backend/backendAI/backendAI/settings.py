@@ -26,17 +26,13 @@ def env_int(name, default=0):
 # CORE SETTINGS
 # ============================================================================
 
-SECRET_KEY = (
-    os.environ.get('DJANGO_SECRET_KEY')
-    or os.environ.get('SECRET_KEY')
-    or "django-insecure-(x2q%0-9oh7r=0klrzt0#f4^kh2rhy_ajje#uow5racu$ju^3k"
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    "django-insecure-(x2q%0-9oh7r=0klrzt0#f4^kh2rhy_ajje#uow5racu$ju^3k",
 )
 
 DEBUG = env_bool('DJANGO_DEBUG', True)
-
-# Default allowed hosts include production domains
-_default_hosts = 'localhost,127.0.0.1,0.0.0.0,nmcnpm-api-ai.lethanhcong.site,nmcnpm.lethanhcong.site'
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', _default_hosts).split(',')
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',')
 
 # URL Configuration
 APPEND_SLASH = True  # Auto-redirect URLs without trailing slash to with trailing slash
@@ -55,14 +51,11 @@ INSTALLED_APPS = [
     "drf_yasg",
     "apps.conversation",
     "apps.prompt_service",
-    "apps.rec_prompt",
-    "apps.prompt_to_video",
     "apps.image_service",
     "apps.image_gallery",
     "apps.intent_router",
     "apps.image_generation",
     "apps.upscale",
-    "apps.image_to_video",
     "apps.remove_background",
     "apps.relight",
     "apps.style_transfer",
@@ -132,12 +125,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # INTERNATIONALIZATION
 # ============================================================================
 
-LANGUAGE_CODE = os.environ.get('LANGUAGE_CODE', 'en-us') or 'en-us'
-
-# TIME_ZONE must be a valid timezone string, fallback to UTC if empty/invalid
-_time_zone_env = os.environ.get('TIME_ZONE', '').strip()
-TIME_ZONE = _time_zone_env if _time_zone_env else 'UTC'
-
+LANGUAGE_CODE = os.environ.get('LANGUAGE_CODE', 'en-us')
+TIME_ZONE = os.environ.get('TIME_ZONE', 'UTC')
 USE_I18N = env_bool('USE_I18N', True)
 USE_TZ = env_bool('USE_TZ', True)
 
@@ -236,24 +225,11 @@ MEDIA_ROOT = BASE_DIR / 'media'
 ML_MODELS_DIR = BASE_DIR / 'ml_models'
 
 # ==========================================================================
-# External Service URLs & API Keys
+# External Service URLs (configured via environment only; no extra .env files)
 # ==========================================================================
 # MEDIA_UPLOAD_URL: Endpoint to upload generated images (expects multipart/form-data)
 # Example expected response: { "file_url": "https://.../image.png" }
 # GEMINI_MODEL: Optional model name for prompt refinement metadata
-
-# Freepik API Key for AI image generation
-FREEPIK_API_KEY = os.environ.get('FREEPIK_API_KEY', '')
-
-# Gemini API Keys (comma-separated for rotation)
-GEMINI_API_KEYS = os.environ.get('GEMINI_API_KEYS', '')
-
-# ModelStudio API
-MODELSTUDIO_API_KEY = os.environ.get('MODELSTUDIO_API_KEY', '')
-MODELSTUDIO_API_BASE = os.environ.get('MODELSTUDIO_API_BASE', 'https://dashscope-intl.aliyuncs.com/api/v1')
-
-# File Service URL for image uploads
-FILE_SERVICE_URL = os.environ.get('FILE_SERVICE_URL', 'https://file-service-cdal.onrender.com')
 
 os.makedirs(MEDIA_ROOT, exist_ok=True)
 os.makedirs(ML_MODELS_DIR, exist_ok=True)
@@ -304,6 +280,31 @@ LOGGING = {
 }
 
 os.makedirs(BASE_DIR / 'logs', exist_ok=True)
+
+# ============================================================================
+# EXTERNAL API KEYS
+# ============================================================================
+
+# Freepik API
+FREEPIK_API_KEY = os.environ.get('FREEPIK_API_KEY', '')
+
+# Gemini AI
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
+
+# Token Service
+TOKEN_SERVICE_URL = os.environ.get('TOKEN_SERVICE_URL', '')
+TOKEN_API_KEY_1 = os.environ.get('TOKEN_API_KEY_1', '')
+TOKEN_API_KEY_2 = os.environ.get('TOKEN_API_KEY_2', '')
+TOKEN_SERVICE_TIMEOUT = env_int('TOKEN_SERVICE_TIMEOUT', 10)
+
+# Video Generation Mock Mode
+# MOCK_VIDEO_GENERATION removed - using real API
+
+# JWT Authentication
+JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', '')
+JWT_ALGORITHM = os.environ.get('JWT_ALGORITHM', 'HS512')
+JWT_ISSUER = os.environ.get('JWT_ISSUER', 'ThanhCong')
+JWT_AUDIENCE = os.environ.get('JWT_AUDIENCE', 'NMCNPM-CLIENT')
 
 # ============================================================================
 # CELERY

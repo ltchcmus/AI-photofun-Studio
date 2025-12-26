@@ -6,8 +6,7 @@ from rest_framework import status
 from core import APIResponse
 from .serializers import ReimagineInputSerializer
 from .services import ReimagineService, ReimagineError
-from core.token_decorators import require_tokens
-from core.token_costs import TOKEN_COSTS
+from core.token_decorators import track_processing_time
 from core.image_input_handler import ImageInputHandler
 import logging
 
@@ -17,7 +16,7 @@ logger = logging.getLogger(__name__)
 class ReimagineView(APIView):
     """Reimagine image - POST /v1/features/reimagine/"""
     
-    @require_tokens(cost=TOKEN_COSTS['reimagine'], feature='reimagine')
+    @track_processing_time(feature='reimagine', min_required_tokens=15)
     def post(self, request):
         serializer = ReimagineInputSerializer(data=request.data)
         if not serializer.is_valid():

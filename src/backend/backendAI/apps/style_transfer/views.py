@@ -6,8 +6,7 @@ from rest_framework import status
 from core import APIResponse
 from .serializers import StyleTransferInputSerializer
 from .services import StyleTransferService, StyleTransferError
-from core.token_decorators import require_tokens
-from core.token_costs import TOKEN_COSTS
+from core.token_decorators import track_processing_time
 from core.image_input_handler import ImageInputHandler
 import logging
 
@@ -17,7 +16,7 @@ logger = logging.getLogger(__name__)
 class StyleTransferView(APIView):
     """Style transfer - POST /v1/features/style-transfer/"""
     
-    @require_tokens(cost=TOKEN_COSTS['style_transfer'], feature='style_transfer')
+    @track_processing_time(feature='style_transfer', min_required_tokens=12)
     def post(self, request):
         serializer = StyleTransferInputSerializer(data=request.data)
         if not serializer.is_valid():

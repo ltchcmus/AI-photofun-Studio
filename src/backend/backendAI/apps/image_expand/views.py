@@ -6,8 +6,7 @@ from rest_framework import status
 from core import APIResponse
 from .serializers import ImageExpandInputSerializer
 from .services import ImageExpandService, ImageExpandError
-from core.token_decorators import require_tokens
-from core.token_costs import TOKEN_COSTS
+from core.token_decorators import track_processing_time
 from core.image_input_handler import ImageInputHandler
 import logging
 
@@ -17,7 +16,7 @@ logger = logging.getLogger(__name__)
 class ImageExpandView(APIView):
     """Expand image - POST /v1/features/image-expand/"""
     
-    @require_tokens(cost=TOKEN_COSTS['image_expand'], feature='image_expand')
+    @track_processing_time(feature='image_expand', min_required_tokens=10)
     def post(self, request):
         serializer = ImageExpandInputSerializer(data=request.data)
         if not serializer.is_valid():
