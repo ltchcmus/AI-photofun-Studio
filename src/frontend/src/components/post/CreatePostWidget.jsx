@@ -3,6 +3,9 @@ import { Image, Video, Sparkles, X, Loader2 } from "lucide-react";
 
 const DEFAULT_AVATAR = "https://placehold.co/40x40/111/fff?text=U";
 
+// Prompt mặc định khi người dùng tự upload ảnh/video (không phải từ AI tools)
+const DEFAULT_PROMPT = "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e";
+
 export default function CreatePostWidget({
   currentUser,
   onCreatePost,
@@ -46,6 +49,9 @@ export default function CreatePostWidget({
   }, [autoOpen]);
 
   // Pre-fill data from AI tools
+  // isFromAiTools = true khi có initialPrompt hoặc initialImageUrl từ AI tools
+  const isFromAiTools = Boolean(initialPrompt || initialImageUrl);
+
   useEffect(() => {
     if (initialImageUrl) {
       setImagePreview(initialImageUrl);
@@ -150,14 +156,17 @@ export default function CreatePostWidget({
     setError("");
     setSubmitting(true);
     try {
+      // Sử dụng prompt mặc định nếu không có prompt (khi tự upload)
+      const finalPrompt = prompt.trim() || DEFAULT_PROMPT;
+
       if (postType === "video" && videoFile) {
         // Create video post
-        await onCreateVideoPost({ caption, prompt, video: videoFile });
+        await onCreateVideoPost({ caption, prompt: finalPrompt, video: videoFile });
       } else {
         // Create image post - pass imageUrl if no file (from AI tools)
         await onCreatePost({
           caption,
-          prompt,
+          prompt: finalPrompt,
           image: imageFile,
           imageUrl: !imageFile && imagePreview ? imagePreview : undefined
         });
@@ -322,19 +331,21 @@ export default function CreatePostWidget({
                   />
                 </div>
 
-                <div className="mt-6">
-                  <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-gray-600">
-                    <Sparkles className="w-4 h-4 text-purple-500" /> Prompt đã
-                    dùng (tuỳ chọn)
-                  </label>
-                  <textarea
-                    value={prompt}
-                    onChange={(event) => setPrompt(event.target.value)}
-                    placeholder="Nhập prompt bạn đã dùng để tạo ảnh/video..."
-                    className="mt-3 w-full rounded-xl border border-gray-200 bg-gray-50 p-3 text-xs font-mono text-gray-700 focus:ring-2 focus:ring-purple-200"
-                    rows={3}
-                  />
-                </div>
+                {isFromAiTools && (
+                  <div className="mt-6">
+                    <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-gray-600">
+                      <Sparkles className="w-4 h-4 text-purple-500" /> Prompt đã
+                      dùng (tuỳ chọn)
+                    </label>
+                    <textarea
+                      value={prompt}
+                      onChange={(event) => setPrompt(event.target.value)}
+                      placeholder="Nhập prompt bạn đã dùng để tạo ảnh/video..."
+                      className="mt-3 w-full rounded-xl border border-gray-200 bg-gray-50 p-3 text-xs font-mono text-gray-700 focus:ring-2 focus:ring-purple-200"
+                      rows={3}
+                    />
+                  </div>
+                )}
 
                 {error && (
                   <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">

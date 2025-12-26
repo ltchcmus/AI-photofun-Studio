@@ -26,8 +26,15 @@ const extractBackendId = (post) =>
 const normalizePost = (post, index = 0) => {
   if (!post) return null;
 
+  // Prompt mặc định khi người dùng tự upload ảnh/video (không phải từ AI tools)
+  const DEFAULT_PROMPT = "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e";
+
   const author = post.author || post.user || post.owner || post.createdBy || {};
   const promptValue = typeof post.prompt === "string" ? post.prompt.trim() : "";
+
+  // Ẩn prompt nếu là chuỗi mặc định (người dùng tự upload, không có prompt thực)
+  const isDefaultPrompt = promptValue === DEFAULT_PROMPT;
+
   const userId =
     post.userId || post.userID || post.ownerId || post.authorId || author.id;
   const name =
@@ -65,8 +72,8 @@ const normalizePost = (post, index = 0) => {
     likes: post.totalLikes ?? post.likeCount ?? post.likes ?? 0,
     comments: post.totalComments ?? post.commentCount ?? post.comments ?? 0,
     liked: Boolean(post.liked ?? post.isLiked ?? false),
-    hasPrompt: Boolean(promptValue),
-    prompt: promptValue,
+    hasPrompt: Boolean(promptValue) && !isDefaultPrompt,
+    prompt: isDefaultPrompt ? "" : promptValue,
     userId,
   };
 };
@@ -312,9 +319,8 @@ export const usePosts = (options = {}) => {
     async ({ caption, prompt, image, imageUrl }) => {
       const formData = new FormData();
       formData.append("caption", caption || "");
-      if (prompt?.trim()) {
-        formData.append("prompt", prompt.trim());
-      }
+      // API yêu cầu prompt bắt buộc, luôn gửi prompt
+      formData.append("prompt", prompt || "");
 
       // If we have an image file, use it directly
       if (image) {
@@ -379,9 +385,8 @@ export const usePosts = (options = {}) => {
       // Step 2: Create video post with the URL
       const formData = new FormData();
       formData.append("caption", caption || "");
-      if (prompt?.trim()) {
-        formData.append("prompt", prompt.trim());
-      }
+      // API yêu cầu prompt bắt buộc, luôn gửi prompt
+      formData.append("prompt", prompt || "");
       formData.append("videoUrl", videoUrl);
 
       const response = await postApi.createVideoPost(formData);
