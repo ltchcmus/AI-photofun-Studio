@@ -1,5 +1,4 @@
 import axios from "axios";
-import { getUserId } from "../utils/userUtils.js";
 import rateLimiter from "../utils/rateLimiter";
 // Base URL for AI backend - use environment variable for production
 const AI_BASE_URL = import.meta.env.VITE_AI_API_URL || "http://localhost:9999";
@@ -38,6 +37,22 @@ aiClient.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// Get the authenticated user ID from JWT token or localStorage
+const getUserId = () => {
+  // First, try to get from cached user data
+  const cachedUser = localStorage.getItem("user");
+  if (cachedUser) {
+    try {
+      const userData = JSON.parse(cachedUser);
+      if (userData?.id) {
+        return userData.id;
+      }
+    } catch (e) {
+      console.warn("Failed to parse cached user data: ", e);
+    }
+  }
+};
 
 // Generate a unique session ID
 const getSessionId = () => {
@@ -721,6 +736,9 @@ export default {
   pollTaskStatus,
   uploadImageForAI,
   getSessionId,
+  suggestPrompts,
+  recordPromptChoice,
+  getUserId,
   generateVideoFromPrompt,
   generateVideoFromImage,
   pollVideoTaskStatus,
