@@ -711,11 +711,16 @@ const MessagesPage = () => {
   }, [messages]);
 
   // Handle share to group from AI tools
+  const hasSentShareRef = useRef(false);
+
   useEffect(() => {
     if (!pendingShareMedia || !groups.length || !socketRef.current || !socketConnected) return;
+    if (hasSentShareRef.current) return; // Prevent duplicate sends
 
     const targetGroup = groups.find(g => g.groupId === pendingShareMedia.groupId);
     if (targetGroup) {
+      hasSentShareRef.current = true; // Mark as sent
+
       // Select the target group
       setActiveChat(targetGroup);
       setActiveTab("groups");
@@ -746,28 +751,14 @@ const MessagesPage = () => {
         };
         setMessages(prev => [...prev, newMsg]);
 
-        // Send additional text message if provided
-        if (pendingShareMedia.message) {
-          const textMessageData = {
-            senderId: user.id,
-            groupId: pendingShareMedia.groupId,
-            message: pendingShareMedia.message,
-            isImage: false,
-          };
-          socketRef.current.emit("sendMessageToGroup", textMessageData);
-
-          const textMsg = {
-            id: Date.now() + 1,
-            sender: "me",
-            text: pendingShareMedia.message,
-            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          };
-          setMessages(prev => [...prev, textMsg]);
-        }
-
         // Clear pending and location state
         setPendingShareMedia(null);
         navigate("/messages", { replace: true, state: {} });
+
+        // Reset the ref after a delay
+        setTimeout(() => {
+          hasSentShareRef.current = false;
+        }, 1000);
       };
 
       sendMedia();
