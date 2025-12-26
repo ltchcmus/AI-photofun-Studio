@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Download, Film, Play, Share2, Users, Video } from "lucide-react";
 import { suggestPrompts, recordPromptChoice } from "../api/aiApi";
 import ShareToGroupModal from "../components/common/ShareToGroupModal";
+import { formatAIError } from "../utils/formatAIError";
 
 // Models for Prompt to Video (Text to Video)
 const PROMPT_TO_VIDEO_MODELS = [
@@ -177,11 +178,11 @@ const PromptToVideo = () => {
                 // Initial poll
                 setTimeout(() => pollStatus(data.result.task_id), 1000);
             } else {
-                setError(data.message || "Không thể tạo video. Vui lòng thử lại.");
+                setError(formatAIError(data.message));
                 setLoading(false);
             }
         } catch (err) {
-            setError("Lỗi kết nối: " + err.message);
+            setError(formatAIError(err));
             setLoading(false);
         }
     };

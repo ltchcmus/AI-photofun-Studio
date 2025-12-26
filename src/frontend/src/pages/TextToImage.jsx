@@ -158,6 +158,26 @@ const TextToImage = () => {
       console.error('Failed to record prompt choice:', err);
     }
 
+    // Helper to format error message
+    const formatError = (error) => {
+      const errorStr = (error?.toString() || "").toLowerCase();
+      const errorMsg = (error?.message || "").toLowerCase();
+
+      if (errorStr.includes("429") || errorStr.includes("rate limit") ||
+        errorStr.includes("quota") || errorStr.includes("limit") ||
+        errorMsg.includes("429") || errorMsg.includes("rate limit") ||
+        errorMsg.includes("exceeded")) {
+        return "⚠️ Bạn đã đạt giới hạn tạo ảnh trong ngày hôm nay. Vui lòng thử lại vào ngày mai hoặc nâng cấp Premium.";
+      }
+      if (errorStr.includes("401") || errorStr.includes("unauthorized")) {
+        return "⚠️ Lỗi xác thực. Vui lòng đăng nhập lại.";
+      }
+      if (errorStr.includes("500") || errorStr.includes("server")) {
+        return "⚠️ Máy chủ đang bận. Vui lòng thử lại sau ít phút.";
+      }
+      return error?.message || error || "Đã xảy ra lỗi. Vui lòng thử lại.";
+    };
+
     try {
       // Step 1: Submit generation request
       const genResult = await generateImage({
@@ -167,7 +187,7 @@ const TextToImage = () => {
       });
 
       if (!genResult.success) {
-        setError(genResult.error || "Không thể tạo ảnh. Vui lòng thử lại.");
+        setError(formatError(genResult.error));
         setLoading(false);
         return;
       }
@@ -192,10 +212,10 @@ const TextToImage = () => {
           aspectRatio,
         });
       } else {
-        setError(pollResult.error || "Không thể tạo ảnh. Vui lòng thử lại.");
+        setError(formatError(pollResult.error));
       }
     } catch (err) {
-      setError(err.message || "Đã xảy ra lỗi. Vui lòng thử lại.");
+      setError(formatError(err));
     } finally {
       setLoading(false);
       setTaskStatus("");

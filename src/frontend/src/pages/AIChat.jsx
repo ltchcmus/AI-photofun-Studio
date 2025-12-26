@@ -20,6 +20,7 @@ import ShareToGroupModal from "../components/common/ShareToGroupModal";
 import CreatePostWidget from "../components/post/CreatePostWidget";
 import { communicationApi } from "../api/communicationApi";
 import { usePosts } from "../hooks/usePosts";
+import { formatAIError } from "../utils/formatAIError";
 
 const AI_BACKEND_URL = import.meta.env.VITE_AI_BACKEND_URL || "https://nmcnpm-api-ai.lethanhcong.site:46337/api/v1";
 
@@ -157,9 +158,15 @@ const AIChat = () => {
     // Update message from API response
     const updateMessageFromAPI = (apiMsg) => {
         const imageUrl = apiMsg.image_url || apiMsg.uploaded_urls?.[0];
-        const content = apiMsg.content || "Hoàn thành!";
         const intent = apiMsg.metadata?.intent;
         const extractedParams = apiMsg.metadata?.extracted_params;
+
+        // Format content based on status
+        let content = apiMsg.content || "Hoàn thành!";
+        if (apiMsg.status === "FAILED") {
+            // Use formatAIError to show friendly message instead of raw technical error
+            content = formatAIError(apiMsg.content || apiMsg.error);
+        }
 
         setMessages((prev) =>
             prev.map((m) =>
@@ -428,7 +435,7 @@ const AIChat = () => {
                                         <img
                                             src={msg.imageUrl}
                                             alt="AI Generated"
-                                            className="rounded-xl max-w-full cursor-pointer hover:opacity-90 transition-opacity"
+                                            className="rounded-xl max-w-[300px] max-h-[250px] object-contain cursor-pointer hover:opacity-90 transition-opacity"
                                             onClick={() => setLightboxImage(msg.imageUrl)}
                                         />
                                         {msg.role === "bot" && (

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Download, Film, Image, Play, Share2, Upload, Users } from "lucide-react";
 import { communicationApi } from "../api/communicationApi";
 import ShareToGroupModal from "../components/common/ShareToGroupModal";
+import { formatAIError } from "../utils/formatAIError";
 
 // Models for Image to Video
 const IMAGE_TO_VIDEO_MODELS = [
