@@ -4,6 +4,7 @@ import { useAuth } from "../hooks/useAuth";
 import LoadingScreen from "../components/common/LoadingScreen";
 import axiosClient from "../api/axiosClient";
 import SetPasswordModal from "../components/auth/SetPasswordModal";
+import tokenManager from "../api/tokenManager";
 
 // API Gateway URL - use environment variable for production
 const API_GATEWAY = import.meta.env.VITE_API_GATEWAY || "http://localhost:8888";
@@ -13,7 +14,7 @@ const GoogleLoadingPage = () => {
   const { refreshUser } = useAuth();
   const [error, setError] = useState("");
   const [showSetPasswordModal, setShowSetPasswordModal] = useState(false);
-  
+
   // Prevent double call in React StrictMode
   const hasCalledRef = useRef(false);
 
@@ -70,19 +71,18 @@ const GoogleLoadingPage = () => {
         console.log("Access token received:", accessToken ? "Yes" : "No");
 
         if (accessToken) {
-          // Store access token in localStorage
-          localStorage.setItem("token", accessToken);
-          console.log("Access token stored in localStorage");
-          console.log("Token value:", accessToken);
+          // Store access token in memory instead of localStorage
+          tokenManager.setToken(accessToken);
+          console.log("Access token stored in memory");
           console.log("Token length:", accessToken.length);
-          
+
           // Try to hydrate user (optional - just for loading user data)
           try {
             await refreshUser();
           } catch (userErr) {
             console.warn("Could not fetch user info, but token is valid:", userErr);
           }
-          
+
           // Check if user needs to set password (logged in via Google and hasn't set password yet)
           try {
             console.log("Calling check-login-by-google API...");
@@ -91,7 +91,7 @@ const GoogleLoadingPage = () => {
             console.log("   - Code:", checkResponse.data.code);
             console.log("   - Result (isLoginByGoogle):", checkResponse.data.result);
             console.log("   - Message:", checkResponse.data.message);
-            
+
             if (checkResponse.data.code === 1000 && checkResponse.data.result === true) {
               // User logged in via Google and hasn't set password yet
               console.log("🔐 User needs to set password - showing modal");
@@ -105,7 +105,7 @@ const GoogleLoadingPage = () => {
             console.error("   - Error details:", checkErr.response?.data || checkErr.message);
             // Continue to home even if check fails
           }
-          
+
           // Navigate to home if no password needed or check failed
           console.log("Google login successful! Redirecting to /home");
           navigate("/home");

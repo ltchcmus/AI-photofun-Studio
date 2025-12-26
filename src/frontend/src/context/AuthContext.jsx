@@ -75,18 +75,36 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  // On mount, try to restore session using refresh token (HttpOnly cookie)
+  // Use minimum loading time to prevent flash
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setLoading(false);
-      return;
-    }
+    const MIN_LOADING_TIME = 500; // Minimum time to show loading screen (ms)
+    const startTime = Date.now();
 
-    hydrateUser()
-      .catch(() => {
-        localStorage.removeItem("token");
-      })
-      .finally(() => setLoading(false));
+    const initializeAuth = async () => {
+      try {
+        // Try to refresh token using HttpOnly cookie
+        // This will get a new access token if refresh token cookie is valid
+        await authApi.refreshToken();
+        // If refresh successful, hydrate user data
+        await hydrateUser();
+      } catch (refreshError) {
+        // Refresh failed - user needs to login again
+        console.log("Session expired or not logged in");
+        localStorage.removeItem("user");
+      } finally {
+        // Ensure loading screen shows for at least MIN_LOADING_TIME
+        // This prevents jarring flash of login page
+        const elapsed = Date.now() - startTime;
+        const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsed);
+
+        setTimeout(() => {
+          setLoading(false);
+        }, remainingTime);
+      }
+    };
+
+    initializeAuth();
   }, [hydrateUser]);
 
   const login = useCallback(
@@ -138,7 +156,7 @@ export const AuthProvider = ({ children }) => {
     } catch (logoutError) {
       console.error("Failed to logout", logoutError);
     } finally {
-      localStorage.removeItem("token");
+      // Token is cleared by authApi.logout() from memory
       localStorage.removeItem("user");
       setUser(null);
       setIsAuthenticated(false);

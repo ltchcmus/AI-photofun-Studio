@@ -1,5 +1,6 @@
 import axios from "axios";
 import rateLimiter from "../utils/rateLimiter";
+import tokenManager from "./tokenManager";
 
 // Use environment variable for production, fallback to relative URL for dev
 const baseURL = import.meta.env.VITE_API_GATEWAY || "";
@@ -18,7 +19,8 @@ axiosClient.interceptors.request.use(
     // Wait for rate limit slot
     await rateLimiter.waitForSlot();
 
-    const token = localStorage.getItem("token");
+    // Get token from memory instead of localStorage
+    const token = tokenManager.getToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -39,3 +41,4 @@ axiosClient.interceptors.response.use(
 );
 
 export default axiosClient;
+
