@@ -1,5 +1,4 @@
 import axios from "axios";
-import rateLimiter from "../utils/rateLimiter";
 // Base URL for AI backend - use environment variable for production
 const AI_BASE_URL = import.meta.env.VITE_AI_API_URL || "http://localhost:9999";
 
@@ -16,7 +15,6 @@ const aiClient = axios.create({
 aiClient.interceptors.request.use(
   async (config) => {
     // Wait for rate limit slot
-    await rateLimiter.waitForSlot();
 
     const token = localStorage.getItem("token");
     if (token) {
