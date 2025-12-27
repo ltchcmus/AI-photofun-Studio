@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>🤖 AI Chat Test - Conversation API</title>
+    <title>🖼️ Image Gallery API Test</title>
     <style>
         * {
             box-sizing: border-box;
@@ -13,321 +13,337 @@
 
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh;
             padding: 20px;
+            color: #fff;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
         h1 {
             text-align: center;
-            color: white;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #00d9ff, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 217, 255, 0.3);
         }
 
         /* Config Panel */
         .config-panel {
-            background: white;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            margin-bottom: 25px;
         }
 
         .config-panel h2 {
-            margin-bottom: 15px;
-            color: #333;
+            margin-bottom: 20px;
+            color: #00d9ff;
+            font-size: 1.3rem;
         }
 
         .config-row {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 20px;
+            align-items: end;
         }
 
         .form-group label {
             display: block;
             font-weight: 600;
-            color: #555;
-            margin-bottom: 5px;
+            color: #a0aec0;
+            margin-bottom: 8px;
             font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .form-group input {
             width: 100%;
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            padding: 14px 18px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
             font-size: 14px;
-            transition: border-color 0.3s;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            transition: all 0.3s;
         }
 
         .form-group input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #00d9ff;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
         }
 
         .btn {
-            padding: 12px 24px;
+            padding: 14px 28px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #00d9ff 0%, #a855f7 100%);
             color: white;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
         }
 
         .btn-success {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
         }
 
-        /* Chat Container */
-        .chat-container {
-            background: white;
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #a0aec0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #00d9ff 0%, #a855f7 100%);
+            border-color: transparent;
+            color: white;
+        }
+
+        /* Gallery Grid */
+        .gallery-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .gallery-header h2 {
+            color: #00d9ff;
+            font-size: 1.3rem;
+        }
+
+        .gallery-stats {
+            background: rgba(0, 217, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #00d9ff;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .gallery-card {
+            background: rgba(0, 0, 0, 0.3);
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
         }
 
-        .chat-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
+        .gallery-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(0, 217, 255, 0.3);
+        }
+
+        .gallery-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .gallery-card img:hover {
+            transform: scale(1.05);
+        }
+
+        .gallery-card .info {
+            padding: 15px;
+        }
+
+        .gallery-card .prompt {
+            font-size: 13px;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .gallery-card .meta {
+            font-size: 11px;
+            color: #718096;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .session-info {
-            font-size: 12px;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 5px 10px;
-            border-radius: 20px;
-        }
-
-        /* Messages Area */
-        .messages-area {
-            height: 500px;
-            overflow-y: auto;
-            padding: 20px;
-            background: #f8f9fa;
-        }
-
-        .message {
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .message.user {
-            align-items: flex-end;
-        }
-
-        .message.bot {
-            align-items: flex-start;
-        }
-
-        .message-bubble {
-            max-width: 70%;
-            padding: 12px 16px;
-            border-radius: 16px;
-            position: relative;
-        }
-
-        .message.user .message-bubble {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-
-        .message.bot .message-bubble {
-            background: white;
-            color: #333;
-            border-bottom-left-radius: 4px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .message-status {
-            font-size: 11px;
-            margin-top: 5px;
-            color: #888;
-        }
-
-        .message-image {
-            max-width: 100%;
-            border-radius: 8px;
-            margin-top: 10px;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-
-        .message-image:hover {
-            transform: scale(1.02);
-        }
-
-        .reply-btn {
-            font-size: 11px;
-            background: #e0e7ff;
-            color: #4f46e5;
-            border: none;
-            padding: 4px 10px;
-            border-radius: 12px;
-            cursor: pointer;
-            margin-top: 8px;
-        }
-
-        .reply-btn:hover {
-            background: #c7d2fe;
-        }
-
-        /* Loading Animation */
-        .typing-indicator {
-            display: flex;
-            gap: 5px;
-            padding: 15px 20px;
-        }
-
-        .typing-indicator span {
-            width: 10px;
-            height: 10px;
-            background: #667eea;
-            border-radius: 50%;
-            animation: bounce 1.4s infinite ease-in-out both;
-        }
-
-        .typing-indicator span:nth-child(1) {
-            animation-delay: -0.32s;
-        }
-
-        .typing-indicator span:nth-child(2) {
-            animation-delay: -0.16s;
-        }
-
-        @keyframes bounce {
-
-            0%,
-            80%,
-            100% {
-                transform: scale(0);
-            }
-
-            40% {
-                transform: scale(1);
-            }
-        }
-
-        /* Input Area */
-        .input-area {
-            padding: 20px;
-            border-top: 1px solid #eee;
-            background: white;
-        }
-
-        .reply-preview {
-            background: #f0f0ff;
-            border-left: 3px solid #667eea;
-            padding: 10px 15px;
-            margin-bottom: 10px;
-            border-radius: 0 8px 8px 0;
-            display: none;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .reply-preview img {
-            width: 40px;
-            height: 40px;
-            border-radius: 4px;
-            object-fit: cover;
-        }
-
-        .reply-preview .cancel-reply {
-            margin-left: auto;
-            background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            color: #888;
-        }
-
-        .input-row {
-            display: flex;
-            gap: 10px;
-        }
-
-        .input-row input {
-            flex: 1;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 25px;
-            font-size: 14px;
-        }
-
-        .input-row input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .send-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-
-        .send-btn:hover {
-            transform: scale(1.1);
-        }
-
-        /* Status Badge */
-        .status-badge {
-            display: inline-block;
+        .gallery-card .intent-badge {
+            background: rgba(168, 85, 247, 0.2);
+            color: #a855f7;
             padding: 3px 8px;
-            border-radius: 10px;
+            border-radius: 6px;
             font-size: 10px;
-            font-weight: 600;
             text-transform: uppercase;
         }
 
-        .status-pending {
-            background: #fef3c7;
-            color: #92400e;
+        .gallery-card .actions {
+            display: flex;
+            gap: 8px;
+            padding: 0 15px 15px;
         }
 
-        .status-processing {
-            background: #dbeafe;
-            color: #1e40af;
+        .gallery-card .actions button {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        .status-completed {
-            background: #d1fae5;
-            color: #065f46;
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
         }
 
-        .status-failed {
-            background: #fee2e2;
-            color: #991b1b;
+        .btn-delete:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-restore {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .btn-restore:hover {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-permanent {
+            background: rgba(220, 38, 38, 0.2);
+            color: #dc2626;
+        }
+
+        .btn-permanent:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+        /* Log Panel */
+        .log-panel {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .log-panel h3 {
+            color: #00d9ff;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .log-content {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            color: #10b981;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .log-entry.error {
+            color: #ef4444;
+        }
+
+        .log-entry.success {
+            color: #10b981;
+        }
+
+        .log-entry.info {
+            color: #00d9ff;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #718096;
+        }
+
+        .empty-state .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
         }
 
         /* Lightbox */
@@ -337,7 +353,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             display: none;
             justify-content: center;
             align-items: center;
@@ -347,16 +363,63 @@
         .lightbox img {
             max-width: 90%;
             max-height: 90%;
-            border-radius: 8px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
 
         .lightbox-close {
             position: absolute;
-            top: 20px;
-            right: 30px;
+            top: 30px;
+            right: 40px;
             color: white;
             font-size: 40px;
             cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .lightbox-close:hover {
+            transform: scale(1.2);
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .loading .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(0, 217, 255, 0.2);
+            border-top-color: #00d9ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 217, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 217, 255, 0.5);
         }
     </style>
 </head>
@@ -364,7 +427,7 @@
 <body>
 
     <div class="container">
-        <h1>🤖 AI Chat - Conversation API Test</h1>
+        <h1>🖼️ Image Gallery API Test</h1>
 
         <!-- Config Panel -->
         <div class="config-panel">
@@ -372,98 +435,68 @@
             <div class="config-row">
                 <div class="form-group">
                     <label>AI Backend URL</label>
-                    <input type="text" id="backendUrl" value="http://localhost:9999/api/v1" />
+                    <input type="text" id="backendUrl" value="http://localhost:9999/v1" />
                 </div>
                 <div class="form-group">
                     <label>User ID</label>
-                    <input type="text" id="userId" value="test-user-001" />
+                    <input type="text" id="userId" value="test_user_001" />
                 </div>
-                <div class="form-group">
-                    <label>Actions</label>
-                    <button class="btn btn-primary" onclick="createSession()">🆕 Create Session</button>
+                <button class="btn btn-primary" onclick="loadGallery()">🔄 Load Gallery</button>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('active')" id="tab-active">📁 Active Images</div>
+            <div class="tab" onclick="switchTab('deleted')" id="tab-deleted">🗑️ Trash</div>
+        </div>
+
+        <!-- Active Gallery -->
+        <div class="gallery-section" id="active-section">
+            <div class="gallery-header">
+                <h2>📁 Your Images</h2>
+                <div class="gallery-stats" id="active-stats">0 images</div>
+            </div>
+            <div class="gallery-grid" id="active-gallery">
+                <div class="empty-state">
+                    <div class="icon">🖼️</div>
+                    <h3>No images yet</h3>
+                    <p>Click "Load Gallery" to fetch your images</p>
                 </div>
             </div>
         </div>
 
-        <!-- Chat Container -->
-        <div class="chat-container">
-            <div class="chat-header">
-                <div>
-                    <h3>💬 AI Assistant</h3>
-                    <p style="font-size: 12px; opacity: 0.8;">Hỗ trợ 7 tính năng AI</p>
-                </div>
-                <div class="session-info" id="sessionInfo">
-                    Chưa có session
-                </div>
-            </div>
-
-            <div class="messages-area" id="messagesArea">
-                <div class="message bot">
-                    <div class="message-bubble">
-                        👋 Xin chào! Tôi có thể giúp bạn:<br><br>
-                        🎨 <b>Tạo ảnh</b> - "Tạo ảnh một con mèo"<br>
-                        🔍 <b>Upscale</b> - "Nâng độ phân giải ảnh này"<br>
-                        🧹 <b>Xóa nền</b> - "Xóa nền ảnh này"<br>
-                        🎭 <b>Reimagine</b> - "Biến ảnh thành tranh sơn dầu"<br>
-                        ☀️ <b>Relight</b> - "Thêm ánh sáng hoàng hôn"<br>
-                        📐 <b>Expand</b> - "Mở rộng ảnh sang trái phải"<br>
-                        🖌️ <b>Style</b> - "Áp dụng style này"<br><br>
-                        Click "Create Session" để bắt đầu!
-                    </div>
+        <!-- Deleted Gallery -->
+        <div class="gallery-section" id="deleted-section" style="display: none;">
+            <div class="gallery-header">
+                <h2>🗑️ Trash</h2>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <div class="gallery-stats" id="deleted-stats">0 images</div>
+                    <button class="btn btn-danger" onclick="emptyTrash()" style="padding: 8px 16px; font-size: 12px;">
+                        🗑️ Empty Trash
+                    </button>
                 </div>
             </div>
-
-            <div class="input-area">
-                <div class="reply-preview" id="replyPreview">
-                    <img id="replyImage" src="" alt="" />
-                    <div>
-                        <div style="font-size: 12px; color: #667eea;">↩️ Reply to image</div>
-                        <div id="replyMessageId" style="font-size: 11px; color: #888;"></div>
-                    </div>
-                    <button class="cancel-reply" onclick="cancelReply()">×</button>
+            <div class="gallery-grid" id="deleted-gallery">
+                <div class="empty-state">
+                    <div class="icon">🗑️</div>
+                    <h3>Trash is empty</h3>
+                    <p>Deleted images will appear here</p>
                 </div>
+            </div>
+        </div>
 
-                <!-- Image URL Input -->
-                <div class="image-url-input" id="imageUrlSection" style="display: none; margin-bottom: 10px;">
-                    <div style="display: flex; gap: 10px; align-items: center;">
-                        <input type="text" id="imageUrlInput" placeholder="Dán URL ảnh vào đây..."
-                            style="flex: 1; padding: 10px; border: 2px solid #e0e7ff; border-radius: 8px;" />
-                        <button onclick="attachImageUrl()" class="btn btn-success"
-                            style="padding: 10px 15px;">✓</button>
-                        <button onclick="cancelImageUrl()"
-                            style="padding: 10px 15px; background: #f3f4f6; border: none; border-radius: 8px; cursor: pointer;">×</button>
-                    </div>
-                    <div style="font-size: 11px; color: #888; margin-top: 5px;">
-                        💡 Tip: Dán link ảnh, sau đó nhập prompt như "Upscale ảnh này" hoặc "Xóa nền"
-                    </div>
-                </div>
-
-                <!-- Attached Image Preview -->
-                <div class="attached-image-preview" id="attachedImagePreview"
-                    style="display: none; margin-bottom: 10px;">
-                    <div
-                        style="display: flex; gap: 10px; align-items: center; background: #f0f9ff; padding: 10px; border-radius: 8px; border: 1px solid #bae6fd;">
-                        <img id="attachedImage" src="" alt=""
-                            style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;" />
-                        <div style="flex: 1;">
-                            <div style="font-size: 12px; color: #0369a1;">📎 Ảnh đã đính kèm</div>
-                            <div id="attachedImageUrl"
-                                style="font-size: 10px; color: #888; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 300px;">
-                            </div>
-                        </div>
-                        <button onclick="removeAttachedImage()"
-                            style="background: none; border: none; font-size: 18px; cursor: pointer; color: #888;">×</button>
-                    </div>
-                </div>
-
-                <div class="input-row">
-                    <button onclick="toggleImageUrlInput()"
-                        style="width: 50px; height: 50px; border-radius: 50%; background: #f3f4f6; border: none; font-size: 20px; cursor: pointer;"
-                        title="Đính kèm ảnh URL">📎</button>
-                    <input type="text" id="messageInput" placeholder="Nhập tin nhắn..."
-                        onkeypress="handleKeyPress(event)" />
-                    <button class="send-btn" onclick="sendMessage()">➤</button>
-                </div>
+        <!-- Log Panel -->
+        <div class="log-panel">
+            <h3>
+                📋 API Logs
+                <button onclick="clearLogs()"
+                    style="padding: 5px 12px; font-size: 11px; background: rgba(255,255,255,0.1); border: none; border-radius: 6px; color: #a0aec0; cursor: pointer;">
+                    Clear
+                </button>
+            </h3>
+            <div class="log-content" id="logContent">
+                <div class="log-entry info">Ready to test Image Gallery API...</div>
             </div>
         </div>
     </div>
@@ -475,282 +508,224 @@
     </div>
 
     <script>
-        let sessionId = null;
-        let pollingInterval = null;
-        let pendingMessages = new Set();
-        let replyToMessageId = null;
-        let messagesCache = {};
-        let attachedImageUrl = null;  // Store attached image URL
+        let currentTab = 'active';
 
         function getConfig() {
             return {
                 backendUrl: document.getElementById('backendUrl').value.trim(),
-                userId: document.getElementById('userId').value.trim() || 'test-user-001'
+                userId: document.getElementById('userId').value.trim() || 'test_user_001'
             };
         }
 
-        // Image URL attachment functions
-        function toggleImageUrlInput() {
-            const section = document.getElementById('imageUrlSection');
-            section.style.display = section.style.display === 'none' ? 'block' : 'none';
-            if (section.style.display === 'block') {
-                document.getElementById('imageUrlInput').focus();
+        function log(message, type = 'info') {
+            const logContent = document.getElementById('logContent');
+            const time = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.innerHTML = `<span style="color: #718096;">[${time}]</span> ${message}`;
+            logContent.appendChild(entry);
+            logContent.scrollTop = logContent.scrollHeight;
+        }
+
+        function clearLogs() {
+            document.getElementById('logContent').innerHTML = '<div class="log-entry info">Logs cleared.</div>';
+        }
+
+        // Switch tabs
+        function switchTab(tab) {
+            currentTab = tab;
+
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.add('active');
+
+            document.getElementById('active-section').style.display = tab === 'active' ? 'block' : 'none';
+            document.getElementById('deleted-section').style.display = tab === 'deleted' ? 'block' : 'none';
+
+            if (tab === 'deleted') {
+                loadDeletedImages();
             }
         }
 
-        function attachImageUrl() {
-            const url = document.getElementById('imageUrlInput').value.trim();
-            if (!url) {
-                alert('Vui lòng nhập URL ảnh!');
+        // Load active gallery
+        async function loadGallery() {
+            const config = getConfig();
+            const gallery = document.getElementById('active-gallery');
+
+            gallery.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+            log(`📤 GET ${config.backendUrl}/gallery?user_id=${config.userId}`, 'info');
+
+            try {
+                const res = await fetch(`${config.backendUrl}/gallery?user_id=${config.userId}`);
+                const data = await res.json();
+
+                log(`📥 Response: ${JSON.stringify(data).slice(0, 200)}...`, data.code === 1000 ? 'success' : 'error');
+
+                if (data.code === 1000 && data.result) {
+                    renderGallery('active-gallery', data.result, false);
+                    document.getElementById('active-stats').textContent = `${data.result.length} images`;
+                } else {
+                    gallery.innerHTML = `<div class="empty-state"><div class="icon">❌</div><h3>Error</h3><p>${data.message || 'Failed to load'}</p></div>`;
+                }
+            } catch (err) {
+                log(`❌ Error: ${err.message}`, 'error');
+                gallery.innerHTML = `<div class="empty-state"><div class="icon">❌</div><h3>Connection Error</h3><p>${err.message}</p></div>`;
+            }
+        }
+
+        // Load deleted images
+        async function loadDeletedImages() {
+            const config = getConfig();
+            const gallery = document.getElementById('deleted-gallery');
+
+            gallery.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+            log(`📤 GET ${config.backendUrl}/gallery/deleted?user_id=${config.userId}`, 'info');
+
+            try {
+                const res = await fetch(`${config.backendUrl}/gallery/deleted?user_id=${config.userId}`);
+                const data = await res.json();
+
+                log(`📥 Response: ${JSON.stringify(data).slice(0, 200)}...`, data.code === 1000 ? 'success' : 'error');
+
+                if (data.code === 1000 && data.result) {
+                    renderGallery('deleted-gallery', data.result, true);
+                    document.getElementById('deleted-stats').textContent = `${data.result.length} images`;
+                } else {
+                    gallery.innerHTML = `<div class="empty-state"><div class="icon">🗑️</div><h3>Trash is empty</h3></div>`;
+                }
+            } catch (err) {
+                log(`❌ Error: ${err.message}`, 'error');
+                gallery.innerHTML = `<div class="empty-state"><div class="icon">❌</div><h3>Error</h3><p>${err.message}</p></div>`;
+            }
+        }
+
+        // Render gallery
+        function renderGallery(containerId, images, isTrash) {
+            const container = document.getElementById(containerId);
+
+            if (!images || images.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">${isTrash ? '🗑️' : '🖼️'}</div>
+                        <h3>${isTrash ? 'Trash is empty' : 'No images'}</h3>
+                    </div>
+                `;
                 return;
             }
 
-            attachedImageUrl = url;
-            document.getElementById('attachedImage').src = url;
-            document.getElementById('attachedImageUrl').textContent = url;
-            document.getElementById('attachedImagePreview').style.display = 'block';
-            document.getElementById('imageUrlSection').style.display = 'none';
-            document.getElementById('imageUrlInput').value = '';
-
-            addMessage('bot', `📎 Đã đính kèm ảnh! Bây giờ hãy nhập prompt như "Upscale ảnh này" hoặc "Xóa nền ảnh"`);
-        }
-
-        function cancelImageUrl() {
-            document.getElementById('imageUrlSection').style.display = 'none';
-            document.getElementById('imageUrlInput').value = '';
-        }
-
-        function removeAttachedImage() {
-            attachedImageUrl = null;
-            document.getElementById('attachedImagePreview').style.display = 'none';
-        }
-
-        // Create Session
-        async function createSession() {
-            const config = getConfig();
-
-            try {
-                const res = await fetch(`${config.backendUrl}/chat/sessions`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: config.userId })
-                });
-
-                const data = await res.json();
-                console.log('Create Session:', data);
-
-                sessionId = data.result?.session_id || data.data?.session_id || data.session_id;
-
-                if (sessionId) {
-                    document.getElementById('sessionInfo').textContent = `Session: ${sessionId.slice(0, 8)}...`;
-                    addMessage('bot', '✅ Session đã được tạo! Bạn có thể bắt đầu chat.');
-
-                    // Start polling
-                    startPolling();
-                } else {
-                    addMessage('bot', '❌ Không thể tạo session. Kiểm tra lại backend.');
-                }
-            } catch (err) {
-                console.error(err);
-                addMessage('bot', `❌ Lỗi: ${err.message}`);
-            }
-        }
-
-        // Send Message
-        async function sendMessage() {
-            if (!sessionId) {
-                alert('Hãy tạo session trước!');
-                return;
-            }
-
-            const input = document.getElementById('messageInput');
-            const prompt = input.value.trim();
-            if (!prompt) return;
-
-            input.value = '';
-            const config = getConfig();
-
-            // Add user message to UI
-            addMessage('user', prompt);
-
-            // Build request
-            const requestBody = {
-                user_id: config.userId,
-                prompt: prompt
-            };
-
-            // Add reply reference if any
-            if (replyToMessageId) {
-                requestBody.selected_messages = [replyToMessageId];
-                cancelReply();
-            }
-
-            // Add attached image URL if any
-            if (attachedImageUrl) {
-                requestBody.image_url = attachedImageUrl;
-                removeAttachedImage();
-            }
-
-            // Show typing indicator
-            showTyping();
-
-            try {
-                const res = await fetch(`${config.backendUrl}/chat/sessions/${sessionId}/messages`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(requestBody)
-                });
-
-                const data = await res.json();
-                console.log('Send Message:', data);
-
-                const messageId = data.result?.message_id || data.data?.message_id;
-
-                if (messageId) {
-                    pendingMessages.add(messageId);
-                    addMessage('bot', '⏳ Đang xử lý...', messageId, 'PENDING');
-                } else {
-                    hideTyping();
-                    addMessage('bot', '❌ Không nhận được message_id');
-                }
-            } catch (err) {
-                hideTyping();
-                console.error(err);
-                addMessage('bot', `❌ Lỗi: ${err.message}`);
-            }
-        }
-
-        // Polling for updates
-        function startPolling() {
-            if (pollingInterval) clearInterval(pollingInterval);
-
-            pollingInterval = setInterval(async () => {
-                if (pendingMessages.size === 0) return;
-
-                const config = getConfig();
-
-                try {
-                    const res = await fetch(`${config.backendUrl}/chat/sessions/${sessionId}`);
-                    const data = await res.json();
-
-                    if (data.result?.messages) {
-                        data.result.messages.forEach(msg => {
-                            if (pendingMessages.has(msg.message_id)) {
-                                updateMessage(msg);
-
-                                if (msg.status === 'COMPLETED' || msg.status === 'FAILED') {
-                                    pendingMessages.delete(msg.message_id);
-                                    hideTyping();
-                                }
-                            }
-                            // Cache message for reply
-                            messagesCache[msg.message_id] = msg;
-                        });
-                    }
-                } catch (err) {
-                    console.error('Polling error:', err);
-                }
-            }, 2000);
-        }
-
-        // Add message to UI
-        function addMessage(sender, text, messageId = null, status = null) {
-            const area = document.getElementById('messagesArea');
-            const div = document.createElement('div');
-            div.className = `message ${sender}`;
-            if (messageId) div.id = `msg-${messageId}`;
-
-            let statusBadge = '';
-            if (status) {
-                statusBadge = `<span class="status-badge status-${status.toLowerCase()}">${status}</span>`;
-            }
-
-            div.innerHTML = `
-            <div class="message-bubble">
-                ${text}
-            </div>
-            ${statusBadge ? `<div class="message-status">${statusBadge}</div>` : ''}
-        `;
-
-            area.appendChild(div);
-            area.scrollTop = area.scrollHeight;
-        }
-
-        // Update message with result
-        function updateMessage(msg) {
-            const div = document.getElementById(`msg-${msg.message_id}`);
-            if (!div) return;
-
-            const imageUrl = msg.image_url || (msg.uploaded_urls && msg.uploaded_urls[0]);
-            const content = msg.content || 'Hoàn thành!';
-            const intent = msg.metadata?.intent || '';
-            const extractedParams = msg.metadata?.extracted_params;
-
-            let html = `<div class="message-bubble">`;
-            html += `<div>${content}</div>`;
-
-            if (intent) {
-                html += `<div style="font-size: 11px; color: #888; margin-top: 5px;">🎯 Intent: ${intent}</div>`;
-            }
-
-            if (extractedParams && Object.keys(extractedParams).length > 0) {
-                html += `<div style="font-size: 11px; color: #888;">📋 Params: ${JSON.stringify(extractedParams)}</div>`;
-            }
-
-            if (imageUrl) {
-                html += `<img class="message-image" src="${imageUrl}" alt="Generated" onclick="openLightbox('${imageUrl}')" />`;
-                html += `<button class="reply-btn" onclick="replyToImage('${msg.message_id}', '${imageUrl}')">↩️ Reply to edit</button>`;
-            }
-
-            html += `</div>`;
-
-            const statusClass = msg.status.toLowerCase();
-            html += `<div class="message-status"><span class="status-badge status-${statusClass}">${msg.status}</span></div>`;
-
-            div.innerHTML = html;
-
-            const area = document.getElementById('messagesArea');
-            area.scrollTop = area.scrollHeight;
-        }
-
-        // Reply to image
-        function replyToImage(messageId, imageUrl) {
-            replyToMessageId = messageId;
-            document.getElementById('replyPreview').style.display = 'flex';
-            document.getElementById('replyImage').src = imageUrl;
-            document.getElementById('replyMessageId').textContent = `Message: ${messageId.slice(0, 8)}...`;
-            document.getElementById('messageInput').focus();
-        }
-
-        function cancelReply() {
-            replyToMessageId = null;
-            document.getElementById('replyPreview').style.display = 'none';
-        }
-
-        // Typing indicator
-        function showTyping() {
-            if (document.getElementById('typing-indicator')) return;
-
-            const area = document.getElementById('messagesArea');
-            const div = document.createElement('div');
-            div.id = 'typing-indicator';
-            div.className = 'message bot';
-            div.innerHTML = `
-            <div class="message-bubble">
-                <div class="typing-indicator">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+            container.innerHTML = images.map(img => `
+                <div class="gallery-card" id="card-${img.id}">
+                    <img src="${img.image_url}" alt="${img.prompt || 'Image'}" 
+                         onclick="openLightbox('${img.image_url}')" 
+                         onerror="this.src='https://via.placeholder.com/400x200?text=Image+Not+Found'" />
+                    <div class="info">
+                        <div class="prompt">${img.prompt || 'No prompt'}</div>
+                        <div class="meta">
+                            <span>${new Date(img.created_at).toLocaleDateString()}</span>
+                            <span class="intent-badge">${img.intent || 'unknown'}</span>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        ${isTrash ? `
+                            <button class="btn-restore" onclick="restoreImage('${img.id}')">♻️ Restore</button>
+                            <button class="btn-permanent" onclick="permanentDelete('${img.id}')">🗑️ Delete Forever</button>
+                        ` : `
+                            <button class="btn-delete" onclick="deleteImage('${img.id}')">🗑️ Delete</button>
+                        `}
+                    </div>
                 </div>
-            </div>
-        `;
-            area.appendChild(div);
-            area.scrollTop = area.scrollHeight;
+            `).join('');
         }
 
-        function hideTyping() {
-            const indicator = document.getElementById('typing-indicator');
-            if (indicator) indicator.remove();
+        // Soft delete image
+        async function deleteImage(imageId) {
+            if (!confirm('Move this image to trash?')) return;
+
+            const config = getConfig();
+            log(`📤 DELETE ${config.backendUrl}/gallery/${imageId}`, 'info');
+
+            try {
+                const res = await fetch(`${config.backendUrl}/gallery/${imageId}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+
+                log(`📥 Response: ${JSON.stringify(data)}`, data.code === 1000 ? 'success' : 'error');
+
+                if (data.code === 1000) {
+                    document.getElementById(`card-${imageId}`).remove();
+                    log(`✅ Image ${imageId} moved to trash`, 'success');
+                } else {
+                    alert('Failed to delete: ' + data.message);
+                }
+            } catch (err) {
+                log(`❌ Error: ${err.message}`, 'error');
+            }
+        }
+
+        // Restore image
+        async function restoreImage(imageId) {
+            const config = getConfig();
+            log(`📤 POST ${config.backendUrl}/gallery/${imageId}/restore`, 'info');
+
+            try {
+                const res = await fetch(`${config.backendUrl}/gallery/${imageId}/restore`, {
+                    method: 'POST'
+                });
+                const data = await res.json();
+
+                log(`📥 Response: ${JSON.stringify(data)}`, data.code === 1000 ? 'success' : 'error');
+
+                if (data.code === 1000) {
+                    document.getElementById(`card-${imageId}`).remove();
+                    log(`✅ Image ${imageId} restored!`, 'success');
+                } else {
+                    alert('Failed to restore: ' + data.message);
+                }
+            } catch (err) {
+                log(`❌ Error: ${err.message}`, 'error');
+            }
+        }
+
+        // Permanent delete
+        async function permanentDelete(imageId) {
+            if (!confirm('⚠️ This will PERMANENTLY delete the image. This cannot be undone!')) return;
+
+            const config = getConfig();
+            log(`📤 DELETE ${config.backendUrl}/gallery/${imageId}/permanent`, 'info');
+
+            try {
+                const res = await fetch(`${config.backendUrl}/gallery/${imageId}/permanent`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+
+                log(`📥 Response: ${JSON.stringify(data)}`, data.code === 1000 ? 'success' : 'error');
+
+                if (data.code === 1000) {
+                    document.getElementById(`card-${imageId}`).remove();
+                    log(`✅ Image ${imageId} permanently deleted`, 'success');
+                } else {
+                    alert('Failed to delete: ' + data.message);
+                }
+            } catch (err) {
+                log(`❌ Error: ${err.message}`, 'error');
+            }
+        }
+
+        // Empty trash
+        async function emptyTrash() {
+            if (!confirm('⚠️ This will PERMANENTLY delete ALL images in trash. Continue?')) return;
+
+            const config = getConfig();
+            const gallery = document.getElementById('deleted-gallery');
+            const cards = gallery.querySelectorAll('.gallery-card');
+
+            for (const card of cards) {
+                const imageId = card.id.replace('card-', '');
+                await permanentDelete(imageId);
+            }
+
+            loadDeletedImages();
         }
 
         // Lightbox
@@ -763,10 +738,11 @@
             document.getElementById('lightbox').style.display = 'none';
         }
 
-        // Handle Enter key
-        function handleKeyPress(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
+        // Load on start
+        window.onload = () => {
+            log('🚀 Image Gallery API Test ready!', 'success');
+            log('📝 Endpoints: GET/POST /gallery, DELETE /gallery/{id}, POST /gallery/{id}/restore, DELETE /gallery/{id}/permanent', 'info');
+        };
     </script>
 
 </body>
