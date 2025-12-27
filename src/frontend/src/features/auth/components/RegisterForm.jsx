@@ -3,6 +3,97 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useAuth } from "../../../hooks/useAuth";
 
+/**
+ * Format registration errors into user-friendly messages
+ * Maps error codes and technical messages to clear, actionable messages
+ */
+const formatRegistrationError = (error) => {
+  // Extract error data from various response formats
+  const errorData = error?.response?.data || error?.data || error;
+  const code = errorData?.code;
+  const message = errorData?.message || error?.message;
+  const status = error?.response?.status || error?.status;
+
+  // Map error codes to user-friendly messages
+  const errorCodeMessages = {
+    // Registration specific errors
+    1027: "You have exceeded the registration limit. Please try again later or contact our support team for assistance.",
+    1001: "This username is already taken. Please choose a different username.",
+    1002: "This email address is already registered. Try logging in or use a different email.",
+    1003: "Invalid email format. Please enter a valid email address.",
+    1004: "Password is too weak. Please use at least 8 characters with letters and numbers.",
+    1005: "Username must be between 3-50 characters and contain only letters, numbers, and underscores.",
+    1006: "Full name is required. Please enter your full name.",
+    1007: "Password and confirmation password do not match.",
+    1008: "Registration is temporarily disabled. Please try again later.",
+    1009: "Invalid registration data. Please check your information and try again.",
+
+    // General authentication errors
+    1010: "Session expired. Please refresh the page and try again.",
+    1011: "Account verification required. Please check your email.",
+    1012: "This account has been suspended. Please contact support.",
+  };
+
+  // Check for known error codes
+  if (code && errorCodeMessages[code]) {
+    return errorCodeMessages[code];
+  }
+
+  // Handle HTTP status codes
+  if (status === 429 || message?.toLowerCase().includes('rate limit') || message?.toLowerCase().includes('too many')) {
+    return "Too many registration attempts. Please wait a few minutes before trying again.";
+  }
+
+  if (status === 503 || status === 502) {
+    return "Our service is temporarily unavailable. Please try again in a few minutes.";
+  }
+
+  if (status === 500) {
+    return "Something went wrong on our end. Please try again later or contact support if the issue persists.";
+  }
+
+  if (status === 400) {
+    // Try to extract meaningful message from 400 errors
+    if (message && !message.includes('code') && message.length < 200) {
+      return message;
+    }
+    return "Invalid registration information. Please check your details and try again.";
+  }
+
+  // Handle network errors
+  if (error?.code === 'ERR_NETWORK' || message?.includes('Network Error')) {
+    return "Unable to connect to our servers. Please check your internet connection and try again.";
+  }
+
+  // Handle timeout errors
+  if (error?.code === 'ECONNABORTED' || message?.includes('timeout')) {
+    return "The request timed out. Please check your connection and try again.";
+  }
+
+  // If we have a clean, user-friendly message from the server, use it
+  if (message && typeof message === 'string' && message.length < 200) {
+    // Filter out technical-looking messages
+    const technicalPatterns = [
+      /error\s*code/i,
+      /exception/i,
+      /stack\s*trace/i,
+      /null\s*pointer/i,
+      /undefined/i,
+      /^\{.*\}$/,  // JSON-like strings
+      /^\[.*\]$/,  // Array-like strings
+    ];
+
+    const isTechnical = technicalPatterns.some(pattern => pattern.test(message));
+
+    if (!isTechnical) {
+      return message;
+    }
+  }
+
+  // Default fallback message
+  return "Registration failed. Please check your information and try again. If the problem continues, contact our support team.";
+};
+
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
     username: "",
@@ -49,9 +140,7 @@ const RegisterPage = () => {
       );
       navigate("/login");
     } catch (err) {
-      // backend may return object or message
-      const msg =
-        err?.message || err?.error || JSON.stringify(err) || "Register failed";
+      const msg = formatRegistrationError(err);
       setError(msg);
     } finally {
       setLoading(false);

@@ -1,5 +1,4 @@
 import axios from "axios";
-import rateLimiter from "../utils/rateLimiter";
 import tokenManager from "./tokenManager";
 
 // Use environment variable for production, fallback to relative URL for dev
@@ -33,7 +32,6 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
   async (config) => {
     // Wait for rate limit slot
-    await rateLimiter.waitForSlot();
 
     // Get token from memory
     const token = tokenManager.getToken();
@@ -124,5 +122,3 @@ axiosClient.interceptors.response.use(
 );
 
 export default axiosClient;
-
-
