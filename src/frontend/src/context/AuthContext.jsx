@@ -150,19 +150,16 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const logout = useCallback(async () => {
-    setLoading(true);
-    try {
-      await authApi.logout();
-    } catch (logoutError) {
-      console.error("Failed to logout", logoutError);
-    } finally {
-      // Token is cleared by authApi.logout() from memory
-      localStorage.removeItem("user");
-      setUser(null);
-      setIsAuthenticated(false);
-      setError("");
-      setLoading(false);
-    }
+    // Clear state immediately for instant UI response (no loading screen)
+    localStorage.removeItem("user");
+    setUser(null);
+    setIsAuthenticated(false);
+    setError("");
+
+    // Call logout API in background (fire-and-forget) - don't block UI
+    authApi.logout().catch((logoutError) => {
+      console.error("Failed to logout from server", logoutError);
+    });
   }, []);
 
   const value = useMemo(
