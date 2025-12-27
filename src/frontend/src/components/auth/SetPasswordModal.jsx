@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "../../hooks/use-toast";
 import axiosClient from "../../api/axiosClient";
 
 const SetPasswordModal = ({ onClose, onSuccess }) => {
@@ -169,22 +169,14 @@ const SetPasswordModal = ({ onClose, onSuccess }) => {
             </ul>
           </div>
 
-          {/* Error message */}
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-600 text-sm">{error}</p>
-            </div>
-          )}
-
           {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 bg-blue-600 text-white rounded-xl text-base font-semibold transition-all duration-300 ${
-              loading
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-blue-700 hover:shadow-lg"
-            }`}
+            className={`w-full py-3 bg-blue-600 text-white rounded-xl text-base font-semibold transition-all duration-300 ${loading
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:bg-blue-700 hover:shadow-lg"
+              }`}
           >
             {loading ? "Setting Password..." : "Set Password"}
           </button>

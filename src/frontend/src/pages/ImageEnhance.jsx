@@ -19,6 +19,7 @@ import { communicationApi } from "../api/communicationApi";
 import { usePosts } from "../hooks/usePosts";
 import CreatePostWidget from "../components/post/CreatePostWidget";
 import ShareToGroupModal from "../components/common/ShareToGroupModal";
+import { toast } from "../hooks/use-toast";
 
 const readFileAsDataUrl = (file) =>
   new Promise((resolve, reject) => {
@@ -65,7 +66,7 @@ const ImageEnhance = () => {
       setError("");
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch {
-      setError("Không thể đọc ảnh, vui lòng thử lại.");
+      toast.error("Không thể đọc ảnh, vui lòng thử lại.");
     }
   };
 
@@ -85,7 +86,7 @@ const ImageEnhance = () => {
 
   const handleEnhance = async () => {
     if (!canEnhance) {
-      setError("Hãy tải ảnh và chọn tỷ lệ upscale trước.");
+      toast.warning("Hãy tải ảnh và chọn tỷ lệ upscale trước.");
       return;
     }
 
@@ -109,7 +110,7 @@ const ImageEnhance = () => {
         }
       } catch (uploadErr) {
         console.error("Upload error:", uploadErr);
-        setError("Không thể upload ảnh. Vui lòng thử lại.");
+        toast.error("Không thể upload ảnh. Vui lòng thử lại.");
         setProcessing(false);
         return;
       }
@@ -168,7 +169,7 @@ const ImageEnhance = () => {
 
     } catch (err) {
       console.error("Enhance error:", err);
-      setError(`Lỗi: ${err.message}. Vui lòng thử lại.`);
+      toast.error(`Lỗi: ${err.message}. Vui lòng thử lại.`);
     } finally {
       setProcessing(false);
       setProcessingStatus("");
@@ -363,12 +364,6 @@ const ImageEnhance = () => {
               </div>
             ))}
           </div>
-
-          {error && (
-            <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-2xl p-3">
-              {error}
-            </p>
-          )}
           <button
             type="button"
             onClick={handleEnhance}
