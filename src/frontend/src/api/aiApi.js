@@ -1,11 +1,8 @@
 import axios from "axios";
-import rateLimiter from "../utils/rateLimiter";
-import tokenManager from "./tokenManager";
-
 // Base URL for AI backend - use environment variable for production
 const AI_BASE_URL = import.meta.env.VITE_AI_API_URL || "http://localhost:9999";
 const API_GATEWAY = import.meta.env.VITE_API_GATEWAY || "";
-
+import tokenManager from "./tokenManager";
 // File upload URL: production uses VITE_FILE_UPLOAD_URL, dev uses Vite proxy
 const FILE_UPLOAD_BASE_URL = import.meta.env.VITE_FILE_UPLOAD_URL || "";
 
@@ -37,7 +34,6 @@ const aiClient = axios.create({
 aiClient.interceptors.request.use(
   async (config) => {
     // Wait for rate limit slot
-    await rateLimiter.waitForSlot();
 
     // Get token from memory
     const token = tokenManager.getToken();
@@ -154,7 +150,7 @@ const getSessionId = () => {
 export const pollTaskStatus = async (
   taskId,
   endpoint,
-  onStatusUpdate = () => { },
+  onStatusUpdate = () => {},
   maxAttempts = 60,
   interval = 3000
 ) => {
@@ -753,7 +749,7 @@ export const generateVideoFromImage = async ({
 export const pollVideoTaskStatus = async (
   taskId,
   feature = "prompt-to-video",
-  onStatusUpdate = () => { },
+  onStatusUpdate = () => {},
   maxAttempts = 60,
   interval = 3000
 ) => {
