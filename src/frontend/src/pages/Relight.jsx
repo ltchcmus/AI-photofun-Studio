@@ -13,6 +13,7 @@ import { communicationApi } from "../api/communicationApi";
 import { usePosts } from "../hooks/usePosts";
 import CreatePostWidget from "../components/post/CreatePostWidget";
 import ShareToGroupModal from "../components/common/ShareToGroupModal";
+import { toast } from "../hooks/use-toast";
 
 const readFileAsDataUrl = (file) =>
     new Promise((resolve, reject) => {
@@ -55,7 +56,7 @@ const Relight = () => {
             setError("");
             if (fileInputRef.current) fileInputRef.current.value = "";
         } catch {
-            setError("Không thể đọc ảnh, vui lòng thử lại.");
+            toast.error("Không thể đọc ảnh, vui lòng thử lại.");
         }
     };
 
@@ -67,7 +68,7 @@ const Relight = () => {
 
     const handleRelight = async () => {
         if (!canRelight) {
-            setError("Hãy tải ảnh và nhập mô tả ánh sáng trước.");
+            toast.warning("Hãy tải ảnh và nhập mô tả ánh sáng trước.");
             return;
         }
 
@@ -85,7 +86,7 @@ const Relight = () => {
                 apiImageUrl = uploadResult?.result?.image || uploadResult?.result?.url || uploadResult?.url || uploadResult?.image;
                 if (!apiImageUrl) throw new Error("Không nhận được URL từ server");
             } catch (uploadErr) {
-                setError("Không thể upload ảnh. Vui lòng thử lại.");
+                toast.error("Không thể upload ảnh. Vui lòng thử lại.");
                 setProcessing(false);
                 return;
             }
@@ -125,7 +126,7 @@ const Relight = () => {
             });
         } catch (err) {
             console.error("Relight error:", err);
-            setError(`Lỗi: ${err.message}. Vui lòng thử lại.`);
+            toast.error(`Lỗi: ${err.message}. Vui lòng thử lại.`);
         } finally {
             setProcessing(false);
             setProcessingStatus("");
@@ -221,10 +222,6 @@ const Relight = () => {
                             </div>
                         </div>
                     </div>
-
-                    {error && (
-                        <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl p-3">{error}</p>
-                    )}
 
                     <button
                         onClick={handleRelight}

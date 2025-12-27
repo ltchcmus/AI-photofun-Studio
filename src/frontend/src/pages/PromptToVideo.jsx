@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Download, Film, Play, Share2, Video } from "lucide-react";
 import { suggestPrompts, recordPromptChoice, generateVideoFromPrompt, pollVideoTaskStatus } from "../api/aiApi";
+import { toast } from "../hooks/use-toast";
 
 // Models for Prompt to Video (Text to Video)
 const PROMPT_TO_VIDEO_MODELS = [
@@ -102,7 +103,7 @@ const PromptToVideo = () => {
             setLoading(false);
             if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
         } else if (result.error && !result.error.includes("Timeout")) {
-            setError(result.error);
+            toast.error(result.error);
             setLoading(false);
             if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
         }
@@ -111,7 +112,7 @@ const PromptToVideo = () => {
     // Start video generation
     const handleGenerate = async () => {
         if (!prompt.trim()) {
-            setError("Vui lòng nhập mô tả video.");
+            toast.warning("Vui lòng nhập mô tả video.");
             return;
         }
 
@@ -146,7 +147,7 @@ const PromptToVideo = () => {
             // Initial poll
             setTimeout(() => pollStatus(result.taskId), 1000);
         } else {
-            setError(result.error || "Không thể tạo video. Vui lòng thử lại.");
+            toast.error(result.error || "Không thể tạo video. Vui lòng thử lại.");
             setLoading(false);
         }
     };
@@ -268,12 +269,6 @@ const PromptToVideo = () => {
                             </div>
                         </div>
                     </div>
-
-                    {error && (
-                        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-600 text-sm">
-                            {error}
-                        </div>
-                    )}
 
                     {!videoUrl && (
                         <button

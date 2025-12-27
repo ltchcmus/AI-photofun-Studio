@@ -14,6 +14,7 @@ import { communicationApi } from "../api/communicationApi";
 import { usePosts } from "../hooks/usePosts";
 import CreatePostWidget from "../components/post/CreatePostWidget";
 import ShareToGroupModal from "../components/common/ShareToGroupModal";
+import { toast } from "../hooks/use-toast";
 
 const stylePresets = [
   {
@@ -109,7 +110,7 @@ const StyleTransfer = () => {
     if (!files || !files.length) return;
     const [file] = files;
     if (!file.type.startsWith("image/")) {
-      setError("Vui lòng chọn đúng định dạng ảnh.");
+      toast.warning("Vui lòng chọn đúng định dạng ảnh.");
       return;
     }
     try {
@@ -120,7 +121,7 @@ const StyleTransfer = () => {
       setError("");
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch {
-      setError("Không thể đọc ảnh, vui lòng thử lại.");
+      toast.error("Không thể đọc ảnh, vui lòng thử lại.");
     }
   };
 
@@ -138,7 +139,7 @@ const StyleTransfer = () => {
 
   const handleTransfer = async () => {
     if (!canTransfer) {
-      setError("Tải ảnh và chọn style trước khi áp dụng.");
+      toast.warning("Tải ảnh và chọn style trước khi áp dụng.");
       return;
     }
     setProcessing(true);
@@ -160,7 +161,7 @@ const StyleTransfer = () => {
         }
       } catch (uploadErr) {
         console.error("Upload error:", uploadErr);
-        setError("Không thể upload ảnh. Vui lòng thử lại.");
+        toast.error("Không thể upload ảnh. Vui lòng thử lại.");
         setProcessing(false);
         return;
       }
@@ -233,7 +234,7 @@ const StyleTransfer = () => {
       });
     } catch (err) {
       console.error("Transfer error:", err);
-      setError(`Lỗi: ${err.message}. Vui lòng thử lại.`);
+      toast.error(`Lỗi: ${err.message}. Vui lòng thử lại.`);
     } finally {
       setProcessing(false);
       setProcessingStatus("");
@@ -393,12 +394,6 @@ const StyleTransfer = () => {
               </div>
             )}
           </div>
-
-          {error && (
-            <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-2xl p-3">
-              {error}
-            </p>
-          )}
 
           <button
             type="button"

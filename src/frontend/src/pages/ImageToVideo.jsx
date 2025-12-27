@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Download, Film, Image, Play, Share2, Upload } from "lucide-react";
 import { communicationApi } from "../api/communicationApi";
 import ShareToGroupModal from "../components/common/ShareToGroupModal";
+import { toast } from "../hooks/use-toast";
 
 // Models for Image to Video
 const IMAGE_TO_VIDEO_MODELS = [
@@ -55,11 +56,11 @@ const ImageToVideo = () => {
                 console.log("Image URL set:", uploadedUrl);
             } else {
                 console.error("No URL found in response:", result);
-                setError("Không thể upload ảnh. Vui lòng thử lại.");
+                toast.error("Không thể upload ảnh. Vui lòng thử lại.");
             }
         } catch (err) {
             console.error("Upload error:", err);
-            setError("Lỗi upload: " + err.message);
+            toast.error("Lỗi upload: " + err.message);
         } finally {
             setUploading(false);
         }
@@ -101,7 +102,7 @@ const ImageToVideo = () => {
             setLoading(false);
             if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
         } else if (result.error && !result.error.includes("Timeout")) {
-            setError(result.error);
+            toast.error(result.error);
             setLoading(false);
             if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
         }
@@ -110,11 +111,11 @@ const ImageToVideo = () => {
     // Start video generation
     const handleGenerate = async () => {
         if (!imageUrl) {
-            setError("Vui lòng upload ảnh hoặc nhập URL ảnh.");
+            toast.warning("Vui lòng upload ảnh hoặc nhập URL ảnh.");
             return;
         }
         if (!prompt.trim()) {
-            setError("Vui lòng nhập mô tả chuyển động.");
+            toast.warning("Vui lòng nhập mô tả chuyển động.");
             return;
         }
 
@@ -142,7 +143,7 @@ const ImageToVideo = () => {
             // Initial poll
             setTimeout(() => pollStatus(result.taskId), 1000);
         } else {
-            setError(result.error || "Không thể tạo video. Vui lòng thử lại.");
+            toast.error(result.error || "Không thể tạo video. Vui lòng thử lại.");
             setLoading(false);
         }
     };
@@ -320,12 +321,6 @@ const ImageToVideo = () => {
                             </div>
                         </div>
                     </div>
-
-                    {error && (
-                        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-600 text-sm">
-                            {error}
-                        </div>
-                    )}
 
                     {!videoUrl && (
                         <button

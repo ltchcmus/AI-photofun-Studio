@@ -7,7 +7,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
+import { toast } from "../hooks/use-toast";
 import { userApi } from "../api/userApi";
 
 const VerifyEmailPage = () => {
@@ -149,11 +149,6 @@ const VerifyEmailPage = () => {
               autoFocus
               maxLength={4}
             />
-            {error && (
-              <div className="flex items-center justify-center gap-1.5 text-red-500 text-sm mt-3 animate-in slide-in-from-top-1">
-                <AlertCircle className="w-4 h-4" /> {error}
-              </div>
-            )}
           </div>
 
           <button

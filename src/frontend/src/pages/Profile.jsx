@@ -17,6 +17,7 @@ import PostList from "../components/post/PostList";
 import { usePosts } from "../hooks/usePosts";
 import { useProfile } from "../hooks/useProfile";
 import { userApi } from "../api/userApi";
+import { toast } from "../hooks/use-toast";
 
 const DEFAULT_AVATAR = "https://placehold.co/128x128/111/fff?text=U";
 
@@ -85,7 +86,9 @@ const Profile = () => {
       navigate("/verify-email");
     } catch (error) {
       console.error("Failed to send verification email:", error);
-      setVerifyMessage("Không thể gửi email xác minh. Vui lòng thử lại sau.");
+      const msg = "Không thể gửi email xác minh. Vui lòng thử lại sau.";
+      setVerifyMessage(msg);
+      toast.error(msg);
       setVerifying(false);
     }
   };

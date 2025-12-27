@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Camera, ChevronLeft, Mail, Phone, Save, User, X } from "lucide-react";
+import { toast } from "../hooks/use-toast";
 
 const API_GATEWAY = import.meta.env.VITE_API_GATEWAY || "http://localhost:8888";
 const PROFILE_ENDPOINT = "/api/v1/profiles/my-profile";
@@ -10,9 +11,9 @@ const UPLOAD_AVATAR_ENDPOINT = "/api/v1/identity/users/upload-avatar";
 const DEFAULT_AVATAR = "https://placehold.co/128x128/111/fff?text=U";
 
 const DEFAULT_FORM = {
-  fullName: "Cao Ty",
-  email: "caoty113@gmail.com",
-  phone: "+84 912 345 678",
+  fullName: "",
+  email: "",
+  phone: "",
   avatarUrl: DEFAULT_AVATAR,
   avatarFile: null,
 };
@@ -72,10 +73,9 @@ const EditProfile = () => {
           avatarFile: null,
         }));
       } catch (error) {
-        setStatus({
-          error: error.message || "Không thể tải thông tin hồ sơ",
-          success: "",
-        });
+        const msg = error.message || "Không thể tải thông tin hồ sơ";
+        setStatus({ error: msg, success: "" });
+        toast.error(msg);
       } finally {
         setFetchingProfile(false);
       }
@@ -158,8 +158,8 @@ const EditProfile = () => {
       const token = localStorage.getItem("token");
       const authHeaders = token
         ? {
-            Authorization: `Bearer ${token}`,
-          }
+          Authorization: `Bearer ${token}`,
+        }
         : {};
 
       let nextAvatarUrl = formData.avatarUrl || DEFAULT_AVATAR;
@@ -230,17 +230,15 @@ const EditProfile = () => {
         setPreviewAvatar(null);
       }
 
-      setStatus({
-        error: "",
-        success: data.message || "Đã cập nhật hồ sơ thành công",
-      });
+      const successMsg = data.message || "Đã cập nhật hồ sơ thành công";
+      setStatus({ error: "", success: successMsg });
+      toast.success(successMsg);
 
       setTimeout(() => navigate("/profile"), 1200);
     } catch (error) {
-      setStatus({
-        success: "",
-        error: error.message || "Không thể cập nhật hồ sơ",
-      });
+      const errorMsg = error.message || "Không thể cập nhật hồ sơ";
+      setStatus({ success: "", error: errorMsg });
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -276,16 +274,6 @@ const EditProfile = () => {
             {fetchingProfile && (
               <div className="mb-6 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600">
                 Đang tải thông tin hồ sơ...
-              </div>
-            )}
-            {status.error && (
-              <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-                {status.error}
-              </div>
-            )}
-            {status.success && (
-              <div className="mb-6 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-                {status.success}
               </div>
             )}
             <div className="flex flex-col items-center mb-10">

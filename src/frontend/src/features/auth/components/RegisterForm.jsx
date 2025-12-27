@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
+import { toast } from "../../../hooks/use-toast";
 import { useAuth } from "../../../hooks/useAuth";
 
 /**
@@ -142,6 +142,7 @@ const RegisterPage = () => {
     } catch (err) {
       const msg = formatRegistrationError(err);
       setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -256,13 +257,6 @@ const RegisterPage = () => {
                 className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl text-sm transition-all duration-300 outline-none focus:border-black focus:ring-4 focus:ring-black/10"
               />
             </div>
-
-            {/* Error message */}
-            {error && (
-              <div className="mb-4 text-red-500 text-sm text-center">
-                {error}
-              </div>
-            )}
 
             {/* Register Button */}
             <button

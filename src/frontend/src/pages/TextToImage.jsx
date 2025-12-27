@@ -5,6 +5,7 @@ import { generateImage, pollTaskStatus, suggestPrompts, recordPromptChoice } fro
 import { usePosts } from "../hooks/usePosts";
 import CreatePostWidget from "../components/post/CreatePostWidget";
 import ShareToGroupModal from "../components/common/ShareToGroupModal";
+import { toast } from "../hooks/use-toast";
 
 const readFileAsDataUrl = (file) =>
   new Promise((resolve, reject) => {
@@ -111,7 +112,7 @@ const TextToImage = () => {
       const dataUrl = await readFileAsDataUrl(files[0]);
       setUploadedImage(dataUrl);
     } catch (err) {
-      setError("Không thể đọc ảnh tham chiếu. Vui lòng thử lại.");
+      toast.error("Không thể đọc ảnh tham chiếu. Vui lòng thử lại.");
     }
   };
 
@@ -142,7 +143,7 @@ const TextToImage = () => {
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
-      setError("Vui lòng nhập mô tả trước khi tạo ảnh.");
+      toast.warning("Vui lòng nhập mô tả trước khi tạo ảnh.");
       return;
     }
     setError("");
@@ -187,7 +188,7 @@ const TextToImage = () => {
       });
 
       if (!genResult.success) {
-        setError(formatError(genResult.error));
+        toast.error(formatError(genResult.error));
         setLoading(false);
         return;
       }
@@ -212,10 +213,10 @@ const TextToImage = () => {
           aspectRatio,
         });
       } else {
-        setError(formatError(pollResult.error));
+        toast.error(formatError(pollResult.error));
       }
     } catch (err) {
-      setError(formatError(err));
+      toast.error(formatError(err));
     } finally {
       setLoading(false);
       setTaskStatus("");
@@ -410,11 +411,6 @@ const TextToImage = () => {
               </div>
             )}
           </div>
-          {error && (
-            <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-2xl p-3">
-              {error}
-            </p>
-          )}
         </section>
 
         <section className="space-y-6">

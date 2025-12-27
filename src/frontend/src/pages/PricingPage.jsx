@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Check, Loader2, Star } from "lucide-react";
 import { useAuthContext } from "../context/AuthContext";
+import { toast } from "../hooks/use-toast";
 
 const PAYMENT_API_URL =
   import.meta.env.VITE_PAYMENT_API_URL ||
@@ -70,7 +71,7 @@ const PricingPage = () => {
 
     // Check if user is logged in
     if (!isAuthenticated || !user) {
-      alert("Vui lòng đăng nhập để thanh toán");
+      toast.warning("Vui lòng đăng nhập để thanh toán");
       return;
     }
 
@@ -81,7 +82,7 @@ const PricingPage = () => {
       window.location.href = checkoutUrl;
     } catch (error) {
       console.error("Payment error:", error);
-      alert(`Không thể tạo thanh toán: ${error.message}`);
+      toast.error(`Không thể tạo thanh toán: ${error.message}`);
     } finally {
       setLoading(false);
     }
