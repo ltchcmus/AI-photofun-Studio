@@ -2,7 +2,7 @@ import axios from "axios";
 // Base URL for AI backend - use environment variable for production
 const AI_BASE_URL = import.meta.env.VITE_AI_API_URL || "http://localhost:9999";
 const API_GATEWAY = import.meta.env.VITE_API_GATEWAY || "";
-
+import tokenManager from "./tokenManager";
 // File upload URL: production uses VITE_FILE_UPLOAD_URL, dev uses Vite proxy
 const FILE_UPLOAD_BASE_URL = import.meta.env.VITE_FILE_UPLOAD_URL || "";
 
