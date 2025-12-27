@@ -40,10 +40,6 @@ const Sidebar = () => {
 
   const handleLogout = useCallback(async () => {
     try {
-      // Reset dark mode khi logout
-      setDarkMode(false);
-      localStorage.removeItem("darkMode");
-      document.body.classList.remove("dark");
       await logout();
       navigate("/login");
     } catch (error) {
