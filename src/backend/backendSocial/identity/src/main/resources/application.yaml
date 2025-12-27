@@ -3,6 +3,13 @@ server:
   servlet:
     context-path: /identity
   forward-headers-strategy: framework
+  tomcat:
+    remoteip:
+      remote-ip-header: X-Forwarded-For
+      protocol-header: X-Forwarded-Proto
+      internal-proxies: 172\\..*|10\\..*|192\\.168\\..*
+
+
 
 management:
   endpoints:
@@ -15,7 +22,7 @@ management:
 
 config:
   env:
-    limit-account-per-ip: ${LIMIT_ACCOUNT_PER_IP:4}
+    limit-account-per-ip: ${LIMIT_ACCOUNT_PER_IP:40}
 
   cookie:
     secure: ${COOKIE_SECURE:false}
