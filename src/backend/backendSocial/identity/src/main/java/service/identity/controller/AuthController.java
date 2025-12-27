@@ -151,10 +151,7 @@ public class AuthController {
   HttpResponse<Map<String, Object>>
   authenticate(@RequestParam("code") String code, HttpServletResponse response,
                HttpServletRequest request) {
-    String clientIp = request.getHeader("X-Forwarded-For");
-    if (clientIp == null || clientIp.isEmpty()) {
-      clientIp = request.getRemoteAddr();
-    }
+    String clientIp = request.getRemoteAddr();
 
     boolean success = authService.authenticate(code, response, clientIp);
 

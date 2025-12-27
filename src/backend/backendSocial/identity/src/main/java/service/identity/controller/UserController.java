@@ -37,10 +37,7 @@ public class UserController {
       @RequestBody @Valid RegisterUserRequest request,
       HttpServletRequest httpServletRequest) {
 
-    String clientIp = httpServletRequest.getHeader("X-Forwarded-For");
-    if (clientIp == null || clientIp.isEmpty()) {
-      clientIp = httpServletRequest.getRemoteAddr();
-    }
+    String clientIp = httpServletRequest.getRemoteAddr();
 
     return HttpResponse.<RegisterUserResponse>builder()
         .code(1000)
