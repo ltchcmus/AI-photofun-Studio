@@ -9,8 +9,6 @@ server:
       protocol-header: X-Forwarded-Proto
       internal-proxies: 172\\..*|10\\..*|192\\.168\\..*
 
-
-
 management:
   endpoints:
     web:
@@ -22,7 +20,7 @@ management:
 
 config:
   env:
-    limit-account-per-ip: ${LIMIT_ACCOUNT_PER_IP:40}
+    limit-account-per-ip: ${LIMIT_ACCOUNT_PER_IP:1000}
 
   cookie:
     secure: ${COOKIE_SECURE:false}
