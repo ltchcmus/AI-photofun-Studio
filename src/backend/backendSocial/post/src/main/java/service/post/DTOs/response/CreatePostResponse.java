@@ -15,6 +15,7 @@ public class CreatePostResponse {
     String userId;
     String caption;
     String imageUrl;
+    String videoUrl;
     String prompt;
     long likes;
     long comments;

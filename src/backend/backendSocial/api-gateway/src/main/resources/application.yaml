@@ -2,28 +2,61 @@ server:
   port: ${PORT:8888}
   servlet:
     context-path: /api-gateway
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
 
 config:
   http:
-    identity: ${IDENTITY_SERVICE_URL:http://localhost:8080/identity}
+    identity: ${IDENTITY_SERVICE_URL:http://localhost:8000/identity}
   prefix: /api/v1
   remove-prefix: 2
+
+cors:
+  allowed:
+    origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}
 
 spring:
   application:
     name: api-gateway
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
   cloud:
     gateway:
+      # CORS Configuration - THIS IS THE KEY!
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          "[/**]":
+            allowedOriginPatterns:
+              - "http://localhost:*"
+              - "https://nmcnpm.lethanhcong.site:*"
+              - "https://nmcnpm-api.lethanhcong.site:*"
+              - "https://*.lethanhcong.site:*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowedHeaders: "*"
+            exposedHeaders:
+              - X-Access-Token
+              - Authorization
+              - Content-Type
+              - Set-Cookie
+            allowCredentials: true
+            maxAge: 3600
+      default-filters:
+        - PreserveHostHeader
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
       routes:
         - id: identity-service
-          uri: ${IDENTITY_SERVICE_URL:http://localhost:8080}
+          uri: ${IDENTITY_SERVICE_URL:http://localhost:8000}
           predicates:
-               - Path=${config.prefix}/identity/**
+            - Path=${config.prefix}/identity/**
           filters:
-                - StripPrefix=${config.remove-prefix}
+            - StripPrefix=${config.remove-prefix}
 
         - id: profile-service
           uri: ${PROFILE_SERVICE_URL:http://localhost:8081}
@@ -40,8 +73,15 @@ spring:
             - StripPrefix=${config.remove-prefix}
 
         - id: comments-service
-          uri: ${COMMENT_SERVICE_URL:http://localhost:8083}
+          uri: ${COMMENT_SERVICE_URL:http://localhost:8003}
           predicates:
             - Path=${config.prefix}/comments/**
+          filters:
+            - StripPrefix=${config.remove-prefix}
+
+        - id: communication-service
+          uri: ${COMMUNICATION_SERVICE_URL:http://localhost:8085}
+          predicates:
+            - Path=${config.prefix}/communications/**
           filters:
             - StripPrefix=${config.remove-prefix}

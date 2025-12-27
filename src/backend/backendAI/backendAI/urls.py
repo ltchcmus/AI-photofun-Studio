@@ -1,9 +1,20 @@
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.http import JsonResponse
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+
+
+def health_check(request):
+    """Simple health check endpoint for load balancers and monitoring"""
+    return JsonResponse({
+        'status': 'healthy',
+        'service': 'backendAI',
+        'version': '1.0.0'
+    })
+
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -18,6 +29,9 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    # Health check endpoint
+    path('health/', health_check, name='health-check'),
+    
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
@@ -28,11 +42,14 @@ urlpatterns = [
     
     # Internal services (used by conversation flow)
     path('v1/prompt/', include('apps.prompt_service.urls')),
+    path('v1/rec-prompt/', include('apps.rec_prompt.urls')),
     path('v1/image/', include('apps.image_service.urls')),
     
     # Direct feature endpoints (no conversation required)
     path('v1/features/image-generation/', include('apps.image_generation.urls')),
     path('v1/features/upscale/', include('apps.upscale.urls')),
+    path('v1/features/prompt-to-video/', include('apps.prompt_to_video.urls')),
+    path('v1/features/image-to-video/', include('apps.image_to_video.urls')),
     path('v1/features/remove-background/', include('apps.remove_background.urls')),
     path('v1/features/relight/', include('apps.relight.urls')),
     path('v1/features/style-transfer/', include('apps.style_transfer.urls')),

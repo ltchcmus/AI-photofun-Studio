@@ -8,8 +8,9 @@ import (
 )
 
 type Config struct {
-	Port     string
-	MongoURI string
+	Port           string
+	MongoURI       string
+	PostServiceURL string
 }
 
 var (
@@ -27,8 +28,9 @@ func LoadConfig() {
 	_ = godotenv.Load(pathEnv)
 
 	config = &Config{
-		Port:     GetEnv("PORT", "8003"),
-		MongoURI: GetEnv("MONGO_URI", "mongodb://admin:admin123@mongodb:27017/comments_db?authSource=admin"),
+		Port:           GetEnv("PORT", "8003"),
+		MongoURI:       GetEnv("MONGO_URI", "mongodb://admin:admin123@mongodb:27017/comments_db?authSource=admin"),
+		PostServiceURL: GetEnv("POST_SERVICE_URL", "http://localhost:8082/posts"),
 	}
 
 }
@@ -47,4 +49,7 @@ func GetPort() string {
 }
 func GetMongoURI() string {
 	return config.MongoURI
+}
+func GetPostServiceURL() string {
+	return config.PostServiceURL
 }

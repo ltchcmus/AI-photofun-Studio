@@ -6,8 +6,7 @@ from rest_framework import status
 from core import APIResponse
 from .serializers import RemoveBackgroundInputSerializer
 from .services import RemoveBackgroundService, RemoveBackgroundError
-from core.token_decorators import require_tokens
-from core.token_costs import TOKEN_COSTS
+from core.token_decorators import track_processing_time
 from core.image_input_handler import ImageInputHandler
 import logging
 
@@ -20,7 +19,7 @@ class RemoveBackgroundView(APIView):
     POST /v1/features/remove-background/
     """
     
-    @require_tokens(cost=TOKEN_COSTS['remove_background'], feature='remove_background')
+    @track_processing_time(feature='remove_background', min_required_tokens=3)
     def post(self, request):
         """
         Remove background from image

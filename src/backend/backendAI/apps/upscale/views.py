@@ -6,8 +6,7 @@ from rest_framework import status
 from core import APIResponse
 from .serializers import UpscaleInputSerializer
 from .services import UpscaleService, UpscaleError
-from core.token_decorators import require_tokens
-from core.token_costs import TOKEN_COSTS
+from core.token_decorators import track_processing_time
 from core.image_input_handler import ImageInputHandler
 import logging
 
@@ -25,7 +24,7 @@ class UpscaleView(APIView):
     3. Multipart form-data: files={'image_file': file}
     """
     
-    @require_tokens(cost=TOKEN_COSTS['upscale'], feature='upscale')
+    @track_processing_time(feature='upscale', min_required_tokens=5)
     def post(self, request):
         """
         Upscale image
@@ -39,7 +38,7 @@ class UpscaleView(APIView):
             "user_id": "user123"
         }
         """
-        serializer = UpscaleSerializer(data=request.data)
+        serializer = UpscaleInputSerializer(data=request.data)
         if not serializer.is_valid():
             return APIResponse.error(message="Validation failed", result=serializer.errors)
         
@@ -69,15 +68,22 @@ class UpscaleView(APIView):
                 user_id=validated_data['user_id'],
                 sharpen=settings['sharpen'],
                 smart_grain=settings['smart_grain'],
-                ultra_detail=settings['ultra_detail']
+                ultra_detail=settings['ultra_detail'],
+                flavor=flavor,
+                scale_factor=2  # V2 default
             )
             
             return APIResponse.success(
                 result={
                     "task_id": result['task_id'],
-                    "status": result['status']
+                    "status": result['status'],
+                    "image_url": result.get('uploaded_urls', [None])[0] if result.get('uploaded_urls') else None,
+                    "original_image": result.get('original_image'),
+                    "flavor": result.get('flavor', 'photo'),
+                    "scale_factor": result.get('scale_factor', 2),
+                    "settings": result.get('settings', {})
                 },
-                message="Upscale started. Use task_id to poll status."
+                message="Upscale started (V2 API). Use task_id to poll status."
             )
         
         except UpscaleError as e:
@@ -106,8 +112,11 @@ class UpscaleStatusView(APIView):
     def get(self, request, task_id):
         """Get upscale task status"""
         try:
+            # Get user_id from query params for gallery save
+            user_id = request.query_params.get('user_id')
+            
             service = UpscaleService()
-            result = service.poll_task_status(task_id)
+            result = service.poll_task_status(task_id, user_id=user_id)
             
             return APIResponse.success(
                 result={

@@ -18,7 +18,7 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
 # Expose port
-EXPOSE 8080
+EXPOSE 8000
 
 # Run the application with optimized JVM settings for faster startup
 ENTRYPOINT ["java", \

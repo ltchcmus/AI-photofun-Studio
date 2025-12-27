@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>🖼️ Image Gallery API Test</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #00d9ff, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 217, 255, 0.3);
+        }
+
+        /* Config Panel */
+        .config-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .config-panel h2 {
+            margin-bottom: 20px;
+            color: #00d9ff;
+            font-size: 1.3rem;
+        }
+
+        .config-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 20px;
+            align-items: end;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #a0aec0;
+            margin-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 14px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #00d9ff;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d9ff 0%, #a855f7 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #a0aec0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #00d9ff 0%, #a855f7 100%);
+            border-color: transparent;
+            color: white;
+        }
+
+        /* Gallery Grid */
+        .gallery-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .gallery-header h2 {
+            color: #00d9ff;
+            font-size: 1.3rem;
+        }
+
+        .gallery-stats {
+            background: rgba(0, 217, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #00d9ff;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .gallery-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+
+        .gallery-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(0, 217, 255, 0.3);
+        }
+
+        .gallery-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .gallery-card img:hover {
+            transform: scale(1.05);
+        }
+
+        .gallery-card .info {
+            padding: 15px;
+        }
+
+        .gallery-card .prompt {
+            font-size: 13px;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .gallery-card .meta {
+            font-size: 11px;
+            color: #718096;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .gallery-card .intent-badge {
+            background: rgba(168, 85, 247, 0.2);
+            color: #a855f7;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        .gallery-card .actions {
+            display: flex;
+            gap: 8px;
+            padding: 0 15px 15px;
+        }
+
+        .gallery-card .actions button {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .btn-delete:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-restore {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .btn-restore:hover {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-permanent {
+            background: rgba(220, 38, 38, 0.2);
+            color: #dc2626;
+        }
+
+        .btn-permanent:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+        /* Log Panel */
+        .log-panel {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .log-panel h3 {
+            color: #00d9ff;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .log-content {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            color: #10b981;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .log-entry.error {
+            color: #ef4444;
+        }
+
+        .log-entry.success {
+            color: #10b981;
+        }
+
+        .log-entry.info {
+            color: #00d9ff;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #718096;
+        }
+
+        .empty-state .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .lightbox-close:hover {
+            transform: scale(1.2);
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .loading .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(0, 217, 255, 0.2);
+            border-top-color: #00d9ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 217, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 217, 255, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>🖼️ Image Gallery API Test</h1>
+
+        <!-- Config Panel -->
+        <div class="config-panel">
+            <h2>⚙️ Configuration</h2>
+            <div class="config-row">
+                <div class="form-group">
+                    <label>AI Backend URL</label>
+                    <input type="text" id="backendUrl" value="http://localhost:9999/v1" />
+                </div>
+                <div class="form-group">
+                    <label>User ID</label>
+                    <input type="text" id="userId" value="test_user_001" />
+                </div>
+                <button class="btn btn-primary" onclick="loadGallery()">🔄 Load Gallery</button>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('active')" id="tab-active">📁 Active Images</div>
+            <div class="tab" onclick="switchTab('deleted')" id="tab-deleted">🗑️ Trash</div>
+        </div>
+
+        <!-- Active Gallery -->
+        <div class="gallery-section" id="active-section">
+            <div class="gallery-header">
+                <h2>📁 Your Images</h2>
+                <div class="gallery-stats" id="active-stats">0 images</div>
+            </div>
+            <div class="gallery-grid" id="active-gallery">
+                <div class="empty-state">
+                    <div class="icon">🖼️</div>
+                    <h3>No images yet</h3>
+                    <p>Click "Load Gallery" to fetch your images</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deleted Gallery -->
+        <div class="gallery-section" id="deleted-section" style="display: none;">
+            <div class="gallery-header">
+                <h2>🗑️ Trash</h2>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <div class="gallery-stats" id="deleted-stats">0 images</div>
+                    <button class="btn btn-danger" onclick="emptyTrash()" style="padding: 8px 16px; font-size: 12px;">
+                        🗑️ Empty Trash
+                    </button>
+                </div>
+            </div>
+            <div class="gallery-grid" id="deleted-gallery">
+                <div class="empty-state">
+                    <div class="icon">🗑️</div>
+                    <h3>Trash is empty</h3>
+                    <p>Deleted images will appear here</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Log Panel -->
+        <div class="log-panel">
+            <h3>
+                📋 API Logs
+                <button onclick="clearLogs()"
+                    style="padding: 5px 12px; font-size: 11px; background: rgba(255,255,255,0.1); border: none; border-radius: 6px; color: #a0aec0; cursor: pointer;">
+                    Clear
+                </button>
+            </h3>
+            <div class="log-content" id="logContent">
+                <div class="log-entry info">Ready to test Image Gallery API...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <span class="lightbox-close">&times;</span>
+        <img id="lightboxImage" src="" alt="" />
+    </div>
+
+    <script>
+        let currentTab = 'active';
+
+        function getConfig() {
+            return {
+                backendUrl: document.getElementById('backendUrl').value.trim(),
+                userId: document.getElementById('userId').value.trim() || 'test_user_001'
+            };
+        }
+
+        function log(message, type = 'info') {
+            const logContent = document.getElementById('logContent');
+            const time = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.innerHTML = `<span style="color: #718096;">[${time}]</span> ${message}`;
+            logContent.appendChild(entry);
+            logContent.scrollTop = logContent.scrollHeight;
+        }
+
+        function clearLogs() {
+            document.getElementById('logContent').innerHTML = '<div class="log-entry info">Logs cleared.</div>';
+        }
+
+        // Switch tabs
+        function switchTab(tab) {
+            currentTab = tab;
+
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.add('active');
+
+            document.getElementById('active-section').style.display = tab === 'active' ? 'block' : 'none';
+            document.getElementById('deleted-section').style.display = tab === 'deleted' ? 'block' : 'none';
+
+            if (tab === 'deleted') {
+                loadDeletedImages();
+            }
+        }
+
+        // Load active gallery
+        async function loadGallery() {
+            const config = getConfig();
+            const gallery = document.getElementById('active-gallery');
+
+            gallery.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+            log(`📤 GET ${config.backendUrl}/gallery?user_id=${config.userId}`, 'info');
+
+            try {
+                const res = await fetch(`${config.backendUrl}/gallery?user_id=${config.userId}`);
+                const data = await res.json();
+
+                log(`📥 Response: ${JSON.stringify(data).slice(0, 200)}...`, data.code === 1000 ? 'success' : 'error');
+
+                if (data.code === 1000 && data.result) {
+                    renderGallery('active-gallery', data.result, false);
+                    document.getElementById('active-stats').textContent = `${data.result.length} images`;
+                } else {
+                    gallery.innerHTML = `<div class="empty-state"><div class="icon">❌</div><h3>Error</h3><p>${data.message || 'Failed to load'}</p></div>`;
+                }
+            } catch (err) {
+                log(`❌ Error: ${err.message}`, 'error');
+                gallery.innerHTML = `<div class="empty-state"><div class="icon">❌</div><h3>Connection Error</h3><p>${err.message}</p></div>`;
+            }
+        }
+
+        // Load deleted images
+        async function loadDeletedImages() {
+            const config = getConfig();
+            const gallery = document.getElementById('deleted-gallery');
+
+            gallery.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+            log(`📤 GET ${config.backendUrl}/gallery/deleted?user_id=${config.userId}`, 'info');
+
+            try {
+                const res = await fetch(`${config.backendUrl}/gallery/deleted?user_id=${config.userId}`);
+                const data = await res.json();
+
+                log(`📥 Response: ${JSON.stringify(data).slice(0, 200)}...`, data.code === 1000 ? 'success' : 'error');
+
+                if (data.code === 1000 && data.result) {
+                    renderGallery('deleted-gallery', data.result, true);
+                    document.getElementById('deleted-stats').textContent = `${data.result.length} images`;
+                } else {
+                    gallery.innerHTML = `<div class="empty-state"><div class="icon">🗑️</div><h3>Trash is empty</h3></div>`;
+                }
+            } catch (err) {
+                log(`❌ Error: ${err.message}`, 'error');
+                gallery.innerHTML = `<div class="empty-state"><div class="icon">❌</div><h3>Error</h3><p>${err.message}</p></div>`;
+            }
+        }
+
+        // Render gallery
+        function renderGallery(containerId, images, isTrash) {
+            const container = document.getElementById(containerId);
+
+            if (!images || images.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">${isTrash ? '🗑️' : '🖼️'}</div>
+                        <h3>${isTrash ? 'Trash is empty' : 'No images'}</h3>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = images.map(img => `
+                <div class="gallery-card" id="card-${img.id}">
+                    <img src="${img.image_url}" alt="${img.prompt || 'Image'}" 
+                         onclick="openLightbox('${img.image_url}')" 
+                         onerror="this.src='https://via.placeholder.com/400x200?text=Image+Not+Found'" />
+                    <div class="info">
+                        <div class="prompt">${img.prompt || 'No prompt'}</div>
+                        <div class="meta">
+                            <span>${new Date(img.created_at).toLocaleDateString()}</span>
+                            <span class="intent-badge">${img.intent || 'unknown'}</span>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        ${isTrash ? `
+                            <button class="btn-restore" onclick="restoreImage('${img.id}')">♻️ Restore</button>
+                            <button class="btn-permanent" onclick="permanentDelete('${img.id}')">🗑️ Delete Forever</button>
+                        ` : `
+                            <button class="btn-delete" onclick="deleteImage('${img.id}')">🗑️ Delete</button>
+                        `}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Soft delete image
+        async function deleteImage(imageId) {
+            if (!confirm('Move this image to trash?')) return;
+
+            const config = getConfig();
+            log(`📤 DELETE ${config.backendUrl}/gallery/${imageId}`, 'info');
+
+            try {
+                const res = await fetch(`${config.backendUrl}/gallery/${imageId}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+
+                log(`📥 Response: ${JSON.stringify(data)}`, data.code === 1000 ? 'success' : 'error');
+
+                if (data.code === 1000) {
+                    document.getElementById(`card-${imageId}`).remove();
+                    log(`✅ Image ${imageId} moved to trash`, 'success');
+                } else {
+                    alert('Failed to delete: ' + data.message);
+                }
+            } catch (err) {
+                log(`❌ Error: ${err.message}`, 'error');
+            }
+        }
+
+        // Restore image
+        async function restoreImage(imageId) {
+            const config = getConfig();
+            log(`📤 POST ${config.backendUrl}/gallery/${imageId}/restore`, 'info');
+
+            try {
+                const res = await fetch(`${config.backendUrl}/gallery/${imageId}/restore`, {
+                    method: 'POST'
+                });
+                const data = await res.json();
+
+                log(`📥 Response: ${JSON.stringify(data)}`, data.code === 1000 ? 'success' : 'error');
+
+                if (data.code === 1000) {
+                    document.getElementById(`card-${imageId}`).remove();
+                    log(`✅ Image ${imageId} restored!`, 'success');
+                } else {
+                    alert('Failed to restore: ' + data.message);
+                }
+            } catch (err) {
+                log(`❌ Error: ${err.message}`, 'error');
+            }
+        }
+
+        // Permanent delete
+        async function permanentDelete(imageId) {
+            if (!confirm('⚠️ This will PERMANENTLY delete the image. This cannot be undone!')) return;
+
+            const config = getConfig();
+            log(`📤 DELETE ${config.backendUrl}/gallery/${imageId}/permanent`, 'info');
+
+            try {
+                const res = await fetch(`${config.backendUrl}/gallery/${imageId}/permanent`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+
+                log(`📥 Response: ${JSON.stringify(data)}`, data.code === 1000 ? 'success' : 'error');
+
+                if (data.code === 1000) {
+                    document.getElementById(`card-${imageId}`).remove();
+                    log(`✅ Image ${imageId} permanently deleted`, 'success');
+                } else {
+                    alert('Failed to delete: ' + data.message);
+                }
+            } catch (err) {
+                log(`❌ Error: ${err.message}`, 'error');
+            }
+        }
+
+        // Empty trash
+        async function emptyTrash() {
+            if (!confirm('⚠️ This will PERMANENTLY delete ALL images in trash. Continue?')) return;
+
+            const config = getConfig();
+            const gallery = document.getElementById('deleted-gallery');
+            const cards = gallery.querySelectorAll('.gallery-card');
+
+            for (const card of cards) {
+                const imageId = card.id.replace('card-', '');
+                await permanentDelete(imageId);
+            }
+
+            loadDeletedImages();
+        }
+
+        // Lightbox
+        function openLightbox(url) {
+            document.getElementById('lightboxImage').src = url;
+            document.getElementById('lightbox').style.display = 'flex';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').style.display = 'none';
+        }
+
+        // Load on start
+        window.onload = () => {
+            log('🚀 Image Gallery API Test ready!', 'success');
+            log('📝 Endpoints: GET/POST /gallery, DELETE /gallery/{id}, POST /gallery/{id}/restore, DELETE /gallery/{id}/permanent', 'info');
+        };
+    </script>
+
+</body>
+
+</html>

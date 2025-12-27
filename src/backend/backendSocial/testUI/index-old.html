@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Testing Dashboard - Complete System</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <header class="header">
+        <h1>🚀 API Testing Dashboard</h1>
+        <div class="auth-status">
+          <span id="authStatus">Not Authenticated</span>
+          <button id="logoutBtn" style="display: none">Logout</button>
+        </div>
+      </header>
+
+      <!-- Config Section -->
+      <section class="config-section">
+        <h2>⚙️ Configuration</h2>
+        <div class="form-group">
+          <label>API Gateway URL:</label>
+          <input
+            type="text"
+            id="apiGatewayUrl"
+            value="http://localhost:8888/api-gateway"
+          />
+        </div>
+        <div class="form-group">
+          <label>Comments Service URL:</label>
+          <input type="text" id="commentsUrl" value="http://localhost:8003" />
+        </div>
+        <div class="form-group">
+          <label>Communication Socket URL:</label>
+          <input
+            type="text"
+            id="communicationSocketUrl"
+            value="http://localhost:8899"
+          />
+        </div>
+      </section>
+
+      <!-- Navigation Tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('auth')">
+          🔐 Authentication
+        </button>
+        <button class="tab-btn" onclick="showTab('user')">
+          👤 User Management
+        </button>
+        <button class="tab-btn" onclick="showTab('group')">👥 Groups</button>
+        <button class="tab-btn" onclick="showTab('profile')">📋 Profile</button>
+        <button class="tab-btn" onclick="showTab('post')">📝 Posts</button>
+        <button class="tab-btn" onclick="showTab('comment')">
+          💬 Comments
+        </button>
+        <button class="tab-btn" onclick="showTab('chat')">💬 Chat</button>
+        <button class="tab-btn" onclick="showTab('socket')">🔌 Sockets</button>
+        <button class="tab-btn" onclick="showTab('admin')">🔑 Admin</button>
+      </div>
+
+      <!-- Authentication Tab -->
+      <div id="auth" class="tab-content active">
+        <h2>🔐 Authentication</h2>
+
+        <div class="api-section">
+          <h3>Register</h3>
+          <div class="form-group">
+            <input type="text" id="regUsername" placeholder="Username" />
+            <input type="email" id="regEmail" placeholder="Email" />
+            <input type="password" id="regPassword" placeholder="Password" />
+            <input
+              type="password"
+              id="regConfirmPass"
+              placeholder="Confirm Password"
+            />
+            <input type="text" id="regFullName" placeholder="Full Name" />
+          </div>
+          <button onclick="register()">Register</button>
+        </div>
+
+        <div class="api-section">
+          <h3>Login</h3>
+          <div class="form-group">
+            <input
+              type="text"
+              id="loginUsername"
+              placeholder="Username or Email"
+            />
+            <input type="password" id="loginPassword" placeholder="Password" />
+          </div>
+          <button onclick="login()">Login</button>
+        </div>
+
+        <div class="api-section">
+          <h3>Token Management</h3>
+          <div class="form-group">
+            <input
+              type="text"
+              id="introspectToken"
+              placeholder="Token to introspect"
+            />
+          </div>
+          <button onclick="introspectToken()">Introspect Token</button>
+          <button onclick="refreshToken()">Refresh Token</button>
+        </div>
+
+        <div class="response-box" id="authResponse"></div>
+      </div>
+
+      <!-- User Management Tab -->
+      <div id="user" class="tab-content">
+        <h2>👤 User Management</h2>
+
+        <div class="api-section">
+          <h3>User Info</h3>
+          <button onclick="getMyInfo()">Get My Info</button>
+          <button onclick="getAllUsers()">Get All Users</button>
+          <div class="form-group">
+            <input type="text" id="getUserId" placeholder="User ID" />
+            <button onclick="getUserById()">Get User by ID</button>
+          </div>
+        </div>
+
+        <div class="api-section">
+          <h3>Change Password</h3>
+          <div class="form-group">
+            <input
+              type="password"
+              id="oldPassword"
+              placeholder="Old Password"
+            />
+            <input
+              type="password"
+              id="newPassword"
+              placeholder="New Password"
+            />
+            <input
+              type="password"
+              id="confirmNewPassword"
+              placeholder="Confirm New Password"
+            />
+          </div>
+          <button onclick="changePassword()">Change Password</button>
+        </div>
+
+        <div class="api-section">
+          <h3>Upload Avatar</h3>
+          <div class="form-group">
+            <input type="file" id="avatarFile" accept="image/*" />
+          </div>
+          <button onclick="uploadAvatar()">Upload Avatar</button>
+        </div>
+
+        <div class="api-section">
+          <h3>Other Actions</h3>
+          <button onclick="checkLoginByGoogle()">Check Google Login</button>
+          <div class="form-group">
+            <input type="text" id="likePostId" placeholder="Post ID" />
+            <button onclick="likePost()">Like/Unlike Post</button>
+          </div>
+        </div>
+
+        <div class="response-box" id="userResponse"></div>
+      </div>
+
+      <!-- Groups Tab -->
+      <div id="group" class="tab-content">
+        <h2>👥 Group Management</h2>
+
+        <div class="api-section">
+          <h3>View Groups</h3>
+          <button onclick="getAllGroups()">Get All Groups</button>
+          <button onclick="getMyGroups()">Get My Groups</button>
+          <div class="form-group">
+            <input type="text" id="viewGroupId" placeholder="Group ID" />
+            <button onclick="getGroupDetail()">Get Group Detail</button>
+          </div>
+        </div>
+
+        <div class="api-section">
+          <h3>Create Group (Premium Only)</h3>
+          <div class="form-group">
+            <input type="text" id="createGroupName" placeholder="Group Name" />
+            <input
+              type="text"
+              id="createGroupImage"
+              placeholder="Image URL (optional)"
+            />
+          </div>
+          <button onclick="createGroup()">Create Group</button>
+        </div>
+
+        <div class="api-section">
+          <h3>Update Group (Admin Only)</h3>
+          <div class="form-group">
+            <input type="text" id="updateGroupId" placeholder="Group ID" />
+            <input type="text" id="updateGroupName" placeholder="New Name" />
+            <input
+              type="text"
+              id="updateGroupDesc"
+              placeholder="New Description"
+            />
+          </div>
+          <button onclick="updateGroup()">Update Group</button>
+        </div>
+
+        <div class="api-section">
+          <h3>Upload Group Avatar (Admin Only)</h3>
+          <div class="form-group">
+            <input
+              type="text"
+              id="uploadAvatarGroupId"
+              placeholder="Group ID"
+            />
+            <input type="file" id="groupAvatarFile" accept="image/*" />
+          </div>
+          <button onclick="uploadGroupAvatar()">Upload Avatar</button>
+        </div>
+
+        <div class="api-section">
+          <h3>Join Group</h3>
+          <div class="form-group">
+            <input type="text" id="joinGroupId" placeholder="Group ID" />
+          </div>
+          <button onclick="requestJoinGroup()">Request Join</button>
+        </div>
+
+        <div class="api-section">
+          <h3>Manage Requests (Admin)</h3>
+          <button onclick="getMemberRequests()">Get Member Requests</button>
+          <div class="form-group">
+            <input type="text" id="acceptRequestId" placeholder="User ID" />
+            <input type="text" id="acceptGroupId" placeholder="Group ID" />
+            <select id="acceptStatus">
+              <option value="1">Accept</option>
+              <option value="0">Deny</option>
+            </select>
+          </div>
+          <button onclick="modifyRequestStatus()">Process Request</button>
+        </div>
+
+        <div class="response-box" id="groupResponse"></div>
+      </div>
+
+      <!-- Profile Tab -->
+      <div id="profile" class="tab-content">
+        <h2>📋 Profile Management</h2>
+
+        <div class="api-section">
+          <h3>View Profile</h3>
+          <button onclick="getMyProfile()">Get My Profile</button>
+        </div>
+
+        <div class="api-section">
+          <h3>Update Profile</h3>
+          <div class="form-group">
+            <input type="text" id="updateFullName" placeholder="Full Name" />
+            <input type="text" id="updatePhone" placeholder="Phone" />
+            <input type="email" id="updateEmail" placeholder="Email" />
+            <input type="text" id="updateAvatarUrl" placeholder="Avatar URL" />
+          </div>
+          <button onclick="updateProfile()">Update Profile</button>
+        </div>
+
+        <div class="api-section">
+          <h3>Email Verification</h3>
+          <button onclick="checkVerify()">Check Verify Status</button>
+          <button onclick="verifyProfile()">Send Verification Code</button>
+          <div class="form-group">
+            <input
+              type="number"
+              id="verifyCode"
+              placeholder="Verification Code (4 digits)"
+            />
+            <button onclick="activateProfile()">Activate Profile</button>
+          </div>
+        </div>
+
+        <div class="response-box" id="profileResponse"></div>
+      </div>
+
+      <!-- Posts Tab -->
+      <div id="post" class="tab-content">
+        <h2>📝 Post Management</h2>
+
+        <div class="api-section">
+          <h3>View Posts</h3>
+          <button onclick="getAllPosts()">Get All Posts</button>
+          <button onclick="getMyPosts()">Get My Posts</button>
+          <div class="form-group">
+            <input type="text" id="viewPostId" placeholder="Post ID" />
+            <button onclick="viewPost()">View Post</button>
+          </div>
+        </div>
+
+        <div class="api-section">
+          <h3>Create Post</h3>
+          <div class="form-group">
+            <input type="text" id="postCaption" placeholder="Caption" />
+            <input type="text" id="postPrompt" placeholder="AI Prompt" />
+            <input type="file" id="postImage" accept="image/*" />
+          </div>
+          <button onclick="createPost()">Create Post</button>
+        </div>
+
+        <div class="api-section">
+          <h3>Post Actions</h3>
+          <div class="form-group">
+            <input type="text" id="postLikeId" placeholder="Post ID" />
+            <select id="postLikeAction">
+              <option value="1">Like</option>
+              <option value="-1">Unlike</option>
+            </select>
+            <button onclick="likePostAction()">Execute</button>
+          </div>
+          <div class="form-group">
+            <input type="text" id="downloadPostId" placeholder="Post ID" />
+            <button onclick="downloadPost()">Download Image</button>
+          </div>
+        </div>
+
+        <div class="response-box" id="postResponse"></div>
+      </div>
+
+      <!-- Comments Tab -->
+      <div id="comment" class="tab-content">
+        <h2>💬 Comments Management</h2>
+
+        <div class="api-section">
+          <h3>View Comments</h3>
+          <div class="form-group">
+            <input type="text" id="commentsPostId" placeholder="Post ID" />
+            <button onclick="getCommentsByPost()">Get Comments</button>
+          </div>
+          <div class="form-group">
+            <input type="text" id="commentId" placeholder="Comment ID" />
+            <button onclick="getCommentById()">Get Comment by ID</button>
+          </div>
+        </div>
+
+        <div class="api-section">
+          <h3>Create Comment</h3>
+          <div class="form-group">
+            <input type="text" id="createCommentPostId" placeholder="Post ID" />
+            <input type="text" id="createCommentUserId" placeholder="User ID" />
+            <input
+              type="text"
+              id="createCommentContent"
+              placeholder="Comment Content"
+            />
+            <input
+              type="text"
+              id="createCommentParentId"
+              placeholder="Parent ID (optional)"
+            />
+          </div>
+          <button onclick="createComment()">Create Comment</button>
+        </div>
+
+        <div class="api-section">
+          <h3>Update Comment</h3>
+          <div class="form-group">
+            <input type="text" id="updateCommentId" placeholder="Comment ID" />
+            <input
+              type="text"
+              id="updateCommentContent"
+              placeholder="New Content"
+            />
+          </div>
+          <button onclick="updateComment()">Update Comment</button>
+        </div>
+
+        <div class="api-section">
+          <h3>Delete Comment</h3>
+          <div class="form-group">
+            <input type="text" id="deleteCommentId" placeholder="Comment ID" />
+          </div>
+          <button onclick="deleteComment()">Delete Comment</button>
+        </div>
+
+        <div class="response-box" id="commentResponse"></div>
+      </div>
+
+      <!-- Chat Tab -->
+      <div id="chat" class="tab-content">
+        <h2>💬 Chat (1-1 & Group)</h2>
+
+        <div class="api-section">
+          <h3>1-1 Chat Messages</h3>
+          <div class="form-group">
+            <input
+              type="text"
+              id="chatReceiverId"
+              placeholder="Receiver User ID"
+            />
+            <button onclick="getChatMessages()">Get Messages</button>
+          </div>
+        </div>
+
+        <div class="api-section">
+          <h3>Group Chat Messages</h3>
+          <div class="form-group">
+            <input type="text" id="groupChatId" placeholder="Group ID" />
+            <button onclick="getGroupMessages()">Get Messages</button>
+          </div>
+        </div>
+
+        <div class="response-box" id="chatResponse"></div>
+      </div>
+
+      <!-- Sockets Tab -->
+      <div id="socket" class="tab-content">
+        <h2>🔌 Real-time Communication</h2>
+
+        <div class="api-section">
+          <h3>Comments Socket (Port 8003)</h3>
+          <div class="form-group">
+            <input
+              type="text"
+              id="commentsSocketPostId"
+              placeholder="Post ID to join"
+            />
+          </div>
+          <button onclick="connectCommentsSocket()">Connect</button>
+          <button onclick="disconnectCommentsSocket()">Disconnect</button>
+          <button onclick="joinCommentsRoom()">Join Room</button>
+          <button onclick="leaveCommentsRoom()">Leave Room</button>
+          <div class="socket-status" id="commentsSocketStatus">
+            Disconnected
+          </div>
+        </div>
+
+        <div class="api-section">
+          <h3>Communication Socket (Port 8899)</h3>
+          <div class="form-group">
+            <input
+              type="text"
+              id="communicationUserId"
+              placeholder="Your User ID"
+            />
+          </div>
+          <button onclick="connectCommunicationSocket()">Connect</button>
+          <button onclick="disconnectCommunicationSocket()">Disconnect</button>
+          <div class="socket-status" id="communicationSocketStatus">
+            Disconnected
+          </div>
+
+          <h4>Send 1-1 Message</h4>
+          <div class="form-group">
+            <input
+              type="text"
+              id="socketReceiverId"
+              placeholder="Receiver ID"
+            />
+            <input type="text" id="socketMessage" placeholder="Message" />
+            <label><input type="checkbox" id="socketIsImage" /> Is Image</label>
+          </div>
+          <button onclick="sendSocketMessage()">Send Message</button>
+
+          <h4>Send Group Message</h4>
+          <div class="form-group">
+            <input type="text" id="socketGroupId" placeholder="Group ID" />
+            <input type="text" id="socketGroupMessage" placeholder="Message" />
+            <label
+              ><input type="checkbox" id="socketGroupIsImage" /> Is Image</label
+            >
+          </div>
+          <button onclick="sendGroupMessage()">Send Group Message</button>
+
+          <h4>Room Management</h4>
+          <div class="form-group">
+            <input type="text" id="socketRoomId" placeholder="Group ID" />
+            <button onclick="joinCommunicationRoom()">Join Room</button>
+            <button onclick="leaveCommunicationRoom()">Leave Room</button>
+          </div>
+        </div>
+
+        <div class="response-box" id="socketResponse"></div>
+        <div class="socket-logs" id="socketLogs">
+          <h4>Socket Events Log:</h4>
+          <div id="socketLogContent"></div>
+        </div>
+      </div>
+
+      <!-- Admin Tab -->
+      <div id="admin" class="tab-content">
+        <h2>🔑 Admin Functions</h2>
+
+        <div class="api-section">
+          <h3>Roles & Authorities</h3>
+          <button onclick="getAllRoles()">Get All Roles</button>
+          <button onclick="getAllAuthorities()">Get All Authorities</button>
+        </div>
+
+        <div class="api-section">
+          <h3>Create Authority</h3>
+          <div class="form-group">
+            <input
+              type="text"
+              id="authorityName"
+              placeholder="Authority Name"
+            />
+            <input type="text" id="authorityDesc" placeholder="Description" />
+          </div>
+          <button onclick="createAuthority()">Create Authority</button>
+        </div>
+
+        <div class="api-section">
+          <h3>Create Role</h3>
+          <div class="form-group">
+            <input type="text" id="roleName" placeholder="Role Name" />
+            <input type="text" id="roleDesc" placeholder="Description" />
+            <input
+              type="text"
+              id="roleAuthorities"
+              placeholder="Authorities (comma separated)"
+            />
+          </div>
+          <button onclick="createRole()">Create Role</button>
+        </div>
+
+        <div class="api-section">
+          <h3>Dangerous Operations</h3>
+          <div class="form-group">
+            <input type="text" id="deleteUserId" placeholder="User ID" />
+            <button onclick="deleteUser()">Delete User</button>
+          </div>
+          <button onclick="deleteAllPosts()" style="background: #dc3545">
+            Delete All Posts
+          </button>
+        </div>
+
+        <div class="response-box" id="adminResponse"></div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

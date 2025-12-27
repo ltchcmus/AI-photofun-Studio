@@ -21,17 +21,32 @@ spring:
   application:
     name: profile
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: update
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+        jdbc:
+          batch_size: 0
+          use_streams_for_binary: false
+        cache:
+          use_second_level_cache: false
+          use_query_cache: false
+        connection:
+          provider_disables_autocommit: false
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://dpg-d41p7um3cjmc738t8o6g-a.singapore-postgres.render.com:5432/database_pym9?sslmode=require}
-    username: ${DATABASE_USERNAME:lethanhcong}
-    password: ${DATABASE_PASSWORD:zMna2eG7LBmjIZvGvMqOibJMSou9ys23}
+    url: ${DATABASE_URL:jdbc:postgresql://aws-1-ap-south-1.pooler.supabase.com:6543/postgres?sslmode=require&prepareThreshold=0&preparedStatementCacheQueries=0&preferQueryMode=simple}
+    username: ${DATABASE_USERNAME:postgres.noyltxzqpksuzxmjonkm}
+    password: ${DATABASE_PASSWORD:Cong2642005@@}
     driver-class-name: org.postgresql.Driver
     hikari:
-      connection-timeout: 30000
-      maximum-pool-size: 5
+      maximum-pool-size: 2
+      minimum-idle: 1
+      max-lifetime: 600000
+      connection-timeout: 40000
+      connection-test-query: null
+      validation-timeout: 5000
+      idle-timeout: 120000
+      auto-commit: false

@@ -40,9 +40,10 @@ class FileUploader:
     """
     
     UPLOAD_URL = "https://file-service-cdal.onrender.com/api/v1/file/uploads"
+    UPLOAD_VIDEO_URL = "https://file-service-cdal.onrender.com/api/v1/file/uploads-video"
     
     def __init__(self):
-        self.timeout = getattr(settings, 'FILE_UPLOAD_TIMEOUT', 30)
+        self.timeout = getattr(settings, 'FILE_UPLOAD_TIMEOUT', 120)  # 2 minutes for large images/slow networks
     
     def upload_file(self, file_path: str, custom_id: Optional[str] = None) -> str:
         """
@@ -126,7 +127,7 @@ class FileUploader:
         try:
             # Download image
             logger.info(f"Downloading image from: {image_url}")
-            response = requests.get(image_url, timeout=30)
+            response = requests.get(image_url, timeout=60, stream=True)  # Increased timeout for large images
             response.raise_for_status()
             
             # Detect file extension from URL or content-type
@@ -149,6 +150,65 @@ class FileUploader:
         except requests.exceptions.RequestException as e:
             logger.error(f"Failed to download image from URL: {str(e)}")
             raise FileUploadError(f"Image download failed: {str(e)}")
+
+    def upload_video_from_url(self, video_url: str, custom_id: Optional[str] = None) -> str:
+        """
+        Upload video by URL to file service
+
+        Args:
+            video_url: URL of video to register
+            custom_id: Optional custom UUID
+
+        Returns:
+            URL of uploaded video
+
+        Raises:
+            FileUploadError: When upload fails
+        """
+        file_id = custom_id or str(uuid.uuid4())
+        data = {"id": file_id, "url": video_url}
+
+        try:
+            response = requests.post(
+                self.UPLOAD_VIDEO_URL,
+                data=data,
+                timeout=self.timeout
+            )
+            response.raise_for_status()
+
+            result = response.json()
+            logger.info(f"Video uploaded successfully: {file_id}")
+            logger.info(f"Upload response: {result}")
+
+            uploaded_url = (
+                result.get('url') or
+                result.get('file_url') or
+                result.get('data', {}).get('url') or
+                result.get('result', {}).get('video') or
+                result.get('result', {}).get('video_url')
+            )
+
+            if not uploaded_url:
+                logger.error(f"No URL found in video upload response: {result}")
+                raise FileUploadError("Video upload response missing URL field")
+
+            return uploaded_url
+
+        except requests.exceptions.Timeout:
+            logger.error(f"Video upload timeout for: {video_url}")
+            raise FileUploadError("Video upload timeout")
+
+        except requests.exceptions.HTTPError as e:
+            logger.error(f"Video upload HTTP error: {e.response.status_code} - {e.response.text}")
+            raise FileUploadError(f"Video upload failed: {e.response.status_code}")
+
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Video upload request failed: {str(e)}")
+            raise FileUploadError(f"Video upload unavailable: {str(e)}")
+
+        except Exception as e:
+            logger.error(f"Unexpected error during video upload: {str(e)}")
+            raise FileUploadError(f"Video upload error: {str(e)}")
     
     def upload_from_base64(
         self, 

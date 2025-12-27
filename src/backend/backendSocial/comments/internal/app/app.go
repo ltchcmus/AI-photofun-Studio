@@ -40,19 +40,18 @@ func (app *Application) Run() {
 		AllowCredentials: true,
 	}))
 
-	// Setup Socket.IO
-	socketServer := handler.SetupSocketIO()
-	defer socketServer.Close()
-
 	// Initialize layers
 	collection := mongodb.GetCollection("comments")
 	commentRepo := repositories.NewCommentRepository(collection)
-	commentService := services.NewCommentService(commentRepo, socketServer)
+	commentService := services.NewCommentService(commentRepo)
 	commentHandler := handler.NewCommentHandler(commentService)
 
-	// Setup routes with context path
+	// Setup WebSocket endpoint
+	r.GET("/ws", handler.HandleWebSocket)
+
+	// Setup REST API routes with context path
 	api := r.Group("/comments")
-	routes.SetupRoutes(api, commentHandler, socketServer)
+	routes.SetupRoutes(api, commentHandler)
 
 	// Start server
 	port := configuration.GetPort()

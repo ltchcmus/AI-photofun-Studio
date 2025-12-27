@@ -1,6 +1,5 @@
 package service.identity.utils;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -27,10 +26,14 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.UUID;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 @Component
 @Slf4j
@@ -64,13 +67,17 @@ public class Utils {
     @Value("${config.gg.client-secret}")
     private String clientSecret;
 
-    public String generateScope(User user){
+    @NonFinal
+    @Value("${config.jwt.secret-refresh}")
+    private String jwtRefreshSecret;
+
+    public String generateScope(User user) {
         StringJoiner scope = new StringJoiner(" ");
         Set<Role> roles = user.getRoles();
-        for (Role role : roles){
+        for (Role role : roles) {
             String roleName = "ROLE_" + role.getRoleName();
             scope.add(roleName);
-            for(Authority authority : role.getAuthorities()){
+            for (Authority authority : role.getAuthorities()) {
                 scope.add(authority.getAuthorityName());
             }
         }
@@ -89,8 +96,8 @@ public class Utils {
                 .jwtID(String.valueOf(UUID.randomUUID()))
                 .audience("NMCNPM-CLIENT")
                 .claim("scope", generateScope(user))
+                .claim("type", "access")
                 .build();
-
 
         Payload payload = new Payload(claimSet.toJSONObject());
         JWSObject jwtObject = new JWSObject(header, payload);
@@ -100,21 +107,38 @@ public class Utils {
         return jwtObject.serialize();
     }
 
+    public String generateRefreshToken(User user) throws JOSEException {
+        JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
-    public ParamGgRequest generateParamGgRequest(String code) {
-        return ParamGgRequest.builder()
-                .code(code)
-                .client_secret(clientSecret)
-                .client_id(clientId)
-                .grant_type("authorization_code")
-                .redirect_uri(redirectUri)
+        JWTClaimsSet claimSet = new JWTClaimsSet.Builder()
+                .subject(user.getUserId())
+                .issuer("ThanhCong")
+                .expirationTime(Date.from(Instant.now().plus(refreshExpiresIn, ChronoUnit.SECONDS)))
+                .issueTime(Date.from(Instant.now()))
+                .jwtID(String.valueOf(UUID.randomUUID()))
+                .audience("NMCNPM-CLIENT")
+                .claim("type", "refresh")
+                .claim("scope", generateScope(user))
                 .build();
+        Payload payload = new Payload(claimSet.toJSONObject());
+        JWSObject jwtObject = new JWSObject(header, payload);
+        jwtObject.sign(new MACSigner(jwtRefreshSecret.getBytes()));
+        return jwtObject.serialize();
     }
 
-    public Role getRoleDefault(){
+    public MultiValueMap<String, String> generateParamGgRequest(String code) {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("code", code);
+        params.add("client_id", clientId);
+        params.add("client_secret", clientSecret);
+        params.add("redirect_uri", redirectUri);
+        params.add("grant_type", "authorization_code");
+        return params;
+    }
+
+    public Role getRoleDefault() {
         return roleRepository.findById("USER").orElseThrow(
-                ()-> new AppException(ErrorCode.ROLE_NOT_FOUND)
-        );
+                () -> new AppException(ErrorCode.ROLE_NOT_FOUND));
     }
 
     public String Welcome(String username) {

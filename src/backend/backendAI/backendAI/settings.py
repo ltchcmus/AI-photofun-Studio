@@ -282,6 +282,31 @@ LOGGING = {
 os.makedirs(BASE_DIR / 'logs', exist_ok=True)
 
 # ============================================================================
+# EXTERNAL API KEYS
+# ============================================================================
+
+# Freepik API
+FREEPIK_API_KEY = os.environ.get('FREEPIK_API_KEY', '')
+
+# Gemini AI
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
+
+# Token Service
+TOKEN_SERVICE_URL = os.environ.get('TOKEN_SERVICE_URL', '')
+TOKEN_API_KEY_1 = os.environ.get('TOKEN_API_KEY_1', '')
+TOKEN_API_KEY_2 = os.environ.get('TOKEN_API_KEY_2', '')
+TOKEN_SERVICE_TIMEOUT = env_int('TOKEN_SERVICE_TIMEOUT', 10)
+
+# Video Generation Mock Mode
+# MOCK_VIDEO_GENERATION removed - using real API
+
+# JWT Authentication
+JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', '')
+JWT_ALGORITHM = os.environ.get('JWT_ALGORITHM', 'HS512')
+JWT_ISSUER = os.environ.get('JWT_ISSUER', 'ThanhCong')
+JWT_AUDIENCE = os.environ.get('JWT_AUDIENCE', 'NMCNPM-CLIENT')
+
+# ============================================================================
 # CELERY
 # ============================================================================
 

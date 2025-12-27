@@ -10,6 +10,23 @@ import time
 logger = logging.getLogger(__name__)
 
 
+def merge_parameters(extracted_params: dict, user_params: dict) -> dict:
+    """
+    Merge extracted parameters from prompt analysis with user-provided parameters.
+    User parameters take priority over extracted ones.
+    
+    Args:
+        extracted_params: Parameters extracted from natural language by Gemini
+        user_params: Explicitly provided parameters from user (via feature_params)
+        
+    Returns:
+        dict: Merged parameters with user params overriding extracted ones
+    """
+    merged = extracted_params.copy()
+    merged.update(user_params)  # User params override extracted
+    return merged
+
+
 def poll_for_completion(service, task_id: str, max_attempts: int = 30, delay: int = 3) -> dict:
     """
     Generic polling function for async Freepik API tasks
@@ -47,7 +64,7 @@ def poll_for_completion(service, task_id: str, max_attempts: int = 30, delay: in
 @shared_task(name="intent_router.route_to_ai_feature_task", bind=True)
 def route_to_ai_feature_task(self, refined_prompt_result: dict) -> tuple:
     """
-    Route to appropriate AI feature based on intent
+    Route to appropriate AI feature based on intent with full parameter support
     
     Args:
         refined_prompt_result: Raw dict from prompt service with:
@@ -56,6 +73,13 @@ def route_to_ai_feature_task(self, refined_prompt_result: dict) -> tuple:
     Returns:
         Tuple of (wrapped_refined_prompt, feature_result_dict)
     """
+    import time
+    from core.token_client import token_client
+    from core.exceptions import TokenServiceError
+    
+    # Start timing for token deduction
+    start_time = time.time()
+    
     try:
         logger.warning("="*80)
         logger.warning(f"[IntentRouter] TASK CALLED! Task ID: {self.request.id}")
@@ -76,13 +100,29 @@ def route_to_ai_feature_task(self, refined_prompt_result: dict) -> tuple:
     intent = refined_prompt_result.get('intent', 'image_generation')
     context = refined_prompt_result.get('context', {})
     prompt = refined_prompt_result.get('prompt', '')
-    image_url = context.get('image_url')
+    
+    # Extract images from context
+    images = context.get('images', [])
+    image_url = context.get('image_url') or (images[0] if images else None)
+    reference_image = context.get('reference_image') or (images[1] if len(images) > 1 else None)
+    
+    # PARAMETER MERGING: Combine extracted params with user params (user priority)
+    extracted_params = refined_prompt_result.get('extracted_params', {})  # From Gemini analysis
+    user_feature_params = context.get('feature_params', {})  # From user (explicit)
+    feature_params = merge_parameters(extracted_params, user_feature_params)
+    
+    user_id = context.get('session_id', 'system')  # Use session_id as user_id
     
     logger.warning(f"[IntentRouter] ✓ Extracted - Intent: {intent} | Prompt: {prompt[:50]}...")
+    if extracted_params:
+        logger.warning(f"[IntentRouter] ✓ Extracted params (from AI): {extracted_params}")
+    if user_feature_params:
+        logger.warning(f"[IntentRouter] ✓ User params (explicit): {user_feature_params}")
+    logger.warning(f"[IntentRouter] ✓ Final merged params: {feature_params}")
     if image_url:
-        logger.warning(f"[IntentRouter] ✓ Context image available: {image_url[:100]}...")
-    else:
-        logger.warning("[IntentRouter] ✗ No context image")
+        logger.warning(f"[IntentRouter] ✓ Primary image: {image_url[:100]}...")
+    if reference_image:
+        logger.warning(f"[IntentRouter] ✓ Reference image: {reference_image[:100]}...")
     
     try:
         # Route based on intent
@@ -92,8 +132,8 @@ def route_to_ai_feature_task(self, refined_prompt_result: dict) -> tuple:
             service = ImageGenerationService()
             result = service.generate_image(
                 prompt=prompt,
-                user_id='system',
-                aspect_ratio='square_1_1'
+                user_id=user_id,
+                aspect_ratio=feature_params.get('aspect_ratio', 'square_1_1')
             )
             
             logger.warning(f"[IntentRouter] Generation result: task_id={result.get('task_id')}, status={result.get('status')}")
@@ -108,9 +148,8 @@ def route_to_ai_feature_task(self, refined_prompt_result: dict) -> tuple:
                 if uploaded_urls:
                     try:
                         from apps.image_gallery.services import image_gallery_service
-                        session_id = context.get('session_id', 'unknown')
                         image_gallery_service.save_multiple_images(
-                            user_id=session_id,
+                            user_id=user_id,
                             image_urls=uploaded_urls,
                             refined_prompt=prompt,
                             intent=intent,
@@ -131,7 +170,7 @@ def route_to_ai_feature_task(self, refined_prompt_result: dict) -> tuple:
                 'uploaded_urls': uploaded_urls,
                 'metadata': {
                     'model': result.get('model', 'realism'),
-                    'size': result.get('aspect_ratio', 'square_1_1'),
+                    'aspect_ratio': result.get('aspect_ratio', 'square_1_1'),
                     'intent': intent
                 }
             })
@@ -145,27 +184,34 @@ def route_to_ai_feature_task(self, refined_prompt_result: dict) -> tuple:
             from apps.upscale.services import UpscaleService
             service = UpscaleService()
             result = service.upscale_image(
-                input_image=image_url,
-                user_id='system',
-                sharpen=0.5,
-                smart_grain=0.3
+                image_url=image_url,
+                user_id=user_id,
+                sharpen=feature_params.get('sharpen', 0.5),
+                smart_grain=feature_params.get('smart_grain', 0.2),
+                ultra_detail=feature_params.get('ultra_detail', 0.3),
+                flavor=feature_params.get('flavor', 'photo'),
+                scale_factor=feature_params.get('scale_factor', 2)
             )
             
             uploaded_urls = result.get('uploaded_urls', [])
-            if not uploaded_urls and result.get('task_id'):
+            # Only poll if task is NOT already completed
+            if not uploaded_urls and result.get('task_id') and result.get('status') != 'COMPLETED':
                 poll_result = poll_for_completion(service, result['task_id'])
                 uploaded_urls = poll_result.get('uploaded_urls', [])
             
             if not uploaded_urls:
-                return wrapped_refined_prompt, ResponseFormatter.error(message="Upscale failed")
+                error_msg = "Upscale failed"
+                if result.get('status') == 'COMPLETED':
+                    error_msg = "Upscale completed but image upload failed (timeout or network error)"
+                return wrapped_refined_prompt, ResponseFormatter.error(message=error_msg)
             
             return wrapped_refined_prompt, ResponseFormatter.success(result={
                 'uploaded_urls': uploaded_urls,
                 'metadata': {
                     'intent': intent,
                     'original_image': image_url,
-                    'sharpen': 0.5,
-                    'smart_grain': 0.3
+                    'flavor': result.get('flavor', 'photo'),
+                    'scale_factor': result.get('scale_factor', 2)
                 }
             })
             
@@ -178,8 +224,8 @@ def route_to_ai_feature_task(self, refined_prompt_result: dict) -> tuple:
             from apps.remove_background.services import RemoveBackgroundService
             service = RemoveBackgroundService()
             result = service.remove_background(
-                input_image=image_url,
-                user_id='system'
+                image_url=image_url,
+                user_id=user_id
             )
             
             # Remove background is synchronous, returns immediately
@@ -196,6 +242,49 @@ def route_to_ai_feature_task(self, refined_prompt_result: dict) -> tuple:
                 }
             })
             
+        elif intent == 'reimagine':
+            if not image_url:
+                return wrapped_refined_prompt, ResponseFormatter.error(
+                    message="Reimagine requires an image. Please generate or provide an image first."
+                )
+            
+            from apps.reimagine.services import ReimagineService
+            service = ReimagineService()
+            
+            # Reimagine uses imagination as enum: "subtle", "vivid", "wild"
+            # Default is moderate behavior (use vivid as middle ground)
+            imagination_value = feature_params.get('imagination', 'vivid')
+            
+            result = service.reimagine_image(
+                image_url=image_url,
+                user_id=user_id,
+                prompt=prompt,
+                imagination=imagination_value,
+                aspect_ratio=feature_params.get('aspect_ratio', 'square_1_1')
+            )
+            
+            uploaded_urls = result.get('uploaded_urls', [])
+            # Only poll if task is NOT already completed (avoid 404 on synchronous completion)
+            if not uploaded_urls and result.get('task_id') and result.get('status') != 'COMPLETED':
+                poll_result = poll_for_completion(service, result['task_id'])
+                uploaded_urls = poll_result.get('uploaded_urls', [])
+            
+            if not uploaded_urls:
+                error_msg = "Reimagine failed"
+                if result.get('status') == 'COMPLETED':
+                    error_msg = "Reimagine completed but image upload failed (timeout or network error)"
+                return wrapped_refined_prompt, ResponseFormatter.error(message=error_msg)
+            
+            return wrapped_refined_prompt, ResponseFormatter.success(result={
+                'uploaded_urls': uploaded_urls,
+                'metadata': {
+                    'intent': intent,
+                    'original_image': image_url,
+                    'imagination': imagination_value,
+                    'refined_prompt': result.get('refined_prompt', prompt)
+                }
+            })
+            
         elif intent == 'relight':
             if not image_url:
                 return wrapped_refined_prompt, ResponseFormatter.error(
@@ -205,70 +294,79 @@ def route_to_ai_feature_task(self, refined_prompt_result: dict) -> tuple:
             from apps.relight.services import RelightService
             service = RelightService()
             result = service.relight_image(
-                input_image=image_url,
-                user_id='system',
+                image_url=image_url,
                 prompt=prompt,
-                style='neutral'
+                user_id=user_id,
+                reference_image=reference_image,  # Optional reference image
+                light_transfer_strength=feature_params.get('light_transfer_strength', 0.8),
+                style=feature_params.get('style', 'standard')
             )
             
             uploaded_urls = result.get('uploaded_urls', [])
-            if not uploaded_urls and result.get('task_id'):
+            # Only poll if task is NOT already completed
+            if not uploaded_urls and result.get('task_id') and result.get('status') != 'COMPLETED':
                 poll_result = poll_for_completion(service, result['task_id'])
                 uploaded_urls = poll_result.get('uploaded_urls', [])
             
             if not uploaded_urls:
-                return wrapped_refined_prompt, ResponseFormatter.error(message="Relight failed")
+                error_msg = "Relight failed"
+                if result.get('status') == 'COMPLETED':
+                    error_msg = "Relight completed but image upload failed (timeout or network error)"
+                return wrapped_refined_prompt, ResponseFormatter.error(message=error_msg)
             
             return wrapped_refined_prompt, ResponseFormatter.success(result={
                 'uploaded_urls': uploaded_urls,
                 'metadata': {
                     'intent': intent,
                     'original_image': image_url,
-                    'style': 'neutral'
+                    'reference_image': reference_image,
+                    'style': feature_params.get('style', 'standard')
                 }
             })
             
         elif intent == 'style_transfer':
             if not image_url:
                 return wrapped_refined_prompt, ResponseFormatter.error(
-                    message="Style transfer requires images. Please provide images first."
+                    message="Style transfer requires a target image. Please provide an image first."
                 )
             
-            # Style transfer needs reference image - not supported in conversation yet
-            logger.warning("[IntentRouter] Style transfer requires reference image")
-            return wrapped_refined_prompt, ResponseFormatter.error(
-                message="Style transfer requires reference image. Use direct API instead."
-            )
-            
-        elif intent == 'reimagine':
-            if not image_url:
+            if not reference_image:
                 return wrapped_refined_prompt, ResponseFormatter.error(
-                    message="Reimagine requires an image. Please generate or provide an image first."
+                    message="Style transfer requires a reference image. Please provide a style reference via additional_images."
                 )
             
-            from apps.reimagine.services import ReimagineService
-            service = ReimagineService()
-            result = service.reimagine_image(
-                input_image=image_url,
-                user_id='system',
-                prompt=prompt,
-                imagination=0.7
+            from apps.style_transfer.services import StyleTransferService
+            service = StyleTransferService()
+            result = service.transfer_style(
+                image_url=image_url,
+                reference_image=reference_image,
+                user_id=user_id,
+                style_strength=feature_params.get('style_strength', 0.75),
+                structure_strength=feature_params.get('structure_strength', 0.75),
+                is_portrait=feature_params.get('is_portrait', False),
+                portrait_style=feature_params.get('portrait_style', 'standard')
             )
             
             uploaded_urls = result.get('uploaded_urls', [])
-            if not uploaded_urls and result.get('task_id'):
+            # Only poll if task is NOT already completed
+            if not uploaded_urls and result.get('task_id') and result.get('status') != 'COMPLETED':
                 poll_result = poll_for_completion(service, result['task_id'])
                 uploaded_urls = poll_result.get('uploaded_urls', [])
             
             if not uploaded_urls:
-                return wrapped_refined_prompt, ResponseFormatter.error(message="Reimagine failed")
+                error_msg = "Style transfer failed"
+                if result.get('status') == 'COMPLETED':
+                    error_msg = "Style transfer completed but image upload failed (timeout or network error)"
+                return wrapped_refined_prompt, ResponseFormatter.error(message=error_msg)
             
             return wrapped_refined_prompt, ResponseFormatter.success(result={
                 'uploaded_urls': uploaded_urls,
                 'metadata': {
                     'intent': intent,
                     'original_image': image_url,
-                    'imagination': 0.7
+                    'reference_image': reference_image,
+                    'style_strength': feature_params.get('style_strength', 0.75),
+                    'structure_strength': feature_params.get('structure_strength', 0.75)
                 }
             })
             
@@ -281,26 +379,36 @@ def route_to_ai_feature_task(self, refined_prompt_result: dict) -> tuple:
             from apps.image_expand.services import ImageExpandService
             service = ImageExpandService()
             result = service.expand_image(
-                input_image=image_url,
-                user_id='system',
+                image_url=image_url,
+                user_id=user_id,
                 prompt=prompt,
-                expansion='all'
+                left=feature_params.get('left', 0),
+                right=feature_params.get('right', 0),
+                top=feature_params.get('top', 0),
+                bottom=feature_params.get('bottom', 0)
             )
             
             uploaded_urls = result.get('uploaded_urls', [])
-            if not uploaded_urls and result.get('task_id'):
+            # Only poll if task is NOT already completed
+            if not uploaded_urls and result.get('task_id') and result.get('status') != 'COMPLETED':
                 poll_result = poll_for_completion(service, result['task_id'])
                 uploaded_urls = poll_result.get('uploaded_urls', [])
             
             if not uploaded_urls:
-                return wrapped_refined_prompt, ResponseFormatter.error(message="Image expand failed")
+                error_msg = "Image expand failed"
+                if result.get('status') == 'COMPLETED':
+                    error_msg = "Image expand completed but image upload failed (timeout or network error)"
+                return wrapped_refined_prompt, ResponseFormatter.error(message=error_msg)
             
             return wrapped_refined_prompt, ResponseFormatter.success(result={
                 'uploaded_urls': uploaded_urls,
                 'metadata': {
                     'intent': intent,
                     'original_image': image_url,
-                    'expansion': 'all'
+                    'left': feature_params.get('left', 0),
+                    'right': feature_params.get('right', 0),
+                    'top': feature_params.get('top', 0),
+                    'bottom': feature_params.get('bottom', 0)
                 }
             })
             
@@ -315,3 +423,47 @@ def route_to_ai_feature_task(self, refined_prompt_result: dict) -> tuple:
         return wrapped_refined_prompt, ResponseFormatter.error(
             message=f"Feature execution error: {str(e)}"
         )
+    finally:
+        # Deduct tokens based on processing time (regardless of success/failure)
+        processing_time = time.time() - start_time
+        tokens_to_deduct = token_client.calculate_tokens_from_processing_time(processing_time)
+        
+        # Extract user_id from context (session_id is used as user_id in conversation)
+        try:
+            # Get the actual user_id from the conversation
+            from apps.conversation.models import get_conversations_collection
+            context = refined_prompt_result.get('context', {})
+            session_id = context.get('session_id')
+            
+            if session_id:
+                conversations = get_conversations_collection()
+                convo = conversations.find_one({'session_id': session_id})
+                if convo:
+                    actual_user_id = convo.get('user_id')
+                    if actual_user_id:
+                        token_client.deduct_tokens(
+                            user_id=actual_user_id,
+                            amount=tokens_to_deduct,
+                            reason=f"conversation_{intent}",
+                            metadata={
+                                'processing_time': processing_time,
+                                'intent': intent,
+                                'session_id': session_id
+                            }
+                        )
+                        logger.info(
+                            f"[IntentRouter] Deducted {tokens_to_deduct} tokens from user {actual_user_id} "
+                            f"for {intent} (processing time: {processing_time:.2f}s)"
+                        )
+                    else:
+                        logger.warning(f"[IntentRouter] No user_id in conversation {session_id}")
+                else:
+                    logger.warning(f"[IntentRouter] Conversation {session_id} not found")
+            else:
+                logger.warning("[IntentRouter] No session_id in context, skipping token deduction")
+        except TokenServiceError as e:
+            logger.error(f"[IntentRouter] Token deduction failed: {str(e)}")
+            # Don't fail the task if token deduction fails
+        except Exception as e:
+            logger.error(f"[IntentRouter] Error during token deduction: {str(e)}", exc_info=True)
+

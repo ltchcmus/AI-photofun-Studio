@@ -5,17 +5,28 @@ services:
       dockerfile: Dockerfile
     container_name: identity-service
     ports:
-      - "8080:8080"
+      - "8000:8000"
     environment:
-      PORT: 8080
+      PORT: 8000
       PROFILE_SERVICE_URL: http://profile-service:8081/profiles
       POST_SERVICE_URL: http://post-service:8082/posts
+      DATABASE_URL: jdbc:postgresql://aws-1-ap-south-1.pooler.supabase.com:6543/postgres?sslmode=require&prepareThreshold=0&preparedStatementCacheQueries=0&preferQueryMode=simple&connectTimeout=30&socketTimeout=30&loginTimeout=30
+      DATABASE_USERNAME: postgres.noyltxzqpksuzxmjonkm
+      DATABASE_PASSWORD: Cong2642005@@
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      COOKIE_SAME_SITE: ${COOKIE_SAME_SITE:-Lax}
+      REDIRECT_AFTER_LOGIN_GOOGLE_FRONTEND: ${REDIRECT_AFTER_LOGIN_GOOGLE_FRONTEND:-http://localhost:5173/google-loading}
+      REDIRECT_AFTER_LOGIN_GOOGLE_FRONTEND_FAILURE: ${REDIRECT_AFTER_LOGIN_GOOGLE_FRONTEND_FAILURE:-http://localhost:5173/failure}
+      REDIRECT_URI: ${REDIRECT_URI:-http://localhost:5173/google-loading}
     depends_on:
       - profile-service
       - post-service
     networks:
       - backend-network
     restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   post-service:
     build:
@@ -26,9 +37,14 @@ services:
       - "8082:8082"
     environment:
       PORT: 8082
+      DATABASE_URL: jdbc:postgresql://aws-1-ap-south-1.pooler.supabase.com:6543/postgres?sslmode=require&prepareThreshold=0&preparedStatementCacheQueries=0&preferQueryMode=simple&connectTimeout=30&socketTimeout=30&loginTimeout=30
+      DATABASE_USERNAME: postgres.noyltxzqpksuzxmjonkm
+      DATABASE_PASSWORD: Cong2642005@@
     networks:
       - backend-network
     restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   profile-service:
     build:
@@ -39,9 +55,14 @@ services:
       - "8081:8081"
     environment:
       PORT: 8081
+      DATABASE_URL: jdbc:postgresql://aws-1-ap-south-1.pooler.supabase.com:6543/postgres?sslmode=require&prepareThreshold=0&preparedStatementCacheQueries=0&preferQueryMode=simple&connectTimeout=30&socketTimeout=30&loginTimeout=30
+      DATABASE_USERNAME: postgres.noyltxzqpksuzxmjonkm
+      DATABASE_PASSWORD: Cong2642005@@
     networks:
       - backend-network
     restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   comments-service:
     build:
@@ -53,6 +74,28 @@ services:
     environment:
       PORT: 8003
       MONGO_URI: "mongodb+srv://LeThanhCong:LeThanhCong@mywebv1.dbl7xj4.mongodb.net/?appName=MyWebv1"
+      POST_SERVICE_URL: http://post-service:8082/posts
+    depends_on:
+      - post-service
+    networks:
+      - backend-network
+    restart: unless-stopped
+
+  communication-service:
+    build:
+      context: ./communication
+      dockerfile: Dockerfile
+    container_name: communication-service
+    ports:
+      - "8085:8085"
+      - "8899:8899"
+    environment:
+      PORT: 8085
+      SOCKET_SERVICE_PORT: 8899
+      SOCKET_SERVICE_HOST: 0.0.0.0
+      IDENTITY_SERVICE_URL: http://identity-service:8000/identity
+    depends_on:
+      - identity-service
     networks:
       - backend-network
     restart: unless-stopped
@@ -66,16 +109,19 @@ services:
       - "8888:8888"
     environment:
       PORT: 8888
-      IDENTITY_SERVICE_URL: http://identity-service:8080
+      IDENTITY_SERVICE_URL: http://identity-service:8000
       PROFILE_SERVICE_URL: http://profile-service:8081
       POST_SERVICE_URL: http://post-service:8082
       COMMENT_SERVICE_URL: http://comments-service:8003
-      CONFIG_HTTP_IDENTITY: http://identity-service:8080/identity
+      COMMUNICATION_SERVICE_URL: http://communication-service:8085
+      CONFIG_HTTP_IDENTITY: http://identity-service:8000/identity
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173,http://localhost:3000}
     depends_on:
       - identity-service
       - profile-service
       - post-service
       - comments-service
+      - communication-service
     networks:
       - backend-network
     restart: unless-stopped
