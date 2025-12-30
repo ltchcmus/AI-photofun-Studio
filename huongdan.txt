@@ -110,4 +110,4 @@ A: Viết prompt chi tiết hơn, dùng tiếng Anh.
 - Kiểm tra token trước khi tạo nhiều ảnh
 - Nâng cấp Premium nếu cần số lượng lớn
 
-Cảm ơn bạn đã sử dụng AI PhotoFun Studio!
+Cảm ơn bạn đã sử dụng AI PhotoFun Studio!!
