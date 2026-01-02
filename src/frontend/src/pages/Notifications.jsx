@@ -150,10 +150,11 @@ const Notifications = () => {
               key={filter.id}
               type="button"
               onClick={() => setActiveFilter(filter.id)}
-              className={`relative pb-3 text-sm font-semibold capitalize transition-colors ${activeFilter === filter.id
+              className={`relative pb-3 text-sm font-semibold capitalize transition-colors cursor-pointer ${
+                activeFilter === filter.id
                   ? "text-gray-900"
                   : "text-gray-500 hover:text-gray-900"
-                }`}
+              }`}
             >
               {filter.label}
               {activeFilter === filter.id && (
@@ -172,10 +173,11 @@ const Notifications = () => {
           return (
             <article
               key={notification.id}
-              className={`px-4 md:px-6 py-4 transition-colors ${notification.isUnread
+              className={`px-4 md:px-6 py-4 transition-colors ${
+                notification.isUnread
                   ? "bg-blue-50/70 hover:bg-blue-50"
                   : "hover:bg-gray-50"
-                }`}
+              }`}
             >
               <div className="flex gap-3">
                 <div className="relative flex-shrink-0">
@@ -185,8 +187,9 @@ const Notifications = () => {
                   {TypeIcon && (
                     <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1 shadow-sm">
                       <TypeIcon
-                        className={`w-3.5 h-3.5 ${typeMeta?.iconClass ?? "text-gray-500"
-                          }`}
+                        className={`w-3.5 h-3.5 ${
+                          typeMeta?.iconClass ?? "text-gray-500"
+                        }`}
                       />
                     </div>
                   )}
@@ -225,7 +228,7 @@ const Notifications = () => {
                     {notification.ctaLabel && (
                       <button
                         type="button"
-                        className="px-4 py-1.5 bg-black text-white rounded-lg text-xs font-semibold hover:bg-gray-800"
+                        className="px-4 py-1.5 bg-black text-white rounded-lg text-xs font-semibold hover:bg-gray-800 cursor-pointer"
                       >
                         {notification.ctaLabel}
                       </button>
@@ -235,7 +238,7 @@ const Notifications = () => {
 
                 <button
                   type="button"
-                  className="p-1 text-gray-500 hover:text-gray-900 rounded-lg flex-shrink-0"
+                  className="p-1 text-gray-500 hover:text-gray-900 rounded-lg flex-shrink-0 cursor-pointer"
                 >
                   <MoreHorizontal className="w-4 h-4" />
                 </button>
@@ -259,7 +262,7 @@ const Notifications = () => {
       <div className="text-center pt-2">
         <button
           type="button"
-          className="text-sm font-semibold text-gray-600 hover:text-gray-900"
+          className="text-sm font-semibold text-gray-600 hover:text-gray-900 cursor-pointer"
         >
           Load more notifications
         </button>

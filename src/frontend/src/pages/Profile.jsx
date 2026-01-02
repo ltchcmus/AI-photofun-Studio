@@ -25,8 +25,8 @@ const DEFAULT_AVATAR = "https://placehold.co/128x128/111/fff?text=U";
 
 // Utility functions to mask sensitive data
 const maskEmail = (email) => {
-  if (!email || !email.includes('@')) return email;
-  const [local, domain] = email.split('@');
+  if (!email || !email.includes("@")) return email;
+  const [local, domain] = email.split("@");
   if (local.length <= 2) return `${local[0]}***@${domain}`;
   return `${local[0]}${local[1]}***@${domain}`;
 };
@@ -131,11 +131,11 @@ const Profile = () => {
       : PROFILE_DEFAULTS.created,
     isPremium: Boolean(
       profile?.isPremium ||
-      profile?.premium ||
-      profile?.premiumOneMonth ||
-      profile?.premiumSixMonths ||
-      currentUser?.premiumOneMonth ||
-      currentUser?.premiumSixMonths
+        profile?.premium ||
+        profile?.premiumOneMonth ||
+        profile?.premiumSixMonths ||
+        currentUser?.premiumOneMonth ||
+        currentUser?.premiumSixMonths
     ),
     premiumOneMonth: Boolean(
       profile?.premiumOneMonth || currentUser?.premiumOneMonth
@@ -153,7 +153,7 @@ const Profile = () => {
       rawValue: displayProfile.email,
       isShown: showEmail,
       toggle: () => setShowEmail(!showEmail),
-      icon: Mail
+      icon: Mail,
     },
     {
       id: "phone",
@@ -179,10 +179,11 @@ const Profile = () => {
         </div>
       )}
       <section
-        className={`bg-white border border-gray-200 rounded-2xl p-6 md:p-8 shadow-sm relative overflow-hidden ${displayProfile.isPremium
-          ? "border-2 border-transparent bg-gradient-to-r from-yellow-50 via-orange-50 to-pink-50"
-          : ""
-          }`}
+        className={`bg-white border border-gray-200 rounded-2xl p-6 md:p-8 shadow-sm relative overflow-hidden ${
+          displayProfile.isPremium
+            ? "border-2 border-transparent bg-gradient-to-r from-yellow-50 via-orange-50 to-pink-50"
+            : ""
+        }`}
       >
         {/* Premium Background Decoration */}
         {displayProfile.isPremium && (
@@ -204,16 +205,18 @@ const Profile = () => {
               />
             )}
             <div
-              className={`relative ${displayProfile.isPremium
-                ? "p-1 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-full"
-                : ""
-                }`}
+              className={`relative ${
+                displayProfile.isPremium
+                  ? "p-1 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-full"
+                  : ""
+              }`}
             >
               <img
                 src={displayProfile.avatarUrl}
                 alt={`${displayProfile.fullName} avatar`}
-                className={`w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg ${displayProfile.isPremium ? "animate-pulse-glow" : ""
-                  }`}
+                className={`w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg ${
+                  displayProfile.isPremium ? "animate-pulse-glow" : ""
+                }`}
               />
             </div>
             {/* Premium Crown Badge */}
@@ -232,10 +235,11 @@ const Profile = () => {
               <div>
                 <div className="flex items-center gap-3 flex-wrap">
                   <h1
-                    className={`text-3xl font-bold ${displayProfile.isPremium
-                      ? "bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text text-transparent"
-                      : ""
-                      }`}
+                    className={`text-3xl font-bold ${
+                      displayProfile.isPremium
+                        ? "bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text text-transparent"
+                        : ""
+                    }`}
                   >
                     {displayProfile.fullName}
                   </h1>
@@ -267,13 +271,13 @@ const Profile = () => {
                 <button
                   type="button"
                   onClick={() => navigate("/profile/edit")}
-                  className="px-6 py-2.5 bg-black text-white rounded-lg font-semibold hover:bg-gray-900"
+                  className="px-6 py-2.5 bg-black text-white rounded-lg font-semibold hover:bg-gray-900 cursor-pointer"
                 >
                   Edit Profile
                 </button>
                 <button
                   type="button"
-                  className="px-6 py-2.5 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                  className="px-6 py-2.5 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 flex items-center gap-2 cursor-pointer"
                 >
                   <Share2 className="w-4 h-4" /> Share Profile
                 </button>
@@ -302,10 +306,11 @@ const Profile = () => {
                   {/* Verified badge for email - after email value */}
                   {isEmailField && (
                     <span
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${emailVerified
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                        }`}
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
+                        emailVerified
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
                     >
                       {emailVerified ? (
                         <>
@@ -325,7 +330,7 @@ const Profile = () => {
                     <button
                       type="button"
                       onClick={item.toggle}
-                      className="p-1.5 rounded-lg hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors"
+                      className="p-1.5 rounded-lg hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
                       title={item.isShown ? "Hide" : "Show"}
                     >
                       {item.isShown ? (
@@ -343,7 +348,7 @@ const Profile = () => {
                       type="button"
                       onClick={handleSendVerification}
                       disabled={verifying}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors w-fit"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors w-fit cursor-pointer"
                     >
                       {verifying ? (
                         <>
@@ -358,7 +363,13 @@ const Profile = () => {
                       )}
                     </button>
                     {verifyMessage && (
-                      <p className={`text-sm ${verifyMessage.includes("sent") ? "text-green-600" : "text-red-600"}`}>
+                      <p
+                        className={`text-sm ${
+                          verifyMessage.includes("sent")
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                      >
                         {verifyMessage}
                       </p>
                     )}
@@ -376,7 +387,7 @@ const Profile = () => {
           <button
             type="button"
             onClick={() => navigate("/dashboard")}
-            className="text-sm font-semibold text-blue-600 hover:text-blue-700"
+            className="text-sm font-semibold text-blue-600 hover:text-blue-700 cursor-pointer"
           >
             Manage Posts
           </button>
@@ -393,7 +404,8 @@ const Profile = () => {
         )}
         {!postsLoading && !postsError && posts.length === 0 && (
           <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-5 text-sm text-gray-600 text-center">
-            You don't have any posts yet. Create your first post in the dashboard!
+            You don't have any posts yet. Create your first post in the
+            dashboard!
           </div>
         )}
         <PostList
@@ -403,7 +415,7 @@ const Profile = () => {
           onNavigateAiTools={() => navigate("/ai-tools")}
         />
       </section>
-    </div >
+    </div>
   );
 };
 

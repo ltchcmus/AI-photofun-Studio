@@ -4,7 +4,8 @@ import { Image, Video, Sparkles, X, Loader2 } from "lucide-react";
 const DEFAULT_AVATAR = "https://placehold.co/40x40/111/fff?text=U";
 
 // Prompt mặc định khi người dùng tự upload ảnh/video (không phải từ AI tools)
-const DEFAULT_PROMPT = "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e";
+const DEFAULT_PROMPT =
+  "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e";
 
 export default function CreatePostWidget({
   currentUser,
@@ -51,7 +52,9 @@ export default function CreatePostWidget({
 
   // Pre-fill data from AI tools
   // isFromAiTools = true khi có initialPrompt hoặc initialImageUrl hoặc initialVideoUrl từ AI tools
-  const isFromAiTools = Boolean(initialPrompt || initialImageUrl || initialVideoUrl);
+  const isFromAiTools = Boolean(
+    initialPrompt || initialImageUrl || initialVideoUrl
+  );
 
   useEffect(() => {
     if (initialImageUrl) {
@@ -153,7 +156,13 @@ export default function CreatePostWidget({
   const handleSubmit = async () => {
     if (submitting) return;
     // Allow post with imagePreview/videoPreview URL (from AI tools) even without file
-    if (!caption && !imageFile && !videoFile && !imagePreview && !videoPreview) {
+    if (
+      !caption &&
+      !imageFile &&
+      !videoFile &&
+      !imagePreview &&
+      !videoPreview
+    ) {
       setError("Please enter content or select an image/video.");
       return;
     }
@@ -170,7 +179,7 @@ export default function CreatePostWidget({
           caption,
           prompt: finalPrompt,
           video: videoFile,
-          videoUrl: !videoFile && videoPreview ? videoPreview : undefined
+          videoUrl: !videoFile && videoPreview ? videoPreview : undefined,
         });
       } else {
         // Create image post - pass imageUrl if no file (from AI tools)
@@ -178,7 +187,7 @@ export default function CreatePostWidget({
           caption,
           prompt: finalPrompt,
           image: imageFile,
-          imageUrl: !imageFile && imagePreview ? imagePreview : undefined
+          imageUrl: !imageFile && imagePreview ? imagePreview : undefined,
         });
       }
       handleClose();
@@ -207,13 +216,13 @@ export default function CreatePostWidget({
           <button
             type="button"
             onClick={handleOpen}
-            className="flex-1 text-left text-gray-500 border border-gray-200 rounded-full py-3 px-4 hover:bg-gray-50"
+            className="flex-1 text-left text-gray-500 border border-gray-200 rounded-full py-3 px-4 hover:bg-gray-50 cursor-pointer"
           >
             Share something inspiring...
           </button>
           <button
             type="button"
-            className="p-2 -m-2 hover:bg-gray-100 rounded-full text-gray-500"
+            className="p-2 -m-2 hover:bg-gray-100 rounded-full text-gray-500 cursor-pointer"
             onClick={handleOpen}
             title="Upload image"
           >
@@ -221,7 +230,7 @@ export default function CreatePostWidget({
           </button>
           <button
             type="button"
-            className="p-2 -m-2 hover:bg-gray-100 rounded-full text-blue-500"
+            className="p-2 -m-2 hover:bg-gray-100 rounded-full text-blue-500 cursor-pointer"
             onClick={handleOpen}
             title="Upload video"
           >
@@ -242,7 +251,7 @@ export default function CreatePostWidget({
                 <h2 className="text-lg font-semibold">Create post</h2>
                 <button
                   type="button"
-                  className="p-2 hover:bg-gray-100 rounded-full"
+                  className="p-2 hover:bg-gray-100 rounded-full cursor-pointer"
                   onClick={handleClose}
                 >
                   <X className="w-5 h-5 text-gray-500" />
@@ -267,7 +276,7 @@ export default function CreatePostWidget({
                     />
                     <button
                       type="button"
-                      className="absolute top-3 right-3 p-1.5 bg-black/70 rounded-full text-white"
+                      className="absolute top-3 right-3 p-1.5 bg-black/70 rounded-full text-white cursor-pointer"
                       onClick={() => {
                         URL.revokeObjectURL(imagePreview);
                         setImagePreview(null);
@@ -288,7 +297,7 @@ export default function CreatePostWidget({
                     />
                     <button
                       type="button"
-                      className="absolute top-3 right-3 p-1.5 bg-black/70 rounded-full text-white z-10"
+                      className="absolute top-3 right-3 p-1.5 bg-black/70 rounded-full text-white z-10 cursor-pointer"
                       onClick={() => {
                         URL.revokeObjectURL(videoPreview);
                         setVideoPreview(null);
@@ -344,8 +353,8 @@ export default function CreatePostWidget({
                 {isFromAiTools && (
                   <div className="mt-6">
                     <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-gray-600">
-                      <Sparkles className="w-4 h-4 text-purple-500" /> Prompt used
-                      (optional)
+                      <Sparkles className="w-4 h-4 text-purple-500" /> Prompt
+                      used (optional)
                     </label>
                     <textarea
                       value={prompt}
@@ -380,7 +389,11 @@ export default function CreatePostWidget({
                   disabled={submitting}
                 >
                   {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
-                  {submitting ? "Posting..." : postType === "video" ? "Post Video" : "Post"}
+                  {submitting
+                    ? "Posting..."
+                    : postType === "video"
+                    ? "Post Video"
+                    : "Post"}
                 </button>
               </div>
             </div>

@@ -101,7 +101,7 @@ const ChatBot = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 animate-bounce"
+          className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 animate-bounce cursor-pointer"
           aria-label="Open chat"
         >
           <MessageCircle className="w-6 h-6" />
@@ -124,7 +124,7 @@ const ChatBot = () => {
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="hover:bg-white/20 p-2 rounded-full transition-colors"
+              className="hover:bg-white/20 p-2 rounded-full transition-colors cursor-pointer"
               aria-label="Close chat"
             >
               <X className="w-5 h-5" />
@@ -142,14 +142,16 @@ const ChatBot = () => {
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"
-                  }`}
+                className={`flex ${
+                  message.sender === "user" ? "justify-end" : "justify-start"
+                }`}
               >
                 <div
-                  className={`max-w-[75%] rounded-2xl px-4 py-2 ${message.sender === "user"
-                    ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-br-none"
-                    : "bg-white text-gray-800 rounded-bl-none shadow-sm border border-gray-200"
-                    }`}
+                  className={`max-w-[75%] rounded-2xl px-4 py-2 ${
+                    message.sender === "user"
+                      ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-br-none"
+                      : "bg-white text-gray-800 rounded-bl-none shadow-sm border border-gray-200"
+                  }`}
                 >
                   {message.imageUrl && (
                     <img
@@ -162,10 +164,11 @@ const ChatBot = () => {
                   )}
                   <p className="text-sm whitespace-pre-wrap">{message.text}</p>
                   <p
-                    className={`text-xs mt-1 ${message.sender === "user"
-                      ? "text-purple-100"
-                      : "text-gray-400"
-                      }`}
+                    className={`text-xs mt-1 ${
+                      message.sender === "user"
+                        ? "text-purple-100"
+                        : "text-gray-400"
+                    }`}
                   >
                     {formatTime(message.timestamp)}
                   </p>
@@ -213,7 +216,7 @@ const ChatBot = () => {
               <button
                 type="submit"
                 disabled={!inputMessage.trim()}
-                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-3 rounded-full hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-3 rounded-full hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 aria-label="Send message"
               >
                 <Send className="w-5 h-5" />

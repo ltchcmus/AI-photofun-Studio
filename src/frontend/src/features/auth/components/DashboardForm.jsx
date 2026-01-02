@@ -42,7 +42,7 @@ export default function DashboardForm() {
       <header className="fixed top-0 left-0 md:left-20 right-0 bg-white/95 backdrop-blur border-b border-gray-200 z-50">
         <div className="max-w-2xl mx-auto px-4 md:px-6 py-4">
           <div className="flex items-center gap-8">
-            <button className="text-sm font-semibold text-black relative">
+            <button className="text-sm font-semibold text-black relative cursor-pointer">
               For you
               <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-black rounded-full" />
             </button>
@@ -86,4 +86,3 @@ export default function DashboardForm() {
     </div>
   );
 }
-

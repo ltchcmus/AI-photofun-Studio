@@ -18,7 +18,10 @@ const Settings = () => {
   // Xác định trạng thái premium và loại gói
   const isPremiumOneMonth = Boolean(user?.premiumOneMonth);
   const isPremiumSixMonths = Boolean(user?.premiumSixMonths);
-  const isPremium = isPremiumOneMonth || isPremiumSixMonths || Boolean(user?.isPremium || user?.premium);
+  const isPremium =
+    isPremiumOneMonth ||
+    isPremiumSixMonths ||
+    Boolean(user?.isPremium || user?.premium);
 
   // Determine current plan name
   const currentPlanName = useMemo(() => {
@@ -30,7 +33,9 @@ const Settings = () => {
 
   const tokenBalance = user?.tokens ?? 0;
   const dailyLimit = isPremium ? 500 : 200; // Premium có giới hạn cao hơn
-  const tokenUsagePercent = dailyLimit ? Math.min(tokenBalance / dailyLimit, 1) * 100 : 0;
+  const tokenUsagePercent = dailyLimit
+    ? Math.min(tokenBalance / dailyLimit, 1) * 100
+    : 0;
 
   const accountActions = [
     {
@@ -66,7 +71,6 @@ const Settings = () => {
     };
     checkGoogleLinkStatus();
   }, []);
-
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -109,7 +113,7 @@ const Settings = () => {
                 </div>
                 <button
                   type="button"
-                  className="self-start md:self-auto px-4 py-2 rounded-lg border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                  className="self-start md:self-auto px-4 py-2 rounded-lg border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50 cursor-pointer"
                 >
                   {item.actionLabel}
                 </button>
@@ -133,10 +137,11 @@ const Settings = () => {
             </div>
             <div className="flex flex-wrap gap-3">
               <span
-                className={`px-3 py-1.5 rounded-full text-sm font-medium border ${googleLinked
-                  ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                  : "border-gray-200 bg-gray-50 text-gray-600"
-                  }`}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium border ${
+                  googleLinked
+                    ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                    : "border-gray-200 bg-gray-50 text-gray-600"
+                }`}
               >
                 Google — {googleLinked ? "Linked" : "Not linked"}
               </span>
@@ -157,7 +162,7 @@ const Settings = () => {
               <button
                 type="button"
                 onClick={() => alert("This feature is not yet supported")}
-                className="px-4 py-2 rounded-lg border border-red-200 text-sm font-semibold text-red-600 hover:bg-white"
+                className="px-4 py-2 rounded-lg border border-red-200 text-sm font-semibold text-red-600 hover:bg-white cursor-pointer"
               >
                 Delete Account
               </button>
@@ -191,7 +196,11 @@ const Settings = () => {
                       {currentPlanName}
                     </span>
                     <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
-                      {isPremiumSixMonths ? "6 MONTHS" : isPremiumOneMonth ? "1 MONTH" : "PRO"}
+                      {isPremiumSixMonths
+                        ? "6 MONTHS"
+                        : isPremiumOneMonth
+                        ? "1 MONTH"
+                        : "PRO"}
                     </span>
                   </div>
                 </div>
@@ -200,8 +209,8 @@ const Settings = () => {
                 {isPremiumSixMonths
                   ? "You are using the 6-month Premium plan with all premium features."
                   : isPremiumOneMonth
-                    ? "You are using the 1-month Premium plan with all premium features."
-                    : "You have unlocked all premium tools."}
+                  ? "You are using the 1-month Premium plan with all premium features."
+                  : "You have unlocked all premium tools."}
               </p>
             </div>
 

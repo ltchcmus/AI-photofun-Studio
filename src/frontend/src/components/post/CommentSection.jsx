@@ -583,7 +583,7 @@ export default function CommentSection({ postId }) {
               type="button"
               onClick={handleSend}
               disabled={!newComment.trim() || !currentUser.id || isSubmitting}
-              className="absolute inset-y-0 right-2 flex items-center rounded-full p-1.5 text-blue-600 transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-40"
+              className="absolute inset-y-0 right-2 flex items-center rounded-full p-1.5 text-blue-600 transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
               aria-label="Send comment"
             >
               {isSubmitting ? (
