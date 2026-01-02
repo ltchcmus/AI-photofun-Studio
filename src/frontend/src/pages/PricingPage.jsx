@@ -64,10 +64,10 @@ const createPaymentUrl = async (user, planType) => {
 
 const PricingPage = () => {
   const { user, isAuthenticated } = useAuthContext();
-  const [loading, setLoading] = useState(false);
+  const [loadingPlan, setLoadingPlan] = useState(null);
 
   const handleSubscribe = async (planType) => {
-    if (loading) return;
+    if (loadingPlan) return;
 
     // Check if user is logged in
     if (!isAuthenticated || !user) {
@@ -75,7 +75,7 @@ const PricingPage = () => {
       return;
     }
 
-    setLoading(true);
+    setLoadingPlan(planType);
     try {
       const checkoutUrl = await createPaymentUrl(user, planType);
       // Redirect to Stripe checkout page
@@ -83,9 +83,14 @@ const PricingPage = () => {
     } catch (error) {
       console.error("Payment error:", error);
       toast.error(`Unable to create payment: ${error.message}`);
-    } finally {
-      setLoading(false);
+      setLoadingPlan(null);
     }
+    // Note: We don't reset loading in finally block if redirecting, 
+    // but since we might not redirect on error, we handle it in catch.
+    // If success, the page unloads anyway. 
+    // However, to be safe if navigation is cancelled or SPA behavior:
+    // Ideally we should reset if it fails. If it succeeds, we leave the page.
+    // Let's keep the original logic structure but with the new state.
   };
 
   return (
@@ -123,10 +128,10 @@ const PricingPage = () => {
           <button
             type="button"
             onClick={() => handleSubscribe("1_MONTH")}
-            disabled={loading}
+            disabled={!!loadingPlan}
             className="w-full py-3 px-4 bg-blue-50 text-blue-600 font-bold rounded-xl hover:bg-blue-100 active:bg-blue-200 transition-colors disabled:opacity-70 flex justify-center items-center"
           >
-            {loading ? (
+            {loadingPlan === "1_MONTH" ? (
               <Loader2 className="animate-spin w-5 h-5" />
             ) : (
               "Choose 1 Month Plan"
@@ -174,10 +179,10 @@ const PricingPage = () => {
           <button
             type="button"
             onClick={() => handleSubscribe("6_MONTHS")}
-            disabled={loading}
+            disabled={!!loadingPlan}
             className="w-full py-3 px-4 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-bold rounded-xl hover:from-yellow-600 hover:to-orange-700 active:scale-[0.98] transition-all disabled:opacity-70 shadow-lg shadow-orange-900/50 flex justify-center items-center"
           >
-            {loading ? (
+            {loadingPlan === "6_MONTHS" ? (
               <Loader2 className="animate-spin w-5 h-5" />
             ) : (
               "Upgrade Now ($20)"
