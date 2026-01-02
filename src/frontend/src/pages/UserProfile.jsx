@@ -17,6 +17,14 @@ import { communicationApi } from "../api/communicationApi";
 
 const DEFAULT_AVATAR = "https://placehold.co/128x128/111/fff?text=U";
 
+// Utility function to mask email
+const maskEmail = (email) => {
+  if (!email || !email.includes('@')) return email;
+  const [local, domain] = email.split('@');
+  if (local.length <= 2) return `${local[0]}***@${domain}`;
+  return `${local[0]}${local[1]}***@${domain}`;
+};
+
 const UserProfile = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
@@ -41,7 +49,7 @@ const UserProfile = () => {
 
         setProfile({
           id: userData?.id || userId,
-          fullName: userData?.fullName || userData?.username || "Người dùng",
+          fullName: userData?.fullName || userData?.username || "User",
           username: userData?.username || "",
           email: userData?.email || "",
           bio: userData?.bio || "AI creative explorer",
@@ -49,9 +57,9 @@ const UserProfile = () => {
           createdAt: userData?.createdAt,
           isPremium: Boolean(
             userData?.isPremium ||
-              userData?.premium ||
-              userData?.premiumOneMonth ||
-              userData?.premiumSixMonths
+            userData?.premium ||
+            userData?.premiumOneMonth ||
+            userData?.premiumSixMonths
           ),
           premiumOneMonth: Boolean(userData?.premiumOneMonth),
           premiumSixMonths: Boolean(userData?.premiumSixMonths),
@@ -75,7 +83,7 @@ const UserProfile = () => {
         }
       } catch (fetchError) {
         console.error("Failed to fetch user profile", fetchError);
-        setError("Không thể tải thông tin người dùng");
+        setError("Unable to load user information");
       } finally {
         setLoading(false);
       }
@@ -123,10 +131,10 @@ const UserProfile = () => {
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-gray-600 hover:text-gray-900 text-sm font-semibold"
         >
-          <ArrowLeft className="w-4 h-4" /> Quay lại
+          <ArrowLeft className="w-4 h-4" /> Back
         </button>
         <div className="p-6 rounded-xl border border-red-200 bg-red-50 text-sm text-red-700">
-          {error || "Không tìm thấy người dùng"}
+          {error || "User not found"}
         </div>
       </div>
     );
@@ -140,16 +148,15 @@ const UserProfile = () => {
         onClick={() => navigate(-1)}
         className="flex items-center gap-2 text-gray-600 hover:text-gray-900 text-sm font-semibold"
       >
-        <ArrowLeft className="w-4 h-4" /> Quay lại
+        <ArrowLeft className="w-4 h-4" /> Back
       </button>
 
       {/* Profile Header */}
       <section
-        className={`bg-white border border-gray-200 rounded-2xl p-6 md:p-8 shadow-sm relative overflow-hidden ${
-          profile.isPremium
+        className={`bg-white border border-gray-200 rounded-2xl p-6 md:p-8 shadow-sm relative overflow-hidden ${profile.isPremium
             ? "border-2 border-transparent bg-gradient-to-r from-yellow-50 via-orange-50 to-pink-50"
             : ""
-        }`}
+          }`}
       >
         {/* Premium Background Decoration */}
         {profile.isPremium && (
@@ -171,18 +178,16 @@ const UserProfile = () => {
               />
             )}
             <div
-              className={`relative ${
-                profile.isPremium
+              className={`relative ${profile.isPremium
                   ? "p-1 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-full"
                   : ""
-              }`}
+                }`}
             >
               <img
                 src={profile.avatarUrl}
                 alt={`${profile.fullName} avatar`}
-                className={`w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg ${
-                  profile.isPremium ? "animate-pulse-glow" : ""
-                }`}
+                className={`w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg ${profile.isPremium ? "animate-pulse-glow" : ""
+                  }`}
               />
             </div>
             {/* Premium Crown Badge */}
@@ -201,11 +206,10 @@ const UserProfile = () => {
               <div>
                 <div className="flex items-center gap-3 flex-wrap">
                   <h1
-                    className={`text-3xl font-bold ${
-                      profile.isPremium
+                    className={`text-3xl font-bold ${profile.isPremium
                         ? "bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text text-transparent"
                         : ""
-                    }`}
+                      }`}
                   >
                     {profile.fullName}
                   </h1>
@@ -230,19 +234,19 @@ const UserProfile = () => {
                 <div className="bg-gray-50 rounded-xl p-4 text-center">
                   <p className="text-2xl font-bold">{profile.postsCount}</p>
                   <p className="text-xs text-gray-500 uppercase font-semibold">
-                    Bài viết
+                    Posts
                   </p>
                 </div>
                 <div className="bg-gray-50 rounded-xl p-4 text-center">
                   <p className="text-2xl font-bold">{profile.followersCount}</p>
                   <p className="text-xs text-gray-500 uppercase font-semibold">
-                    Người theo dõi
+                    Followers
                   </p>
                 </div>
                 <div className="bg-gray-50 rounded-xl p-4 text-center">
                   <p className="text-2xl font-bold">{profile.followingCount}</p>
                   <p className="text-xs text-gray-500 uppercase font-semibold">
-                    Đang theo dõi
+                    Following
                   </p>
                 </div>
               </div>
@@ -252,19 +256,18 @@ const UserProfile = () => {
                 <button
                   type="button"
                   onClick={handleFollow}
-                  className={`px-6 py-2.5 rounded-lg font-semibold flex items-center gap-2 transition-colors ${
-                    isFollowing
+                  className={`px-6 py-2.5 rounded-lg font-semibold flex items-center gap-2 transition-colors ${isFollowing
                       ? "bg-gray-200 text-gray-700 hover:bg-gray-300"
                       : "bg-black text-white hover:bg-gray-900"
-                  }`}
+                    }`}
                 >
                   {isFollowing ? (
                     <>
-                      <UserCheck className="w-4 h-4" /> Đang theo dõi
+                      <UserCheck className="w-4 h-4" /> Following
                     </>
                   ) : (
                     <>
-                      <UserPlus className="w-4 h-4" /> Theo dõi
+                      <UserPlus className="w-4 h-4" /> Follow
                     </>
                   )}
                 </button>
@@ -273,7 +276,7 @@ const UserProfile = () => {
                   onClick={handleMessage}
                   className="px-6 py-2.5 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                 >
-                  <MessageCircle className="w-4 h-4" /> Nhắn tin
+                  <MessageCircle className="w-4 h-4" /> Message
                 </button>
               </div>
             </div>
@@ -283,13 +286,13 @@ const UserProfile = () => {
 
       {/* User Info */}
       <section className="bg-white border border-gray-200 rounded-2xl p-6">
-        <h2 className="text-lg font-bold mb-4">Thông tin</h2>
+        <h2 className="text-lg font-bold mb-4">Information</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {profile.email && (
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
               <Mail className="w-5 h-5 text-gray-600" />
               <span className="text-sm font-medium text-gray-800">
-                {profile.email}
+                {maskEmail(profile.email)}
               </span>
             </div>
           )}
@@ -297,8 +300,8 @@ const UserProfile = () => {
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
               <Calendar className="w-5 h-5 text-gray-600" />
               <span className="text-sm font-medium text-gray-800">
-                Tham gia{" "}
-                {new Date(profile.createdAt).toLocaleDateString("vi-VN")}
+                Joined{" "}
+                {new Date(profile.createdAt).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}
               </span>
             </div>
           )}
@@ -307,10 +310,10 @@ const UserProfile = () => {
 
       {/* User Posts */}
       <section className="bg-white border border-gray-200 rounded-2xl p-6">
-        <h2 className="text-lg font-bold mb-4">Bài viết ({posts.length})</h2>
+        <h2 className="text-lg font-bold mb-4">Posts ({posts.length})</h2>
         {posts.length === 0 ? (
           <div className="py-8 text-center text-sm text-gray-500">
-            Người dùng này chưa có bài viết nào.
+            This user hasn't posted anything yet.
           </div>
         ) : (
           <PostList
@@ -328,7 +331,7 @@ const UserProfile = () => {
                 premiumSixMonths: profile.premiumSixMonths,
               },
             }}
-            onLikePost={() => {}}
+            onLikePost={() => { }}
             onNavigateAiTools={() => navigate("/ai-tools")}
           />
         )}

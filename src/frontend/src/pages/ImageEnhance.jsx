@@ -66,7 +66,7 @@ const ImageEnhance = () => {
       setError("");
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch {
-      toast.error("Không thể đọc ảnh, vui lòng thử lại.");
+      toast.error("Unable to read image, please try again.");
     }
   };
 
@@ -86,19 +86,19 @@ const ImageEnhance = () => {
 
   const handleEnhance = async () => {
     if (!canEnhance) {
-      toast.warning("Hãy tải ảnh và chọn tỷ lệ upscale trước.");
+      toast.warning("Please upload an image and select upscale ratio first.");
       return;
     }
 
     setProcessing(true);
-    setProcessingStatus("Đang chuẩn bị...");
+    setProcessingStatus("Preparing...");
     setResult(null);
     setSliderPercent(50);
     setError("");
 
     try {
       // Step 1: Upload image to file service first
-      setProcessingStatus("Đang upload ảnh...");
+      setProcessingStatus("Uploading image...");
 
       let apiImageUrl;
       try {
@@ -106,11 +106,11 @@ const ImageEnhance = () => {
         apiImageUrl = uploadResult?.result?.image || uploadResult?.result?.url || uploadResult?.url || uploadResult?.image;
 
         if (!apiImageUrl) {
-          throw new Error("Không nhận được URL từ server");
+          throw new Error("No URL received from server");
         }
       } catch (uploadErr) {
         console.error("Upload error:", uploadErr);
-        toast.error("Không thể upload ảnh. Vui lòng thử lại.");
+        toast.error("Unable to upload image. Please try again.");
         setProcessing(false);
         return;
       }
@@ -124,7 +124,7 @@ const ImageEnhance = () => {
       }
 
       // Step 2: Call upscale API
-      setProcessingStatus("Đang gửi yêu cầu upscale...");
+      setProcessingStatus("Sending upscale request...");
       const upscaleResult = await upscaleImage({
         imageUrl: apiImageUrl,
         flavor: flavor,
@@ -135,14 +135,14 @@ const ImageEnhance = () => {
       }
 
       // Step 3: Poll for completion
-      setProcessingStatus("Đang xử lý AI...");
+      setProcessingStatus("Processing with AI...");
       const taskId = upscaleResult.taskId;
 
       const pollResult = await pollTaskStatus(
         taskId,
         "v1/features/upscale",
         (status, attempt) => {
-          setProcessingStatus(`Đang xử lý... (${attempt}/60)`);
+          setProcessingStatus(`Processing... (${attempt}/60)`);
         },
         60,
         3000
@@ -169,7 +169,7 @@ const ImageEnhance = () => {
 
     } catch (err) {
       console.error("Enhance error:", err);
-      toast.error(`Lỗi: ${err.message}. Vui lòng thử lại.`);
+      toast.error(`Error: ${err.message}. Please try again.`);
     } finally {
       setProcessing(false);
       setProcessingStatus("");
@@ -185,7 +185,7 @@ const ImageEnhance = () => {
   };
 
   const handleSave = () => {
-    alert("Ảnh đã được lưu vào thư viện (demo)");
+    alert("Image saved to library (demo)");
   };
 
   const handleShare = () => {
@@ -381,9 +381,9 @@ const ImageEnhance = () => {
               <div className="aspect-square bg-gray-50 rounded-2xl flex items-center justify-center">
                 <div className="text-center">
                   <div className="w-16 h-16 border-4 border-gray-200 border-t-black rounded-full animate-spin mx-auto mb-4" />
-                  <p className="text-gray-700 font-semibold">Đang xử lý...</p>
+                  <p className="text-gray-700 font-semibold">Processing...</p>
                   <p className="text-sm text-gray-500">
-                    {processingStatus || "Vui lòng chờ..."}
+                    {processingStatus || "Please wait..."}
                   </p>
                 </div>
               </div>
@@ -489,14 +489,14 @@ const ImageEnhance = () => {
                     onClick={handleShare}
                     className="py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold flex items-center justify-center gap-2"
                   >
-                    <Share2 className="w-4 h-4" /> Đăng Feed
+                    <Share2 className="w-4 h-4" /> Post Feed
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowShareToGroup(true)}
                     className="py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold flex items-center justify-center gap-2"
                   >
-                    <Users className="w-4 h-4" /> Gửi Nhóm
+                    <Users className="w-4 h-4" /> Send to Group
                   </button>
                 </div>
                 <button
@@ -514,9 +514,9 @@ const ImageEnhance = () => {
             <h3 className="font-bold mb-3">Tips</h3>
             <ul className="space-y-2">
               <li>• 1000px+ images yield better upscale results.</li>
-              <li>• PNG hoặc JPG giúp giữ chất lượng ổn định.</li>
-              <li>• Bật Face Correction khi xử lý ảnh chân dung.</li>
-              <li>• Dùng slider để xem sự khác biệt rõ ràng.</li>
+              <li>• PNG or JPG helps maintain stable quality.</li>
+              <li>• Enable Face Correction when processing portrait photos.</li>
+              <li>• Use the slider to clearly see the difference.</li>
             </ul>
           </div>
         </section>

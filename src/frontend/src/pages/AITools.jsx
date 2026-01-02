@@ -12,7 +12,7 @@ const CreateWithAI = () => {
       id: "ai-chat",
       icon: <MessageCircle className="w-7 h-7 text-purple-500" />,
       title: "AI Chat",
-      description: "Chat với AI để tạo và chỉnh sửa ảnh tự động",
+      description: "Chat with AI to create and edit images automatically",
     },
     {
       id: "generate",
@@ -54,13 +54,13 @@ const CreateWithAI = () => {
       id: "image-to-video",
       icon: <Film className="w-7 h-7 text-red-500" />,
       title: "Image to Video",
-      description: "Chuyển ảnh tĩnh thành video động với AI",
+      description: "Transform still images into dynamic videos with AI",
     },
     {
       id: "prompt-to-video",
       icon: <Video className="w-7 h-7 text-pink-500" />,
       title: "Prompt to Video",
-      description: "Tạo video từ mô tả văn bản với AI",
+      description: "Create videos from text descriptions with AI",
     },
   ];
 
@@ -132,7 +132,7 @@ const CreateWithAI = () => {
             ? "Create with AI"
             : selectedTool?.title}
         </h1>
-        <span className="text-xs text-gray-400">Beta</span>
+
       </header>
 
       {currentView === "tool-selection" && (

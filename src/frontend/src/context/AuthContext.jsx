@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }) => {
       console.error("Failed to hydrate user", hydrateError);
       setUser(null);
       setIsAuthenticated(false);
-      setError(hydrateError?.message || "Không thể tải thông tin người dùng");
+      setError(hydrateError?.message || "Unable to load user information");
       throw hydrateError;
     }
   }, []);
@@ -124,7 +124,7 @@ export const AuthProvider = ({ children }) => {
         setError(
           loginError?.response?.data?.message ||
           loginError?.message ||
-          "Đăng nhập thất bại"
+          "Login failed"
         );
         throw loginError;
       }
@@ -143,7 +143,7 @@ export const AuthProvider = ({ children }) => {
       setError(
         registerError?.response?.data?.message ||
         registerError?.message ||
-        "Đăng ký thất bại"
+        "Registration failed"
       );
       throw registerError;
     }

@@ -56,7 +56,7 @@ const Relight = () => {
             setError("");
             if (fileInputRef.current) fileInputRef.current.value = "";
         } catch {
-            toast.error("Không thể đọc ảnh, vui lòng thử lại.");
+            toast.error("Unable to read image, please try again.");
         }
     };
 
@@ -68,31 +68,31 @@ const Relight = () => {
 
     const handleRelight = async () => {
         if (!canRelight) {
-            toast.warning("Hãy tải ảnh và nhập mô tả ánh sáng trước.");
+            toast.warning("Please upload an image and enter a lighting description first.");
             return;
         }
 
         setProcessing(true);
-        setProcessingStatus("Đang chuẩn bị...");
+        setProcessingStatus("Preparing...");
         setResult(null);
         setError("");
 
         try {
             // Upload image
-            setProcessingStatus("Đang upload ảnh...");
+            setProcessingStatus("Uploading image...");
             let apiImageUrl;
             try {
                 const uploadResult = await communicationApi.uploadChatImage(uploadedFile);
                 apiImageUrl = uploadResult?.result?.image || uploadResult?.result?.url || uploadResult?.url || uploadResult?.image;
-                if (!apiImageUrl) throw new Error("Không nhận được URL từ server");
+                if (!apiImageUrl) throw new Error("No URL received from server");
             } catch (uploadErr) {
-                toast.error("Không thể upload ảnh. Vui lòng thử lại.");
+                toast.error("Unable to upload image. Please try again.");
                 setProcessing(false);
                 return;
             }
 
             // Call relight API
-            setProcessingStatus("Đang gửi yêu cầu relight...");
+            setProcessingStatus("Sending relight request...");
             const relightResult = await relightImage({
                 imageUrl: apiImageUrl,
                 prompt: prompt,
@@ -104,12 +104,12 @@ const Relight = () => {
             }
 
             // Poll for completion
-            setProcessingStatus("Đang xử lý AI...");
+            setProcessingStatus("Processing with AI...");
             const pollResult = await pollTaskStatus(
                 relightResult.taskId,
                 "v1/features/relight",
                 (status, attempt) => {
-                    setProcessingStatus(`Đang xử lý... (${attempt}/60)`);
+                    setProcessingStatus(`Processing... (${attempt}/60)`);
                 },
                 60,
                 3000
@@ -126,7 +126,7 @@ const Relight = () => {
             });
         } catch (err) {
             console.error("Relight error:", err);
-            toast.error(`Lỗi: ${err.message}. Vui lòng thử lại.`);
+            toast.error(`Error: ${err.message}. Please try again.`);
         } finally {
             setProcessing(false);
             setProcessingStatus("");
@@ -160,7 +160,7 @@ const Relight = () => {
                 <h1 className="text-lg md:text-xl font-bold flex items-center gap-2">
                     <Sun className="w-5 h-5 text-orange-500" /> Relight
                 </h1>
-                <div className="text-xs text-gray-400">Beta</div>
+
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -177,8 +177,8 @@ const Relight = () => {
                             onDragLeave={(e) => { e.preventDefault(); setDragOver(false); }}
                         >
                             <ImageIcon className="w-12 h-12 mx-auto mb-3 text-gray-400" />
-                            <p className="text-gray-600 font-medium">Kéo & thả ảnh vào đây</p>
-                            <p className="text-xs text-gray-500 mb-4">hoặc click để chọn</p>
+                            <p className="text-gray-600 font-medium">Drag & drop your image here</p>
+                            <p className="text-xs text-gray-500 mb-4">or click to browse</p>
                             <input
                                 ref={fileInputRef}
                                 type="file"
@@ -204,7 +204,7 @@ const Relight = () => {
                                     value={prompt}
                                     onChange={(e) => setPrompt(e.target.value)}
                                     className="w-full border border-gray-300 rounded-xl p-3 min-h-[80px]"
-                                    placeholder="Mô tả ánh sáng bạn muốn..."
+                                    placeholder="Describe the lighting you want..."
                                 />
                             </div>
                             <div>
@@ -239,8 +239,8 @@ const Relight = () => {
                             <div className="aspect-square bg-gray-50 rounded-2xl flex items-center justify-center">
                                 <div className="text-center">
                                     <div className="w-16 h-16 border-4 border-gray-200 border-t-orange-500 rounded-full animate-spin mx-auto mb-4" />
-                                    <p className="text-gray-700 font-semibold">Đang xử lý...</p>
-                                    <p className="text-sm text-gray-500">{processingStatus || "Vui lòng chờ..."}</p>
+                                    <p className="text-gray-700 font-semibold">Processing...</p>
+                                    <p className="text-sm text-gray-500">{processingStatus || "Please wait..."}</p>
                                 </div>
                             </div>
                         ) : result ? (
@@ -257,19 +257,19 @@ const Relight = () => {
                                         onClick={handleShare}
                                         className="py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold flex items-center justify-center gap-2"
                                     >
-                                        <Share2 className="w-4 h-4" /> Đăng Feed
+                                        <Share2 className="w-4 h-4" /> Post Feed
                                     </button>
                                     <button
                                         onClick={() => setShowShareToGroup(true)}
                                         className="py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold flex items-center justify-center gap-2 col-span-2"
                                     >
-                                        <Users className="w-4 h-4" /> Gửi Nhóm
+                                        <Users className="w-4 h-4" /> Send to Group
                                     </button>
                                 </div>
                             </>
                         ) : (
                             <div className="aspect-square border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center">
-                                <p className="text-gray-500 text-center px-4">Kết quả sẽ hiển thị ở đây</p>
+                                <p className="text-gray-500 text-center px-4">Result will appear here</p>
                             </div>
                         )}
                     </div>

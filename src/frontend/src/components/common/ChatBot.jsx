@@ -10,7 +10,7 @@ const ChatBot = () => {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Xin chào! Tôi là AI Assistant. Tôi có thể giúp gì cho bạn?",
+      text: "Hello! I'm your AI Assistant. How can I help you?",
       sender: "bot",
       timestamp: new Date(),
     },
@@ -53,7 +53,7 @@ const ChatBot = () => {
 
       // Extract bot response from API
       // Response format: { code: 1000, message: "Chat successfully", result: { imageUrl, answer } }
-      let botText = "Xin lỗi, tôi không nhận được phản hồi từ server.";
+      let botText = "Sorry, I didn't receive a response from the server.";
       let imageUrl = null;
 
       if (response && response.result) {
@@ -72,12 +72,12 @@ const ChatBot = () => {
       setMessages((prev) => [...prev, botResponse]);
     } catch (error) {
       console.error("Error sending message:", error);
-      setError("Không thể kết nối với chatbot. Vui lòng thử lại.");
+      setError("Unable to connect to chatbot. Please try again.");
 
       // Fallback response
       const errorResponse = {
         id: messages.length + 2,
-        text: "Xin lỗi, tôi đang gặp sự cố kết nối. Vui lòng thử lại sau.",
+        text: "Sorry, I'm having connection issues. Please try again later.",
         sender: "bot",
         timestamp: new Date(),
       };
@@ -89,7 +89,7 @@ const ChatBot = () => {
   };
 
   const formatTime = (date) => {
-    return date.toLocaleTimeString("vi-VN", {
+    return date.toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
     });
@@ -119,7 +119,7 @@ const ChatBot = () => {
               </div>
               <div>
                 <h3 className="font-semibold text-lg">AI Assistant</h3>
-                <p className="text-xs text-purple-100">Luôn sẵn sàng hỗ trợ</p>
+                <p className="text-xs text-purple-100">Always ready to help</p>
               </div>
             </div>
             <button
@@ -157,7 +157,7 @@ const ChatBot = () => {
                       alt="Bot response"
                       className="rounded-lg mb-2 max-w-full h-auto cursor-pointer hover:opacity-90 transition-opacity"
                       onClick={() => setLightboxImage(message.imageUrl)}
-                      title="Click để xem ảnh lớn"
+                      title="Click to view larger image"
                     />
                   )}
                   <p className="text-sm whitespace-pre-wrap">{message.text}</p>
@@ -207,7 +207,7 @@ const ChatBot = () => {
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                placeholder="Nhập tin nhắn..."
+                placeholder="Type a message..."
                 className="flex-1 px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
               <button

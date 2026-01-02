@@ -29,7 +29,7 @@ const Sidebar = () => {
   const menuRef = useRef(null);
   const { user, logout } = useAuth();
 
-  const displayName = user?.fullName || "Người dùng";
+  const displayName = user?.fullName || "User";
   const avatarUrl = user?.avatar || DEFAULT_AVATAR;
   const isPremium = Boolean(
     user?.isPremium ||
@@ -74,6 +74,14 @@ const Sidebar = () => {
 
   return (
     <aside className="hidden md:flex fixed left-0 top-0 h-screen w-20 flex-col items-center py-6 border-r border-gray-200 bg-white">
+      {/* Logo */}
+      <div className="mb-4">
+        <img
+          src="/AIphotofun.png"
+          alt="AI Photofun Studio"
+          className="w-12 h-12 object-contain"
+        />
+      </div>
       <div className="mb-8 flex flex-col items-center text-center">
         {/* Premium Avatar with Frame */}
         <div className="relative group">
@@ -178,7 +186,7 @@ const Sidebar = () => {
                 <Moon className="w-4 h-4" /> Dark Mode
               </span>
               <span className="text-xs text-gray-500">
-                {darkMode ? "Bật" : "Tắt"}
+                {darkMode ? "On" : "Off"}
               </span>
             </button>
             <button
@@ -188,7 +196,7 @@ const Sidebar = () => {
               <span className="flex items-center gap-2 font-semibold text-gray-900">
                 <Globe className="w-4 h-4" /> Language
               </span>
-              <span className="text-xs text-gray-500">Tiếng Việt</span>
+              <span className="text-xs text-gray-500">English</span>
             </button>
             <hr className="border-gray-200" />
             {!isPremium && (

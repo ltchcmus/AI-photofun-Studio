@@ -16,7 +16,7 @@ const DEFAULT_AVATAR =
 
 const buildCurrentUser = (user) => ({
   id: user?.id || user?.userId,
-  name: user?.fullName || user?.username || user?.email || "Bạn",
+  name: user?.fullName || user?.username || user?.email || "You",
   avatar: user?.avatar || user?.avatarUrl || DEFAULT_AVATAR,
   isPremium: Boolean(
     user?.isPremium ||
@@ -27,18 +27,18 @@ const buildCurrentUser = (user) => ({
 });
 
 const formatRelativeTime = (value) => {
-  if (!value) return "Vừa xong";
+  if (!value) return "Just now";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
 
   const diffMs = Date.now() - date.getTime();
   const minutes = Math.floor(diffMs / (60 * 1000));
-  if (minutes < 1) return "Vừa xong";
-  if (minutes < 60) return `${minutes} phút trước`;
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes} min ago`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} giờ trước`;
+  if (hours < 24) return `${hours} hr ago`;
   const days = Math.floor(hours / 24);
-  if (days < 7) return `${days} ngày trước`;
+  if (days < 7) return `${days} days ago`;
   return date.toLocaleDateString();
 };
 
@@ -48,7 +48,7 @@ const extractUserInfo = (payload) => ({
     payload?.username ||
     payload?.displayName ||
     payload?.email ||
-    "Người dùng",
+    "User",
   avatar:
     payload?.avatarUrl ||
     payload?.avatar ||
@@ -135,7 +135,7 @@ export default function CommentSection({ postId }) {
           id: comment?.id || comment?._id || String(Date.now()),
           userId: comment?.userId,
           user: userMap[comment?.userId] || {
-            name: comment?.userName || "Người dùng",
+            name: comment?.userName || "User",
             avatar: DEFAULT_AVATAR,
             isPremium: false,
           },
@@ -154,7 +154,7 @@ export default function CommentSection({ postId }) {
           setError(
             fetchError?.response?.data?.message ||
             fetchError?.message ||
-            "Không thể tải bình luận"
+            "Unable to load comments"
           );
         }
       } finally {
@@ -200,7 +200,7 @@ export default function CommentSection({ postId }) {
                 return;
 
               let userInfo = {
-                name: payload?.userName || "Người dùng",
+                name: payload?.userName || "User",
                 avatar: DEFAULT_AVATAR,
                 isPremium: false,
               };
@@ -349,7 +349,7 @@ export default function CommentSection({ postId }) {
       setError(
         createError?.response?.data?.message ||
         createError?.message ||
-        "Không thể gửi bình luận"
+        "Unable to send comment"
       );
     } finally {
       setIsSubmitting(false);
@@ -375,7 +375,7 @@ export default function CommentSection({ postId }) {
       setComments((prev) =>
         prev.map((c) =>
           c.id === commentId
-            ? { ...c, content: editContent, time: "Vừa xong" }
+            ? { ...c, content: editContent, time: "Just now" }
             : c
         )
       );
@@ -383,14 +383,14 @@ export default function CommentSection({ postId }) {
       setEditContent("");
     } catch (updateError) {
       console.error("Failed to update comment", updateError);
-      setError("Không thể cập nhật bình luận");
+      setError("Unable to update comment");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDeleteComment = async (commentId) => {
-    if (!window.confirm("Bạn có chắc muốn xóa bình luận này?")) return;
+    if (!window.confirm("Are you sure you want to delete this comment?")) return;
 
     setError("");
 
@@ -400,7 +400,7 @@ export default function CommentSection({ postId }) {
       setMenuOpenId(null);
     } catch (deleteError) {
       console.error("Failed to delete comment", deleteError);
-      setError("Không thể xóa bình luận");
+      setError("Unable to delete comment");
     }
   };
 
@@ -409,7 +409,7 @@ export default function CommentSection({ postId }) {
   if (!postId) {
     return (
       <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-        Không tìm thấy mã bài viết để tải bình luận.
+        Post not found to load comments.
       </div>
     );
   }
@@ -418,13 +418,13 @@ export default function CommentSection({ postId }) {
     <div className="mt-4 rounded-2xl border border-gray-200 bg-white">
       <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
         <h3 className="text-sm font-semibold text-gray-900">
-          Bình luận ({comments.length})
+          Comments ({comments.length})
         </h3>
       </div>
 
       {error && (
         <div className="mx-4 mt-3 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600">
-          Lỗi tải bình luận: {error}
+          Error loading comments: {error}
         </div>
       )}
 
@@ -437,7 +437,7 @@ export default function CommentSection({ postId }) {
 
         {!loading && !comments.length && !error && (
           <div className="py-4 text-center text-sm text-gray-500">
-            Chưa có bình luận nào. Hãy là người đầu tiên!
+            No comments yet. Be the first!
           </div>
         )}
 
@@ -447,16 +447,16 @@ export default function CommentSection({ postId }) {
             <div
               key={comment.id}
               className={`flex gap-3 rounded-xl p-3 transition-all ${comment.isNew
-                  ? "bg-green-50 border-2 border-green-200"
-                  : "bg-gray-50/70"
+                ? "bg-green-50 border-2 border-green-200"
+                : "bg-gray-50/70"
                 }`}
             >
               <img
                 src={comment.user.avatar}
                 alt={comment.user.name}
                 className={`h-10 w-10 rounded-full object-cover ${comment.user.isPremium
-                    ? "ring-2 ring-yellow-400 ring-offset-2"
-                    : ""
+                  ? "ring-2 ring-yellow-400 ring-offset-2"
+                  : ""
                   }`}
               />
               <div className="flex-1">
@@ -471,7 +471,7 @@ export default function CommentSection({ postId }) {
                   )}
                   {comment.isNew && (
                     <span className="rounded-full bg-green-500 px-2 py-0.5 text-[10px] font-bold text-white">
-                      MỚI
+                      NEW
                     </span>
                   )}
                   <span className="text-xs text-gray-500">{comment.time}</span>
@@ -492,7 +492,7 @@ export default function CommentSection({ postId }) {
                         disabled={isSubmitting}
                         className="rounded-lg bg-blue-600 px-3 py-1 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
                       >
-                        Lưu
+                        Save
                       </button>
                       <button
                         type="button"
@@ -502,7 +502,7 @@ export default function CommentSection({ postId }) {
                         }}
                         className="rounded-lg bg-gray-300 px-3 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-400"
                       >
-                        Hủy
+                        Cancel
                       </button>
                     </div>
                   </div>
@@ -532,7 +532,7 @@ export default function CommentSection({ postId }) {
                             className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-gray-50"
                           >
                             <Edit2 className="h-3 w-3" />
-                            Chỉnh sửa
+                            Edit
                           </button>
                           <button
                             type="button"
@@ -540,7 +540,7 @@ export default function CommentSection({ postId }) {
                             className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-red-600 hover:bg-gray-50"
                           >
                             <Trash2 className="h-3 w-3" />
-                            Xóa
+                            Delete
                           </button>
                         </div>
                       )}
@@ -572,7 +572,7 @@ export default function CommentSection({ postId }) {
                 }
               }}
               placeholder={
-                currentUser.id ? "Viết bình luận..." : "Đăng nhập để bình luận"
+                currentUser.id ? "Write a comment..." : "Login to comment"
               }
               disabled={!currentUser.id || isSubmitting}
               className="w-full rounded-full border border-transparent bg-gray-100 py-2.5 pl-4 pr-16 text-sm text-gray-700 transition focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
@@ -585,7 +585,7 @@ export default function CommentSection({ postId }) {
               onClick={handleSend}
               disabled={!newComment.trim() || !currentUser.id || isSubmitting}
               className="absolute inset-y-0 right-2 flex items-center rounded-full p-1.5 text-blue-600 transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-40"
-              aria-label="Gửi bình luận"
+              aria-label="Send comment"
             >
               {isSubmitting ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

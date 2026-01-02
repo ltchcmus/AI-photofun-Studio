@@ -136,7 +136,7 @@ const RegisterPage = () => {
         roles: ["USER"],
       });
       toast.success(
-        "Đăng ký thành công! Vui lòng đăng nhập."
+        "Registration successful! Please log in."
       );
       navigate("/login");
     } catch (err) {

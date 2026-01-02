@@ -44,7 +44,7 @@ const FaceSwap = () => {
       }
     } catch (err) {
       // surface a toast system later; for now use alert to keep UX simple
-      alert("Không thể đọc ảnh, vui lòng thử lại.");
+      alert("Unable to read image, please try again.");
     }
   };
 
@@ -87,14 +87,13 @@ const FaceSwap = () => {
   };
 
   const handleSave = () => {
-    alert("Đã lưu vào thư viện (demo)");
+    alert("Saved to library (demo)");
   };
 
   const dropClass = (type) =>
-    `border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
-      dragState[type]
-        ? "border-blue-300 bg-blue-50"
-        : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+    `border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${dragState[type]
+      ? "border-blue-300 bg-blue-50"
+      : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
     }`;
 
   return (
@@ -110,7 +109,7 @@ const FaceSwap = () => {
         <h1 className="text-lg md:text-xl font-bold flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-purple-500" /> Face Swap
         </h1>
-        <div className="text-xs text-gray-400">Beta</div>
+
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -238,14 +237,12 @@ const FaceSwap = () => {
             <button
               type="button"
               onClick={toggleFaceCorrection}
-              className={`relative inline-flex items-center h-7 w-12 rounded-full transition-colors ${
-                faceCorrection ? "bg-emerald-500" : "bg-gray-300"
-              }`}
+              className={`relative inline-flex items-center h-7 w-12 rounded-full transition-colors ${faceCorrection ? "bg-emerald-500" : "bg-gray-300"
+                }`}
             >
               <span
-                className={`inline-block h-5 w-5 bg-white rounded-full transform transition-transform ${
-                  faceCorrection ? "translate-x-5" : "translate-x-1"
-                }`}
+                className={`inline-block h-5 w-5 bg-white rounded-full transform transition-transform ${faceCorrection ? "translate-x-5" : "translate-x-1"
+                  }`}
               />
             </button>
           </div>
@@ -259,7 +256,7 @@ const FaceSwap = () => {
                 <div className="w-16 h-16 border-4 border-gray-200 border-t-black rounded-full animate-spin mx-auto mb-4" />
                 <p className="text-gray-700 font-semibold">Swapping faces...</p>
                 <p className="text-sm text-gray-500">
-                  Vui lòng chờ trong giây lát
+                  Please wait a moment
                 </p>
               </div>
             </div>

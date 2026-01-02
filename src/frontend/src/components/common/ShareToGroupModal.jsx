@@ -57,7 +57,7 @@ export default function ShareToGroupModal({
                 .map((group) => ({
                     id: group.groupId || group.id,
                     groupId: group.groupId || group.id,
-                    name: group.name || "Nhóm",
+                    name: group.name || "Group",
                     avatar: group.image || DEFAULT_GROUP_AVATAR,
                     memberCount: group.memberIds?.length || 0,
                 }));
@@ -114,7 +114,7 @@ export default function ShareToGroupModal({
                     <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
                         <h2 className="text-lg font-semibold flex items-center gap-2">
                             <Users className="w-5 h-5 text-purple-500" />
-                            Gửi đến nhóm
+                            Send to Group
                         </h2>
                         <button
                             type="button"
@@ -140,14 +140,14 @@ export default function ShareToGroupModal({
                                     {isVideo ? (
                                         <><Video className="w-4 h-4" /> Video AI</>
                                     ) : (
-                                        <><Image className="w-4 h-4" /> Ảnh AI</>
+                                        <><Image className="w-4 h-4" /> AI Image</>
                                     )}
                                 </div>
                                 <input
                                     type="text"
                                     value={message}
                                     onChange={(e) => setMessage(e.target.value)}
-                                    placeholder="Thêm tin nhắn (tuỳ chọn)..."
+                                    placeholder="Add a message (optional)..."
                                     className="w-full mt-1 text-sm border-0 p-0 focus:ring-0 focus:outline-none text-gray-800 placeholder-gray-400"
                                 />
                             </div>
@@ -162,7 +162,7 @@ export default function ShareToGroupModal({
                             </div>
                         ) : groups.length === 0 ? (
                             <div className="text-center py-8 text-gray-500 text-sm">
-                                Bạn chưa tham gia nhóm nào.
+                                You haven't joined any groups yet.
                             </div>
                         ) : (
                             <div className="space-y-1">
@@ -172,8 +172,8 @@ export default function ShareToGroupModal({
                                         type="button"
                                         onClick={() => setSelectedGroup(group)}
                                         className={`w-full flex items-center gap-3 p-3 rounded-xl transition-colors ${selectedGroup?.groupId === group.groupId
-                                                ? "bg-purple-50 border-2 border-purple-500"
-                                                : "hover:bg-gray-50 border-2 border-transparent"
+                                            ? "bg-purple-50 border-2 border-purple-500"
+                                            : "hover:bg-gray-50 border-2 border-transparent"
                                             }`}
                                     >
                                         <img
@@ -183,7 +183,7 @@ export default function ShareToGroupModal({
                                         />
                                         <div className="flex-1 text-left">
                                             <p className="font-medium text-gray-900">{group.name}</p>
-                                            <p className="text-xs text-gray-500">{group.memberCount} thành viên</p>
+                                            <p className="text-xs text-gray-500">{group.memberCount} members</p>
                                         </div>
                                         {selectedGroup?.groupId === group.groupId && (
                                             <div className="w-5 h-5 rounded-full bg-purple-500 flex items-center justify-center">
@@ -209,7 +209,7 @@ export default function ShareToGroupModal({
                             ) : (
                                 <>
                                     <Send className="w-5 h-5" />
-                                    Gửi đến nhóm
+                                    Send to Group
                                 </>
                             )}
                         </button>

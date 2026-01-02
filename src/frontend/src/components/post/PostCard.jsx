@@ -48,7 +48,7 @@ export default function PostCard({
           type="button"
           onClick={handleViewProfile}
           className="shrink-0 focus:outline-none rounded-full relative group"
-          title={`Xem trang cá nhân của ${displayName}`}
+          title={`View ${displayName}'s profile`}
         >
           {/* Premium Avatar Frame */}
           {isPremium && (
@@ -137,7 +137,7 @@ export default function PostCard({
                 alt={`Post by ${displayName}`}
                 className="w-full h-auto object-cover hover:opacity-95 transition-opacity"
                 loading="lazy"
-                title="Click để xem ảnh lớn"
+                title="Click to view full image"
               />
             </div>
           )}
@@ -181,7 +181,7 @@ export default function PostCard({
               className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-500"
               onClick={() => setShowComments((prev) => !prev)}
               aria-expanded={showComments}
-              aria-label="Xem bình luận"
+              aria-label="View comments"
             >
               <MessageCircle className="w-5 h-5" />
               {Number(post.comments || 0).toLocaleString()}

@@ -51,7 +51,7 @@ const VerifyEmailPage = () => {
   const handleVerify = async (e) => {
     e.preventDefault();
     if (code.length < 4) {
-      setError("Vui lòng nhập đủ 4 chữ số.");
+      setError("Please enter all 4 digits.");
       return;
     }
 
@@ -60,7 +60,7 @@ const VerifyEmailPage = () => {
       await userApi.activateProfile(code);
 
       setSuccess(true);
-      toast.success("Xác thực email thành công!");
+      toast.success("Email verified successfully!");
       // Chuyển về trang profile và reload để hiển thị trạng thái mới
       setTimeout(() => {
         window.location.href = "/profile";
@@ -69,7 +69,7 @@ const VerifyEmailPage = () => {
       const message =
         err?.response?.data?.message ||
         err?.message ||
-        "Mã xác thực không đúng. Vui lòng thử lại.";
+        "Invalid verification code. Please try again.";
       setError(message);
       toast.error(message);
     } finally {
@@ -83,7 +83,7 @@ const VerifyEmailPage = () => {
 
     try {
       await userApi.resendVerification();
-      toast.success("Đã gửi lại mã xác thực mới đến email của bạn");
+      toast.success("A new verification code has been sent to your email");
 
       // Reset timer
       setTimer(60);
@@ -94,7 +94,7 @@ const VerifyEmailPage = () => {
       const message =
         err?.response?.data?.message ||
         err?.message ||
-        "Không thể gửi lại mã xác thực";
+        "Unable to resend verification code";
       toast.error(message);
     }
   };
@@ -122,11 +122,11 @@ const VerifyEmailPage = () => {
         </div>
 
         <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          Xác thực Email
+          Verify Email
         </h1>
         <p className="text-gray-500 mb-8 text-sm leading-relaxed">
-          Chúng tôi đã gửi một mã xác thực 4 số đến email của bạn. <br />
-          Vui lòng kiểm tra hộp thư đến.
+          We have sent a 4-digit verification code to your email. <br />
+          Please check your inbox.
         </p>
 
         <form onSubmit={handleVerify} className="space-y-6">
@@ -164,12 +164,12 @@ const VerifyEmailPage = () => {
             {loading ? (
               <>
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                Đang xác thực...
+                Verifying...
               </>
             ) : success ? (
-              "Xác thực thành công!"
+              "Verification successful!"
             ) : (
-              "Xác nhận"
+              "Confirm"
             )}
             {!loading && !success && <ArrowRight className="w-5 h-5" />}
           </button>
@@ -177,7 +177,7 @@ const VerifyEmailPage = () => {
 
         {/* Khu vực Gửi lại mã */}
         <div className="mt-8 pt-6 border-t border-gray-100">
-          <p className="text-sm text-gray-500 mb-3">Bạn chưa nhận được mã?</p>
+          <p className="text-sm text-gray-500 mb-3">Didn't receive the code?</p>
 
           <button
             onClick={handleResend}
@@ -193,7 +193,7 @@ const VerifyEmailPage = () => {
               className={`w-4 h-4 ${!canResend && "animate-spin-slow opacity-50"
                 }`}
             />
-            {canResend ? "Gửi lại mã ngay" : `Gửi lại sau ${timer}s`}
+            {canResend ? "Resend code now" : `Resend in ${timer}s`}
           </button>
         </div>
       </div>
