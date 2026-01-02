@@ -34,6 +34,14 @@ export default function DashboardForm() {
     if (shareVideo) {
       // Clear state to prevent re-opening on refresh
       navigate(location.pathname, { replace: true, state: {} });
+    } else if (shouldOpenCreateModal) {
+      // Remove create param so it can be triggered again
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete("create");
+      navigate(
+        { pathname: location.pathname, search: newParams.toString() },
+        { replace: true }
+      );
     }
   };
 
