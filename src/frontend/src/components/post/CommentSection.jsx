@@ -20,9 +20,9 @@ const buildCurrentUser = (user) => ({
   avatar: user?.avatar || user?.avatarUrl || DEFAULT_AVATAR,
   isPremium: Boolean(
     user?.isPremium ||
-    user?.premium ||
-    user?.premiumOneMonth ||
-    user?.premiumSixMonths
+      user?.premium ||
+      user?.premiumOneMonth ||
+      user?.premiumSixMonths
   ),
 });
 
@@ -56,9 +56,9 @@ const extractUserInfo = (payload) => ({
     DEFAULT_AVATAR,
   isPremium: Boolean(
     payload?.isPremium ||
-    payload?.premium ||
-    payload?.premiumOneMonth ||
-    payload?.premiumSixMonths
+      payload?.premium ||
+      payload?.premiumOneMonth ||
+      payload?.premiumSixMonths
   ),
 });
 
@@ -71,7 +71,8 @@ const parseApiData = (response) =>
   [];
 
 // WebSocket URL cho comment service (cổng 8003 local, production dùng VITE_SOCKET_COMMENT_URL + /ws)
-const WS_BASE = import.meta.env.VITE_SOCKET_COMMENT_URL || "http://localhost:8003";
+const WS_BASE =
+  import.meta.env.VITE_SOCKET_COMMENT_URL || "http://localhost:8003";
 const SOCKET_URL = WS_BASE.replace(/^http/, "ws") + "/ws";
 
 export default function CommentSection({ postId }) {
@@ -153,8 +154,8 @@ export default function CommentSection({ postId }) {
         if (isMounted) {
           setError(
             fetchError?.response?.data?.message ||
-            fetchError?.message ||
-            "Unable to load comments"
+              fetchError?.message ||
+              "Unable to load comments"
           );
         }
       } finally {
@@ -253,10 +254,10 @@ export default function CommentSection({ postId }) {
                 prev.map((c) =>
                   c.id === payload.id
                     ? {
-                      ...c,
-                      content: payload.content,
-                      time: formatRelativeTime(payload.updatedAt),
-                    }
+                        ...c,
+                        content: payload.content,
+                        time: formatRelativeTime(payload.updatedAt),
+                      }
                     : c
                 )
               );
@@ -348,15 +349,13 @@ export default function CommentSection({ postId }) {
       console.error("Failed to create comment", createError);
       setError(
         createError?.response?.data?.message ||
-        createError?.message ||
-        "Unable to send comment"
+          createError?.message ||
+          "Unable to send comment"
       );
     } finally {
       setIsSubmitting(false);
     }
   };
-
-
 
   const handleEditComment = (comment) => {
     setEditingCommentId(comment.id);
@@ -390,7 +389,8 @@ export default function CommentSection({ postId }) {
   };
 
   const handleDeleteComment = async (commentId) => {
-    if (!window.confirm("Are you sure you want to delete this comment?")) return;
+    if (!window.confirm("Are you sure you want to delete this comment?"))
+      return;
 
     setError("");
 
@@ -403,8 +403,6 @@ export default function CommentSection({ postId }) {
       setError("Unable to delete comment");
     }
   };
-
-
 
   if (!postId) {
     return (
@@ -446,18 +444,20 @@ export default function CommentSection({ postId }) {
           comments.map((comment) => (
             <div
               key={comment.id}
-              className={`flex gap-3 rounded-xl p-3 transition-all ${comment.isNew
-                ? "bg-green-50 border-2 border-green-200"
-                : "bg-gray-50/70"
-                }`}
+              className={`flex gap-3 rounded-xl p-3 transition-all ${
+                comment.isNew
+                  ? "bg-green-50 border-2 border-green-200"
+                  : "bg-gray-50/70"
+              }`}
             >
               <img
                 src={comment.user.avatar}
                 alt={comment.user.name}
-                className={`h-10 w-10 rounded-full object-cover ${comment.user.isPremium
-                  ? "ring-2 ring-yellow-400 ring-offset-2"
-                  : ""
-                  }`}
+                className={`h-10 w-10 rounded-full object-cover ${
+                  comment.user.isPremium
+                    ? "ring-2 ring-yellow-400 ring-offset-2"
+                    : ""
+                }`}
               />
               <div className="flex-1">
                 <div className="flex items-center gap-2">
@@ -490,7 +490,7 @@ export default function CommentSection({ postId }) {
                         type="button"
                         onClick={() => handleSaveEdit(comment.id)}
                         disabled={isSubmitting}
-                        className="rounded-lg bg-blue-600 px-3 py-1 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+                        className="rounded-lg bg-blue-600 px-3 py-1 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
                       >
                         Save
                       </button>
@@ -500,7 +500,7 @@ export default function CommentSection({ postId }) {
                           setEditingCommentId(null);
                           setEditContent("");
                         }}
-                        className="rounded-lg bg-gray-300 px-3 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-400"
+                        className="rounded-lg bg-gray-300 px-3 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-400 cursor-pointer"
                       >
                         Cancel
                       </button>
@@ -520,7 +520,7 @@ export default function CommentSection({ postId }) {
                             menuOpenId === comment.id ? null : comment.id
                           )
                         }
-                        className="rounded-full p-1 text-gray-400 transition hover:bg-gray-200 hover:text-gray-600"
+                        className="rounded-full p-1 text-gray-400 transition hover:bg-gray-200 hover:text-gray-600 cursor-pointer"
                       >
                         <MoreHorizontal className="h-4 w-4" />
                       </button>
@@ -529,7 +529,7 @@ export default function CommentSection({ postId }) {
                           <button
                             type="button"
                             onClick={() => handleEditComment(comment)}
-                            className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-gray-50"
+                            className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-gray-50 cursor-pointer"
                           >
                             <Edit2 className="h-3 w-3" />
                             Edit
@@ -537,7 +537,7 @@ export default function CommentSection({ postId }) {
                           <button
                             type="button"
                             onClick={() => handleDeleteComment(comment.id)}
-                            className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-red-600 hover:bg-gray-50"
+                            className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-red-600 hover:bg-gray-50 cursor-pointer"
                           >
                             <Trash2 className="h-3 w-3" />
                             Delete
@@ -548,7 +548,6 @@ export default function CommentSection({ postId }) {
                   </div>
                 )}
               </div>
-
             </div>
           ))}
       </div>

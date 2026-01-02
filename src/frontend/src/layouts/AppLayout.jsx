@@ -30,7 +30,7 @@ const AppLayout = () => {
             <button
               key={item.id}
               onClick={() => navigate(item.path)}
-              className="p-2.5"
+              className="p-2.5 cursor-pointer"
             >
               <Icon
                 className={`w-6 h-6 ${
