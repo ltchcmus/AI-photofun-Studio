@@ -82,7 +82,7 @@ const Sidebar = () => {
           className="w-12 h-12 object-contain"
         />
       </div>
-      <div className="mb-8 flex flex-col items-center text-center">
+      <div className="mb-8 w-full flex flex-col items-center text-center">
         {/* Premium Avatar with Frame */}
         <div className="relative group">
           {isPremium && (
@@ -114,7 +114,8 @@ const Sidebar = () => {
           )}
         </div>
         <p
-          className={`mt-2 text-sm font-semibold line-clamp-2 ${
+          title={displayName}
+          className={`mt-2 w-full px-1 text-center text-xs font-semibold truncate ${
             isPremium
               ? "bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text text-transparent"
               : "text-gray-800"
