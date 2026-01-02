@@ -109,16 +109,16 @@ const AIChat = () => {
                     {
                         id: "welcome",
                         role: "bot",
-                        content: `Xin chào! 👋 Tôi là AI Assistant, có thể giúp bạn:\n\n🎨 **Tạo ảnh** - "Tạo ảnh một con mèo dễ thương"\n🔍 **Upscale** - "Nâng độ phân giải ảnh này"\n🧹 **Xóa nền** - "Xóa nền ảnh này"\n🎭 **Reimagine** - "Biến ảnh thành tranh sơn dầu"\n☀️ **Relight** - "Thêm ánh sáng hoàng hôn"\n📐 **Expand** - "Mở rộng ảnh sang trái phải"\n🖌️ **Style Transfer** - "Áp dụng style này"\n\nHãy bắt đầu chat hoặc đính kèm ảnh để chỉnh sửa!`,
+                        content: `Hello! 👋 I'm your AI Assistant, I can help you with:\n\n🎨 **Create images** - "Create an image of a cute cat"\n🔍 **Upscale** - "Upscale this image"\n🧹 **Remove background** - "Remove background from this image"\n🎭 **Reimagine** - "Turn this image into an oil painting"\n☀️ **Relight** - "Add sunset lighting"\n📐 **Expand** - "Expand image left and right"\n🖌️ **Style Transfer** - "Apply this style"\n\nStart chatting or attach an image to edit!`,
                         timestamp: new Date(),
                     },
                 ]);
             } else {
-                setError("Không thể tạo session. Vui lòng thử lại.");
+                setError("Unable to create session. Please try again.");
             }
         } catch (err) {
             console.error("Create session error:", err);
-            setError(`Lỗi kết nối: ${err.message}`);
+            setError(`Connection error: ${err.message}`);
         }
     };
 
@@ -162,7 +162,7 @@ const AIChat = () => {
         const extractedParams = apiMsg.metadata?.extracted_params;
 
         // Format content based on status
-        let content = apiMsg.content || "Hoàn thành!";
+        let content = apiMsg.content || "Done!";
         if (apiMsg.status === "FAILED") {
             // Use formatAIError to show friendly message instead of raw technical error
             content = formatAIError(apiMsg.content || apiMsg.error);
@@ -187,7 +187,7 @@ const AIChat = () => {
     // Send message
     const handleSendMessage = async () => {
         if (!sessionId) {
-            setError("Chưa có session. Đang tạo lại...");
+            setError("No session yet. Creating new one...");
             await createSession();
             return;
         }
@@ -245,7 +245,7 @@ const AIChat = () => {
                     {
                         id: messageId,
                         role: "bot",
-                        content: "⏳ Đang xử lý...",
+                        content: "⏳ Processing...",
                         status: "PENDING",
                         timestamp: new Date(),
                     },
@@ -258,7 +258,7 @@ const AIChat = () => {
                     {
                         id: `error-${Date.now()}`,
                         role: "bot",
-                        content: "❌ Không thể gửi tin nhắn. Vui lòng thử lại.",
+                        content: "❌ Unable to send message. Please try again.",
                         timestamp: new Date(),
                     },
                 ]);
@@ -271,7 +271,7 @@ const AIChat = () => {
                 {
                     id: `error-${Date.now()}`,
                     role: "bot",
-                    content: `❌ Lỗi: ${err.message}`,
+                    content: `❌ Error: ${err.message}`,
                     timestamp: new Date(),
                 },
             ]);
@@ -299,12 +299,12 @@ const AIChat = () => {
             if (imageUrl) {
                 setAttachedImageUrl(imageUrl);
             } else {
-                setError("Không thể upload ảnh. Vui lòng thử lại.");
+                setError("Unable to upload image. Please try again.");
                 setAttachedImagePreview(null);
             }
         } catch (err) {
             console.error("Upload error:", err);
-            setError(`Lỗi upload: ${err.message}`);
+            setError(`Upload error: ${err.message}`);
             setAttachedImagePreview(null);
         } finally {
             setIsUploading(false);
@@ -369,7 +369,7 @@ const AIChat = () => {
 
     // Format time
     const formatTime = (date) => {
-        return new Date(date).toLocaleTimeString("vi-VN", {
+        return new Date(date).toLocaleTimeString("en-US", {
             hour: "2-digit",
             minute: "2-digit",
         });
@@ -392,7 +392,7 @@ const AIChat = () => {
                 <button
                     onClick={handleResetChat}
                     className="flex items-center gap-1 text-gray-500 hover:text-gray-700 text-sm"
-                    title="Bắt đầu cuộc trò chuyện mới"
+                    title="Start a new conversation"
                 >
                     <RotateCcw className="w-4 h-4" />
                 </button>
@@ -450,19 +450,19 @@ const AIChat = () => {
                                                     onClick={() => handleReplyToImage(msg.id, msg.imageUrl)}
                                                     className="flex items-center gap-1 text-xs bg-purple-100 hover:bg-purple-200 text-purple-700 px-3 py-1.5 rounded-lg"
                                                 >
-                                                    <RotateCcw className="w-3 h-3" /> Chỉnh sửa
+                                                    <RotateCcw className="w-3 h-3" /> Edit
                                                 </button>
                                                 <button
                                                     onClick={() => handleShareToFeed(msg.imageUrl)}
                                                     className="flex items-center gap-1 text-xs bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1.5 rounded-lg"
                                                 >
-                                                    <Share2 className="w-3 h-3" /> Đăng Feed
+                                                    <Share2 className="w-3 h-3" /> Post Feed
                                                 </button>
                                                 <button
                                                     onClick={() => handleShareToGroup(msg.imageUrl)}
                                                     className="flex items-center gap-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1.5 rounded-lg"
                                                 >
-                                                    <Users className="w-3 h-3" /> Gửi nhóm
+                                                    <Users className="w-3 h-3" /> Send to Group
                                                 </button>
                                             </div>
                                         )}
@@ -521,7 +521,7 @@ const AIChat = () => {
                         <div className="flex items-center gap-3 mb-3 p-2 bg-purple-50 border border-purple-200 rounded-xl">
                             <img src={replyToImageUrl} alt="" className="w-12 h-12 rounded-lg object-cover" />
                             <div className="flex-1">
-                                <div className="text-xs text-purple-600 font-medium">↩️ Chỉnh sửa ảnh này</div>
+                                <div className="text-xs text-purple-600 font-medium">↩️ Edit this image</div>
                             </div>
                             <button onClick={cancelReply} className="text-gray-400 hover:text-gray-600">
                                 <X className="w-4 h-4" />
@@ -546,14 +546,14 @@ const AIChat = () => {
                                 <div className="text-xs text-blue-600 font-medium flex items-center gap-2">
                                     {isUploading ? (
                                         <>
-                                            <Loader2 className="w-3 h-3 animate-spin" /> Đang upload...
+                                            <Loader2 className="w-3 h-3 animate-spin" /> Uploading...
                                         </>
                                     ) : (
-                                        <>📎 Ảnh đã đính kèm</>
+                                        <>📎 Image attached</>
                                     )}
                                 </div>
                                 {attachedImageUrl && (
-                                    <div className="text-xs text-green-600">✓ Upload thành công</div>
+                                    <div className="text-xs text-green-600">✓ Upload successful</div>
                                 )}
                             </div>
                             <button onClick={removeAttachedImage} className="text-gray-400 hover:text-gray-600" disabled={isUploading}>
@@ -568,7 +568,7 @@ const AIChat = () => {
                             onClick={() => imageInputRef.current?.click()}
                             disabled={isUploading}
                             className="w-12 h-12 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors disabled:opacity-50"
-                            title="Upload ảnh"
+                            title="Upload image"
                         >
                             {isUploading ? (
                                 <Loader2 className="w-5 h-5 text-gray-600 animate-spin" />
@@ -582,7 +582,7 @@ const AIChat = () => {
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
                             onKeyPress={handleKeyPress}
-                            placeholder="Nhập tin nhắn..."
+                            placeholder="Type a message..."
                             className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
                             disabled={isLoading}
                         />

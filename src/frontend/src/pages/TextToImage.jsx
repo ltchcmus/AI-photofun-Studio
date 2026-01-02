@@ -112,7 +112,7 @@ const TextToImage = () => {
       const dataUrl = await readFileAsDataUrl(files[0]);
       setUploadedImage(dataUrl);
     } catch (err) {
-      toast.error("Không thể đọc ảnh tham chiếu. Vui lòng thử lại.");
+      toast.error("Unable to read reference image. Please try again.");
     }
   };
 
@@ -143,13 +143,13 @@ const TextToImage = () => {
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
-      toast.warning("Vui lòng nhập mô tả trước khi tạo ảnh.");
+      toast.warning("Please enter a description before generating an image.");
       return;
     }
     setError("");
     setLoading(true);
     setResult(null);
-    setTaskStatus("Đang khởi tạo...");
+    setTaskStatus("Initializing...");
     setShowSuggestions(false);
 
     // Record the prompt choice for improving suggestions
@@ -168,15 +168,15 @@ const TextToImage = () => {
         errorStr.includes("quota") || errorStr.includes("limit") ||
         errorMsg.includes("429") || errorMsg.includes("rate limit") ||
         errorMsg.includes("exceeded")) {
-        return "⚠️ Bạn đã đạt giới hạn tạo ảnh trong ngày hôm nay. Vui lòng thử lại vào ngày mai hoặc nâng cấp Premium.";
+        return "⚠️ You have reached your daily image generation limit. Please try again tomorrow or upgrade to Premium.";
       }
       if (errorStr.includes("401") || errorStr.includes("unauthorized")) {
-        return "⚠️ Lỗi xác thực. Vui lòng đăng nhập lại.";
+        return "⚠️ Authentication error. Please log in again.";
       }
       if (errorStr.includes("500") || errorStr.includes("server")) {
-        return "⚠️ Máy chủ đang bận. Vui lòng thử lại sau ít phút.";
+        return "⚠️ The server is busy. Please try again in a few minutes.";
       }
-      return error?.message || error || "Đã xảy ra lỗi. Vui lòng thử lại.";
+      return error?.message || error || "An error occurred. Please try again.";
     };
 
     try {
@@ -193,14 +193,14 @@ const TextToImage = () => {
         return;
       }
 
-      setTaskStatus("Đang tạo ảnh...");
+      setTaskStatus("Generating image...");
 
       // Step 2: Poll for result
       const pollResult = await pollTaskStatus(
         genResult.taskId,
         "v1/features/image-generation",
         (status, attempt) => {
-          setTaskStatus(`${status} (lần thử ${attempt})...`);
+          setTaskStatus(`${status} (attempt ${attempt})...`);
         }
       );
 
@@ -294,7 +294,7 @@ const TextToImage = () => {
               {showSuggestions && suggestions.length > 0 && (
                 <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-auto">
                   {loadingSuggestions && (
-                    <div className="px-4 py-2 text-sm text-gray-500">Đang tải gợi ý...</div>
+                    <div className="px-4 py-2 text-sm text-gray-500">Loading suggestions...</div>
                   )}
                   {suggestions.map((suggestion) => (
                     <button
@@ -419,10 +419,10 @@ const TextToImage = () => {
               <div className="aspect-square rounded-2xl bg-gray-50 flex flex-col items-center justify-center text-center">
                 <div className="w-16 h-16 border-4 border-gray-200 border-t-black rounded-full animate-spin mb-4" />
                 <p className="font-semibold text-gray-700">
-                  Đang tạo hình ảnh...
+                  Generating image...
                 </p>
                 <p className="text-sm text-gray-500">
-                  {taskStatus || "Quá trình có thể mất vài giây"}
+                  {taskStatus || "This process may take a few seconds"}
                 </p>
               </div>
             </div>
@@ -454,14 +454,14 @@ const TextToImage = () => {
                     onClick={handleShare}
                     className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold"
                   >
-                    <Share2 className="w-4 h-4" /> Đăng Feed
+                    <Share2 className="w-4 h-4" /> Share to Feed
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowShareToGroup(true)}
                     className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold"
                   >
-                    <Users className="w-4 h-4" /> Gửi Nhóm
+                    <Users className="w-4 h-4" /> Send to Group
                   </button>
                 </div>
                 <button

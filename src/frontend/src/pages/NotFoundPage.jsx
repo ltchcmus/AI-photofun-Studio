@@ -6,13 +6,13 @@ export default function NotFoundPage() {
     <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-center p-6 text-gray-700">
       <div>
         <p className="text-6xl font-bold">404</p>
-        <p className="mt-2 text-xl">Không tìm thấy trang bạn cần.</p>
+        <p className="mt-2 text-xl">The page you're looking for could not be found.</p>
       </div>
       <Link
         to="/home"
         className="px-4 py-2 rounded-lg bg-black text-white hover:bg-gray-800 transition-colors"
       >
-        Quay về trang chủ
+        Go back to home
       </Link>
     </div>
   );

@@ -56,7 +56,7 @@ const createPaymentUrl = async (user, planType) => {
   const data = await response.json();
 
   if (!data?.result?.url) {
-    throw new Error("Không nhận được URL thanh toán từ server");
+    throw new Error("No payment URL received from server");
   }
 
   return data.result.url;
@@ -71,7 +71,7 @@ const PricingPage = () => {
 
     // Check if user is logged in
     if (!isAuthenticated || !user) {
-      toast.warning("Vui lòng đăng nhập để thanh toán");
+      toast.warning("Please log in to make a payment");
       return;
     }
 
@@ -82,7 +82,7 @@ const PricingPage = () => {
       window.location.href = checkoutUrl;
     } catch (error) {
       console.error("Payment error:", error);
-      toast.error(`Không thể tạo thanh toán: ${error.message}`);
+      toast.error(`Unable to create payment: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -91,32 +91,32 @@ const PricingPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 font-sans flex flex-col justify-center">
       <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-gray-900">Nâng cấp Premium</h2>
+        <h2 className="text-3xl font-bold text-gray-900">Upgrade to Premium</h2>
         <p className="text-gray-600 mt-2">
-          Chọn gói phù hợp với nhu cầu sáng tạo của bạn
+          Choose a plan that suits your creative needs
         </p>
       </div>
 
       <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8 w-full">
         <div className="bg-white p-8 rounded-2xl shadow-md border border-gray-200 flex flex-col hover:shadow-lg transition-shadow duration-300">
-          <h3 className="text-xl font-semibold text-gray-900">Gói 1 Tháng</h3>
+          <h3 className="text-xl font-semibold text-gray-900">1 Month Plan</h3>
           <div className="my-4">
             <span className="text-4xl font-bold text-gray-900">$5</span>
-            <span className="text-gray-500">/tháng</span>
+            <span className="text-gray-500">/month</span>
           </div>
 
           <ul className="space-y-3 mb-8 flex-1">
             <li className="flex items-center gap-2 text-gray-700">
               <Check className="w-5 h-5 text-green-500 flex-shrink-0" /> 500
-              Tokens mỗi ngày
+              Tokens per day
             </li>
             <li className="flex items-center gap-2 text-gray-700">
-              <Check className="w-5 h-5 text-green-500 flex-shrink-0" /> Tốc độ
-              tạo ảnh nhanh
+              <Check className="w-5 h-5 text-green-500 flex-shrink-0" /> Fast
+              image generation
             </li>
             <li className="flex items-center gap-2 text-gray-700">
-              <Check className="w-5 h-5 text-green-500 flex-shrink-0" /> Mở khóa
-              mọi Style
+              <Check className="w-5 h-5 text-green-500 flex-shrink-0" /> Unlock
+              all Styles
             </li>
           </ul>
 
@@ -129,45 +129,45 @@ const PricingPage = () => {
             {loading ? (
               <Loader2 className="animate-spin w-5 h-5" />
             ) : (
-              "Chọn gói 1 Tháng"
+              "Choose 1 Month Plan"
             )}
           </button>
         </div>
 
         <div className="bg-gray-900 p-8 rounded-2xl shadow-xl border border-gray-800 flex flex-col relative overflow-hidden md:scale-105 transform transition-transform duration-300 z-10">
           <div className="absolute top-0 right-0 bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg shadow-sm">
-            TIẾT KIỆM NHẤT
+            BEST VALUE
           </div>
 
           <h3 className="text-xl font-semibold text-white flex items-center gap-2">
-            Gói 6 Tháng
+            6 Month Plan
             <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
           </h3>
 
           <div className="my-4">
             <span className="text-4xl font-bold text-white">$20</span>
-            <span className="text-gray-400">/6 tháng</span>
+            <span className="text-gray-400">/6 months</span>
           </div>
           <p className="text-sm text-gray-400 mb-4">
-            Chỉ khoảng $3.3/tháng (Tiết kiệm 33%)
+            Only about $3.3/month (Save 33%)
           </p>
 
           <ul className="space-y-3 mb-8 flex-1 text-gray-300">
             <li className="flex items-center gap-2">
               <Check className="w-5 h-5 text-yellow-500 flex-shrink-0" /> 2000
-              Tokens mỗi ngày
+              Tokens per day
             </li>
             <li className="flex items-center gap-2">
-              <Check className="w-5 h-5 text-yellow-500 flex-shrink-0" /> Ưu
-              tiên hàng chờ cao nhất
+              <Check className="w-5 h-5 text-yellow-500 flex-shrink-0" /> Highest
+              priority queue
             </li>
             <li className="flex items-center gap-2">
-              <Check className="w-5 h-5 text-yellow-500 flex-shrink-0" /> Hỗ trợ
+              <Check className="w-5 h-5 text-yellow-500 flex-shrink-0" /> Support
               24/7 & Early Access
             </li>
             <li className="flex items-center gap-2">
-              <Check className="w-5 h-5 text-yellow-500 flex-shrink-0" /> Giữ
-              nguyên lịch sử tạo ảnh
+              <Check className="w-5 h-5 text-yellow-500 flex-shrink-0" /> Keep
+              all image history
             </li>
           </ul>
 
@@ -180,7 +180,7 @@ const PricingPage = () => {
             {loading ? (
               <Loader2 className="animate-spin w-5 h-5" />
             ) : (
-              "Nâng cấp ngay ($20)"
+              "Upgrade Now ($20)"
             )}
           </button>
         </div>

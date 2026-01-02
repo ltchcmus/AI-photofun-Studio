@@ -72,7 +72,7 @@ export default function DashboardForm() {
           )}
           {!loading && posts.length === 0 && (
             <div className="border border-gray-200 bg-gray-50 text-gray-600 text-sm rounded-xl px-4 py-5 text-center">
-              Chưa có bài viết nào. Hãy là người đầu tiên chia sẻ cảm hứng!
+              No posts yet. Be the first to share your inspiration!
             </div>
           )}
           <PostList

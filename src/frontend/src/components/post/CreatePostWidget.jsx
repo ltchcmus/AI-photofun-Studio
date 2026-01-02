@@ -123,13 +123,13 @@ export default function CreatePostWidget({
 
     // Validate file type
     if (!file.type.startsWith("video/")) {
-      setError("Vui lòng chọn file video!");
+      setError("Please select a video file!");
       return;
     }
 
     // Validate file size (max 50MB)
     if (file.size > 50 * 1024 * 1024) {
-      setError("Video quá lớn! Vui lòng chọn video dưới 50MB.");
+      setError("Video too large! Please select a video under 50MB.");
       return;
     }
 
@@ -154,7 +154,7 @@ export default function CreatePostWidget({
     if (submitting) return;
     // Allow post with imagePreview/videoPreview URL (from AI tools) even without file
     if (!caption && !imageFile && !videoFile && !imagePreview && !videoPreview) {
-      setError("Vui lòng nhập nội dung hoặc chọn ảnh/video.");
+      setError("Please enter content or select an image/video.");
       return;
     }
 
@@ -186,7 +186,7 @@ export default function CreatePostWidget({
       const message =
         submitError?.response?.data?.message ||
         submitError?.message ||
-        "Không thể tạo bài viết";
+        "Unable to create post";
       setError(message);
     } finally {
       setSubmitting(false);
@@ -344,13 +344,13 @@ export default function CreatePostWidget({
                 {isFromAiTools && (
                   <div className="mt-6">
                     <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-gray-600">
-                      <Sparkles className="w-4 h-4 text-purple-500" /> Prompt đã
-                      dùng (tuỳ chọn)
+                      <Sparkles className="w-4 h-4 text-purple-500" /> Prompt used
+                      (optional)
                     </label>
                     <textarea
                       value={prompt}
                       onChange={(event) => setPrompt(event.target.value)}
-                      placeholder="Nhập prompt bạn đã dùng để tạo ảnh/video..."
+                      placeholder="Enter the prompt you used to create the image/video..."
                       className="mt-3 w-full rounded-xl border border-gray-200 bg-gray-50 p-3 text-xs font-mono text-gray-700 focus:ring-2 focus:ring-purple-200"
                       rows={3}
                     />
@@ -371,7 +371,7 @@ export default function CreatePostWidget({
                   onClick={handleClose}
                   disabled={submitting}
                 >
-                  Hủy
+                  Cancel
                 </button>
                 <button
                   type="button"
@@ -380,7 +380,7 @@ export default function CreatePostWidget({
                   disabled={submitting}
                 >
                   {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
-                  {submitting ? "Đang đăng..." : postType === "video" ? "Đăng video" : "Đăng bài"}
+                  {submitting ? "Posting..." : postType === "video" ? "Post Video" : "Post"}
                 </button>
               </div>
             </div>

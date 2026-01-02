@@ -38,7 +38,7 @@ const notifications = [
     initials: "AC",
     username: "alex_chen",
     action: "liked your artwork",
-    timeAgo: "2 phút trước",
+    timeAgo: "2 minutes ago",
     type: "like",
     previewImage:
       "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&h=100&fit=crop",
@@ -50,7 +50,7 @@ const notifications = [
     username: "sarah_kim",
     action: "commented on your post",
     comment: "This is amazing! Love the colors 🎨",
-    timeAgo: "15 phút trước",
+    timeAgo: "15 minutes ago",
     type: "comment",
     previewImage:
       "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=100&h=100&fit=crop",
@@ -61,7 +61,7 @@ const notifications = [
     initials: "MC",
     username: "mike_creates",
     action: "started following you",
-    timeAgo: "1 giờ trước",
+    timeAgo: "1 hour ago",
     type: "follow",
     ctaLabel: "Follow",
     isUnread: true,
@@ -71,7 +71,7 @@ const notifications = [
     initials: "EW",
     username: "emma_wilson",
     action: "liked your artwork",
-    timeAgo: "2 giờ trước",
+    timeAgo: "2 hours ago",
     type: "like",
     previewImage:
       "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=100&h=100&fit=crop",
@@ -83,7 +83,7 @@ const notifications = [
     username: "david_lee",
     action: "commented on your post",
     comment: "Great work! What prompt did you use?",
-    timeAgo: "3 giờ trước",
+    timeAgo: "3 hours ago",
     type: "comment",
     previewImage:
       "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&h=100&fit=crop",
@@ -94,7 +94,7 @@ const notifications = [
     initials: "LP",
     username: "lisa_park",
     action: "and 5 others liked your artwork",
-    timeAgo: "5 giờ trước",
+    timeAgo: "5 hours ago",
     type: "like",
     previewImage:
       "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=100&h=100&fit=crop",
@@ -105,7 +105,7 @@ const notifications = [
     initials: "JD",
     username: "john_doe",
     action: "started following you",
-    timeAgo: "1 ngày trước",
+    timeAgo: "1 day ago",
     type: "follow",
     ctaLabel: "Follow",
     isUnread: false,
@@ -116,7 +116,7 @@ const notifications = [
     username: "anna_smith",
     action: "mentioned you in a comment",
     comment: "@your_username check this out!",
-    timeAgo: "2 ngày trước",
+    timeAgo: "2 days ago",
     type: "mention",
     previewImage:
       "https://images.unsplash.com/photo-1620121692029-d088224ddc74?w=100&h=100&fit=crop",
@@ -150,11 +150,10 @@ const Notifications = () => {
               key={filter.id}
               type="button"
               onClick={() => setActiveFilter(filter.id)}
-              className={`relative pb-3 text-sm font-semibold capitalize transition-colors ${
-                activeFilter === filter.id
+              className={`relative pb-3 text-sm font-semibold capitalize transition-colors ${activeFilter === filter.id
                   ? "text-gray-900"
                   : "text-gray-500 hover:text-gray-900"
-              }`}
+                }`}
             >
               {filter.label}
               {activeFilter === filter.id && (
@@ -173,11 +172,10 @@ const Notifications = () => {
           return (
             <article
               key={notification.id}
-              className={`px-4 md:px-6 py-4 transition-colors ${
-                notification.isUnread
+              className={`px-4 md:px-6 py-4 transition-colors ${notification.isUnread
                   ? "bg-blue-50/70 hover:bg-blue-50"
                   : "hover:bg-gray-50"
-              }`}
+                }`}
             >
               <div className="flex gap-3">
                 <div className="relative flex-shrink-0">
@@ -187,9 +185,8 @@ const Notifications = () => {
                   {TypeIcon && (
                     <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1 shadow-sm">
                       <TypeIcon
-                        className={`w-3.5 h-3.5 ${
-                          typeMeta?.iconClass ?? "text-gray-500"
-                        }`}
+                        className={`w-3.5 h-3.5 ${typeMeta?.iconClass ?? "text-gray-500"
+                          }`}
                       />
                     </div>
                   )}

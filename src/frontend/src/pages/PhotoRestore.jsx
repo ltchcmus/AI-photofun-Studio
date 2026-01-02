@@ -38,7 +38,7 @@ const PhotoRestore = () => {
     if (!files || !files.length) return;
     const file = files[0];
     if (!file.type.startsWith("image/")) {
-      setError("Vui lòng chọn đúng định dạng ảnh.");
+      setError("Please select a valid image format.");
       return;
     }
     try {
@@ -48,7 +48,7 @@ const PhotoRestore = () => {
       setError("");
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch {
-      setError("Không thể đọc ảnh, vui lòng thử lại.");
+      setError("Unable to read image, please try again.");
     }
   };
 
@@ -66,7 +66,7 @@ const PhotoRestore = () => {
 
   const handleRestore = () => {
     if (!canRestore) {
-      setError("Hãy tải ảnh cần phục hồi trước.");
+      setError("Please upload an image to restore first.");
       return;
     }
     setProcessing(true);
@@ -99,21 +99,21 @@ const PhotoRestore = () => {
     {
       id: "colorize",
       label: "Colorize",
-      description: "Chuyển ảnh đen trắng thành màu",
+      description: "Convert black & white to color",
       value: colorize,
       action: () => setColorize((prev) => !prev),
     },
     {
       id: "scratch",
       label: "Scratch Removal",
-      description: "Loại bỏ trầy xước, nhiễu",
+      description: "Remove scratches and noise",
       value: scratchRemoval,
       action: () => setScratchRemoval((prev) => !prev),
     },
     {
       id: "face",
       label: "Face Correction",
-      description: "Tự động chỉnh khuôn mặt",
+      description: "Auto face enhancement",
       value: faceCorrection,
       action: () => setFaceCorrection((prev) => !prev),
     },
@@ -140,11 +140,10 @@ const PhotoRestore = () => {
           <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
             <p className="text-sm font-semibold mb-3">Upload Original Image</p>
             <div
-              className={`relative h-64 border-2 border-dashed rounded-2xl flex items-center justify-center text-center p-4 cursor-pointer transition-colors ${
-                dragOver
+              className={`relative h-64 border-2 border-dashed rounded-2xl flex items-center justify-center text-center p-4 cursor-pointer transition-colors ${dragOver
                   ? "border-blue-300 bg-blue-50"
                   : "border-gray-300 hover:border-gray-400"
-              }`}
+                }`}
               onDragOver={(event) => {
                 event.preventDefault();
                 setDragOver(true);
@@ -160,7 +159,7 @@ const PhotoRestore = () => {
                 <div className="flex flex-col items-center gap-3">
                   <ImageIcon className="w-12 h-12 text-gray-400" />
                   <p className="text-gray-600 text-sm">
-                    Drag & drop hoặc chọn ảnh từ máy
+                    Drag & drop or select an image
                   </p>
                   <button
                     type="button"
@@ -210,14 +209,12 @@ const PhotoRestore = () => {
                 <button
                   type="button"
                   onClick={card.action}
-                  className={`relative inline-flex items-center h-7 w-12 rounded-full transition-colors ${
-                    card.value ? "bg-emerald-500" : "bg-gray-300"
-                  }`}
+                  className={`relative inline-flex items-center h-7 w-12 rounded-full transition-colors ${card.value ? "bg-emerald-500" : "bg-gray-300"
+                    }`}
                 >
                   <span
-                    className={`inline-block h-5 w-5 bg-white rounded-full transform transition-transform ${
-                      card.value ? "translate-x-5" : "translate-x-1"
-                    }`}
+                    className={`inline-block h-5 w-5 bg-white rounded-full transform transition-transform ${card.value ? "translate-x-5" : "translate-x-1"
+                      }`}
                   />
                 </button>
               </div>
@@ -234,7 +231,7 @@ const PhotoRestore = () => {
                   <div className="w-12 h-12 border-2 border-gray-200 border-t-black rounded-full animate-spin mx-auto" />
                   <p className="text-sm font-semibold">Restoring...</p>
                   <p className="text-xs text-gray-500">
-                    Quá trình có thể mất vài giây
+                    This process may take a few seconds
                   </p>
                 </div>
               )}
@@ -253,7 +250,7 @@ const PhotoRestore = () => {
               )}
               {!processing && !resultData && (
                 <div className="text-center text-gray-500 text-sm px-4">
-                  Upload ảnh và chọn Restore Photo để xem kết quả.
+                  Upload an image and click Restore Photo to see the result.
                 </div>
               )}
             </div>
@@ -278,8 +275,8 @@ const PhotoRestore = () => {
             </button>
           </div>
           <p className="text-xs text-gray-500">
-            Demo này mô phỏng việc phục hồi trong trình duyệt. Tích hợp backend
-            để có kết quả thực tế.
+            This demo simulates restoration in the browser. Integrate with backend
+            for actual results.
           </p>
         </section>
       </div>

@@ -18,7 +18,7 @@ export const useProfile = () => {
       setProfile(data);
       return data;
     } catch (fetchError) {
-      setError(fetchError?.message || "Không thể tải thông tin hồ sơ");
+      setError(fetchError?.message || "Unable to load profile information");
       throw fetchError;
     } finally {
       setLoading(false);

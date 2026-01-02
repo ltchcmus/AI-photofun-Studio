@@ -170,7 +170,7 @@ const ImageLightbox = ({
 
             {/* Instructions */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/60 text-xs text-center">
-                Scroll để zoom • Kéo để di chuyển • ESC để đóng
+                Scroll to zoom • Drag to move • ESC to close
             </div>
         </div>
     );

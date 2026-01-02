@@ -13,15 +13,15 @@ const PaymentSuccess = () => {
         </div>
 
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Thanh toán thành công!
+          Payment Successful!
         </h1>
 
         <p className="text-gray-500 mb-8 leading-relaxed">
-          Cảm ơn bạn! Tài khoản của bạn đã được nâng cấp lên
+          Thank you! Your account has been upgraded to
           <span className="font-bold text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded border border-yellow-200 ml-1">
             Premium
           </span>
-          . Bạn có thể bắt đầu sử dụng tính năng mới ngay bây giờ.
+          . You can start using the new features right away.
         </p>
 
         <button
@@ -29,7 +29,7 @@ const PaymentSuccess = () => {
           onClick={() => navigate("/create")}
           className="w-full bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg shadow-green-200 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
         >
-          Bắt đầu sáng tạo
+          Start Creating
           <ArrowRight className="h-5 w-5" />
         </button>
 
@@ -38,7 +38,7 @@ const PaymentSuccess = () => {
           onClick={() => navigate("/home")}
           className="mt-4 text-sm text-gray-400 hover:text-gray-600 transition-colors"
         >
-          Quay về trang chủ
+          Go back to home
         </button>
       </div>
     </div>

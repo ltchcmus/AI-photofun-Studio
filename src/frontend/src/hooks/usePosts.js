@@ -9,7 +9,7 @@ const DEFAULT_IMAGE =
   "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=600&fit=crop";
 
 const formatTimestamp = (value) => {
-  if (!value) return "Vừa xong";
+  if (!value) return "Just now";
   const parsed = Date.parse(value);
   return Number.isNaN(parsed) ? value : new Date(parsed).toLocaleString();
 };
@@ -197,7 +197,7 @@ export const usePosts = (options = {}) => {
                   data?.fullName ||
                   data?.username ||
                   data?.email ||
-                  "Người dùng",
+                  "User",
                 avatar:
                   data?.avatarUrl ||
                   data?.avatar ||
@@ -260,7 +260,7 @@ export const usePosts = (options = {}) => {
       setPosts(enrichedPosts);
       fetchAuthors(enrichedPosts);
     } catch (fetchError) {
-      setError(fetchError?.message || "Không thể tải danh sách bài viết");
+      setError(fetchError?.message || "Unable to load posts");
     } finally {
       setLoading(false);
     }
@@ -278,7 +278,7 @@ export const usePosts = (options = {}) => {
       return {
         ...prev,
         [authUser.id]: {
-          name: authUser.fullName || authUser.email || "Bạn",
+          name: authUser.fullName || authUser.email || "You",
           avatar: authUser.avatar || DEFAULT_AVATAR,
         },
       };
@@ -346,7 +346,7 @@ export const usePosts = (options = {}) => {
           console.log("✅ Image ready for upload");
         } catch (downloadError) {
           console.error("Failed to download image from URL:", downloadError);
-          throw new Error("Không thể tải ảnh từ URL. Vui lòng thử lại.");
+          throw new Error("Unable to download image from URL. Please try again.");
         }
       }
 
@@ -382,13 +382,13 @@ export const usePosts = (options = {}) => {
         finalVideoUrl = uploadResult.result?.videoUrl || uploadResult.videoUrl;
 
         if (!finalVideoUrl) {
-          throw new Error("Không thể upload video");
+          throw new Error("Unable to upload video");
         }
         console.log("✅ Video uploaded:", finalVideoUrl);
       }
 
       if (!finalVideoUrl) {
-        throw new Error("Không có video URL");
+        throw new Error("No video URL");
       }
 
       // Step 2: Create video post with the URL

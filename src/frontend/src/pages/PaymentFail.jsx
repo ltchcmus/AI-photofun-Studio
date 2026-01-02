@@ -13,11 +13,11 @@ const PaymentFail = () => {
         </div>
 
         <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          Thanh toán thất bại
+          Payment Failed
         </h1>
         <p className="text-gray-500 mb-8 leading-relaxed">
-          Giao dịch đã bị hủy hoặc xảy ra lỗi trong quá trình xử lý. Tài khoản
-          của bạn chưa bị trừ tiền.
+          The transaction was cancelled or an error occurred during processing. Your
+          account has not been charged.
         </p>
 
         <div className="space-y-3">
@@ -26,7 +26,7 @@ const PaymentFail = () => {
             onClick={() => navigate("/pricing")}
             className="w-full bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-semibold py-3 px-6 rounded-xl shadow-md shadow-red-200 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-0.5"
           >
-            <RotateCcw className="h-5 w-5" /> Thử lại
+            <RotateCcw className="h-5 w-5" /> Try Again
           </button>
 
           <button
@@ -34,7 +34,7 @@ const PaymentFail = () => {
             onClick={() => navigate("/")}
             className="w-full bg-white text-gray-600 font-medium py-3 px-6 rounded-xl border border-gray-200 hover:bg-gray-50 hover:text-gray-900 transition-colors flex items-center justify-center gap-2"
           >
-            <ArrowLeft className="h-5 w-5" /> Về trang chủ
+            <ArrowLeft className="h-5 w-5" /> Back to Home
           </button>
         </div>
       </div>

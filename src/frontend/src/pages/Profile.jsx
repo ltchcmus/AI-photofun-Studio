@@ -12,6 +12,8 @@ import {
   Sparkles,
   CheckCircle,
   XCircle,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import PostList from "../components/post/PostList";
 import { usePosts } from "../hooks/usePosts";
@@ -20,6 +22,21 @@ import { userApi } from "../api/userApi";
 import { toast } from "../hooks/use-toast";
 
 const DEFAULT_AVATAR = "https://placehold.co/128x128/111/fff?text=U";
+
+// Utility functions to mask sensitive data
+const maskEmail = (email) => {
+  if (!email || !email.includes('@')) return email;
+  const [local, domain] = email.split('@');
+  if (local.length <= 2) return `${local[0]}***@${domain}`;
+  return `${local[0]}${local[1]}***@${domain}`;
+};
+
+const maskPhone = (phone) => {
+  if (!phone || phone.length < 6) return phone;
+  const visibleStart = phone.slice(0, 3);
+  const visibleEnd = phone.slice(-3);
+  return `${visibleStart}****${visibleEnd}`;
+};
 
 const PROFILE_DEFAULTS = {
   fullName: "",
@@ -40,6 +57,8 @@ const Profile = () => {
   const [emailVerified, setEmailVerified] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [verifyMessage, setVerifyMessage] = useState("");
+  const [showEmail, setShowEmail] = useState(false);
+  const [showPhone, setShowPhone] = useState(false);
   const {
     profile,
     currentUser,
@@ -86,7 +105,7 @@ const Profile = () => {
       navigate("/verify-email");
     } catch (error) {
       console.error("Failed to send verification email:", error);
-      const msg = "Không thể gửi email xác minh. Vui lòng thử lại sau.";
+      const msg = "Unable to send verification email. Please try again later.";
       setVerifyMessage(msg);
       toast.error(msg);
       setVerifying(false);
@@ -127,11 +146,22 @@ const Profile = () => {
   };
 
   const contactDetails = [
-    { id: "email", label: "Email", value: displayProfile.email, icon: Mail },
+    {
+      id: "email",
+      label: "Email",
+      value: showEmail ? displayProfile.email : maskEmail(displayProfile.email),
+      rawValue: displayProfile.email,
+      isShown: showEmail,
+      toggle: () => setShowEmail(!showEmail),
+      icon: Mail
+    },
     {
       id: "phone",
       label: "Phone Number",
-      value: displayProfile.phone,
+      value: showPhone ? displayProfile.phone : maskPhone(displayProfile.phone),
+      rawValue: displayProfile.phone,
+      isShown: showPhone,
+      toggle: () => setShowPhone(!showPhone),
       icon: Phone,
     },
   ];
@@ -140,7 +170,7 @@ const Profile = () => {
     <div className="max-w-4xl mx-auto space-y-6">
       {profileLoading && (
         <div className="p-4 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-600">
-          Đang tải thông tin hồ sơ...
+          Loading profile information...
         </div>
       )}
       {profileError && (
@@ -266,12 +296,13 @@ const Profile = () => {
                 </p>
                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                   <Icon className="w-5 h-5 text-gray-600" />
-                  <span className="text-sm font-medium text-gray-800">
+                  <span className="text-sm font-medium text-gray-800 flex-1">
                     {item.value}
                   </span>
+                  {/* Verified badge for email - after email value */}
                   {isEmailField && (
                     <span
-                      className={`ml-auto inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${emailVerified
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${emailVerified
                         ? "bg-green-100 text-green-700"
                         : "bg-red-100 text-red-700"
                         }`}
@@ -279,15 +310,30 @@ const Profile = () => {
                       {emailVerified ? (
                         <>
                           <CheckCircle className="w-3.5 h-3.5" />
-                          Đã xác minh
+                          Verified
                         </>
                       ) : (
                         <>
                           <XCircle className="w-3.5 h-3.5" />
-                          Chưa xác minh
+                          Not verified
                         </>
                       )}
                     </span>
+                  )}
+                  {/* Show/Hide toggle button - aligned to the right */}
+                  {item.rawValue && (
+                    <button
+                      type="button"
+                      onClick={item.toggle}
+                      className="p-1.5 rounded-lg hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors"
+                      title={item.isShown ? "Hide" : "Show"}
+                    >
+                      {item.isShown ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
                   )}
                 </div>
                 {/* Nút xác minh và thông báo */}
@@ -302,17 +348,17 @@ const Profile = () => {
                       {verifying ? (
                         <>
                           <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          Đang gửi...
+                          Sending...
                         </>
                       ) : (
                         <>
                           <Mail className="w-4 h-4" />
-                          Xác minh ngay
+                          Verify now
                         </>
                       )}
                     </button>
                     {verifyMessage && (
-                      <p className={`text-sm ${verifyMessage.includes("Đã gửi") ? "text-green-600" : "text-red-600"}`}>
+                      <p className={`text-sm ${verifyMessage.includes("sent") ? "text-green-600" : "text-red-600"}`}>
                         {verifyMessage}
                       </p>
                     )}
@@ -326,18 +372,18 @@ const Profile = () => {
 
       <section className="bg-white border border-gray-200 rounded-2xl p-6">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold">Bài viết gần đây</h2>
+          <h2 className="text-lg font-bold">Recent Posts</h2>
           <button
             type="button"
             onClick={() => navigate("/dashboard")}
             className="text-sm font-semibold text-blue-600 hover:text-blue-700"
           >
-            Quản lý bài viết
+            Manage Posts
           </button>
         </div>
         {postsLoading && (
           <div className="mb-4 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600">
-            Đang tải bài viết...
+            Loading posts...
           </div>
         )}
         {postsError && (
@@ -347,7 +393,7 @@ const Profile = () => {
         )}
         {!postsLoading && !postsError && posts.length === 0 && (
           <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-5 text-sm text-gray-600 text-center">
-            Bạn chưa có bài viết nào. Tạo bài đầu tiên ở mục dashboard nhé!
+            You don't have any posts yet. Create your first post in the dashboard!
           </div>
         )}
         <PostList
