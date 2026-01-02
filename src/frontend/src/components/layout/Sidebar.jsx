@@ -73,7 +73,7 @@ const Sidebar = () => {
   }, [menuOpen]);
 
   return (
-    <aside className="hidden md:flex fixed left-0 top-0 h-screen w-20 flex-col items-center py-6 border-r border-gray-200 bg-white">
+    <aside className="hidden md:flex fixed left-0 top-0 h-screen w-20 flex-col items-center py-6 border-r border-gray-200 bg-white z-50">
       {/* Logo */}
       <div className="mb-4">
         <img
