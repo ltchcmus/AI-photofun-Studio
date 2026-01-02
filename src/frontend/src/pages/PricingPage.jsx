@@ -85,9 +85,9 @@ const PricingPage = () => {
       toast.error(`Unable to create payment: ${error.message}`);
       setLoadingPlan(null);
     }
-    // Note: We don't reset loading in finally block if redirecting, 
+    // Note: We don't reset loading in finally block if redirecting,
     // but since we might not redirect on error, we handle it in catch.
-    // If success, the page unloads anyway. 
+    // If success, the page unloads anyway.
     // However, to be safe if navigation is cancelled or SPA behavior:
     // Ideally we should reset if it fails. If it succeeds, we leave the page.
     // Let's keep the original logic structure but with the new state.
@@ -163,12 +163,12 @@ const PricingPage = () => {
               Tokens per day
             </li>
             <li className="flex items-center gap-2">
-              <Check className="w-5 h-5 text-yellow-500 flex-shrink-0" /> Highest
-              priority queue
+              <Check className="w-5 h-5 text-yellow-500 flex-shrink-0" />{" "}
+              Highest priority queue
             </li>
             <li className="flex items-center gap-2">
-              <Check className="w-5 h-5 text-yellow-500 flex-shrink-0" /> Support
-              24/7 & Early Access
+              <Check className="w-5 h-5 text-yellow-500 flex-shrink-0" />{" "}
+              Support 24/7 & Early Access
             </li>
             <li className="flex items-center gap-2">
               <Check className="w-5 h-5 text-yellow-500 flex-shrink-0" /> Keep

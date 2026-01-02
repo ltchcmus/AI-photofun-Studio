@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
+import { toast } from "../../../hooks/use-toast";
 
 // Error Alert Component with professional styling
 const ErrorAlert = ({ message, onClose }) => {
@@ -283,6 +284,7 @@ const LoginForm = () => {
     try {
       await login(formData.usernameOrEmail, formData.password);
       // Only keep submitting true when successful - will navigate away
+      toast.success("Login successful!");
       navigate("/home");
     } catch (submitError) {
       // Immediately stop submitting so error is visible
