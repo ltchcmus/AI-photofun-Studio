@@ -313,7 +313,7 @@ export default function CreatePostWidget({
                 <div className="mt-4 flex flex-wrap gap-3">
                   <button
                     type="button"
-                    className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-xl text-sm font-medium text-gray-600"
+                    className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-xl text-sm font-medium text-gray-600 cursor-pointer"
                     onClick={() => fileInputRef.current?.click()}
                   >
                     <Image className="w-4 h-4" />
@@ -321,7 +321,7 @@ export default function CreatePostWidget({
                   </button>
                   <button
                     type="button"
-                    className="flex items-center gap-2 px-4 py-2 border border-blue-300 rounded-xl text-sm font-medium text-blue-600"
+                    className="flex items-center gap-2 px-4 py-2 border border-blue-300 rounded-xl text-sm font-medium text-blue-600 cursor-pointer"
                     onClick={() => videoInputRef.current?.click()}
                   >
                     <Video className="w-4 h-4" />
@@ -329,7 +329,7 @@ export default function CreatePostWidget({
                   </button>
                   <button
                     type="button"
-                    className="flex items-center gap-2 px-4 py-2 border border-purple-200 rounded-xl text-sm font-medium text-purple-600"
+                    className="flex items-center gap-2 px-4 py-2 border border-purple-200 rounded-xl text-sm font-medium text-purple-600 cursor-pointer"
                     onClick={onNavigateAiTools}
                   >
                     Create with AI
@@ -376,7 +376,7 @@ export default function CreatePostWidget({
               <div className="flex items-center justify-between px-5 py-4 border-t border-gray-200">
                 <button
                   type="button"
-                  className="px-4 py-2 text-sm font-semibold text-gray-600 rounded-lg hover:bg-gray-100"
+                  className="px-4 py-2 text-sm font-semibold text-gray-600 rounded-lg hover:bg-gray-100 cursor-pointer"
                   onClick={handleClose}
                   disabled={submitting}
                 >
@@ -384,7 +384,7 @@ export default function CreatePostWidget({
                 </button>
                 <button
                   type="button"
-                  className="px-5 py-2 text-sm font-semibold text-white bg-black rounded-lg hover:bg-gray-900 disabled:opacity-50 flex items-center gap-2"
+                  className="px-5 py-2 text-sm font-semibold text-white bg-black rounded-lg hover:bg-gray-900 disabled:opacity-50 flex items-center gap-2 cursor-pointer"
                   onClick={handleSubmit}
                   disabled={submitting}
                 >
