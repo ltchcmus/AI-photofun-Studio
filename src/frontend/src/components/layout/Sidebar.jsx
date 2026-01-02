@@ -33,9 +33,9 @@ const Sidebar = () => {
   const avatarUrl = user?.avatar || DEFAULT_AVATAR;
   const isPremium = Boolean(
     user?.isPremium ||
-    user?.premium ||
-    user?.premiumOneMonth ||
-    user?.premiumSixMonths
+      user?.premium ||
+      user?.premiumOneMonth ||
+      user?.premiumSixMonths
   );
 
   const handleLogout = useCallback(async () => {
@@ -92,16 +92,18 @@ const Sidebar = () => {
             />
           )}
           <div
-            className={`relative ${isPremium
-              ? "p-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-2xl"
-              : ""
-              }`}
+            className={`relative ${
+              isPremium
+                ? "p-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-2xl"
+                : ""
+            }`}
           >
             <img
               src={avatarUrl}
               alt={displayName}
-              className={`w-12 h-12 rounded-2xl object-cover bg-white ${isPremium ? "border-0" : "border border-gray-200"
-                }`}
+              className={`w-12 h-12 rounded-2xl object-cover bg-white ${
+                isPremium ? "border-0" : "border border-gray-200"
+              }`}
             />
           </div>
           {/* Premium Crown Badge */}
@@ -112,10 +114,11 @@ const Sidebar = () => {
           )}
         </div>
         <p
-          className={`mt-2 text-sm font-semibold line-clamp-2 ${isPremium
-            ? "bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text text-transparent"
-            : "text-gray-800"
-            }`}
+          className={`mt-2 text-sm font-semibold line-clamp-2 ${
+            isPremium
+              ? "bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text text-transparent"
+              : "text-gray-800"
+          }`}
         >
           {displayName}
         </p>
@@ -143,13 +146,15 @@ const Sidebar = () => {
             <button
               key={item.id}
               onClick={() => navigate(item.path)}
-              className={`p-3 rounded-xl transition-colors ${isActive ? "bg-gray-100" : "hover:bg-gray-50"
-                }`}
+              className={`p-3 rounded-xl transition-colors cursor-pointer ${
+                isActive ? "bg-gray-100" : "hover:bg-gray-50"
+              }`}
               title={item.label}
             >
               <Icon
-                className={`w-6 h-6 ${isActive ? "text-black" : "text-gray-600"
-                  }`}
+                className={`w-6 h-6 ${
+                  isActive ? "text-black" : "text-gray-600"
+                }`}
               />
             </button>
           );
@@ -159,7 +164,7 @@ const Sidebar = () => {
       <div className="relative" ref={menuRef}>
         <button
           type="button"
-          className="p-3 hover:bg-gray-50 rounded-xl transition-colors"
+          className="p-3 hover:bg-gray-50 rounded-xl transition-colors cursor-pointer"
           onClick={() => setMenuOpen((prev) => !prev)}
           aria-label="Sidebar menu"
         >
@@ -169,7 +174,7 @@ const Sidebar = () => {
           <div className="absolute left-14 bottom-0 w-60 bg-white border border-gray-200 rounded-2xl shadow-2xl p-3 text-sm space-y-2">
             <button
               type="button"
-              className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-gray-50 font-semibold text-gray-900"
+              className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-gray-50 font-semibold text-gray-900 cursor-pointer"
               onClick={() => {
                 setMenuOpen(false);
                 navigate("/settings");
@@ -180,7 +185,7 @@ const Sidebar = () => {
             <button
               type="button"
               onClick={() => setDarkMode((prev) => !prev)}
-              className="flex items-center justify-between w-full px-2 py-2 rounded-lg hover:bg-gray-50"
+              className="flex items-center justify-between w-full px-2 py-2 rounded-lg hover:bg-gray-50 cursor-pointer"
             >
               <span className="flex items-center gap-2 font-semibold text-gray-900">
                 <Moon className="w-4 h-4" /> Dark Mode
@@ -191,7 +196,7 @@ const Sidebar = () => {
             </button>
             <button
               type="button"
-              className="flex items-center justify-between w-full px-2 py-2 rounded-lg hover:bg-gray-50"
+              className="flex items-center justify-between w-full px-2 py-2 rounded-lg hover:bg-gray-50 cursor-pointer"
             >
               <span className="flex items-center gap-2 font-semibold text-gray-900">
                 <Globe className="w-4 h-4" /> Language
@@ -206,14 +211,14 @@ const Sidebar = () => {
                   setMenuOpen(false);
                   navigate("/pricing");
                 }}
-                className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-gray-50 font-semibold text-gray-900"
+                className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-gray-50 font-semibold text-gray-900 cursor-pointer"
               >
                 <Gem className="w-4 h-4 text-yellow-500" /> Upgrade to Premium
               </button>
             )}
             <button
               type="button"
-              className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-gray-50 font-semibold text-gray-900"
+              className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-gray-50 font-semibold text-gray-900 cursor-pointer"
             >
               <HelpCircle className="w-4 h-4" /> Help & Support
             </button>
@@ -221,7 +226,7 @@ const Sidebar = () => {
             <button
               type="button"
               onClick={handleLogout}
-              className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-red-50 text-red-600 font-semibold"
+              className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-red-50 text-red-600 font-semibold cursor-pointer"
             >
               <LogOut className="w-4 h-4" /> Log out
             </button>
