@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant hover (&:hover);
+
 /* Base reset for proper layout */
 *,
 *::before,
@@ -44,7 +46,6 @@ body {
 }
 
 @keyframes pulse-glow {
-
   0%,
   100% {
     box-shadow: 0 0 5px rgba(236, 72, 153, 0.5),
@@ -89,7 +90,6 @@ body {
 
 /* Shake animation for error feedback */
 @keyframes shake {
-
   0%,
   100% {
     transform: translateX(0);
