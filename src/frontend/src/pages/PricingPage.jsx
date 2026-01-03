@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Check, Loader2, Star } from "lucide-react";
 import { useAuthContext } from "../context/AuthContext";
 import { toast } from "../hooks/use-toast";
@@ -66,6 +66,44 @@ const PricingPage = () => {
   const { user, isAuthenticated } = useAuthContext();
   const [loadingPlan, setLoadingPlan] = useState(null);
 
+  const plans = useMemo(
+    () => [
+      {
+        key: "1_MONTH",
+        name: "Premium / Monthly",
+        priceLabel: "$5",
+        cadence: "Billed monthly",
+        blurb:
+          "For focused creators who need fast output without long commitments.",
+        features: [
+          "500 tokens per day",
+          "Fast image generation",
+          "All styles unlocked",
+        ],
+        cta: "Start monthly",
+        accent: "from-slate-200/40 to-white/10",
+      },
+      {
+        key: "6_MONTHS",
+        name: "Premium / 6 Months",
+        priceLabel: "$20",
+        cadence: "$3.3/mo · billed every 6 months",
+        blurb: "Best value for teams and power users who ship often.",
+        features: [
+          "2000 tokens per day",
+          "Highest priority queue",
+          "24/7 support and early access",
+          "Keep full image history",
+        ],
+        cta: "Upgrade for $20",
+        highlight: true,
+        badge: "Most popular",
+        accent: "from-amber-200/60 to-orange-200/20",
+      },
+    ],
+    []
+  );
+
   const handleSubscribe = async (planType) => {
     if (loadingPlan) return;
 
@@ -94,100 +132,117 @@ const PricingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 font-sans flex flex-col justify-center">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-gray-900">Upgrade to Premium</h2>
-        <p className="text-gray-600 mt-2">
-          Choose a plan that suits your creative needs
-        </p>
+    <div className="min-h-screen bg-slate-950 text-slate-50 relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-20 top-10 h-64 w-64 rounded-full bg-cyan-400/10 blur-3xl" />
+        <div className="absolute right-0 top-20 h-72 w-72 rounded-full bg-amber-300/10 blur-3xl" />
+        <div className="absolute inset-x-0 bottom-[-30%] h-80 bg-gradient-to-t from-slate-900 via-slate-950" />
       </div>
 
-      <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8 w-full">
-        <div className="bg-white p-8 rounded-2xl shadow-md border border-gray-200 flex flex-col hover:shadow-lg transition-shadow duration-300">
-          <h3 className="text-xl font-semibold text-gray-900">1 Month Plan</h3>
-          <div className="my-4">
-            <span className="text-4xl font-bold text-gray-900">$5</span>
-            <span className="text-gray-500">/month</span>
-          </div>
+      <div className="relative max-w-5xl mx-auto px-6 pb-16 pt-14 sm:pt-16 lg:pt-20">
+        <header className="flex flex-col gap-4 text-center items-center">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.25em] text-slate-300/80 ring-1 ring-white/10">
+            <Star className="h-3.5 w-3.5 fill-amber-300 text-amber-300" />{" "}
+            Premium access
+          </span>
+          <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-white">
+            Pricing that stays out of the way
+          </h1>
+          <p className="max-w-2xl text-sm sm:text-base text-slate-300">
+            Choose the pace that matches your workflow. Transparent pricing,
+            elegant experience, no surprises.
+          </p>
+        </header>
 
-          <ul className="space-y-3 mb-8 flex-1">
-            <li className="flex items-center gap-2 text-gray-700">
-              <Check className="w-5 h-5 text-green-500 flex-shrink-0" /> 500
-              Tokens per day
-            </li>
-            <li className="flex items-center gap-2 text-gray-700">
-              <Check className="w-5 h-5 text-green-500 flex-shrink-0" /> Fast
-              image generation
-            </li>
-            <li className="flex items-center gap-2 text-gray-700">
-              <Check className="w-5 h-5 text-green-500 flex-shrink-0" /> Unlock
-              all Styles
-            </li>
-          </ul>
+        <div className="mt-12 grid gap-6 md:grid-cols-2">
+          {plans.map((plan) => {
+            const isLoading = loadingPlan === plan.key;
+            const isDisabled = !!loadingPlan && !isLoading;
 
-          <button
-            type="button"
-            onClick={() => handleSubscribe("1_MONTH")}
-            disabled={!!loadingPlan}
-            className="w-full py-3 px-4 bg-blue-50 text-blue-600 font-bold rounded-xl hover:bg-blue-100 active:bg-blue-200 transition-colors disabled:opacity-70 flex justify-center items-center"
-          >
-            {loadingPlan === "1_MONTH" ? (
-              <Loader2 className="animate-spin w-5 h-5" />
-            ) : (
-              "Choose 1 Month Plan"
-            )}
-          </button>
+            return (
+              <div
+                key={plan.key}
+                className={`relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-7 shadow-[0_30px_80px_-35px_rgba(0,0,0,0.6)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_35px_90px_-40px_rgba(0,0,0,0.75)] ${
+                  plan.highlight ? "ring-1 ring-amber-200/30" : ""
+                }`}
+              >
+                <div
+                  className={`absolute inset-0 opacity-60 bg-gradient-to-br ${plan.accent}`}
+                />
+                <div className="relative flex flex-col h-full gap-6">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.2em] text-slate-300/80">
+                        {plan.highlight ? "Best for momentum" : "Flexible"}
+                      </p>
+                      <h2 className="mt-2 text-2xl font-semibold text-white">
+                        {plan.name}
+                      </h2>
+                    </div>
+                    {plan.badge ? (
+                      <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-amber-100 ring-1 ring-amber-200/40">
+                        {plan.badge}
+                      </span>
+                    ) : null}
+                  </div>
+
+                  <div>
+                    <div className="flex items-end gap-2">
+                      <span className="text-4xl font-semibold text-white">
+                        {plan.priceLabel}
+                      </span>
+                      <span className="text-sm text-slate-300">
+                        {plan.cadence}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm text-slate-300">{plan.blurb}</p>
+                  </div>
+
+                  <ul className="space-y-2.5 text-sm text-slate-100/90">
+                    {plan.features.map((item) => (
+                      <li key={item} className="flex items-center gap-3">
+                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-emerald-200">
+                          <Check className="h-3.5 w-3.5" />
+                        </span>
+                        <span className="leading-snug">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="mt-auto">
+                    <button
+                      type="button"
+                      onClick={() => handleSubscribe(plan.key)}
+                      disabled={isDisabled}
+                      className={`group inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${
+                        plan.highlight
+                          ? "bg-white text-slate-900 hover:-translate-y-0.5"
+                          : "bg-white/10 text-white hover:bg-white/15 hover:-translate-y-0.5"
+                      } disabled:opacity-60 disabled:cursor-not-allowed`}
+                    >
+                      {isLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        plan.cta
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
 
-        <div className="bg-gray-900 p-8 rounded-2xl shadow-xl border border-gray-800 flex flex-col relative overflow-hidden md:scale-105 transform transition-transform duration-300 z-10">
-          <div className="absolute top-0 right-0 bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg shadow-sm">
-            BEST VALUE
+        <div className="mt-12 flex flex-col items-center gap-3 text-center text-sm text-slate-300">
+          <div className="flex items-center gap-2 text-slate-200">
+            <span className="h-px w-6 bg-white/20" />
+            Thoughtfully simple — cancel anytime
+            <span className="h-px w-6 bg-white/20" />
           </div>
-
-          <h3 className="text-xl font-semibold text-white flex items-center gap-2">
-            6 Month Plan
-            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-          </h3>
-
-          <div className="my-4">
-            <span className="text-4xl font-bold text-white">$20</span>
-            <span className="text-gray-400">/6 months</span>
-          </div>
-          <p className="text-sm text-gray-400 mb-4">
-            Only about $3.3/month (Save 33%)
+          <p className="max-w-2xl text-slate-400">
+            We keep payments minimal: secure checkout, instant activation, and a
+            clean dashboard to manage your subscription.
           </p>
-
-          <ul className="space-y-3 mb-8 flex-1 text-gray-300">
-            <li className="flex items-center gap-2">
-              <Check className="w-5 h-5 text-yellow-500 flex-shrink-0" /> 2000
-              Tokens per day
-            </li>
-            <li className="flex items-center gap-2">
-              <Check className="w-5 h-5 text-yellow-500 flex-shrink-0" />{" "}
-              Highest priority queue
-            </li>
-            <li className="flex items-center gap-2">
-              <Check className="w-5 h-5 text-yellow-500 flex-shrink-0" />{" "}
-              Support 24/7 & Early Access
-            </li>
-            <li className="flex items-center gap-2">
-              <Check className="w-5 h-5 text-yellow-500 flex-shrink-0" /> Keep
-              all image history
-            </li>
-          </ul>
-
-          <button
-            type="button"
-            onClick={() => handleSubscribe("6_MONTHS")}
-            disabled={!!loadingPlan}
-            className="w-full py-3 px-4 bg-gradient-to-r from-yellow-500 to-orange-600 text-white font-bold rounded-xl hover:from-yellow-600 hover:to-orange-700 active:scale-[0.98] transition-all disabled:opacity-70 shadow-lg shadow-orange-900/50 flex justify-center items-center"
-          >
-            {loadingPlan === "6_MONTHS" ? (
-              <Loader2 className="animate-spin w-5 h-5" />
-            ) : (
-              "Upgrade Now ($20)"
-            )}
-          </button>
         </div>
       </div>
     </div>
