@@ -29,13 +29,13 @@ const Sidebar = () => {
   const menuRef = useRef(null);
   const { user, logout } = useAuth();
 
-  const displayName = user?.fullName || "Người dùng";
+  const displayName = user?.fullName || "User";
   const avatarUrl = user?.avatar || DEFAULT_AVATAR;
   const isPremium = Boolean(
     user?.isPremium ||
-    user?.premium ||
-    user?.premiumOneMonth ||
-    user?.premiumSixMonths
+      user?.premium ||
+      user?.premiumOneMonth ||
+      user?.premiumSixMonths
   );
 
   const handleLogout = useCallback(async () => {
@@ -73,8 +73,16 @@ const Sidebar = () => {
   }, [menuOpen]);
 
   return (
-    <aside className="hidden md:flex fixed left-0 top-0 h-screen w-20 flex-col items-center py-6 border-r border-gray-200 bg-white">
-      <div className="mb-8 flex flex-col items-center text-center">
+    <aside className="hidden md:flex fixed left-0 top-0 h-screen w-20 flex-col items-center py-6 border-r border-gray-200 bg-white z-50">
+      {/* Logo */}
+      <div className="mb-4">
+        <img
+          src="/AIphotofun.png"
+          alt="AI Photofun Studio"
+          className="w-12 h-12 object-contain"
+        />
+      </div>
+      <div className="mb-8 w-full flex flex-col items-center text-center">
         {/* Premium Avatar with Frame */}
         <div className="relative group">
           {isPremium && (
@@ -84,16 +92,18 @@ const Sidebar = () => {
             />
           )}
           <div
-            className={`relative ${isPremium
-              ? "p-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-2xl"
-              : ""
-              }`}
+            className={`relative ${
+              isPremium
+                ? "p-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-2xl"
+                : ""
+            }`}
           >
             <img
               src={avatarUrl}
               alt={displayName}
-              className={`w-12 h-12 rounded-2xl object-cover bg-white ${isPremium ? "border-0" : "border border-gray-200"
-                }`}
+              className={`w-12 h-12 rounded-2xl object-cover bg-white ${
+                isPremium ? "border-0" : "border border-gray-200"
+              }`}
             />
           </div>
           {/* Premium Crown Badge */}
@@ -104,10 +114,12 @@ const Sidebar = () => {
           )}
         </div>
         <p
-          className={`mt-2 text-sm font-semibold line-clamp-2 ${isPremium
-            ? "bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text text-transparent"
-            : "text-gray-800"
-            }`}
+          title={displayName}
+          className={`mt-2 w-full px-1 text-center text-xs font-semibold truncate ${
+            isPremium
+              ? "bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text text-transparent"
+              : "text-gray-800"
+          }`}
         >
           {displayName}
         </p>
@@ -135,13 +147,15 @@ const Sidebar = () => {
             <button
               key={item.id}
               onClick={() => navigate(item.path)}
-              className={`p-3 rounded-xl transition-colors ${isActive ? "bg-gray-100" : "hover:bg-gray-50"
-                }`}
+              className={`p-3 rounded-xl transition-colors cursor-pointer ${
+                isActive ? "bg-gray-100" : "hover:bg-gray-50"
+              }`}
               title={item.label}
             >
               <Icon
-                className={`w-6 h-6 ${isActive ? "text-black" : "text-gray-600"
-                  }`}
+                className={`w-6 h-6 ${
+                  isActive ? "text-black" : "text-gray-600"
+                }`}
               />
             </button>
           );
@@ -151,7 +165,7 @@ const Sidebar = () => {
       <div className="relative" ref={menuRef}>
         <button
           type="button"
-          className="p-3 hover:bg-gray-50 rounded-xl transition-colors"
+          className="p-3 hover:bg-gray-50 rounded-xl transition-colors cursor-pointer"
           onClick={() => setMenuOpen((prev) => !prev)}
           aria-label="Sidebar menu"
         >
@@ -161,7 +175,7 @@ const Sidebar = () => {
           <div className="absolute left-14 bottom-0 w-60 bg-white border border-gray-200 rounded-2xl shadow-2xl p-3 text-sm space-y-2">
             <button
               type="button"
-              className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-gray-50 font-semibold text-gray-900"
+              className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-gray-50 font-semibold text-gray-900 cursor-pointer"
               onClick={() => {
                 setMenuOpen(false);
                 navigate("/settings");
@@ -172,23 +186,23 @@ const Sidebar = () => {
             <button
               type="button"
               onClick={() => setDarkMode((prev) => !prev)}
-              className="flex items-center justify-between w-full px-2 py-2 rounded-lg hover:bg-gray-50"
+              className="flex items-center justify-between w-full px-2 py-2 rounded-lg hover:bg-gray-50 cursor-pointer"
             >
               <span className="flex items-center gap-2 font-semibold text-gray-900">
                 <Moon className="w-4 h-4" /> Dark Mode
               </span>
               <span className="text-xs text-gray-500">
-                {darkMode ? "Bật" : "Tắt"}
+                {darkMode ? "On" : "Off"}
               </span>
             </button>
             <button
               type="button"
-              className="flex items-center justify-between w-full px-2 py-2 rounded-lg hover:bg-gray-50"
+              className="flex items-center justify-between w-full px-2 py-2 rounded-lg hover:bg-gray-50 cursor-pointer"
             >
               <span className="flex items-center gap-2 font-semibold text-gray-900">
                 <Globe className="w-4 h-4" /> Language
               </span>
-              <span className="text-xs text-gray-500">Tiếng Việt</span>
+              <span className="text-xs text-gray-500">English</span>
             </button>
             <hr className="border-gray-200" />
             {!isPremium && (
@@ -198,14 +212,14 @@ const Sidebar = () => {
                   setMenuOpen(false);
                   navigate("/pricing");
                 }}
-                className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-gray-50 font-semibold text-gray-900"
+                className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-gray-50 font-semibold text-gray-900 cursor-pointer"
               >
                 <Gem className="w-4 h-4 text-yellow-500" /> Upgrade to Premium
               </button>
             )}
             <button
               type="button"
-              className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-gray-50 font-semibold text-gray-900"
+              className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-gray-50 font-semibold text-gray-900 cursor-pointer"
             >
               <HelpCircle className="w-4 h-4" /> Help & Support
             </button>
@@ -213,7 +227,7 @@ const Sidebar = () => {
             <button
               type="button"
               onClick={handleLogout}
-              className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-red-50 text-red-600 font-semibold"
+              className="flex items-center gap-2 w-full px-2 py-2 rounded-lg hover:bg-red-50 text-red-600 font-semibold cursor-pointer"
             >
               <LogOut className="w-4 h-4" /> Log out
             </button>

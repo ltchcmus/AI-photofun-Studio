@@ -117,7 +117,7 @@ const BackgroundTools = () => {
         setBgData(dataUrl);
       }
     } catch (err) {
-      setError("Không thể đọc file vừa chọn, vui lòng thử lại.");
+      setError("Unable to read selected file, please try again.");
     }
   }, []);
 
@@ -143,11 +143,11 @@ const BackgroundTools = () => {
     if (!canApply) return;
     setProcessing(true);
     setError("");
-    setProcessingStatus("Đang chuẩn bị...");
+    setProcessingStatus("Preparing...");
 
     try {
       // Step 1: Upload image to get a public URL
-      setProcessingStatus("Đang upload ảnh...");
+      setProcessingStatus("Uploading image...");
 
       let apiImageUrl;
       const fileToUpload = origFileRef.current || dataUrlToFile(origData, "image.png");
@@ -159,23 +159,23 @@ const BackgroundTools = () => {
 
         if (!apiImageUrl) {
           console.error("Upload response:", uploadResult);
-          throw new Error("Không nhận được URL từ server");
+          throw new Error("No URL received from server");
         }
       } catch (uploadErr) {
         console.error("Upload error:", uploadErr);
-        setError("Không thể upload ảnh. Vui lòng thử lại sau.");
+        setError("Unable to upload image. Please try again later.");
         setProcessing(false);
         return;
       }
 
       // Step 2: Call the remove background API
-      setProcessingStatus("Đang xóa nền ảnh...");
+      setProcessingStatus("Removing background...");
 
       // Call the remove background API
       const result = await removeBackground(apiImageUrl);
 
       if (!result.success) {
-        setError(result.error || "Không thể xóa nền. Vui lòng thử lại.");
+        setError(result.error || "Unable to remove background. Please try again.");
         setProcessing(false);
         return;
       }
@@ -188,17 +188,17 @@ const BackgroundTools = () => {
         setResultData(removedBgUrl);
       } else if (option === "color") {
         // Composite with color background
-        setProcessingStatus("Đang thay nền màu...");
+        setProcessingStatus("Applying color background...");
         const data = await compositeWithColor(removedBgUrl, color);
         setResultData(data);
       } else if (option === "image" && bgData) {
         // Composite with image background
-        setProcessingStatus("Đang ghép ảnh nền...");
+        setProcessingStatus("Compositing with image background...");
         const data = await compositeWithImage(removedBgUrl, bgData);
         setResultData(data);
       }
     } catch (err) {
-      setError("Có lỗi khi áp dụng thay đổi, hãy thử lại.");
+      setError("Error applying changes, please try again.");
     } finally {
       setProcessing(false);
       setProcessingStatus("");
@@ -243,17 +243,17 @@ const BackgroundTools = () => {
     {
       id: "remove",
       title: "Remove Background",
-      subtitle: "Giữ lại chủ thể, bỏ nền",
+      subtitle: "Keep subject, remove background",
     },
     {
       id: "color",
       title: "Replace with Color",
-      subtitle: "Chọn một màu nền mới",
+      subtitle: "Choose a new background color",
     },
     {
       id: "image",
       title: "Replace with Image",
-      subtitle: "Tải lên ảnh nền khác",
+      subtitle: "Upload a different background image",
     },
   ];
 
@@ -270,7 +270,7 @@ const BackgroundTools = () => {
         <h1 className="text-lg md:text-xl font-bold flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-purple-500" /> Background Tools
         </h1>
-        <div className="text-xs text-gray-400">Beta</div>
+
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -288,10 +288,10 @@ const BackgroundTools = () => {
             >
               <Image className="w-12 h-12 mx-auto mb-3 text-gray-400" />
               <p className="text-gray-600 font-medium mb-2">
-                Kéo & thả ảnh vào đây
+                Drag & drop image here
               </p>
               <p className="text-xs text-gray-500 mb-4">
-                hoặc chọn từ máy của bạn
+                or choose from your computer
               </p>
               <button
                 type="button"
@@ -357,7 +357,7 @@ const BackgroundTools = () => {
                     onChange={(event) => setColor(event.target.value)}
                     className="w-16 h-10 border rounded-lg"
                   />
-                  <span className="text-sm text-gray-600">Chọn màu nền</span>
+                  <span className="text-sm text-gray-600">Choose background color</span>
                 </div>
               )}
 
@@ -373,7 +373,7 @@ const BackgroundTools = () => {
                     onClick={() => bgInputRef.current?.click()}
                   >
                     <p className="text-sm text-gray-600 mb-2">
-                      Tải ảnh nền khác
+                      Upload background image
                     </p>
                     <button
                       type="button"
@@ -425,9 +425,9 @@ const BackgroundTools = () => {
             {processing ? (
               <div className="text-center space-y-2">
                 <div className="w-16 h-16 border-4 border-gray-200 border-t-black rounded-full animate-spin mx-auto" />
-                <p className="text-gray-600 font-medium">Đang xử lý...</p>
+                <p className="text-gray-600 font-medium">Processing...</p>
                 <p className="text-xs text-gray-500">
-                  {processingStatus || "Vui lòng chờ trong giây lát"}
+                  {processingStatus || "Please wait a moment"}
                 </p>
               </div>
             ) : resultData ? (
@@ -438,7 +438,7 @@ const BackgroundTools = () => {
               />
             ) : (
               <p className="text-gray-500 text-center px-4">
-                Kết quả sẽ hiển thị tại đây sau khi áp dụng
+                Result will appear here after applying
               </p>
             )}
           </div>
@@ -472,19 +472,19 @@ const BackgroundTools = () => {
                 onClick={handleShare}
                 className="flex items-center justify-center gap-2 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl text-sm font-semibold"
               >
-                <Share2 className="w-4 h-4" /> Đăng Feed
+                <Share2 className="w-4 h-4" /> Post Feed
               </button>
               <button
                 type="button"
                 onClick={() => setShowShareToGroup(true)}
                 className="flex items-center justify-center gap-2 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl text-sm font-semibold"
               >
-                <Users className="w-4 h-4" /> Gửi Nhóm
+                <Users className="w-4 h-4" /> Send to Group
               </button>
               <button
                 type="button"
                 className="flex items-center justify-center gap-2 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl text-sm font-semibold"
-                onClick={() => alert("Đã lưu vào thư viện (demo)")}
+                onClick={() => alert("Saved to library (demo)")}
               >
                 <Save className="w-4 h-4" /> Save
               </button>
@@ -494,9 +494,9 @@ const BackgroundTools = () => {
           <div className="mt-6 bg-blue-50 border border-blue-200 rounded-2xl p-4 text-sm text-blue-900">
             <p className="font-semibold">Tips</p>
             <ul className="list-disc list-inside mt-2 space-y-1">
-              <li>Ảnh chủ thể tương phản cao giúp tách nền chính xác hơn</li>
-              <li>Tùy chọn màu nền xử lý nhanh nhất</li>
-              <li>Tùy chọn thay nền bằng ảnh có thể mất nhiều thời gian hơn</li>
+              <li>High contrast subjects help remove background more accurately</li>
+              <li>Color background option processes fastest</li>
+              <li>Image background option may take longer</li>
             </ul>
           </div>
         </section>

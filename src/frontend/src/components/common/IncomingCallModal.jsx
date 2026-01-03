@@ -34,13 +34,13 @@ const IncomingCallModal = ({
               <Phone className="h-4 w-4" />
             )}
             <span className="text-sm font-medium">
-              {isVideoCall ? "Cuộc gọi video" : "Cuộc gọi thoại"}
+              {isVideoCall ? "Video call" : "Voice call"}
             </span>
           </div>
 
           {/* Caller Name */}
           <h3 className="mb-2 text-2xl font-bold">{callerName}</h3>
-          <p className="text-sm text-blue-100">Đang gọi cho bạn...</p>
+          <p className="text-sm text-blue-100">Calling you...</p>
         </div>
 
         {/* Action Buttons */}
@@ -54,7 +54,7 @@ const IncomingCallModal = ({
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500 shadow-lg transition-all group-hover:bg-red-600 group-hover:shadow-xl">
               <PhoneOff className="h-7 w-7 text-white" />
             </div>
-            <span className="text-xs font-medium text-white">Từ chối</span>
+            <span className="text-xs font-medium text-white">Decline</span>
           </button>
 
           {/* Accept Button */}
@@ -66,7 +66,7 @@ const IncomingCallModal = ({
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-500 shadow-lg transition-all group-hover:bg-green-600 group-hover:shadow-xl">
               <Phone className="h-7 w-7 text-white" />
             </div>
-            <span className="text-xs font-medium text-white">Trả lời</span>
+            <span className="text-xs font-medium text-white">Answer</span>
           </button>
         </div>
 

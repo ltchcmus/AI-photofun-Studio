@@ -18,34 +18,39 @@ const Settings = () => {
   // Xác định trạng thái premium và loại gói
   const isPremiumOneMonth = Boolean(user?.premiumOneMonth);
   const isPremiumSixMonths = Boolean(user?.premiumSixMonths);
-  const isPremium = isPremiumOneMonth || isPremiumSixMonths || Boolean(user?.isPremium || user?.premium);
+  const isPremium =
+    isPremiumOneMonth ||
+    isPremiumSixMonths ||
+    Boolean(user?.isPremium || user?.premium);
 
-  // Xác định tên gói hiện tại
+  // Determine current plan name
   const currentPlanName = useMemo(() => {
-    if (isPremiumSixMonths) return "Premium 6 tháng";
-    if (isPremiumOneMonth) return "Premium 1 tháng";
+    if (isPremiumSixMonths) return "Premium 6 Months";
+    if (isPremiumOneMonth) return "Premium 1 Month";
     if (isPremium) return "Premium";
     return "Free";
   }, [isPremiumOneMonth, isPremiumSixMonths, isPremium]);
 
   const tokenBalance = user?.tokens ?? 0;
   const dailyLimit = isPremium ? 500 : 200; // Premium có giới hạn cao hơn
-  const tokenUsagePercent = dailyLimit ? Math.min(tokenBalance / dailyLimit, 1) * 100 : 0;
+  const tokenUsagePercent = dailyLimit
+    ? Math.min(tokenBalance / dailyLimit, 1) * 100
+    : 0;
 
   const accountActions = [
     {
       id: "change-password",
-      title: "Đổi mật khẩu",
-      description: "Cập nhật mật khẩu mới để bảo vệ tài khoản của bạn.",
-      actionLabel: "Cập nhật",
+      title: "Change Password",
+      description: "Update your password to protect your account.",
+      actionLabel: "Update",
       icon: Lock,
     },
     {
       id: "set-email-password",
-      title: "Thiết lập mật khẩu cho đăng nhập email",
+      title: "Set Email Password",
       description:
-        "Tạo mật khẩu khi trước đó bạn chỉ đăng nhập bằng Google hoặc mạng xã hội.",
-      actionLabel: "Thiết lập",
+        "Create a password when you previously only logged in with Google or social accounts.",
+      actionLabel: "Set Up",
       icon: KeyRound,
     },
   ];
@@ -67,24 +72,23 @@ const Settings = () => {
     checkGoogleLinkStatus();
   }, []);
 
-
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <header className="space-y-1">
         <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
           Settings
         </p>
-        <h1 className="text-3xl font-bold">Trung tâm thiết lập</h1>
+        <h1 className="text-3xl font-bold">Settings Center</h1>
         <p className="text-sm text-gray-500">
-          Quản lý thông tin tài khoản, bảo mật và gói dịch vụ của bạn.
+          Manage your account information, security, and service plans.
         </p>
       </header>
 
       <section className="bg-white border border-gray-200 rounded-2xl p-6 space-y-5">
         <div>
-          <h2 className="text-lg font-semibold">Tài khoản</h2>
+          <h2 className="text-lg font-semibold">Account</h2>
           <p className="text-sm text-gray-500">
-            Thiết lập bảo mật và quyền kiểm soát cho hồ sơ của bạn.
+            Security settings and controls for your profile.
           </p>
         </div>
 
@@ -109,7 +113,7 @@ const Settings = () => {
                 </div>
                 <button
                   type="button"
-                  className="self-start md:self-auto px-4 py-2 rounded-lg border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                  className="self-start md:self-auto px-4 py-2 rounded-lg border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50 cursor-pointer"
                 >
                   {item.actionLabel}
                 </button>
@@ -124,21 +128,22 @@ const Settings = () => {
               </span>
               <div>
                 <h3 className="font-semibold text-gray-900">
-                  Trạng thái liên kết mạng xã hội
+                  Social Account Status
                 </h3>
                 <p className="text-sm text-gray-500">
-                  Đồng bộ các nền tảng bạn đã kết nối để đăng nhập nhanh hơn.
+                  Sync platforms you've connected for faster login.
                 </p>
               </div>
             </div>
             <div className="flex flex-wrap gap-3">
               <span
-                className={`px-3 py-1.5 rounded-full text-sm font-medium border ${googleLinked
+                className={`px-3 py-1.5 rounded-full text-sm font-medium border ${
+                  googleLinked
                     ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                     : "border-gray-200 bg-gray-50 text-gray-600"
-                  }`}
+                }`}
               >
-                Google — {googleLinked ? "Đã liên kết" : "Chưa liên kết"}
+                Google — {googleLinked ? "Linked" : "Not linked"}
               </span>
             </div>
           </div>
@@ -149,18 +154,17 @@ const Settings = () => {
                 <Trash2 className="w-5 h-5" />
               </span>
               <div className="flex-1">
-                <h3 className="font-semibold text-red-700">Xóa tài khoản</h3>
+                <h3 className="font-semibold text-red-700">Delete Account</h3>
                 <p className="text-sm text-red-600">
-                  Thao tác này sẽ xóa toàn bộ dữ liệu của bạn. Hành động không
-                  thể khôi phục.
+                  This action will delete all your data. This cannot be undone.
                 </p>
               </div>
               <button
                 type="button"
-                onClick={() => alert("Tính năng này chưa được hỗ trợ")}
-                className="px-4 py-2 rounded-lg border border-red-200 text-sm font-semibold text-red-600 hover:bg-white"
+                onClick={() => alert("This feature is not yet supported")}
+                className="px-4 py-2 rounded-lg border border-red-200 text-sm font-semibold text-red-600 hover:bg-white cursor-pointer"
               >
-                Xóa tài khoản
+                Delete Account
               </button>
             </div>
           </div>
@@ -172,10 +176,10 @@ const Settings = () => {
           <div className="flex flex-col gap-1">
             <h2 className="text-lg font-semibold flex items-center gap-2">
               <Crown className="w-5 h-5 text-yellow-500" />
-              Gói dịch vụ Premium
+              Premium Plan
             </h2>
             <p className="text-sm text-gray-500">
-              Thông tin gói Premium hiện tại của bạn.
+              Your current Premium plan information.
             </p>
           </div>
 
@@ -186,23 +190,27 @@ const Settings = () => {
                   <Crown className="w-5 h-5" />
                 </span>
                 <div>
-                  <p className="text-sm text-gray-500">Gói hiện tại</p>
+                  <p className="text-sm text-gray-500">Current Plan</p>
                   <div className="flex items-center gap-2">
                     <span className="text-2xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
                       {currentPlanName}
                     </span>
                     <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
-                      {isPremiumSixMonths ? "6 THÁNG" : isPremiumOneMonth ? "1 THÁNG" : "PRO"}
+                      {isPremiumSixMonths
+                        ? "6 MONTHS"
+                        : isPremiumOneMonth
+                        ? "1 MONTH"
+                        : "PRO"}
                     </span>
                   </div>
                 </div>
               </div>
               <p className="text-sm text-gray-600">
                 {isPremiumSixMonths
-                  ? "Bạn đang sử dụng gói Premium 6 tháng với đầy đủ tính năng cao cấp."
+                  ? "You are using the 6-month Premium plan with all premium features."
                   : isPremiumOneMonth
-                    ? "Bạn đang sử dụng gói Premium 1 tháng với đầy đủ tính năng cao cấp."
-                    : "Bạn đang mở khóa toàn bộ bộ công cụ cao cấp."}
+                  ? "You are using the 1-month Premium plan with all premium features."
+                  : "You have unlocked all premium tools."}
               </p>
             </div>
 
@@ -212,18 +220,18 @@ const Settings = () => {
                   <Coins className="w-5 h-5" />
                 </span>
                 <div>
-                  <p className="text-sm text-gray-500">Số dư token trong tháng</p>
+                  <p className="text-sm text-gray-500">Monthly Token Balance</p>
                   <h3 className="text-3xl font-bold">
                     {tokenBalance}
                     <span className="text-base font-normal text-gray-500 ml-2">
-                      token
+                      tokens
                     </span>
                   </h3>
                 </div>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <ShieldCheck className="w-4 h-4" />
-                Token sẽ được làm mới vào ngày đầu tiên tháng sau.
+                Tokens will be refreshed on the first day of next month.
               </div>
             </div>
           </div>

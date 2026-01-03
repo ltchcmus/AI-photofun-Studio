@@ -64,7 +64,7 @@ const VideoCallModal = ({
   const handleConnectionStateChange = useCallback((state) => {
     console.log("📡 Connection state changed:", state);
     setConnectionState(state);
-    
+
     if (state === "connected") {
       setIsConnected(true);
       setIsConnecting(false);
@@ -76,7 +76,7 @@ const VideoCallModal = ({
   // Initialize WebRTC when call is connecting
   useEffect(() => {
     if (!isOpen || !socket || !recipientId) return;
-    
+
     // Wait for callStatus to be 'connecting' before initializing
     if (callStatus !== "connecting") {
       return;
@@ -139,7 +139,7 @@ const VideoCallModal = ({
       } catch (err) {
         console.error("Error initializing call:", err);
         if (mounted) {
-          setError("Không thể truy cập camera/microphone");
+          setError("Unable to access camera/microphone");
           setIsConnecting(false);
         }
       }
@@ -241,10 +241,10 @@ const VideoCallModal = ({
   // Determine status message
   const getStatusMessage = () => {
     if (error) return error;
-    if (callStatus === "waiting") return "Đang chờ đối phương trả lời...";
-    if (isConnected) return "Đã kết nối";
-    if (connectionState === "connecting") return "Đang thiết lập kết nối...";
-    return "Đang kết nối...";
+    if (callStatus === "waiting") return "Waiting for the other party to answer...";
+    if (isConnected) return "Connected";
+    if (connectionState === "connecting") return "Establishing connection...";
+    return "Connecting...";
   };
 
   return (
@@ -295,7 +295,7 @@ const VideoCallModal = ({
                   <div className="flex h-full w-full items-center justify-center bg-gray-800 text-white">
                     <div className="text-center">
                       <VideoOff className="mx-auto mb-2 h-8 w-8" />
-                      <p className="text-sm">Camera đã tắt</p>
+                      <p className="text-sm">Camera is off</p>
                     </div>
                   </div>
                 ) : (
@@ -316,7 +316,7 @@ const VideoCallModal = ({
             <div className="absolute right-6 top-6 rounded-xl bg-gray-800/80 p-4 shadow-2xl">
               <div className="flex items-center gap-3 text-white">
                 <Phone className="h-6 w-6" />
-                <span className="text-sm font-medium">Cuộc gọi thoại</span>
+                <span className="text-sm font-medium">Voice call</span>
               </div>
             </div>
           )}
@@ -327,11 +327,10 @@ const VideoCallModal = ({
             <button
               type="button"
               onClick={handleToggleMute}
-              className={`rounded-full p-4 shadow-lg transition-all ${
-                isMuted
+              className={`rounded-full p-4 shadow-lg transition-all ${isMuted
                   ? "bg-red-500 hover:bg-red-600"
                   : "bg-gray-700 hover:bg-gray-600"
-              }`}
+                }`}
             >
               {isMuted ? (
                 <MicOff className="h-6 w-6 text-white" />
@@ -345,11 +344,10 @@ const VideoCallModal = ({
               <button
                 type="button"
                 onClick={handleToggleVideo}
-                className={`rounded-full p-4 shadow-lg transition-all ${
-                  isVideoOff
+                className={`rounded-full p-4 shadow-lg transition-all ${isVideoOff
                     ? "bg-red-500 hover:bg-red-600"
                     : "bg-gray-700 hover:bg-gray-600"
-                }`}
+                  }`}
               >
                 {isVideoOff ? (
                   <VideoOff className="h-6 w-6 text-white" />
@@ -373,7 +371,7 @@ const VideoCallModal = ({
           <div className="absolute left-6 top-6 rounded-lg bg-gray-800/50 px-4 py-2 backdrop-blur-sm">
             <p className="text-sm font-medium text-white">{recipientName}</p>
             <p className="text-xs text-gray-300">
-              {isConnected ? "Đã kết nối" : getStatusMessage()}
+              {isConnected ? "Connected" : getStatusMessage()}
             </p>
           </div>
         </div>

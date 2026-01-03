@@ -104,7 +104,7 @@ const MessagesPage = () => {
       const formattedConversations = data.map((conv) => ({
         id: conv.userId,
         userId: conv.userId,
-        name: conv.username || "Người dùng",
+        name: conv.username || "User",
         avatar: conv.avatarUrl || `https://i.pravatar.cc/150?u=${conv.userId}`,
         lastMessage: "",
         time: "",
@@ -135,7 +135,7 @@ const MessagesPage = () => {
         return {
           id: group.groupId,
           groupId: group.groupId,
-          name: group.name || "Nhóm",
+          name: group.name || "Group",
           description: group.description || "",
           avatar: group.image || DEFAULT_GROUP_AVATAR,
           lastMessage: "",
@@ -206,7 +206,7 @@ const MessagesPage = () => {
           return {
             id: group.groupId || group.id,
             groupId: group.groupId || group.id,
-            name: group.name || `Nhóm ${index + 1}`,
+            name: group.name || `Group ${index + 1}`,
             description: group.description || "",
             avatar: group.image || DEFAULT_GROUP_AVATAR,
             lastMessage: "",
@@ -516,7 +516,7 @@ const MessagesPage = () => {
 
         setIncomingCallData({
           callerId: data.callerId,
-          callerName: userData?.username || userData?.fullName || "Người dùng",
+          callerName: userData?.username || userData?.fullName || "User",
           callerAvatar: userData?.avatarUrl || `https://i.pravatar.cc/150?u=${data.callerId}`,
           isVideoCall: data.isVideoCall,
           callId: data.callId,
@@ -537,7 +537,7 @@ const MessagesPage = () => {
     // Call rejected by receiver
     newSocket.on("callRejected", (data) => {
       console.log("❌ Call rejected:", data);
-      alert(`${data.receiverName || "Người dùng"} đã từ chối cuộc gọi`);
+      alert(`${data.receiverName || "User"} declined the call`);
       setShowVideoCall(false);
       setCallStatus(null);
       setCurrentCallId(null);
@@ -792,12 +792,12 @@ const MessagesPage = () => {
   // Handle video call
   const handleStartVideoCall = () => {
     if (!activeChat || activeChat.isGroup) {
-      alert("Chỉ có thể gọi video trong chat 1-1!");
+      alert("Video calls only work in 1-1 chats!");
       return;
     }
 
     if (!socketRef.current || !socketConnected) {
-      alert("Không thể kết nối! Vui lòng thử lại sau.");
+      alert("Unable to connect! Please try again later.");
       return;
     }
 
@@ -823,12 +823,12 @@ const MessagesPage = () => {
   // Handle audio call
   const handleStartAudioCall = () => {
     if (!activeChat || activeChat.isGroup) {
-      alert("Chỉ có thể gọi audio trong chat 1-1!");
+      alert("Audio calls only work in 1-1 chats!");
       return;
     }
 
     if (!socketRef.current || !socketConnected) {
-      alert("Không thể kết nối! Vui lòng thử lại sau.");
+      alert("Unable to connect! Please try again later.");
       return;
     }
 
@@ -981,13 +981,13 @@ const MessagesPage = () => {
 
     // Validate file type
     if (!file.type.startsWith("image/")) {
-      alert("Vui lòng chọn file ảnh!");
+      alert("Please select an image file!");
       return;
     }
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      alert("Ảnh quá lớn! Vui lòng chọn ảnh dưới 5MB.");
+      alert("Image too large! Please select an image under 5MB.");
       return;
     }
 
@@ -1003,7 +1003,7 @@ const MessagesPage = () => {
 
       if (!imageUrl || typeof imageUrl !== 'string') {
         console.error("Invalid upload response:", uploadResult);
-        throw new Error("Không lấy được URL ảnh");
+        throw new Error("Could not get image URL");
       }
 
       // Send message with image
@@ -1046,7 +1046,7 @@ const MessagesPage = () => {
 
     } catch (error) {
       console.error("Failed to send image:", error);
-      alert("Không thể gửi ảnh. Vui lòng thử lại!");
+      alert("Unable to send image. Please try again!");
     } finally {
       setUploadingImage(false);
       // Reset input
@@ -1063,13 +1063,13 @@ const MessagesPage = () => {
 
     // Validate file type
     if (!file.type.startsWith("video/")) {
-      alert("Vui lòng chọn file video!");
+      alert("Please select a video file!");
       return;
     }
 
     // Validate file size (max 50MB for video)
     if (file.size > 50 * 1024 * 1024) {
-      alert("Video quá lớn! Vui lòng chọn video dưới 50MB.");
+      alert("Video too large! Please select a video under 50MB.");
       return;
     }
 
@@ -1085,7 +1085,7 @@ const MessagesPage = () => {
 
       if (!videoUrl || typeof videoUrl !== 'string') {
         console.error("Invalid upload response:", uploadResult);
-        throw new Error("Không lấy được URL video");
+        throw new Error("Could not get video URL");
       }
 
       // Send message with video
@@ -1130,7 +1130,7 @@ const MessagesPage = () => {
 
     } catch (error) {
       console.error("Failed to send video:", error);
-      alert("Không thể gửi video. Vui lòng thử lại!");
+      alert("Unable to send video. Please try again!");
     } finally {
       setUploadingVideo(false);
       // Reset input
@@ -1146,7 +1146,7 @@ const MessagesPage = () => {
     try {
       const response = await communicationApi.createGroup(newGroupName);
 
-      alert(`Tạo nhóm "${newGroupName}" thành công!`);
+      alert(`Group "${newGroupName}" created successfully!`);
       setShowCreateGroup(false);
       setNewGroupName("");
 
@@ -1157,7 +1157,7 @@ const MessagesPage = () => {
       console.error("Failed to create group:", error);
       const errorMsg =
         error.response?.data?.message ||
-        "Không thể tạo nhóm. Vui lòng thử lại!";
+        "Unable to create group. Please try again!";
       alert(errorMsg);
     }
   };
@@ -1178,7 +1178,7 @@ const MessagesPage = () => {
       formData.append("file", file);
 
       await communicationApi.uploadGroupAvatar(activeChat.groupId, formData);
-      alert("Đã cập nhật ảnh đại diện nhóm!");
+      alert("Group avatar updated!");
 
       // Refresh groups to get new avatar
       fetchMyGroups();
@@ -1193,7 +1193,7 @@ const MessagesPage = () => {
       console.error("Failed to upload group avatar:", error);
       const errorMsg =
         error.response?.data?.message ||
-        "Không thể tải ảnh lên. Vui lòng thử lại!";
+        "Unable to upload image. Please try again!";
       alert(errorMsg);
     } finally {
       setLoadingAction(false);
@@ -1215,7 +1215,7 @@ const MessagesPage = () => {
         description: editGroupDescription.trim(),
       });
 
-      alert("Đã cập nhật thông tin nhóm!");
+      alert("Group info updated!");
 
       // Update local state
       setActiveChat((prev) => ({
@@ -1234,7 +1234,7 @@ const MessagesPage = () => {
       console.error("Failed to update group:", error);
       const errorMsg =
         error.response?.data?.message ||
-        "Không thể cập nhật nhóm. Vui lòng thử lại!";
+        "Unable to update group. Please try again!";
       alert(errorMsg);
     } finally {
       setLoadingAction(false);
@@ -1257,14 +1257,14 @@ const MessagesPage = () => {
 
   // Delete conversation (Direct messages)
   const handleDeleteConversation = async (userId, username) => {
-    if (!window.confirm(`Bạn có chắc chắn muốn xóa cuộc hội thoại với "${username}"?\n\nHành động này sẽ xóa tất cả tin nhắn.`)) {
+    if (!window.confirm(`Are you sure you want to delete the conversation with "${username}"?\n\nThis will delete all messages.`)) {
       return;
     }
 
     setLoadingAction(true);
     try {
       await communicationApi.deleteConversation(userId);
-      alert("Đã xóa cuộc hội thoại!");
+      alert("Conversation deleted!");
 
       // Refresh conversations list
       fetchConversations();
@@ -1278,7 +1278,7 @@ const MessagesPage = () => {
       console.error("Failed to delete conversation:", error);
       const errorMsg =
         error.response?.data?.message ||
-        "Không thể xóa cuộc hội thoại. Vui lòng thử lại!";
+        "Unable to delete conversation. Please try again!";
       alert(errorMsg);
     } finally {
       setLoadingAction(false);
@@ -1290,14 +1290,14 @@ const MessagesPage = () => {
     setLoadingAction(true);
     try {
       await communicationApi.requestJoinGroup(groupId);
-      alert("Đã gửi yêu cầu tham gia nhóm!");
+      alert("Join request sent!");
       // Refresh both lists - group moves from explore to my groups after approval
       fetchExploreGroups();
     } catch (error) {
       console.error("Failed to request join group:", error);
       const errorMsg =
         error.response?.data?.message ||
-        "Không thể gửi yêu cầu. Vui lòng thử lại!";
+        "Unable to send request. Please try again!";
       alert(errorMsg);
     } finally {
       setLoadingAction(false);
@@ -1308,12 +1308,12 @@ const MessagesPage = () => {
   const handleLeaveGroup = async () => {
     if (!activeChat?.groupId) return;
 
-    if (!window.confirm("Bạn có chắc chắn muốn rời khỏi nhóm này?")) return;
+    if (!window.confirm("Are you sure you want to leave this group?")) return;
 
     setLoadingAction(true);
     try {
       await communicationApi.leaveGroup(activeChat.groupId);
-      alert("Đã rời khỏi nhóm!");
+      alert("Left the group!");
       setShowGroupInfo(false);
       setActiveChat(null);
       // Refresh both lists - group moves from my groups to explore
@@ -1322,7 +1322,7 @@ const MessagesPage = () => {
     } catch (error) {
       console.error("Failed to leave group:", error);
       const errorMsg =
-        error.response?.data?.message || "Không thể rời nhóm. Vui lòng thử lại!";
+        error.response?.data?.message || "Unable to leave group. Please try again!";
       alert(errorMsg);
     } finally {
       setLoadingAction(false);
@@ -1333,20 +1333,20 @@ const MessagesPage = () => {
   const handleRemoveMember = async (memberId, memberName) => {
     if (!activeChat?.groupId) return;
 
-    if (!window.confirm(`Bạn có chắc chắn muốn xóa ${memberName} khỏi nhóm?`))
+    if (!window.confirm(`Are you sure you want to remove ${memberName} from the group?`))
       return;
 
     setLoadingAction(true);
     try {
       await communicationApi.removeMember(activeChat.groupId, memberId);
-      alert(`Đã xóa ${memberName} khỏi nhóm!`);
+      alert(`Removed ${memberName} from the group!`);
       fetchGroupMembers(activeChat.groupId);
       fetchMyGroups();
     } catch (error) {
       console.error("Failed to remove member:", error);
       const errorMsg =
         error.response?.data?.message ||
-        "Không thể xóa thành viên. Vui lòng thử lại!";
+        "Unable to remove member. Please try again!";
       alert(errorMsg);
     } finally {
       setLoadingAction(false);
@@ -1364,7 +1364,7 @@ const MessagesPage = () => {
         activeChat.groupId,
         accept
       );
-      alert(accept ? "Đã chấp nhận yêu cầu!" : "Đã từ chối yêu cầu!");
+      alert(accept ? "Request accepted!" : "Request rejected!");
       // Refresh pending requests and members
       fetchPendingRequests(activeChat.groupId);
       fetchGroupMembers(activeChat.groupId);
@@ -1373,7 +1373,7 @@ const MessagesPage = () => {
       console.error("Failed to modify request:", error);
       const errorMsg =
         error.response?.data?.message ||
-        "Không thể xử lý yêu cầu. Vui lòng thử lại!";
+        "Unable to process request. Please try again!";
       alert(errorMsg);
     } finally {
       setLoadingAction(false);
@@ -1386,7 +1386,7 @@ const MessagesPage = () => {
       <div className="flex h-[calc(100vh-4rem)] items-center justify-center bg-gray-50 rounded-3xl border border-gray-200">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-          <p className="text-sm text-gray-600">Đang tải cuộc trò chuyện...</p>
+          <p className="text-sm text-gray-600">Loading conversations...</p>
         </div>
       </div>
     );
@@ -1399,9 +1399,9 @@ const MessagesPage = () => {
         <div className="flex h-[calc(100vh-8rem)] w-full items-center justify-center bg-gray-50 rounded-3xl border border-gray-200">
           <div className="flex flex-col items-center gap-3 text-gray-500">
             <Users className="h-16 w-16 text-gray-300" />
-            <p className="text-lg font-medium">Chưa có cuộc trò chuyện</p>
+            <p className="text-lg font-medium">No conversations yet</p>
             <p className="text-sm text-gray-400">
-              Bắt đầu nhắn tin với bạn bè ngay!
+              Start chatting with your friends now!
             </p>
           </div>
         </div>
@@ -1425,7 +1425,7 @@ const MessagesPage = () => {
         {/* Offline Warning Banner */}
         {!socketConnected && (
           <div className="absolute top-0 left-0 right-0 bg-yellow-500 text-white px-4 py-2 text-center text-sm font-medium z-10">
-            ⚠️ Chat server offline - Chỉ xem được tin nhắn cũ, không gửi được tin nhắn mới
+            ⚠️ Chat server offline - You can only view old messages, cannot send new ones
           </div>
         )}
 
@@ -1433,11 +1433,11 @@ const MessagesPage = () => {
           <div className="border-b border-gray-100 p-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <h1 className="text-xl font-bold text-gray-800">Đoạn chat</h1>
+                <h1 className="text-xl font-bold text-gray-800">Chats</h1>
                 <div
                   className={`h-2 w-2 rounded-full ${socketConnected ? "bg-green-500" : "bg-red-500"
                     }`}
-                  title={socketConnected ? "Đã kết nối" : "Mất kết nối"}
+                  title={socketConnected ? "Connected" : "Disconnected"}
                 />
               </div>
               {isPremium && (
@@ -1445,10 +1445,10 @@ const MessagesPage = () => {
                   type="button"
                   onClick={() => setShowCreateGroup(true)}
                   className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 px-3 py-1.5 text-xs font-bold text-white shadow-md hover:shadow-lg transition-all hover:scale-105"
-                  title="Tạo nhóm (Premium)"
+                  title="Create Group (Premium)"
                 >
                   <Users className="h-4 w-4" />
-                  <span>Tạo nhóm</span>
+                  <span>Create Group</span>
                   <Crown className="h-3.5 w-3.5" />
                 </button>
               )}
@@ -1457,7 +1457,7 @@ const MessagesPage = () => {
               <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Tìm kiếm"
+                placeholder="Search"
                 className="w-full rounded-full bg-gray-100 py-2 pl-10 pr-4 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
@@ -1472,7 +1472,7 @@ const MessagesPage = () => {
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                   }`}
               >
-                Trực tiếp
+                Direct
               </button>
               <button
                 type="button"
@@ -1482,7 +1482,7 @@ const MessagesPage = () => {
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                   }`}
               >
-                Nhóm
+                Groups
               </button>
               <button
                 type="button"
@@ -1492,7 +1492,7 @@ const MessagesPage = () => {
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                   }`}
               >
-                🔍 Khám phá
+                🔍 Explore
               </button>
             </div>
           </div>
@@ -1503,7 +1503,7 @@ const MessagesPage = () => {
               conversations.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-gray-500">
                   <Users className="h-12 w-12 mb-3 text-gray-300" />
-                  <p className="text-sm">Chưa có cuộc trò chuyện</p>
+                  <p className="text-sm">No conversations</p>
                 </div>
               ) : (
                 conversations.map((chat) => (
@@ -1567,7 +1567,7 @@ const MessagesPage = () => {
                       }}
                       disabled={loadingAction}
                       className="p-1.5 rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover/conv:opacity-100 transition-all disabled:opacity-50"
-                      title="Xóa cuộc hội thoại"
+                      title="Delete conversation"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -1579,13 +1579,13 @@ const MessagesPage = () => {
               groups.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-gray-500">
                   <Users className="h-12 w-12 mb-3 text-gray-300" />
-                  <p className="text-sm">Chưa tham gia nhóm nào</p>
+                  <p className="text-sm">Haven't joined any groups</p>
                   <button
                     type="button"
                     onClick={() => setActiveTab("explore")}
                     className="mt-3 text-sm text-purple-600 hover:underline"
                   >
-                    🔍 Khám phá nhóm
+                    🔍 Explore Groups
                   </button>
                   {isPremium && (
                     <button
@@ -1593,7 +1593,7 @@ const MessagesPage = () => {
                       onClick={() => setShowCreateGroup(true)}
                       className="mt-2 text-sm text-blue-600 hover:underline"
                     >
-                      Hoặc tạo nhóm mới
+                      Or create a new group
                     </button>
                   )}
                 </div>
@@ -1636,7 +1636,7 @@ const MessagesPage = () => {
                         )}
                       </div>
                       <p className="text-xs text-gray-500 mt-0.5">
-                        {group.memberCount} thành viên
+                        {group.memberCount} members
                       </p>
                     </div>
                   </button>
@@ -1647,8 +1647,8 @@ const MessagesPage = () => {
               exploreGroups.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-gray-500">
                   <Users className="h-12 w-12 mb-3 text-gray-300" />
-                  <p className="text-sm">Không có nhóm mới để khám phá</p>
-                  <p className="text-xs text-gray-400 mt-1">Bạn đã tham gia tất cả nhóm!</p>
+                  <p className="text-sm">No new groups to explore</p>
+                  <p className="text-xs text-gray-400 mt-1">You've joined all groups!</p>
                 </div>
               ) : (
                 exploreGroups.map((group) => (
@@ -1687,7 +1687,7 @@ const MessagesPage = () => {
                       </div>
                       <div className="mt-0.5 flex items-center justify-between">
                         <p className="text-xs text-gray-500">
-                          {group.memberCount} thành viên
+                          {group.memberCount} members
                         </p>
                         <button
                           type="button"
@@ -1699,7 +1699,7 @@ const MessagesPage = () => {
                           className="flex items-center gap-1 px-2 py-1 rounded-full bg-purple-600 text-white text-xs font-medium hover:bg-purple-700 disabled:opacity-50"
                         >
                           <UserPlus className="h-3 w-3" />
-                          Tham gia
+                          Join
                         </button>
                       </div>
                     </div>
@@ -1738,10 +1738,10 @@ const MessagesPage = () => {
                 </div>
                 <p className="text-xs text-gray-500">
                   {activeChat.isGroup
-                    ? `${activeChat.memberCount} thành viên`
+                    ? `${activeChat.memberCount} members`
                     : activeChat.isOnline
-                      ? "Đang hoạt động"
-                      : "Hoạt động gần đây"}
+                      ? "Active now"
+                      : "Recently active"}
                 </p>
               </div>
               {activeChat.isGroup && (
@@ -1754,7 +1754,7 @@ const MessagesPage = () => {
                 onClick={handleStartAudioCall}
                 disabled={!activeChat || activeChat.isGroup}
                 className="rounded-full p-2 transition-colors hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                title={activeChat?.isGroup ? "Không hỗ trợ gọi nhóm" : "Gọi thoại"}
+                title={activeChat?.isGroup ? "Group calls not supported" : "Voice call"}
               >
                 <Phone className="h-5 w-5" />
               </button>
@@ -1763,7 +1763,7 @@ const MessagesPage = () => {
                 onClick={handleStartVideoCall}
                 disabled={!activeChat || activeChat.isGroup}
                 className="rounded-full p-2 transition-colors hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                title={activeChat?.isGroup ? "Không hỗ trợ gọi nhóm" : "Gọi video"}
+                title={activeChat?.isGroup ? "Group calls not supported" : "Video call"}
               >
                 <Video className="h-5 w-5" />
               </button>
@@ -1783,8 +1783,8 @@ const MessagesPage = () => {
                 {messages.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-gray-400">
                     <Send className="h-16 w-16 mb-3 text-gray-300" />
-                    <p className="text-sm">Chưa có tin nhắn</p>
-                    <p className="text-xs mt-1">Bắt đầu cuộc trò chuyện ngay!</p>
+                    <p className="text-sm">No messages yet</p>
+                    <p className="text-xs mt-1">Start a conversation now!</p>
                   </div>
                 ) : (
                   messages.map((message) => (
@@ -1907,7 +1907,7 @@ const MessagesPage = () => {
                     onClick={() => imageInputRef.current?.click()}
                     disabled={uploadingImage || !socketConnected}
                     className="rounded-full p-2 text-blue-600 transition-colors hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    title="Gửi ảnh"
+                    title="Send image"
                   >
                     {uploadingImage ? (
                       <Loader2 className="h-6 w-6 animate-spin" />
@@ -1920,7 +1920,7 @@ const MessagesPage = () => {
                     onClick={() => videoInputRef.current?.click()}
                     disabled={uploadingVideo || !socketConnected}
                     className="rounded-full p-2 text-blue-600 transition-colors hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    title="Gửi video"
+                    title="Send video"
                   >
                     {uploadingVideo ? (
                       <Loader2 className="h-6 w-6 animate-spin" />
@@ -1934,7 +1934,7 @@ const MessagesPage = () => {
                       value={inputMessage}
                       onChange={(event) => setInputMessage(event.target.value)}
                       placeholder={
-                        socketConnected ? "Nhập tin nhắn..." : "Đang kết nối..."
+                        socketConnected ? "Type a message..." : "Connecting..."
                       }
                       disabled={!socketConnected}
                       className="w-full rounded-full bg-gray-100 py-2.5 pl-4 pr-10 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -1961,7 +1961,7 @@ const MessagesPage = () => {
             {showGroupInfo && activeChat.isGroup && (
               <div className="w-72 bg-gray-50 p-4 overflow-y-auto">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-gray-800">Thông tin nhóm</h3>
+                  <h3 className="font-semibold text-gray-800">Group Info</h3>
                   <button
                     type="button"
                     onClick={() => setShowGroupInfo(false)}
@@ -2015,14 +2015,14 @@ const MessagesPage = () => {
                     )}
                   </div>
                   <h4 className="font-bold text-gray-900 text-lg">{activeChat.name}</h4>
-                  <p className="text-sm text-gray-500">{activeChat.memberCount} thành viên</p>
+                  <p className="text-sm text-gray-500">{activeChat.memberCount} members</p>
                   {activeChat.description && (
                     <p className="text-xs text-gray-600 mt-2 px-2 py-1.5 bg-gray-100 rounded-lg text-center">
                       📝 {activeChat.description}
                     </p>
                   )}
                   {isCurrentUserAdmin && (
-                    <p className="text-xs text-blue-500 mt-1">Click vào ảnh để thay đổi</p>
+                    <p className="text-xs text-blue-500 mt-1">Click on image to change</p>
                   )}
                 </div>
 
@@ -2038,22 +2038,22 @@ const MessagesPage = () => {
                           className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-white border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50"
                         >
                           <Settings className="h-4 w-4" />
-                          Chỉnh sửa nhóm
+                          Edit Group
                         </button>
                       ) : (
                         <div className="bg-white p-3 rounded-lg border border-gray-200 space-y-3">
-                          <p className="text-sm font-semibold text-gray-700">Chỉnh sửa nhóm</p>
+                          <p className="text-sm font-semibold text-gray-700">Edit Group</p>
                           <input
                             type="text"
                             value={editGroupName}
                             onChange={(e) => setEditGroupName(e.target.value)}
-                            placeholder="Tên nhóm"
+                            placeholder="Group name"
                             className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                           />
                           <textarea
                             value={editGroupDescription}
                             onChange={(e) => setEditGroupDescription(e.target.value)}
-                            placeholder="Mô tả nhóm (tùy chọn)"
+                            placeholder="Group description (optional)"
                             rows={2}
                             className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 resize-none"
                           />
@@ -2069,7 +2069,7 @@ const MessagesPage = () => {
                               ) : (
                                 <Check className="h-4 w-4" />
                               )}
-                              Lưu
+                              Save
                             </button>
                             <button
                               type="button"
@@ -2077,7 +2077,7 @@ const MessagesPage = () => {
                               disabled={loadingAction}
                               className="px-3 py-2 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 disabled:opacity-50"
                             >
-                              Hủy
+                              Cancel
                             </button>
                           </div>
                         </div>
@@ -2093,13 +2093,13 @@ const MessagesPage = () => {
                       className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg bg-red-50 border border-red-200 text-sm font-medium text-red-600 hover:bg-red-100 disabled:opacity-50"
                     >
                       <LogOut className="h-4 w-4" />
-                      Rời nhóm
+                      Leave Group
                     </button>
                   )}
 
                   {isCurrentUserAdmin && (
                     <p className="text-xs text-gray-400 text-center px-2">
-                      Admin không thể rời nhóm. Hãy xóa nhóm nếu cần.
+                      Admin cannot leave group. Delete the group if needed.
                     </p>
                   )}
                 </div>
@@ -2107,7 +2107,7 @@ const MessagesPage = () => {
                 {/* Members List */}
                 <div>
                   <h5 className="text-sm font-semibold text-gray-700 mb-3">
-                    Thành viên ({groupMembers.length || activeChat.memberCount})
+                    Members ({groupMembers.length || activeChat.memberCount})
                   </h5>
                   <div className="space-y-2">
                     {groupMembers.length > 0 ? (
@@ -2141,7 +2141,7 @@ const MessagesPage = () => {
                                 }
                                 disabled={loadingAction}
                                 className="p-1.5 rounded-full text-red-500 hover:bg-red-50 disabled:opacity-50"
-                                title="Xóa thành viên"
+                                title="Remove member"
                               >
                                 <UserMinus className="h-4 w-4" />
                               </button>
@@ -2150,7 +2150,7 @@ const MessagesPage = () => {
                       ))
                     ) : (
                       <p className="text-sm text-gray-400 text-center py-2">
-                        Đang tải thành viên...
+                        Loading members...
                       </p>
                     )}
                   </div>
@@ -2160,7 +2160,7 @@ const MessagesPage = () => {
                 {isCurrentUserAdmin && pendingRequests.length > 0 && (
                   <div className="mt-6">
                     <h5 className="text-sm font-semibold text-gray-700 mb-3">
-                      Yêu cầu chờ duyệt ({pendingRequests.length})
+                      Pending Requests ({pendingRequests.length})
                     </h5>
                     <div className="space-y-2">
                       {pendingRequests.map((request) => (
@@ -2172,7 +2172,7 @@ const MessagesPage = () => {
                             type="button"
                             onClick={() => navigate(`/user/${request.userId}`)}
                             className="relative group/avatar"
-                            title="Xem trang cá nhân"
+                            title="View profile"
                           >
                             <img
                               src={request.avatarUrl || `https://i.pravatar.cc/150?u=${request.userId}`}
@@ -2185,7 +2185,7 @@ const MessagesPage = () => {
                               type="button"
                               onClick={() => navigate(`/user/${request.userId}`)}
                               className="text-sm font-medium text-gray-900 truncate hover:text-blue-600 hover:underline"
-                              title="Xem trang cá nhân"
+                              title="View profile"
                             >
                               {request.username || "User"}
                             </button>
@@ -2196,7 +2196,7 @@ const MessagesPage = () => {
                               onClick={() => handleModifyRequest(request.userId, true)}
                               disabled={loadingAction}
                               className="p-1.5 rounded-full text-green-600 hover:bg-green-100 disabled:opacity-50"
-                              title="Chấp nhận"
+                              title="Accept"
                             >
                               <Check className="h-4 w-4" />
                             </button>
@@ -2205,7 +2205,7 @@ const MessagesPage = () => {
                               onClick={() => handleModifyRequest(request.userId, false)}
                               disabled={loadingAction}
                               className="p-1.5 rounded-full text-red-500 hover:bg-red-100 disabled:opacity-50"
-                              title="Từ chối"
+                              title="Reject"
                             >
                               <XCircle className="h-4 w-4" />
                             </button>
@@ -2230,7 +2230,7 @@ const MessagesPage = () => {
                     <Users className="h-5 w-5 text-white" />
                   </div>
                   <h2 className="text-lg font-bold text-gray-800">
-                    Tạo nhóm mới
+                    Create New Group
                   </h2>
                 </div>
                 <button
@@ -2249,7 +2249,7 @@ const MessagesPage = () => {
                 <div className="flex items-center gap-2 text-sm">
                   <Crown className="h-4 w-4 text-orange-500" />
                   <span className="text-gray-700">
-                    Tính năng dành cho thành viên{" "}
+                    This feature is for members{" "}
                     <span className="font-bold text-transparent bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text">
                       Premium
                     </span>
@@ -2260,13 +2260,13 @@ const MessagesPage = () => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Tên nhóm
+                    Group Name
                   </label>
                   <input
                     type="text"
                     value={newGroupName}
                     onChange={(e) => setNewGroupName(e.target.value)}
-                    placeholder="Nhập tên nhóm..."
+                    placeholder="Enter group name..."
                     className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                     autoFocus
                     onKeyDown={(e) => {
@@ -2286,7 +2286,7 @@ const MessagesPage = () => {
                     }}
                     className="flex-1 rounded-lg border border-gray-300 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                   >
-                    Hủy
+                    Cancel
                   </button>
                   <button
                     type="button"
@@ -2295,7 +2295,7 @@ const MessagesPage = () => {
                     className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 py-2.5 text-sm font-bold text-white shadow-md hover:shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
                     <Users className="h-4 w-4" />
-                    Tạo nhóm
+                    Create Group
                   </button>
                 </div>
               </div>
@@ -2308,7 +2308,7 @@ const MessagesPage = () => {
           isOpen={showIncomingCall}
           onAccept={handleAcceptCall}
           onReject={handleRejectCall}
-          callerName={incomingCallData?.callerName || "Người dùng"}
+          callerName={incomingCallData?.callerName || "User"}
           callerAvatar={incomingCallData?.callerAvatar || ""}
           isVideoCall={incomingCallData?.isVideoCall || false}
         />

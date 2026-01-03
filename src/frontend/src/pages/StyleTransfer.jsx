@@ -110,7 +110,7 @@ const StyleTransfer = () => {
     if (!files || !files.length) return;
     const [file] = files;
     if (!file.type.startsWith("image/")) {
-      toast.warning("Vui lòng chọn đúng định dạng ảnh.");
+      toast.warning("Please select a valid image format.");
       return;
     }
     try {
@@ -121,7 +121,7 @@ const StyleTransfer = () => {
       setError("");
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch {
-      toast.error("Không thể đọc ảnh, vui lòng thử lại.");
+      toast.error("Unable to read image, please try again.");
     }
   };
 
@@ -139,17 +139,17 @@ const StyleTransfer = () => {
 
   const handleTransfer = async () => {
     if (!canTransfer) {
-      toast.warning("Tải ảnh và chọn style trước khi áp dụng.");
+      toast.warning("Please upload an image and select a style before applying.");
       return;
     }
     setProcessing(true);
-    setProcessingStatus("Đang chuẩn bị...");
+    setProcessingStatus("Preparing...");
     setError("");
     setResult(null);
 
     try {
       // Step 1: Upload image
-      setProcessingStatus("Đang upload ảnh...");
+      setProcessingStatus("Uploading image...");
 
       let apiImageUrl;
       try {
@@ -157,11 +157,11 @@ const StyleTransfer = () => {
         apiImageUrl = uploadResult?.result?.image || uploadResult?.result?.url || uploadResult?.url || uploadResult?.image;
 
         if (!apiImageUrl) {
-          throw new Error("Không nhận được URL từ server");
+          throw new Error("No URL received from server");
         }
       } catch (uploadErr) {
         console.error("Upload error:", uploadErr);
-        toast.error("Không thể upload ảnh. Vui lòng thử lại.");
+        toast.error("Unable to upload image. Please try again.");
         setProcessing(false);
         return;
       }
@@ -187,7 +187,7 @@ const StyleTransfer = () => {
 
       const prompt = stylePrompts[selectedStyle] || `Transform this into ${selectedStyle} style`;
 
-      setProcessingStatus("Đang gửi yêu cầu chuyển đổi...");
+      setProcessingStatus("Sending style transfer request...");
       const reimagineResult = await reimagineImage({
         imageUrl: apiImageUrl,
         prompt: prompt,
@@ -206,12 +206,12 @@ const StyleTransfer = () => {
         resultImageUrl = reimagineResult.imageUrl;
       } else if (reimagineResult.taskId) {
         // Async - poll for completion
-        setProcessingStatus("Đang xử lý AI...");
+        setProcessingStatus("Processing with AI...");
         const pollResult = await pollTaskStatus(
           reimagineResult.taskId,
           "v1/features/reimagine",
           (status, attempt) => {
-            setProcessingStatus(`Đang xử lý... (${attempt}/60)`);
+            setProcessingStatus(`Processing... (${attempt}/60)`);
           },
           60,
           3000
@@ -234,7 +234,7 @@ const StyleTransfer = () => {
       });
     } catch (err) {
       console.error("Transfer error:", err);
-      toast.error(`Lỗi: ${err.message}. Vui lòng thử lại.`);
+      toast.error(`Error: ${err.message}. Please try again.`);
     } finally {
       setProcessing(false);
       setProcessingStatus("");
@@ -256,7 +256,7 @@ const StyleTransfer = () => {
   };
 
   const handleSave = () => {
-    alert("Ảnh đã được lưu (demo)");
+    alert("Image saved (demo)");
   };
 
   return (
@@ -272,7 +272,7 @@ const StyleTransfer = () => {
         <h1 className="text-lg md:text-xl font-bold flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-purple-500" /> Style Transfer
         </h1>
-        <div className="text-xs text-gray-400">Beta</div>
+
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -305,7 +305,7 @@ const StyleTransfer = () => {
                 <div className="space-y-3">
                   <ImageIcon className="w-12 h-12 mx-auto text-gray-400" />
                   <p className="text-sm text-gray-600">
-                    Drag & drop hoặc chọn ảnh từ máy
+                    Drag & drop or select an image from your computer
                   </p>
                   <button
                     type="button"
@@ -349,7 +349,7 @@ const StyleTransfer = () => {
               className="w-full accent-black"
             />
             <p className="text-xs text-gray-500 mt-2">
-              Độ mạnh càng cao thì phong cách mới càng nổi bật.
+              Higher strength makes the new style more prominent.
             </p>
           </div>
 
@@ -439,10 +439,10 @@ const StyleTransfer = () => {
               <div className="aspect-square bg-gray-50 rounded-2xl flex flex-col items-center justify-center text-center">
                 <div className="w-16 h-16 border-4 border-gray-200 border-t-black rounded-full animate-spin mb-4" />
                 <p className="font-semibold text-gray-700">
-                  Đang chuyển đổi phong cách...
+                  Applying style transfer...
                 </p>
                 <p className="text-sm text-gray-500">
-                  {processingStatus || "Vui lòng chờ..."}
+                  {processingStatus || "Please wait..."}
                 </p>
               </div>
             ) : result ? (
@@ -512,14 +512,14 @@ const StyleTransfer = () => {
                       onClick={handleShare}
                       className="py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold flex items-center justify-center gap-2"
                     >
-                      <Share2 className="w-4 h-4" /> Đăng Feed
+                      <Share2 className="w-4 h-4" /> Post Feed
                     </button>
                     <button
                       type="button"
                       onClick={() => setShowShareToGroup(true)}
                       className="py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold flex items-center justify-center gap-2"
                     >
-                      <Users className="w-4 h-4" /> Gửi Nhóm
+                      <Users className="w-4 h-4" /> Send to Group
                     </button>
                     <button
                       type="button"
@@ -546,7 +546,7 @@ const StyleTransfer = () => {
                     No preview yet
                   </p>
                   <p className="text-sm text-gray-500">
-                    Tải ảnh + chọn style rồi nhấn Apply để xem kết quả.
+                    Upload an image + select a style, then click Apply to see the result.
                   </p>
                 </div>
               </div>

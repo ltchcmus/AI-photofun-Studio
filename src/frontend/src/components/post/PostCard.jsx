@@ -28,11 +28,11 @@ export default function PostCard({
   // Check premium status
   const isPremium = Boolean(
     authorInfo?.isPremium ||
-    authorInfo?.premiumOneMonth ||
-    authorInfo?.premiumSixMonths ||
-    post?.isPremium ||
-    post?.premiumOneMonth ||
-    post?.premiumSixMonths
+      authorInfo?.premiumOneMonth ||
+      authorInfo?.premiumSixMonths ||
+      post?.isPremium ||
+      post?.premiumOneMonth ||
+      post?.premiumSixMonths
   );
 
   const handleViewProfile = () => {
@@ -47,8 +47,8 @@ export default function PostCard({
         <button
           type="button"
           onClick={handleViewProfile}
-          className="shrink-0 focus:outline-none rounded-full relative group"
-          title={`Xem trang cá nhân của ${displayName}`}
+          className="shrink-0 focus:outline-none rounded-full relative group cursor-pointer"
+          title={`View ${displayName}'s profile`}
         >
           {/* Premium Avatar Frame */}
           {isPremium && (
@@ -58,16 +58,18 @@ export default function PostCard({
             />
           )}
           <div
-            className={`relative ${isPremium
-              ? "p-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-full"
-              : ""
-              }`}
+            className={`relative ${
+              isPremium
+                ? "p-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 rounded-full"
+                : ""
+            }`}
           >
             <img
               src={displayAvatar}
               alt={`${displayName} avatar`}
-              className={`w-10 h-10 rounded-full object-cover hover:opacity-90 transition-all cursor-pointer ${isPremium ? "ring-2 ring-white" : ""
-                }`}
+              className={`w-10 h-10 rounded-full object-cover hover:opacity-90 transition-all cursor-pointer ${
+                isPremium ? "ring-2 ring-white" : ""
+              }`}
             />
           </div>
           {/* Premium Crown Badge */}
@@ -84,10 +86,11 @@ export default function PostCard({
                 <button
                   type="button"
                   onClick={handleViewProfile}
-                  className={`font-semibold text-sm transition-colors focus:outline-none text-left ${isPremium
-                    ? "bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text text-transparent hover:from-yellow-400 hover:via-orange-400 hover:to-pink-400"
-                    : "text-gray-900 hover:text-blue-600 hover:underline"
-                    }`}
+                  className={`font-semibold text-sm transition-colors focus:outline-none text-left cursor-pointer ${
+                    isPremium
+                      ? "bg-gradient-to-r from-yellow-500 via-orange-500 to-pink-500 bg-clip-text text-transparent hover:from-yellow-400 hover:via-orange-400 hover:to-pink-400"
+                      : "text-gray-900 hover:text-blue-600 hover:underline"
+                  }`}
                 >
                   {displayName}
                 </button>
@@ -104,20 +107,20 @@ export default function PostCard({
               <button
                 type="button"
                 onClick={() => setMenuOpen((prev) => !prev)}
-                className="p-1.5 rounded-full hover:bg-gray-100 text-gray-500"
+                className="p-1.5 rounded-full hover:bg-gray-100 text-gray-500 cursor-pointer"
                 title="Options"
               >
                 <MoreHorizontal className="w-5 h-5" />
               </button>
               {menuOpen && (
                 <div className="absolute right-0 mt-2 w-48 rounded-xl border border-gray-200 bg-white shadow-lg z-20">
-                  <button className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50">
+                  <button className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 cursor-pointer">
                     Save
                   </button>
-                  <button className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50">
+                  <button className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 cursor-pointer">
                     Hide
                   </button>
-                  <button className="w-full px-4 py-3 text-left text-sm text-red-600 hover:bg-gray-50">
+                  <button className="w-full px-4 py-3 text-left text-sm text-red-600 hover:bg-gray-50 cursor-pointer">
                     Report
                   </button>
                 </div>
@@ -137,7 +140,7 @@ export default function PostCard({
                 alt={`Post by ${displayName}`}
                 className="w-full h-auto object-cover hover:opacity-95 transition-opacity"
                 loading="lazy"
-                title="Click để xem ảnh lớn"
+                title="Click to view full image"
               />
             </div>
           )}
@@ -167,28 +170,29 @@ export default function PostCard({
           <div className="flex items-center gap-6 mt-4">
             <button
               type="button"
-              className="flex items-center gap-2 text-sm text-gray-600 hover:text-red-500"
+              className="flex items-center gap-2 text-sm text-gray-600 hover:text-red-500 cursor-pointer"
               onClick={() => onLikePost?.(post.id)}
             >
               <Heart
-                className={`w-5 h-5 ${post.liked ? "fill-red-500 text-red-500" : ""
-                  }`}
+                className={`w-5 h-5 ${
+                  post.liked ? "fill-red-500 text-red-500" : ""
+                }`}
               />
               {Number(post.likes || 0).toLocaleString()}
             </button>
             <button
               type="button"
-              className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-500"
+              className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-500 cursor-pointer"
               onClick={() => setShowComments((prev) => !prev)}
               aria-expanded={showComments}
-              aria-label="Xem bình luận"
+              aria-label="View comments"
             >
               <MessageCircle className="w-5 h-5" />
               {Number(post.comments || 0).toLocaleString()}
             </button>
             <button
               type="button"
-              className="text-sm text-purple-600 hover:text-purple-700"
+              className="text-sm text-purple-600 hover:text-purple-700 cursor-pointer"
               onClick={onNavigateAiTools}
             >
               Use AI tools

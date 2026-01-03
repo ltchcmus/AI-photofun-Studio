@@ -6,11 +6,11 @@ import { toast } from "../hooks/use-toast";
 
 // Models for Prompt to Video (Text to Video)
 const PROMPT_TO_VIDEO_MODELS = [
-    { value: "wan2.6-t2v", label: "wan2.6-t2v (Mặc định)", description: "Chất lượng cao" },
-    { value: "wan2.5-t2v-preview", label: "wan2.5-t2v-preview", description: "Preview mới" },
-    { value: "wan2.2-t2v-plus", label: "wan2.2-t2v-plus", description: "Phiên bản Plus" },
-    { value: "wan2.1-t2v-plus", label: "wan2.1-t2v-plus", description: "Phiên bản Plus cũ" },
-    { value: "wan2.1-t2v-turbo", label: "wan2.1-t2v-turbo", description: "Turbo - nhanh nhất" },
+    { value: "wan2.6-t2v", label: "wan2.6-t2v (Default)", description: "High quality" },
+    { value: "wan2.5-t2v-preview", label: "wan2.5-t2v-preview", description: "New Preview" },
+    { value: "wan2.2-t2v-plus", label: "wan2.2-t2v-plus", description: "Plus version" },
+    { value: "wan2.1-t2v-plus", label: "wan2.1-t2v-plus", description: "Older Plus version" },
+    { value: "wan2.1-t2v-turbo", label: "wan2.1-t2v-turbo", description: "Turbo - fastest" },
 ];
 
 const PromptToVideo = () => {
@@ -94,7 +94,7 @@ const PromptToVideo = () => {
         const result = await pollVideoTaskStatus(
             id,
             "prompt-to-video",
-            (status) => setTaskStatus(status || "Đang xử lý..."),
+            (status) => setTaskStatus(status || "Processing..."),
             1 // Only poll once, will be called again by interval
         );
 
@@ -112,7 +112,7 @@ const PromptToVideo = () => {
     // Start video generation
     const handleGenerate = async () => {
         if (!prompt.trim()) {
-            toast.warning("Vui lòng nhập mô tả video.");
+            toast.warning("Please enter a video description.");
             return;
         }
 
@@ -120,7 +120,7 @@ const PromptToVideo = () => {
         setLoading(true);
         setVideoUrl(null);
         setTaskId(null);
-        setTaskStatus("Đang khởi tạo...");
+        setTaskStatus("Initializing...");
         setShowSuggestions(false);
 
         // Record prompt choice
@@ -137,7 +137,7 @@ const PromptToVideo = () => {
 
         if (result.success && result.taskId) {
             setTaskId(result.taskId);
-            setTaskStatus("Đang tạo video...");
+            setTaskStatus("Creating video...");
 
             // Start polling
             pollIntervalRef.current = setInterval(() => {
@@ -147,7 +147,7 @@ const PromptToVideo = () => {
             // Initial poll
             setTimeout(() => pollStatus(result.taskId), 1000);
         } else {
-            toast.error(result.error || "Không thể tạo video. Vui lòng thử lại.");
+            toast.error(result.error || "Unable to create video. Please try again.");
             setLoading(false);
         }
     };
@@ -212,7 +212,7 @@ const PromptToVideo = () => {
                 <h1 className="text-lg md:text-xl font-bold flex items-center gap-2">
                     <Video className="w-5 h-5 text-pink-500" /> Prompt to Video
                 </h1>
-                <div className="text-xs text-gray-400">Beta</div>
+
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -220,7 +220,7 @@ const PromptToVideo = () => {
                 <section className="space-y-6">
                     {/* Prompt */}
                     <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                        <h2 className="text-xl font-bold mb-4">Mô Tả Video</h2>
+                        <h2 className="text-xl font-bold mb-4">Video Description</h2>
 
                         <div className="space-y-4">
                             <div className="relative" ref={promptInputRef}>
@@ -229,7 +229,7 @@ const PromptToVideo = () => {
                                     value={prompt}
                                     onChange={handlePromptChange}
                                     onFocus={handlePromptFocus}
-                                    placeholder="Mô tả video bạn muốn tạo, ví dụ: Một chú mèo đang chạy trên cánh đồng hoa với bầu trời xanh..."
+                                    placeholder="Describe the video you want to create, e.g.: A cat running on a flower field with blue sky..."
                                     className="w-full border border-gray-300 rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-pink-500 min-h-[150px] text-sm"
                                 />
 
@@ -237,7 +237,7 @@ const PromptToVideo = () => {
                                 {showSuggestions && suggestions.length > 0 && (
                                     <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-auto">
                                         {loadingSuggestions && (
-                                            <div className="px-4 py-2 text-sm text-gray-500">Đang tải gợi ý...</div>
+                                            <div className="px-4 py-2 text-sm text-gray-500">Loading suggestions...</div>
                                         )}
                                         {suggestions.map((suggestion) => (
                                             <button
@@ -280,11 +280,11 @@ const PromptToVideo = () => {
                             {loading ? (
                                 <>
                                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                    {taskStatus || "Đang xử lý..."}
+                                    {taskStatus || "Processing..."}
                                 </>
                             ) : (
                                 <>
-                                    <Play className="w-5 h-5" /> Tạo Video
+                                    <Play className="w-5 h-5" /> Create Video
                                 </>
                             )}
                         </button>
@@ -297,7 +297,7 @@ const PromptToVideo = () => {
                         <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
                             <div className="aspect-video rounded-2xl bg-gray-50 flex flex-col items-center justify-center">
                                 <div className="w-16 h-16 border-4 border-gray-200 border-t-pink-500 rounded-full animate-spin mb-4" />
-                                <p className="font-semibold text-gray-700">Đang tạo video...</p>
+                                <p className="font-semibold text-gray-700">Creating video...</p>
                                 <p className="text-sm text-gray-500">{taskStatus}</p>
                                 {taskId && (
                                     <p className="text-xs text-gray-400 mt-2">Task ID: {taskId}</p>
@@ -309,7 +309,7 @@ const PromptToVideo = () => {
                     {videoUrl && (
                         <>
                             <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                                <h2 className="text-lg font-bold mb-4">Video Đã Tạo</h2>
+                                <h2 className="text-lg font-bold mb-4">Generated Video</h2>
                                 <div className="aspect-video rounded-2xl bg-black overflow-hidden">
                                     <video
                                         controls
@@ -318,7 +318,7 @@ const PromptToVideo = () => {
                                         className="w-full h-full object-contain"
                                     >
                                         <source src={videoUrl} type="video/mp4" />
-                                        Trình duyệt không hỗ trợ video.
+                                        Your browser does not support video.
                                     </video>
                                 </div>
                             </div>
@@ -330,27 +330,27 @@ const PromptToVideo = () => {
                                         onClick={handleDownload}
                                         className="flex items-center justify-center gap-2 py-3 rounded-xl bg-black text-white font-semibold hover:bg-gray-800"
                                     >
-                                        <Download className="w-4 h-4" /> Tải Xuống
+                                        <Download className="w-4 h-4" /> Download
                                     </button>
                                     <button
                                         type="button"
                                         onClick={handleShare}
                                         className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 text-white font-semibold hover:from-pink-700 hover:to-purple-700"
                                     >
-                                        <Share2 className="w-4 h-4" /> Chia Sẻ
+                                        <Share2 className="w-4 h-4" /> Share
                                     </button>
                                     <button
                                         type="button"
                                         onClick={handleReset}
                                         className="flex items-center justify-center gap-2 py-3 rounded-xl border border-gray-300 font-semibold hover:bg-gray-50"
                                     >
-                                        Tạo Mới
+                                        Create New
                                     </button>
                                 </div>
                             </div>
 
                             <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                                <h3 className="font-bold mb-3">Chi Tiết</h3>
+                                <h3 className="font-bold mb-3">Details</h3>
                                 <div className="space-y-2 text-sm">
                                     <div>
                                         <span className="text-gray-500">Model: </span>
@@ -370,9 +370,9 @@ const PromptToVideo = () => {
                             <div className="aspect-video border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center">
                                 <div className="text-center p-8">
                                     <Video className="w-12 h-12 mx-auto text-gray-400 mb-3" />
-                                    <p className="font-semibold text-gray-700 mb-1">Chưa có video</p>
+                                    <p className="font-semibold text-gray-700 mb-1">No video yet</p>
                                     <p className="text-sm text-gray-500">
-                                        Nhập mô tả video và nhấn "Tạo Video"
+                                        Enter a video description and click "Create Video"
                                     </p>
                                 </div>
                             </div>

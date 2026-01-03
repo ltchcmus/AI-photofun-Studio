@@ -150,7 +150,7 @@ const getSessionId = () => {
 export const pollTaskStatus = async (
   taskId,
   endpoint,
-  onStatusUpdate = () => {},
+  onStatusUpdate = () => { },
   maxAttempts = 60,
   interval = 3000
 ) => {
@@ -209,7 +209,7 @@ export const generateImage = async ({
 }) => {
   const userId = getUserId();
   if (!userId) {
-    return { success: false, error: "Vui lòng đăng nhập..." };
+    return { success: false, error: "Please log in..." };
   }
   const sessionId = getSessionId();
 
@@ -255,7 +255,7 @@ export const removeBackground = async (imageUrl) => {
   const sessionId = getSessionId();
   const userId = getUserId();
   if (!userId) {
-    return { success: false, error: "Vui lòng đăng nhập..." };
+    return { success: false, error: "Please log in..." };
   }
   try {
     const response = await aiClient.post("/v1/features/remove-background/", {
@@ -344,7 +344,7 @@ export const uploadImageForAI = async (file) => {
 export const upscaleImage = async ({ imageUrl, flavor = "photo" }) => {
   const userId = getUserId();
   if (!userId) {
-    return { success: false, error: "Vui lòng đăng nhập..." };
+    return { success: false, error: "Please log in..." };
   }
   try {
     const response = await aiClient.post("/v1/features/upscale/", {
@@ -394,7 +394,7 @@ export const reimagineImage = async ({
 }) => {
   const userId = getUserId();
   if (!userId) {
-    return { success: false, error: "Vui lòng đăng nhập..." };
+    return { success: false, error: "Please log in..." };
   }
   try {
     const response = await aiClient.post("/v1/features/reimagine/", {
@@ -458,7 +458,7 @@ export const relightImage = async ({
 }) => {
   const userId = getUserId();
   if (!userId) {
-    return { success: false, error: "Vui lòng đăng nhập..." };
+    return { success: false, error: "Please log in..." };
   }
   try {
     const body = {
@@ -521,7 +521,7 @@ export const expandImage = async ({
 }) => {
   const userId = getUserId();
   if (!userId) {
-    return { success: false, error: "Vui lòng đăng nhập..." };
+    return { success: false, error: "Please log in..." };
   }
   try {
     const response = await aiClient.post("/v1/features/image-expand/", {
@@ -566,7 +566,7 @@ export const expandImage = async ({
 export const suggestPrompts = async (query = "") => {
   const userId = getUserId();
   if (!userId) {
-    return { success: false, error: "Vui lòng đăng nhập..." };
+    return { success: false, error: "Please log in..." };
   }
   try {
     const response = await aiClient.post("/v1/rec-prompt/suggest/", {
@@ -606,7 +606,7 @@ export const suggestPrompts = async (query = "") => {
 export const recordPromptChoice = async (promptText) => {
   const userId = getUserId();
   if (!userId) {
-    return { success: false, error: "Vui lòng đăng nhập..." };
+    return { success: false, error: "Please log in..." };
   }
   try {
     const response = await aiClient.post("/v1/rec-prompt/choose/", {
@@ -645,7 +645,7 @@ export const generateVideoFromPrompt = async ({
   if (!userId) {
     return {
       success: false,
-      error: "Vui lòng đăng nhập để sử dụng tính năng này.",
+      error: "Please log in to use this feature.",
     };
   }
 
@@ -700,7 +700,7 @@ export const generateVideoFromImage = async ({
   if (!userId) {
     return {
       success: false,
-      error: "Vui lòng đăng nhập để sử dụng tính năng này.",
+      error: "Please log in to use this feature.",
     };
   }
 
@@ -749,7 +749,7 @@ export const generateVideoFromImage = async ({
 export const pollVideoTaskStatus = async (
   taskId,
   feature = "prompt-to-video",
-  onStatusUpdate = () => {},
+  onStatusUpdate = () => { },
   maxAttempts = 60,
   interval = 3000
 ) => {
@@ -758,7 +758,7 @@ export const pollVideoTaskStatus = async (
   if (!userId) {
     return {
       success: false,
-      error: "Vui lòng đăng nhập để sử dụng tính năng này.",
+      error: "Please log in to use this feature.",
     };
   }
 

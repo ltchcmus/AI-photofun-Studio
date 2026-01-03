@@ -58,7 +58,7 @@ const ImageExpand = () => {
             setError("");
             if (fileInputRef.current) fileInputRef.current.value = "";
         } catch {
-            setError("Không thể đọc ảnh, vui lòng thử lại.");
+            setError("Unable to read image, please try again.");
         }
     };
 
@@ -70,31 +70,31 @@ const ImageExpand = () => {
 
     const handleExpand = async () => {
         if (!canExpand) {
-            setError("Hãy tải ảnh lên trước.");
+            setError("Please upload an image first.");
             return;
         }
 
         setProcessing(true);
-        setProcessingStatus("Đang chuẩn bị...");
+        setProcessingStatus("Preparing...");
         setResult(null);
         setError("");
 
         try {
             // Upload image
-            setProcessingStatus("Đang upload ảnh...");
+            setProcessingStatus("Uploading image...");
             let apiImageUrl;
             try {
                 const uploadResult = await communicationApi.uploadChatImage(uploadedFile);
                 apiImageUrl = uploadResult?.result?.image || uploadResult?.result?.url || uploadResult?.url || uploadResult?.image;
-                if (!apiImageUrl) throw new Error("Không nhận được URL từ server");
+                if (!apiImageUrl) throw new Error("No URL received from server");
             } catch (uploadErr) {
-                setError("Không thể upload ảnh. Vui lòng thử lại.");
+                setError("Unable to upload image. Please try again.");
                 setProcessing(false);
                 return;
             }
 
             // Call expand API
-            setProcessingStatus("Đang gửi yêu cầu expand...");
+            setProcessingStatus("Sending expand request...");
             const expandResult = await expandImage({
                 imageUrl: apiImageUrl,
                 prompt: prompt,
@@ -109,12 +109,12 @@ const ImageExpand = () => {
             }
 
             // Poll for completion
-            setProcessingStatus("Đang xử lý AI...");
+            setProcessingStatus("Processing with AI...");
             const pollResult = await pollTaskStatus(
                 expandResult.taskId,
                 "v1/features/image-expand",
                 (status, attempt) => {
-                    setProcessingStatus(`Đang xử lý... (${attempt}/60)`);
+                    setProcessingStatus(`Processing... (${attempt}/60)`);
                 },
                 60,
                 3000
@@ -131,7 +131,7 @@ const ImageExpand = () => {
             });
         } catch (err) {
             console.error("Expand error:", err);
-            setError(`Lỗi: ${err.message}. Vui lòng thử lại.`);
+            setError(`Error: ${err.message}. Please try again.`);
         } finally {
             setProcessing(false);
             setProcessingStatus("");
@@ -165,7 +165,7 @@ const ImageExpand = () => {
                 <h1 className="text-lg md:text-xl font-bold flex items-center gap-2">
                     <Maximize2 className="w-5 h-5 text-blue-500" /> Image Expand
                 </h1>
-                <div className="text-xs text-gray-400">Beta</div>
+
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -182,8 +182,8 @@ const ImageExpand = () => {
                             onDragLeave={(e) => { e.preventDefault(); setDragOver(false); }}
                         >
                             <ImageIcon className="w-12 h-12 mx-auto mb-3 text-gray-400" />
-                            <p className="text-gray-600 font-medium">Kéo & thả ảnh vào đây</p>
-                            <p className="text-xs text-gray-500 mb-4">hoặc click để chọn</p>
+                            <p className="text-gray-600 font-medium">Drag & drop image here</p>
+                            <p className="text-xs text-gray-500 mb-4">or click to select</p>
                             <input
                                 ref={fileInputRef}
                                 type="file"
@@ -209,7 +209,7 @@ const ImageExpand = () => {
                                     value={prompt}
                                     onChange={(e) => setPrompt(e.target.value)}
                                     className="w-full border border-gray-300 rounded-xl p-3 min-h-[80px]"
-                                    placeholder="Mô tả nội dung vùng mở rộng..."
+                                    placeholder="Describe the expanded area content..."
                                 />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
@@ -281,8 +281,8 @@ const ImageExpand = () => {
                             <div className="aspect-square bg-gray-50 rounded-2xl flex items-center justify-center">
                                 <div className="text-center">
                                     <div className="w-16 h-16 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mx-auto mb-4" />
-                                    <p className="text-gray-700 font-semibold">Đang xử lý...</p>
-                                    <p className="text-sm text-gray-500">{processingStatus || "Vui lòng chờ..."}</p>
+                                    <p className="text-gray-700 font-semibold">Processing...</p>
+                                    <p className="text-sm text-gray-500">{processingStatus || "Please wait..."}</p>
                                 </div>
                             </div>
                         ) : result ? (
@@ -299,19 +299,19 @@ const ImageExpand = () => {
                                         onClick={handleShare}
                                         className="py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold flex items-center justify-center gap-2"
                                     >
-                                        <Share2 className="w-4 h-4" /> Đăng Feed
+                                        <Share2 className="w-4 h-4" /> Share to Feed
                                     </button>
                                     <button
                                         onClick={() => setShowShareToGroup(true)}
                                         className="py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold flex items-center justify-center gap-2 col-span-2"
                                     >
-                                        <Users className="w-4 h-4" /> Gửi Nhóm
+                                        <Users className="w-4 h-4" /> Send to Group
                                     </button>
                                 </div>
                             </>
                         ) : (
                             <div className="aspect-square border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center">
-                                <p className="text-gray-500 text-center px-4">Kết quả sẽ hiển thị ở đây</p>
+                                <p className="text-gray-500 text-center px-4">Result will be displayed here</p>
                             </div>
                         )}
                     </div>

@@ -34,6 +34,14 @@ export default function DashboardForm() {
     if (shareVideo) {
       // Clear state to prevent re-opening on refresh
       navigate(location.pathname, { replace: true, state: {} });
+    } else if (shouldOpenCreateModal) {
+      // Remove create param so it can be triggered again
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete("create");
+      navigate(
+        { pathname: location.pathname, search: newParams.toString() },
+        { replace: true }
+      );
     }
   };
 
@@ -42,7 +50,7 @@ export default function DashboardForm() {
       <header className="fixed top-0 left-0 md:left-20 right-0 bg-white/95 backdrop-blur border-b border-gray-200 z-50">
         <div className="max-w-2xl mx-auto px-4 md:px-6 py-4">
           <div className="flex items-center gap-8">
-            <button className="text-sm font-semibold text-black relative">
+            <button className="text-sm font-semibold text-black relative cursor-pointer">
               For you
               <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-black rounded-full" />
             </button>
@@ -72,7 +80,7 @@ export default function DashboardForm() {
           )}
           {!loading && posts.length === 0 && (
             <div className="border border-gray-200 bg-gray-50 text-gray-600 text-sm rounded-xl px-4 py-5 text-center">
-              Chưa có bài viết nào. Hãy là người đầu tiên chia sẻ cảm hứng!
+              No posts yet. Be the first to share your inspiration!
             </div>
           )}
           <PostList
@@ -86,4 +94,3 @@ export default function DashboardForm() {
     </div>
   );
 }
-

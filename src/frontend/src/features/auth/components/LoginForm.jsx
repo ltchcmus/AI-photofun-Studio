@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
+import { toast } from "../../../hooks/use-toast";
 
 // Error Alert Component with professional styling
 const ErrorAlert = ({ message, onClose }) => {
@@ -31,46 +32,68 @@ const ErrorAlert = ({ message, onClose }) => {
   const getErrorDetails = (errorMessage) => {
     const lowerMessage = errorMessage.toLowerCase();
 
-    if (lowerMessage.includes("password") || lowerMessage.includes("incorrect") || lowerMessage.includes("wrong")) {
+    if (
+      lowerMessage.includes("password") ||
+      lowerMessage.includes("incorrect") ||
+      lowerMessage.includes("wrong")
+    ) {
       return {
         title: "Incorrect Credentials",
         description: "The password you entered is incorrect. Please try again.",
-        icon: "lock"
+        icon: "lock",
       };
     }
-    if (lowerMessage.includes("user") || lowerMessage.includes("not found") || lowerMessage.includes("exist")) {
+    if (
+      lowerMessage.includes("user") ||
+      lowerMessage.includes("not found") ||
+      lowerMessage.includes("exist")
+    ) {
       return {
         title: "Account Not Found",
         description: "No account found with this username or email.",
-        icon: "user"
+        icon: "user",
       };
     }
-    if (lowerMessage.includes("network") || lowerMessage.includes("connection") || lowerMessage.includes("timeout")) {
+    if (
+      lowerMessage.includes("network") ||
+      lowerMessage.includes("connection") ||
+      lowerMessage.includes("timeout")
+    ) {
       return {
         title: "Connection Error",
-        description: "Unable to connect to server. Please check your internet connection.",
-        icon: "wifi"
+        description:
+          "Unable to connect to server. Please check your internet connection.",
+        icon: "wifi",
       };
     }
-    if (lowerMessage.includes("blocked") || lowerMessage.includes("locked") || lowerMessage.includes("suspended")) {
+    if (
+      lowerMessage.includes("blocked") ||
+      lowerMessage.includes("locked") ||
+      lowerMessage.includes("suspended")
+    ) {
       return {
         title: "Account Locked",
-        description: "Your account has been temporarily locked. Please try again later.",
-        icon: "shield"
+        description:
+          "Your account has been temporarily locked. Please try again later.",
+        icon: "shield",
       };
     }
-    if (lowerMessage.includes("too many") || lowerMessage.includes("rate limit")) {
+    if (
+      lowerMessage.includes("too many") ||
+      lowerMessage.includes("rate limit")
+    ) {
       return {
         title: "Too Many Attempts",
-        description: "You've made too many login attempts. Please wait a moment.",
-        icon: "clock"
+        description:
+          "You've made too many login attempts. Please wait a moment.",
+        icon: "clock",
       };
     }
 
     return {
       title: "Login Failed",
       description: errorMessage,
-      icon: "alert"
+      icon: "alert",
     };
   };
 
@@ -81,38 +104,98 @@ const ErrorAlert = ({ message, onClose }) => {
     switch (errorDetails.icon) {
       case "lock":
         return (
-          <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          <svg
+            className={iconClass}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+            />
           </svg>
         );
       case "user":
         return (
-          <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          <svg
+            className={iconClass}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+            />
           </svg>
         );
       case "wifi":
         return (
-          <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
+          <svg
+            className={iconClass}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"
+            />
           </svg>
         );
       case "shield":
         return (
-          <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          <svg
+            className={iconClass}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+            />
           </svg>
         );
       case "clock":
         return (
-          <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            className={iconClass}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
         );
       default:
         return (
-          <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          <svg
+            className={iconClass}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
           </svg>
         );
     }
@@ -120,10 +203,11 @@ const ErrorAlert = ({ message, onClose }) => {
 
   return (
     <div
-      className={`mb-5 overflow-hidden rounded-xl border border-red-200 bg-gradient-to-r from-red-50 to-rose-50 shadow-lg transition-all duration-300 ease-out ${isVisible && !isLeaving
-        ? "opacity-100 translate-y-0"
-        : "opacity-0 -translate-y-2"
-        }`}
+      className={`mb-5 overflow-hidden rounded-xl border border-red-200 bg-gradient-to-r from-red-50 to-rose-50 shadow-lg transition-all duration-300 ease-out ${
+        isVisible && !isLeaving
+          ? "opacity-100 translate-y-0"
+          : "opacity-0 -translate-y-2"
+      }`}
     >
       <div className="relative p-4">
         {/* Progress bar for auto-dismiss */}
@@ -148,10 +232,20 @@ const ErrorAlert = ({ message, onClose }) => {
           {/* Close button */}
           <button
             onClick={handleClose}
-            className="flex-shrink-0 p-1 text-red-400 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+            className="flex-shrink-0 p-1 text-red-400 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors cursor-pointer"
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -190,6 +284,7 @@ const LoginForm = () => {
     try {
       await login(formData.usernameOrEmail, formData.password);
       // Only keep submitting true when successful - will navigate away
+      toast.success("Login successful!");
       navigate("/home");
     } catch (submitError) {
       // Immediately stop submitting so error is visible
@@ -231,8 +326,6 @@ const LoginForm = () => {
     window.location.href = googleAuthUrl;
   };
 
-
-
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-white p-5 overflow-auto font-sans">
       <div className="w-full max-w-md mx-auto">
@@ -244,9 +337,7 @@ const LoginForm = () => {
           </div>
 
           {/* Error Alert */}
-          {error && (
-            <ErrorAlert message={error} onClose={() => setError("")} />
-          )}
+          {error && <ErrorAlert message={error} onClose={() => setError("")} />}
 
           {/* Form */}
           <div className="mb-6">
@@ -262,8 +353,9 @@ const LoginForm = () => {
                   value={formData.usernameOrEmail}
                   onChange={handleChange}
                   placeholder="Enter your username or email"
-                  className={`w-full px-4 py-3 border-2 rounded-xl text-sm transition-all outline-none focus:border-black focus:ring-4 focus:ring-black/10 ${error ? "border-red-300 bg-red-50/50" : "border-gray-200"
-                    } ${shakeInputs ? "animate-shake" : ""}`}
+                  className={`w-full px-4 py-3 border-2 rounded-xl text-sm transition-all outline-none focus:border-black focus:ring-4 focus:ring-black/10 ${
+                    error ? "border-red-300 bg-red-50/50" : "border-gray-200"
+                  } ${shakeInputs ? "animate-shake" : ""}`}
                 />
               </div>
 
@@ -278,8 +370,9 @@ const LoginForm = () => {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Enter your password"
-                  className={`w-full px-4 py-3 border-2 rounded-xl text-sm transition-all outline-none focus:border-black focus:ring-4 focus:ring-black/10 ${error ? "border-red-300 bg-red-50/50" : "border-gray-200"
-                    } ${shakeInputs ? "animate-shake" : ""}`}
+                  className={`w-full px-4 py-3 border-2 rounded-xl text-sm transition-all outline-none focus:border-black focus:ring-4 focus:ring-black/10 ${
+                    error ? "border-red-300 bg-red-50/50" : "border-gray-200"
+                  } ${shakeInputs ? "animate-shake" : ""}`}
                 />
               </div>
 
@@ -303,7 +396,7 @@ const LoginForm = () => {
                 </div>
                 <button
                   type="button"
-                  className="text-sm font-semibold text-black transition-opacity hover:opacity-70"
+                  className="text-sm font-semibold text-black transition-opacity hover:opacity-70 cursor-pointer"
                 >
                   Forgot password?
                 </button>
@@ -313,8 +406,9 @@ const LoginForm = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className={`w-full py-3 bg-black text-white rounded-xl text-base font-semibold cursor-pointer transition-all duration-300 hover:bg-gray-800 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:shadow-md ${submitting ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
+                className={`w-full py-3 bg-black text-white rounded-xl text-base font-semibold cursor-pointer transition-all duration-300 hover:bg-gray-800 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:shadow-md ${
+                  submitting ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               >
                 {submitting ? "Logging in..." : "Login"}
               </button>
@@ -354,8 +448,6 @@ const LoginForm = () => {
               </svg>
               Google
             </button>
-
-
           </div>
 
           {/* Register Link */}

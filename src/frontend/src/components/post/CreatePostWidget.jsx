@@ -4,7 +4,8 @@ import { Image, Video, Sparkles, X, Loader2 } from "lucide-react";
 const DEFAULT_AVATAR = "https://placehold.co/40x40/111/fff?text=U";
 
 // Prompt mặc định khi người dùng tự upload ảnh/video (không phải từ AI tools)
-const DEFAULT_PROMPT = "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e";
+const DEFAULT_PROMPT =
+  "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e";
 
 export default function CreatePostWidget({
   currentUser,
@@ -51,7 +52,9 @@ export default function CreatePostWidget({
 
   // Pre-fill data from AI tools
   // isFromAiTools = true khi có initialPrompt hoặc initialImageUrl hoặc initialVideoUrl từ AI tools
-  const isFromAiTools = Boolean(initialPrompt || initialImageUrl || initialVideoUrl);
+  const isFromAiTools = Boolean(
+    initialPrompt || initialImageUrl || initialVideoUrl
+  );
 
   useEffect(() => {
     if (initialImageUrl) {
@@ -123,13 +126,13 @@ export default function CreatePostWidget({
 
     // Validate file type
     if (!file.type.startsWith("video/")) {
-      setError("Vui lòng chọn file video!");
+      setError("Please select a video file!");
       return;
     }
 
     // Validate file size (max 50MB)
     if (file.size > 50 * 1024 * 1024) {
-      setError("Video quá lớn! Vui lòng chọn video dưới 50MB.");
+      setError("Video too large! Please select a video under 50MB.");
       return;
     }
 
@@ -153,8 +156,14 @@ export default function CreatePostWidget({
   const handleSubmit = async () => {
     if (submitting) return;
     // Allow post with imagePreview/videoPreview URL (from AI tools) even without file
-    if (!caption && !imageFile && !videoFile && !imagePreview && !videoPreview) {
-      setError("Vui lòng nhập nội dung hoặc chọn ảnh/video.");
+    if (
+      !caption &&
+      !imageFile &&
+      !videoFile &&
+      !imagePreview &&
+      !videoPreview
+    ) {
+      setError("Please enter content or select an image/video.");
       return;
     }
 
@@ -170,7 +179,7 @@ export default function CreatePostWidget({
           caption,
           prompt: finalPrompt,
           video: videoFile,
-          videoUrl: !videoFile && videoPreview ? videoPreview : undefined
+          videoUrl: !videoFile && videoPreview ? videoPreview : undefined,
         });
       } else {
         // Create image post - pass imageUrl if no file (from AI tools)
@@ -178,7 +187,7 @@ export default function CreatePostWidget({
           caption,
           prompt: finalPrompt,
           image: imageFile,
-          imageUrl: !imageFile && imagePreview ? imagePreview : undefined
+          imageUrl: !imageFile && imagePreview ? imagePreview : undefined,
         });
       }
       handleClose();
@@ -186,7 +195,7 @@ export default function CreatePostWidget({
       const message =
         submitError?.response?.data?.message ||
         submitError?.message ||
-        "Không thể tạo bài viết";
+        "Unable to create post";
       setError(message);
     } finally {
       setSubmitting(false);
@@ -207,13 +216,13 @@ export default function CreatePostWidget({
           <button
             type="button"
             onClick={handleOpen}
-            className="flex-1 text-left text-gray-500 border border-gray-200 rounded-full py-3 px-4 hover:bg-gray-50"
+            className="flex-1 text-left text-gray-500 border border-gray-200 rounded-full py-3 px-4 hover:bg-gray-50 cursor-pointer"
           >
             Share something inspiring...
           </button>
           <button
             type="button"
-            className="p-2 -m-2 hover:bg-gray-100 rounded-full text-gray-500"
+            className="p-2 -m-2 hover:bg-gray-100 rounded-full text-gray-500 cursor-pointer"
             onClick={handleOpen}
             title="Upload image"
           >
@@ -221,7 +230,7 @@ export default function CreatePostWidget({
           </button>
           <button
             type="button"
-            className="p-2 -m-2 hover:bg-gray-100 rounded-full text-blue-500"
+            className="p-2 -m-2 hover:bg-gray-100 rounded-full text-blue-500 cursor-pointer"
             onClick={handleOpen}
             title="Upload video"
           >
@@ -242,7 +251,7 @@ export default function CreatePostWidget({
                 <h2 className="text-lg font-semibold">Create post</h2>
                 <button
                   type="button"
-                  className="p-2 hover:bg-gray-100 rounded-full"
+                  className="p-2 hover:bg-gray-100 rounded-full cursor-pointer"
                   onClick={handleClose}
                 >
                   <X className="w-5 h-5 text-gray-500" />
@@ -267,7 +276,7 @@ export default function CreatePostWidget({
                     />
                     <button
                       type="button"
-                      className="absolute top-3 right-3 p-1.5 bg-black/70 rounded-full text-white"
+                      className="absolute top-3 right-3 p-1.5 bg-black/70 rounded-full text-white cursor-pointer"
                       onClick={() => {
                         URL.revokeObjectURL(imagePreview);
                         setImagePreview(null);
@@ -288,7 +297,7 @@ export default function CreatePostWidget({
                     />
                     <button
                       type="button"
-                      className="absolute top-3 right-3 p-1.5 bg-black/70 rounded-full text-white z-10"
+                      className="absolute top-3 right-3 p-1.5 bg-black/70 rounded-full text-white z-10 cursor-pointer"
                       onClick={() => {
                         URL.revokeObjectURL(videoPreview);
                         setVideoPreview(null);
@@ -304,7 +313,7 @@ export default function CreatePostWidget({
                 <div className="mt-4 flex flex-wrap gap-3">
                   <button
                     type="button"
-                    className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-xl text-sm font-medium text-gray-600"
+                    className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-xl text-sm font-medium text-gray-600 cursor-pointer"
                     onClick={() => fileInputRef.current?.click()}
                   >
                     <Image className="w-4 h-4" />
@@ -312,7 +321,7 @@ export default function CreatePostWidget({
                   </button>
                   <button
                     type="button"
-                    className="flex items-center gap-2 px-4 py-2 border border-blue-300 rounded-xl text-sm font-medium text-blue-600"
+                    className="flex items-center gap-2 px-4 py-2 border border-blue-300 rounded-xl text-sm font-medium text-blue-600 cursor-pointer"
                     onClick={() => videoInputRef.current?.click()}
                   >
                     <Video className="w-4 h-4" />
@@ -320,7 +329,7 @@ export default function CreatePostWidget({
                   </button>
                   <button
                     type="button"
-                    className="flex items-center gap-2 px-4 py-2 border border-purple-200 rounded-xl text-sm font-medium text-purple-600"
+                    className="flex items-center gap-2 px-4 py-2 border border-purple-200 rounded-xl text-sm font-medium text-purple-600 cursor-pointer"
                     onClick={onNavigateAiTools}
                   >
                     Create with AI
@@ -344,13 +353,13 @@ export default function CreatePostWidget({
                 {isFromAiTools && (
                   <div className="mt-6">
                     <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-gray-600">
-                      <Sparkles className="w-4 h-4 text-purple-500" /> Prompt đã
-                      dùng (tuỳ chọn)
+                      <Sparkles className="w-4 h-4 text-purple-500" /> Prompt
+                      used (optional)
                     </label>
                     <textarea
                       value={prompt}
                       onChange={(event) => setPrompt(event.target.value)}
-                      placeholder="Nhập prompt bạn đã dùng để tạo ảnh/video..."
+                      placeholder="Enter the prompt you used to create the image/video..."
                       className="mt-3 w-full rounded-xl border border-gray-200 bg-gray-50 p-3 text-xs font-mono text-gray-700 focus:ring-2 focus:ring-purple-200"
                       rows={3}
                     />
@@ -367,20 +376,24 @@ export default function CreatePostWidget({
               <div className="flex items-center justify-between px-5 py-4 border-t border-gray-200">
                 <button
                   type="button"
-                  className="px-4 py-2 text-sm font-semibold text-gray-600 rounded-lg hover:bg-gray-100"
+                  className="px-4 py-2 text-sm font-semibold text-gray-600 rounded-lg hover:bg-gray-100 cursor-pointer"
                   onClick={handleClose}
                   disabled={submitting}
                 >
-                  Hủy
+                  Cancel
                 </button>
                 <button
                   type="button"
-                  className="px-5 py-2 text-sm font-semibold text-white bg-black rounded-lg hover:bg-gray-900 disabled:opacity-50 flex items-center gap-2"
+                  className="px-5 py-2 text-sm font-semibold text-white bg-black rounded-lg hover:bg-gray-900 disabled:opacity-50 flex items-center gap-2 cursor-pointer"
                   onClick={handleSubmit}
                   disabled={submitting}
                 >
                   {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
-                  {submitting ? "Đang đăng..." : postType === "video" ? "Đăng video" : "Đăng bài"}
+                  {submitting
+                    ? "Posting..."
+                    : postType === "video"
+                    ? "Post Video"
+                    : "Post"}
                 </button>
               </div>
             </div>

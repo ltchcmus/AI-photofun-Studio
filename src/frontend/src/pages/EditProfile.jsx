@@ -59,7 +59,7 @@ const EditProfile = () => {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.message || "Không thể tải thông tin hồ sơ");
+          throw new Error(data.message || "Unable to load profile information");
         }
 
         const profile = data.result || data.data || data;
@@ -73,7 +73,7 @@ const EditProfile = () => {
           avatarFile: null,
         }));
       } catch (error) {
-        const msg = error.message || "Không thể tải thông tin hồ sơ";
+        const msg = error.message || "Unable to load profile information";
         setStatus({ error: msg, success: "" });
         toast.error(msg);
       } finally {
@@ -104,7 +104,7 @@ const EditProfile = () => {
 
         const data = await response.json();
         if (!response.ok) {
-          throw new Error(data.message || "Không thể tải thông tin tài khoản");
+          throw new Error(data.message || "Unable to load account information");
         }
 
         const rawUser =
@@ -182,7 +182,7 @@ const EditProfile = () => {
         const uploadJson = await uploadResponse.json();
         if (!uploadResponse.ok) {
           throw new Error(
-            uploadJson.message || "Không thể cập nhật ảnh đại diện"
+            uploadJson.message || "Unable to update profile photo"
           );
         }
 
@@ -217,7 +217,7 @@ const EditProfile = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Không thể cập nhật hồ sơ");
+        throw new Error(data.message || "Unable to update profile");
       }
 
       setFormData((prev) => ({
@@ -230,13 +230,13 @@ const EditProfile = () => {
         setPreviewAvatar(null);
       }
 
-      const successMsg = data.message || "Đã cập nhật hồ sơ thành công";
+      const successMsg = data.message || "Profile updated successfully";
       setStatus({ error: "", success: successMsg });
       toast.success(successMsg);
 
       setTimeout(() => navigate("/profile"), 1200);
     } catch (error) {
-      const errorMsg = error.message || "Không thể cập nhật hồ sơ";
+      const errorMsg = error.message || "Unable to update profile";
       setStatus({ success: "", error: errorMsg });
       toast.error(errorMsg);
     } finally {
@@ -264,7 +264,7 @@ const EditProfile = () => {
               type="button"
               onClick={() => navigate("/profile")}
               className="p-2 bg-gray-50 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition-colors"
-              title="Đóng"
+              title="Close"
             >
               <X className="w-5 h-5" />
             </button>
@@ -273,7 +273,7 @@ const EditProfile = () => {
           <form onSubmit={handleSubmit} className="p-6 md:p-8">
             {fetchingProfile && (
               <div className="mb-6 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600">
-                Đang tải thông tin hồ sơ...
+                Loading profile information...
               </div>
             )}
             <div className="flex flex-col items-center mb-10">
@@ -293,7 +293,7 @@ const EditProfile = () => {
                 <label
                   htmlFor="avatar-upload"
                   className="absolute bottom-1 right-1 bg-blue-600 p-2.5 rounded-full text-white shadow-lg cursor-pointer hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all ring-4 ring-white"
-                  title="Thay đổi ảnh đại diện"
+                  title="Change profile photo"
                 >
                   <Camera className="w-4 h-4" />
                 </label>
@@ -308,10 +308,10 @@ const EditProfile = () => {
                 />
               </div>
               <p className="mt-4 text-sm text-gray-500 font-medium">
-                Click vào ảnh để thay đổi
+                Click on the photo to change
               </p>
               <p className="text-xs text-gray-400 mt-1">
-                Cho phép: JPG, GIF hoặc PNG. Tối đa 5MB.
+                Allowed: JPG, GIF or PNG. Max 5MB.
               </p>
             </div>
 

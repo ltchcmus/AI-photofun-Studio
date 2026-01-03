@@ -7,12 +7,12 @@ import { toast } from "../hooks/use-toast";
 
 // Models for Image to Video
 const IMAGE_TO_VIDEO_MODELS = [
-    { value: "wan2.6-i2v", label: "wan2.6-i2v (Mặc định)", description: "Chất lượng cao" },
-    { value: "wan2.2-i2v-plus", label: "wan2.2-i2v-plus", description: "Phiên bản Plus" },
-    { value: "wan2.5-i2v-preview", label: "wan2.5-i2v-preview", description: "Preview mới" },
-    { value: "wan2.2-i2v-flash", label: "wan2.2-i2v-flash", description: "Nhanh hơn" },
-    { value: "wan2.1-i2v-turbo", label: "wan2.1-i2v-turbo", description: "Turbo - nhanh nhất" },
-    { value: "wan2.1-i2v-plus", label: "wan2.1-i2v-plus", description: "Phiên bản Plus cũ" },
+    { value: "wan2.6-i2v", label: "wan2.6-i2v (Default)", description: "High quality" },
+    { value: "wan2.2-i2v-plus", label: "wan2.2-i2v-plus", description: "Plus version" },
+    { value: "wan2.5-i2v-preview", label: "wan2.5-i2v-preview", description: "New preview" },
+    { value: "wan2.2-i2v-flash", label: "wan2.2-i2v-flash", description: "Faster" },
+    { value: "wan2.1-i2v-turbo", label: "wan2.1-i2v-turbo", description: "Turbo - fastest" },
+    { value: "wan2.1-i2v-plus", label: "wan2.1-i2v-plus", description: "Old Plus version" },
 ];
 
 const ImageToVideo = () => {
@@ -56,11 +56,11 @@ const ImageToVideo = () => {
                 console.log("Image URL set:", uploadedUrl);
             } else {
                 console.error("No URL found in response:", result);
-                toast.error("Không thể upload ảnh. Vui lòng thử lại.");
+                toast.error("Unable to upload image. Please try again.");
             }
         } catch (err) {
             console.error("Upload error:", err);
-            toast.error("Lỗi upload: " + err.message);
+            toast.error("Upload error: " + err.message);
         } finally {
             setUploading(false);
         }
@@ -93,7 +93,7 @@ const ImageToVideo = () => {
         const result = await pollVideoTaskStatus(
             id,
             "image-to-video",
-            (status) => setTaskStatus(status || "Đang xử lý..."),
+            (status) => setTaskStatus(status || "Processing..."),
             1 // Only poll once, will be called again by interval
         );
 
@@ -111,11 +111,11 @@ const ImageToVideo = () => {
     // Start video generation
     const handleGenerate = async () => {
         if (!imageUrl) {
-            toast.warning("Vui lòng upload ảnh hoặc nhập URL ảnh.");
+            toast.warning("Please upload an image or enter an image URL.");
             return;
         }
         if (!prompt.trim()) {
-            toast.warning("Vui lòng nhập mô tả chuyển động.");
+            toast.warning("Please enter a motion description.");
             return;
         }
 
@@ -123,7 +123,7 @@ const ImageToVideo = () => {
         setLoading(true);
         setVideoUrl(null);
         setTaskId(null);
-        setTaskStatus("Đang khởi tạo...");
+        setTaskStatus("Initializing...");
 
         const result = await generateVideoFromImage({
             imageUrl: imageUrl,
@@ -133,7 +133,7 @@ const ImageToVideo = () => {
 
         if (result.success && result.taskId) {
             setTaskId(result.taskId);
-            setTaskStatus("Đang tạo video...");
+            setTaskStatus("Generating video...");
 
             // Start polling
             pollIntervalRef.current = setInterval(() => {
@@ -143,7 +143,7 @@ const ImageToVideo = () => {
             // Initial poll
             setTimeout(() => pollStatus(result.taskId), 1000);
         } else {
-            toast.error(result.error || "Không thể tạo video. Vui lòng thử lại.");
+            toast.error(result.error || "Unable to generate video. Please try again.");
             setLoading(false);
         }
     };
@@ -210,7 +210,7 @@ const ImageToVideo = () => {
                 <h1 className="text-lg md:text-xl font-bold flex items-center gap-2">
                     <Film className="w-5 h-5 text-purple-500" /> Image to Video
                 </h1>
-                <div className="text-xs text-gray-400">Beta</div>
+
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -218,7 +218,7 @@ const ImageToVideo = () => {
                 <section className="space-y-6">
                     {/* Image Upload */}
                     <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                        <h2 className="text-xl font-bold mb-4">Upload Ảnh Gốc</h2>
+                        <h2 className="text-xl font-bold mb-4">Upload Source Image</h2>
 
                         <div
                             className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-colors ${dragOver
@@ -233,7 +233,7 @@ const ImageToVideo = () => {
                             {uploading ? (
                                 <div className="py-4">
                                     <div className="w-8 h-8 border-2 border-gray-300 border-t-purple-500 rounded-full animate-spin mx-auto mb-2" />
-                                    <p className="text-gray-600">Đang upload...</p>
+                                    <p className="text-gray-600">Uploading...</p>
                                 </div>
                             ) : uploadedPreview ? (
                                 <div className="relative">
@@ -250,19 +250,19 @@ const ImageToVideo = () => {
                                         }}
                                         className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-xs"
                                     >
-                                        Xóa
+                                        Remove
                                     </button>
                                 </div>
                             ) : (
                                 <>
                                     <Upload className="w-12 h-12 mx-auto mb-3 text-gray-400" />
-                                    <p className="text-gray-600 font-medium">Kéo thả ảnh vào đây</p>
-                                    <p className="text-xs text-gray-500 mb-4">hoặc click để chọn file</p>
+                                    <p className="text-gray-600 font-medium">Drag & drop image here</p>
+                                    <p className="text-xs text-gray-500 mb-4">or click to select file</p>
                                     <button
                                         type="button"
                                         className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-semibold"
                                     >
-                                        Chọn Ảnh
+                                        Select Image
                                     </button>
                                 </>
                             )}
@@ -278,7 +278,7 @@ const ImageToVideo = () => {
                         {/* Or URL input */}
                         <div className="mt-4">
                             <label className="block text-sm font-semibold mb-2">
-                                Hoặc nhập URL ảnh
+                                Or enter image URL
                             </label>
                             <input
                                 type="text"
@@ -292,7 +292,7 @@ const ImageToVideo = () => {
 
                     {/* Prompt & Model */}
                     <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                        <h2 className="text-xl font-bold mb-4">Mô Tả Chuyển Động</h2>
+                        <h2 className="text-xl font-bold mb-4">Motion Description</h2>
 
                         <div className="space-y-4">
                             <div>
@@ -300,7 +300,7 @@ const ImageToVideo = () => {
                                 <textarea
                                     value={prompt}
                                     onChange={(e) => setPrompt(e.target.value)}
-                                    placeholder="Mô tả cách bạn muốn ảnh chuyển động, ví dụ: Chủ thể đang cử động nhẹ nhàng, gió thổi qua tóc..."
+                                    placeholder="Describe how you want the image to move, e.g., Subject is gently moving, wind blowing through hair..."
                                     className="w-full border border-gray-300 rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-purple-500 min-h-[100px] text-sm"
                                 />
                             </div>
@@ -332,11 +332,11 @@ const ImageToVideo = () => {
                             {loading ? (
                                 <>
                                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                    {taskStatus || "Đang xử lý..."}
+                                    {taskStatus || "Processing..."}
                                 </>
                             ) : (
                                 <>
-                                    <Play className="w-5 h-5" /> Tạo Video
+                                    <Play className="w-5 h-5" /> Generate Video
                                 </>
                             )}
                         </button>
@@ -349,7 +349,7 @@ const ImageToVideo = () => {
                         <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
                             <div className="aspect-video rounded-2xl bg-gray-50 flex flex-col items-center justify-center">
                                 <div className="w-16 h-16 border-4 border-gray-200 border-t-purple-500 rounded-full animate-spin mb-4" />
-                                <p className="font-semibold text-gray-700">Đang tạo video...</p>
+                                <p className="font-semibold text-gray-700">Generating video...</p>
                                 <p className="text-sm text-gray-500">{taskStatus}</p>
                                 {taskId && (
                                     <p className="text-xs text-gray-400 mt-2">Task ID: {taskId}</p>
@@ -361,7 +361,7 @@ const ImageToVideo = () => {
                     {videoUrl && (
                         <>
                             <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                                <h2 className="text-lg font-bold mb-4">Video Đã Tạo</h2>
+                                <h2 className="text-lg font-bold mb-4">Generated Video</h2>
                                 <div className="aspect-video rounded-2xl bg-black overflow-hidden">
                                     <video
                                         controls
@@ -370,7 +370,7 @@ const ImageToVideo = () => {
                                         className="w-full h-full object-contain"
                                     >
                                         <source src={videoUrl} type="video/mp4" />
-                                        Trình duyệt không hỗ trợ video.
+                                        Your browser does not support video.
                                     </video>
                                 </div>
                             </div>
@@ -382,27 +382,27 @@ const ImageToVideo = () => {
                                         onClick={handleDownload}
                                         className="flex items-center justify-center gap-2 py-3 rounded-xl bg-black text-white font-semibold hover:bg-gray-800"
                                     >
-                                        <Download className="w-4 h-4" /> Tải Xuống
+                                        <Download className="w-4 h-4" /> Download
                                     </button>
                                     <button
                                         type="button"
                                         onClick={handleShare}
                                         className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:from-purple-700 hover:to-pink-700"
                                     >
-                                        <Share2 className="w-4 h-4" /> Chia Sẻ
+                                        <Share2 className="w-4 h-4" /> Share
                                     </button>
                                     <button
                                         type="button"
                                         onClick={handleReset}
                                         className="flex items-center justify-center gap-2 py-3 rounded-xl border border-gray-300 font-semibold hover:bg-gray-50"
                                     >
-                                        Tạo Mới
+                                        Create New
                                     </button>
                                 </div>
                             </div>
 
                             <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                                <h3 className="font-bold mb-3">Chi Tiết</h3>
+                                <h3 className="font-bold mb-3">Details</h3>
                                 <div className="space-y-2 text-sm">
                                     <div>
                                         <span className="text-gray-500">Model: </span>
@@ -422,9 +422,9 @@ const ImageToVideo = () => {
                             <div className="aspect-video border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center">
                                 <div className="text-center p-8">
                                     <Film className="w-12 h-12 mx-auto text-gray-400 mb-3" />
-                                    <p className="font-semibold text-gray-700 mb-1">Chưa có video</p>
+                                    <p className="font-semibold text-gray-700 mb-1">No video yet</p>
                                     <p className="text-sm text-gray-500">
-                                        Upload ảnh, nhập mô tả chuyển động và nhấn "Tạo Video"
+                                        Upload an image, enter motion description and click "Generate Video"
                                     </p>
                                 </div>
                             </div>
