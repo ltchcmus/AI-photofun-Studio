@@ -14,11 +14,14 @@ import {
   Crown,
 } from "lucide-react";
 import PremiumUpgradeCTA from "../components/common/PremiumUpgradeCTA";
+import PremiumFeatureModal from "../components/common/PremiumFeatureModal";
 import { useAuthContext } from "../context/AuthContext";
 
 const CreateWithAI = () => {
   const [currentView, setCurrentView] = useState("tool-selection");
   const [selectedTool, setSelectedTool] = useState(null);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
+  const [premiumFeatureName, setPremiumFeatureName] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem("darkMode") === "true";
   });
@@ -123,7 +126,8 @@ const CreateWithAI = () => {
   const handleSelectTool = (tool) => {
     // Check if tool requires premium and user is not premium
     if (tool.premiumOnly && !isPremium) {
-      navigate("/pricing");
+      setPremiumFeatureName(tool.title);
+      setShowPremiumModal(true);
       return;
     }
 
@@ -173,7 +177,15 @@ const CreateWithAI = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <d{/* Premium Feature Modal */}
+      <PremiumFeatureModal
+        isOpen={showPremiumModal}
+        onClose={() => setShowPremiumModal(false)}
+        featureName={premiumFeatureName}
+        isDarkMode={isDarkMode}
+      />
+
+      iv className="space-y-6">
       <header
         className={`${
           isDarkMode
