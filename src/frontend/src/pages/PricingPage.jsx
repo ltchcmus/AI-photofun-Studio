@@ -172,13 +172,13 @@ const PricingPage = () => {
           className={`absolute -left-20 top-10 h-64 w-64 rounded-full ${
             isDarkMode ? "bg-cyan-500/5" : "bg-cyan-300/10"
           } blur-3xl animate-float`}
-          style={{ animationDelay: '0s', animationDuration: '8s' }}
+          style={{ animationDelay: "0s", animationDuration: "8s" }}
         />
         <div
           className={`absolute right-0 top-20 h-72 w-72 rounded-full ${
             isDarkMode ? "bg-amber-500/10" : "bg-amber-200/20"
           } blur-3xl animate-float`}
-          style={{ animationDelay: '2s', animationDuration: '10s' }}
+          style={{ animationDelay: "2s", animationDuration: "10s" }}
         />
         <div
           className={`absolute inset-x-6 top-28 h-72 rounded-3xl bg-gradient-to-r ${
@@ -239,11 +239,13 @@ const PricingPage = () => {
                 }`}
               >
                 {/* Glow effect on hover */}
-                <div className={`absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 ${
-                  isDarkMode
-                    ? "bg-gradient-to-br from-slate-600/20 via-transparent to-slate-700/20"
-                    : "bg-gradient-to-br from-slate-100/50 via-transparent to-slate-200/50"
-                }`} />
+                <div
+                  className={`absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 ${
+                    isDarkMode
+                      ? "bg-gradient-to-br from-slate-600/20 via-transparent to-slate-700/20"
+                      : "bg-gradient-to-br from-slate-100/50 via-transparent to-slate-200/50"
+                  }`}
+                />
                 <div
                   className={`absolute inset-0 opacity-70 bg-gradient-to-br ${plan.accent}`}
                 />
@@ -312,7 +314,10 @@ const PricingPage = () => {
                     }`}
                   >
                     {plan.features.map((item, index) => (
-                      <li key={item} className="flex items-center gap-3 group/feature">
+                      <li
+                        key={item}
+                        className="flex items-center gap-3 group/feature"
+                      >
                         <span
                           className={`flex h-6 w-6 items-center justify-center rounded-full transition-all duration-300 group-hover/card:scale-110 group-hover/feature:rotate-12 ${
                             isDarkMode
@@ -323,7 +328,9 @@ const PricingPage = () => {
                         >
                           <Check className="h-3.5 w-3.5" />
                         </span>
-                        <span className="leading-snug transition-colors duration-300 group-hover/feature:font-medium">{item}</span>
+                        <span className="leading-snug transition-colors duration-300 group-hover/feature:font-medium">
+                          {item}
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -378,13 +385,17 @@ const PricingPage = () => {
           >
             <span
               className={`h-px w-6 transition-all duration-500 group-hover/footer:w-12 ${
-                isDarkMode ? "bg-slate-700 group-hover/footer:bg-slate-600" : "bg-slate-200 group-hover/footer:bg-slate-300"
+                isDarkMode
+                  ? "bg-slate-700 group-hover/footer:bg-slate-600"
+                  : "bg-slate-200 group-hover/footer:bg-slate-300"
               }`}
             />
             Thoughtfully simple — cancel anytime
             <span
               className={`h-px w-6 transition-all duration-500 group-hover/footer:w-12 ${
-                isDarkMode ? "bg-slate-700 group-hover/footer:bg-slate-600" : "bg-slate-200 group-hover/footer:bg-slate-300"
+                isDarkMode
+                  ? "bg-slate-700 group-hover/footer:bg-slate-600"
+                  : "bg-slate-200 group-hover/footer:bg-slate-300"
               }`}
             />
           </div>
