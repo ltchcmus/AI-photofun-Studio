@@ -121,141 +121,116 @@ const PremiumUpgradeCTA = ({
     );
   }
 
-  // Card variant - feature-rich card
+  // Card variant - elegant minimal banner
   if (variant === "card") {
-    const features = [
-      "2000 tokens per day",
-      "Priority generation queue",
-      "All AI tools unlocked",
-      "24/7 Premium support",
-    ];
-
     return (
       <div
         className={`group/card relative overflow-hidden ${
           isDarkMode
-            ? "bg-slate-800 border-slate-700"
-            : "bg-white border-slate-200"
-        } border-2 rounded-2xl p-6 ${className} animate-fade-in transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1`}
+            ? "bg-slate-800/50 border-slate-700/60"
+            : "bg-slate-50/80 border-slate-200/60"
+        } backdrop-blur-sm border rounded-2xl ${className} animate-fade-in transition-all duration-500 hover:border-slate-600 hover:shadow-xl ${
+          isDarkMode ? "hover:shadow-slate-900/40" : "hover:shadow-slate-900/10"
+        }`}
       >
-        {/* Animated background */}
+        {/* Subtle gradient background */}
         <div
-          className={`absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 ${
+          className={`absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-700 ${
             isDarkMode
-              ? "bg-gradient-to-br from-amber-500/10 via-transparent to-purple-500/10"
-              : "bg-gradient-to-br from-amber-100/50 via-transparent to-purple-100/50"
+              ? "bg-gradient-to-r from-amber-500/5 via-transparent to-purple-500/5"
+              : "bg-gradient-to-r from-amber-100/30 via-transparent to-purple-100/30"
           }`}
         />
 
-        {/* Floating sparkles */}
-        <div className="absolute top-4 right-4 opacity-20 group-hover/card:opacity-40 transition-opacity">
-          <Sparkles
-            className={`w-12 h-12 ${
-              isDarkMode ? "text-amber-400" : "text-amber-500"
-            } animate-pulse-subtle`}
-          />
-        </div>
-
-        <div className="relative space-y-4">
-          {/* Header */}
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
+        <div className="relative p-6">
+          <div className="flex items-center justify-between gap-6">
+            {/* Left side - Icon and text */}
+            <div className="flex items-center gap-4 flex-1">
               <div
-                className={`w-12 h-12 ${
-                  isDarkMode
-                    ? "bg-gradient-to-br from-amber-500 to-amber-600"
-                    : "bg-gradient-to-br from-amber-400 to-amber-500"
-                } rounded-xl flex items-center justify-center shadow-lg ${
-                  isDarkMode ? "shadow-amber-500/20" : "shadow-amber-500/30"
-                } group-hover/card:scale-110 group-hover/card:rotate-6 transition-all duration-500`}
+                className={`relative w-12 h-12 ${
+                  isDarkMode ? "bg-slate-700/50" : "bg-white"
+                } rounded-xl flex items-center justify-center shadow-sm group-hover/card:scale-110 transition-all duration-500`}
               >
-                <Crown className="w-6 h-6 text-white" />
+                <Crown
+                  className={`w-6 h-6 ${
+                    isDarkMode ? "text-amber-400" : "text-amber-600"
+                  } group-hover/card:rotate-12 transition-transform duration-500`}
+                />
+                {/* Glow effect */}
+                <div
+                  className={`absolute inset-0 rounded-xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 ${
+                    isDarkMode ? "bg-amber-500/10" : "bg-amber-400/10"
+                  } blur-md`}
+                />
               </div>
-              <div>
+
+              <div className="space-y-1">
                 <h3
-                  className={`font-bold text-lg ${
+                  className={`font-semibold ${
                     isDarkMode ? "text-white" : "text-slate-900"
                   }`}
                 >
-                  Go Premium
+                  Unlock Premium Features
                 </h3>
                 <p
                   className={`text-sm ${
                     isDarkMode ? "text-slate-400" : "text-slate-600"
                   }`}
                 >
-                  Unlock your full potential
+                  2000 tokens daily • Priority queue • All tools unlocked
                 </p>
               </div>
             </div>
 
-            {showClose && onClose && (
+            {/* Right side - CTA */}
+            <div className="flex items-center gap-3">
+              <div className="hidden sm:flex flex-col items-end">
+                <span
+                  className={`text-xs uppercase tracking-wider ${
+                    isDarkMode ? "text-slate-500" : "text-slate-400"
+                  }`}
+                >
+                  Starting at
+                </span>
+                <span
+                  className={`text-lg font-bold ${
+                    isDarkMode ? "text-white" : "text-slate-900"
+                  }`}
+                >
+                  $5/mo
+                </span>
+              </div>
+
               <button
-                onClick={onClose}
-                className={`${
+                onClick={handleUpgradeClick}
+                className={`group/btn relative overflow-hidden px-6 py-2.5 rounded-xl font-medium transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 active:scale-95 flex items-center gap-2 ${
                   isDarkMode
-                    ? "hover:bg-slate-700 text-slate-400"
-                    : "hover:bg-slate-100 text-slate-500"
-                } p-2 rounded-lg transition-colors`}
+                    ? "bg-slate-100 text-slate-900 hover:bg-white hover:shadow-lg"
+                    : "bg-slate-900 text-white hover:bg-slate-800 hover:shadow-lg hover:shadow-slate-900/30"
+                }`}
               >
-                <X className="w-4 h-4" />
+                {/* Shimmer effect */}
+                <span className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                <span className="relative flex items-center gap-2">
+                  Upgrade
+                  <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                </span>
               </button>
-            )}
-          </div>
 
-          {/* Features */}
-          <ul className="space-y-2.5">
-            {features.map((feature, index) => (
-              <li
-                key={index}
-                className="flex items-center gap-3 group/feature"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <span
-                  className={`flex h-5 w-5 items-center justify-center rounded-full transition-all duration-300 ${
+              {showClose && onClose && (
+                <button
+                  onClick={onClose}
+                  className={`${
                     isDarkMode
-                      ? "bg-emerald-900/30 text-emerald-400 ring-1 ring-emerald-700"
-                      : "bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200"
-                  }`}
+                      ? "hover:bg-slate-700 text-slate-400 hover:text-white"
+                      : "hover:bg-slate-100 text-slate-500 hover:text-slate-900"
+                  } p-2 rounded-lg transition-all duration-200`}
                 >
-                  <Check className="h-3 w-3" />
-                </span>
-                <span
-                  className={`text-sm ${
-                    isDarkMode ? "text-slate-300" : "text-slate-700"
-                  }`}
-                >
-                  {feature}
-                </span>
-              </li>
-            ))}
-          </ul>
-
-          {/* CTA */}
-          <button
-            onClick={handleUpgradeClick}
-            className={`group/btn relative overflow-hidden w-full py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2 ${
-              isDarkMode
-                ? "bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 hover:shadow-xl hover:shadow-amber-500/40"
-                : "bg-gradient-to-r from-slate-900 to-slate-800 text-white hover:shadow-xl hover:shadow-slate-900/40"
-            }`}
-          >
-            {/* Shimmer effect */}
-            <span className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-            <span className="relative flex items-center gap-2">
-              Upgrade Now
-              <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-            </span>
-          </button>
-
-          {/* Price hint */}
-          <p
-            className={`text-center text-xs ${
-              isDarkMode ? "text-slate-500" : "text-slate-400"
-            }`}
-          >
-            Starting from <span className="font-semibold">$5/month</span>
-          </p>
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     );
