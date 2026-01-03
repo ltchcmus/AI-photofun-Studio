@@ -12,6 +12,8 @@ import {
   Video,
   MessageCircle,
 } from "lucide-react";
+import PremiumUpgradeCTA from "../components/common/PremiumUpgradeCTA";
+import { useAuthContext } from "../context/AuthContext";
 
 const CreateWithAI = () => {
   const [currentView, setCurrentView] = useState("tool-selection");
@@ -19,7 +21,16 @@ const CreateWithAI = () => {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem("darkMode") === "true";
   });
+  const { user } = useAuthContext();
   const navigate = useNavigate();
+
+  // Check if user is premium
+  const isPremium = Boolean(
+    user?.isPremium ||
+      user?.premium ||
+      user?.premiumOneMonth ||
+      user?.premiumSixMonths
+  );
 
   // Listen for dark mode changes
   useEffect(() => {
@@ -399,6 +410,13 @@ const CreateWithAI = () => {
               </button>
             ))}
           </div>
+
+          {/* Premium CTA Card - Show to non-premium users */}
+          {!isPremium && (
+            <div className="mt-8">
+              <PremiumUpgradeCTA variant="card" />
+            </div>
+          )}
         </section>
       )}
 
