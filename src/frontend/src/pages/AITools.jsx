@@ -234,7 +234,7 @@ const CreateWithAI = () => {
               className={`text-sm ${
                 isDarkMode ? "text-slate-400" : "text-gray-500"
               } animate-fade-in`}
-              style={{ animationDelay: '100ms' }}
+              style={{ animationDelay: "100ms" }}
             >
               Select a powerful AI tool to bring your creative vision to life
             </p>
@@ -254,12 +254,14 @@ const CreateWithAI = () => {
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 {/* Glow effect on hover */}
-                <div className={`absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 ${
-                  isDarkMode
-                    ? "bg-gradient-to-br from-slate-600/30 via-transparent to-slate-700/30"
-                    : "bg-gradient-to-br from-gray-100/80 via-transparent to-gray-200/80"
-                }`} />
-                
+                <div
+                  className={`absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 ${
+                    isDarkMode
+                      ? "bg-gradient-to-br from-slate-600/30 via-transparent to-slate-700/30"
+                      : "bg-gradient-to-br from-gray-100/80 via-transparent to-gray-200/80"
+                  }`}
+                />
+
                 {/* Subtle background shape */}
                 <div
                   className={`absolute top-0 right-0 w-32 h-32 ${
@@ -303,7 +305,9 @@ const CreateWithAI = () => {
                       isDarkMode ? "text-slate-300" : "text-gray-900"
                     } group-hover/card:translate-x-2 transition-all duration-300`}
                   >
-                    <span className="group-hover/card:font-semibold transition-all">Get Started</span>
+                    <span className="group-hover/card:font-semibold transition-all">
+                      Get Started
+                    </span>
                     <svg
                       className="w-4 h-4 ml-1 group-hover/card:translate-x-1 group-hover/card:scale-110 transition-all duration-300"
                       fill="none"
@@ -327,7 +331,9 @@ const CreateWithAI = () => {
           <div className="flex items-center gap-4 group/divider">
             <div
               className={`flex-1 h-px transition-all duration-500 ${
-                isDarkMode ? "bg-slate-700 group-hover/divider:bg-slate-600" : "bg-gray-200 group-hover/divider:bg-gray-300"
+                isDarkMode
+                  ? "bg-slate-700 group-hover/divider:bg-slate-600"
+                  : "bg-gray-200 group-hover/divider:bg-gray-300"
               }`}
             ></div>
             <span
@@ -339,7 +345,9 @@ const CreateWithAI = () => {
             </span>
             <div
               className={`flex-1 h-px transition-all duration-500 ${
-                isDarkMode ? "bg-slate-700 group-hover/divider:bg-slate-600" : "bg-gray-200 group-hover/divider:bg-gray-300"
+                isDarkMode
+                  ? "bg-slate-700 group-hover/divider:bg-slate-600"
+                  : "bg-gray-200 group-hover/divider:bg-gray-300"
               }`}
             ></div>
           </div>
@@ -379,7 +387,9 @@ const CreateWithAI = () => {
                     </h4>
                     <p
                       className={`text-xs transition-colors duration-300 ${
-                        isDarkMode ? "text-slate-400 group-hover/tool:text-slate-300" : "text-gray-500 group-hover/tool:text-gray-600"
+                        isDarkMode
+                          ? "text-slate-400 group-hover/tool:text-slate-300"
+                          : "text-gray-500 group-hover/tool:text-gray-600"
                       } line-clamp-2`}
                     >
                       {tool.description}
