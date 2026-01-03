@@ -136,44 +136,64 @@ const ChatBot = () => {
           <div className="relative">
             <MessageCircle className="w-6 h-6 group-hover/bubble:rotate-12 transition-transform duration-300" />
             {/* Notification dot */}
-            <span className={`absolute -top-1 -right-1 w-3 h-3 ${
-              isDarkMode ? "bg-emerald-400" : "bg-emerald-500"
-            } rounded-full animate-pulse-subtle`}></span>
+            <span
+              className={`absolute -top-1 -right-1 w-3 h-3 ${
+                isDarkMode ? "bg-emerald-400" : "bg-emerald-500"
+              } rounded-full animate-pulse-subtle`}
+            ></span>
           </div>
         </button>
       )}
 
       {/* Chat Window */}
       {isOpen && (
-        <div className={`fixed bottom-6 right-6 z-50 w-96 h-[600px] ${
-          isDarkMode
-            ? "bg-slate-900 border-slate-700"
-            : "bg-white border-slate-200"
-        } rounded-2xl shadow-2xl flex flex-col overflow-hidden border-2 animate-fade-in`}>
-          {/* Header */}
-          <div className={`${
+        <div
+          className={`fixed bottom-6 right-6 z-50 w-96 h-[600px] ${
             isDarkMode
-              ? "bg-slate-800 border-b border-slate-700"
-              : "bg-slate-50 border-b border-slate-200"
-          } p-4 flex items-center justify-between`}>
+              ? "bg-slate-900 border-slate-700"
+              : "bg-white border-slate-200"
+          } rounded-2xl shadow-2xl flex flex-col overflow-hidden border-2 animate-fade-in`}
+        >
+          {/* Header */}
+          <div
+            className={`${
+              isDarkMode
+                ? "bg-slate-800 border-b border-slate-700"
+                : "bg-slate-50 border-b border-slate-200"
+            } p-4 flex items-center justify-between`}
+          >
             <div className="flex items-center gap-3">
-              <div className={`relative w-10 h-10 ${
-                isDarkMode ? "bg-slate-700" : "bg-white"
-              } rounded-xl flex items-center justify-center shadow-sm group/icon`}>
-                <Sparkles className={`w-5 h-5 ${
-                  isDarkMode ? "text-slate-100" : "text-slate-900"
-                } group-hover/icon:rotate-12 transition-transform duration-300`} />
-                <span className={`absolute inset-0 rounded-xl opacity-0 group-hover/icon:opacity-100 transition-opacity duration-300 ${
-                  isDarkMode ? "bg-slate-600/20" : "bg-slate-100"
-                }`}></span>
+              <div
+                className={`relative w-10 h-10 ${
+                  isDarkMode ? "bg-slate-700" : "bg-white"
+                } rounded-xl flex items-center justify-center shadow-sm group/icon`}
+              >
+                <Sparkles
+                  className={`w-5 h-5 ${
+                    isDarkMode ? "text-slate-100" : "text-slate-900"
+                  } group-hover/icon:rotate-12 transition-transform duration-300`}
+                />
+                <span
+                  className={`absolute inset-0 rounded-xl opacity-0 group-hover/icon:opacity-100 transition-opacity duration-300 ${
+                    isDarkMode ? "bg-slate-600/20" : "bg-slate-100"
+                  }`}
+                ></span>
               </div>
               <div>
-                <h3 className={`font-semibold ${
-                  isDarkMode ? "text-white" : "text-slate-900"
-                }`}>AI Assistant</h3>
-                <p className={`text-xs ${
-                  isDarkMode ? "text-slate-400" : "text-slate-500"
-                }`}>Always ready to help</p>
+                <h3
+                  className={`font-semibold ${
+                    isDarkMode ? "text-white" : "text-slate-900"
+                  }`}
+                >
+                  AI Assistant
+                </h3>
+                <p
+                  className={`text-xs ${
+                    isDarkMode ? "text-slate-400" : "text-slate-500"
+                  }`}
+                >
+                  Always ready to help
+                </p>
               </div>
             </div>
             <button
@@ -190,15 +210,19 @@ const ChatBot = () => {
           </div>
 
           {/* Messages Area */}
-          <div className={`flex-1 overflow-y-auto p-4 space-y-4 ${
-            isDarkMode ? "bg-slate-900" : "bg-slate-50"
-          }`}>
+          <div
+            className={`flex-1 overflow-y-auto p-4 space-y-4 ${
+              isDarkMode ? "bg-slate-900" : "bg-slate-50"
+            }`}
+          >
             {error && (
-              <div className={`${
-                isDarkMode
-                  ? "bg-red-900/20 border-red-800 text-red-400"
-                  : "bg-red-50 border-red-200 text-red-700"
-              } border px-4 py-3 rounded-xl text-sm animate-fade-in`}>
+              <div
+                className={`${
+                  isDarkMode
+                    ? "bg-red-900/20 border-red-800 text-red-400"
+                    : "bg-red-50 border-red-200 text-red-700"
+                } border px-4 py-3 rounded-xl text-sm animate-fade-in`}
+              >
                 {error}
               </div>
             )}
@@ -235,7 +259,9 @@ const ChatBot = () => {
                       <div className="absolute inset-0 bg-slate-900/0 group-hover/img:bg-slate-900/10 transition-colors duration-300 rounded-lg"></div>
                     </div>
                   )}
-                  <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.text}</p>
+                  <p className="text-sm whitespace-pre-wrap leading-relaxed">
+                    {message.text}
+                  </p>
                   <p
                     className={`text-xs mt-2 ${
                       message.sender === "user"
@@ -255,11 +281,13 @@ const ChatBot = () => {
 
             {isTyping && (
               <div className="flex justify-start animate-fade-in">
-                <div className={`${
-                  isDarkMode
-                    ? "bg-slate-800 border-slate-700"
-                    : "bg-white border-slate-200"
-                } rounded-2xl rounded-bl-md px-4 py-3 shadow-sm border`}>
+                <div
+                  className={`${
+                    isDarkMode
+                      ? "bg-slate-800 border-slate-700"
+                      : "bg-white border-slate-200"
+                  } rounded-2xl rounded-bl-md px-4 py-3 shadow-sm border`}
+                >
                   <div className="flex gap-1.5">
                     <span
                       className={`w-2 h-2 ${
