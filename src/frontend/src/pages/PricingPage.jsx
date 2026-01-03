@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Check, Loader2, Star } from "lucide-react";
 import { useAuthContext } from "../context/AuthContext";
 import { toast } from "../hooks/use-toast";
@@ -65,6 +65,33 @@ const createPaymentUrl = async (user, planType) => {
 const PricingPage = () => {
   const { user, isAuthenticated } = useAuthContext();
   const [loadingPlan, setLoadingPlan] = useState(null);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem("darkMode") === "true";
+  });
+
+  // Listen for dark mode changes
+  useEffect(() => {
+    const checkDarkMode = () => {
+      const darkModeStorage = localStorage.getItem("darkMode") === "true";
+      const bodyHasDark = document.body.classList.contains("dark");
+      setIsDarkMode(darkModeStorage || bodyHasDark);
+    };
+
+    // Initial check
+    checkDarkMode();
+
+    // Listen for storage changes (when changed from another tab/window)
+    window.addEventListener("storage", checkDarkMode);
+    
+    // Listen for class changes on body (when changed in same tab via Sidebar)
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+
+    return () => {
+      window.removeEventListener("storage", checkDarkMode);
+      observer.disconnect();
+    };
+  }, []);
 
   const plans = useMemo(
     () => [
@@ -132,23 +159,23 @@ const PricingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 relative overflow-hidden">
+    <div className={`min-h-screen ${isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-white text-slate-900'} relative overflow-hidden`}>
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-20 top-10 h-64 w-64 rounded-full bg-cyan-300/10 blur-3xl" />
-        <div className="absolute right-0 top-20 h-72 w-72 rounded-full bg-amber-200/20 blur-3xl" />
-        <div className="absolute inset-x-6 top-28 h-72 rounded-3xl bg-gradient-to-r from-slate-50 via-white to-slate-50" />
+        <div className={`absolute -left-20 top-10 h-64 w-64 rounded-full ${isDarkMode ? 'bg-cyan-500/5' : 'bg-cyan-300/10'} blur-3xl`} />
+        <div className={`absolute right-0 top-20 h-72 w-72 rounded-full ${isDarkMode ? 'bg-amber-500/10' : 'bg-amber-200/20'} blur-3xl`} />
+        <div className={`absolute inset-x-6 top-28 h-72 rounded-3xl bg-gradient-to-r ${isDarkMode ? 'from-slate-800 via-slate-900 to-slate-800' : 'from-slate-50 via-white to-slate-50'}`} />
       </div>
 
       <div className="relative max-w-5xl mx-auto px-6 pb-16 pt-14 sm:pt-16 lg:pt-20">
         <header className="flex flex-col gap-4 text-center items-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-slate-900/5 px-4 py-2 text-xs uppercase tracking-[0.25em] text-slate-500 ring-1 ring-slate-900/10">
+          <span className={`inline-flex items-center gap-2 rounded-full ${isDarkMode ? 'bg-slate-100/10 text-slate-400 ring-slate-100/20' : 'bg-slate-900/5 text-slate-500 ring-slate-900/10'} px-4 py-2 text-xs uppercase tracking-[0.25em] ring-1`}>
             <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-500" />{" "}
             Premium access
           </span>
-          <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-slate-900">
+          <h1 className={`text-4xl sm:text-5xl font-semibold tracking-tight ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
             Pricing that stays out of the way
           </h1>
-          <p className="max-w-2xl text-sm sm:text-base text-slate-600">
+          <p className={`max-w-2xl text-sm sm:text-base ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
             Choose the pace that matches your workflow. Transparent pricing,
             elegant experience, no surprises.
           </p>
@@ -162,8 +189,8 @@ const PricingPage = () => {
             return (
               <div
                 key={plan.key}
-                className={`relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-7 shadow-[0_25px_70px_-45px_rgba(15,23,42,0.35)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-[0_30px_80px_-50px_rgba(15,23,42,0.45)] ${
-                  plan.highlight ? "ring-1 ring-amber-200/80" : ""
+                className={`relative overflow-hidden rounded-2xl border ${isDarkMode ? 'border-slate-700 bg-slate-800 shadow-[0_25px_70px_-45px_rgba(0,0,0,0.6)] hover:border-slate-600 hover:shadow-[0_30px_80px_-50px_rgba(0,0,0,0.7)]' : 'border-slate-200 bg-white shadow-[0_25px_70px_-45px_rgba(15,23,42,0.35)] hover:border-slate-300 hover:shadow-[0_30px_80px_-50px_rgba(15,23,42,0.45)]'} p-7 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 ${
+                  plan.highlight ? (isDarkMode ? 'ring-1 ring-amber-500/40' : 'ring-1 ring-amber-200/80') : ''
                 }`}
               >
                 <div
@@ -172,15 +199,15 @@ const PricingPage = () => {
                 <div className="relative flex flex-col h-full gap-6">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
+                      <p className={`text-xs uppercase tracking-[0.2em] ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
                         {plan.highlight ? "Best for momentum" : "Flexible"}
                       </p>
-                      <h2 className="mt-2 text-2xl font-semibold text-slate-900">
+                      <h2 className={`mt-2 text-2xl font-semibold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
                         {plan.name}
                       </h2>
                     </div>
                     {plan.badge ? (
-                      <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700 ring-1 ring-amber-200">
+                      <span className={`rounded-full ${isDarkMode ? 'bg-amber-900/30 text-amber-400 ring-amber-700' : 'bg-amber-50 text-amber-700 ring-amber-200'} px-3 py-1 text-xs font-medium ring-1`}>
                         {plan.badge}
                       </span>
                     ) : null}
@@ -188,20 +215,22 @@ const PricingPage = () => {
 
                   <div>
                     <div className="flex items-end gap-2">
-                      <span className="text-4xl font-semibold text-slate-900">
+                      <span className={`text-4xl font-semibold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
                         {plan.priceLabel}
                       </span>
-                      <span className="text-sm text-slate-500">
+                      <span className={`text-sm ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
                         {plan.cadence}
                       </span>
                     </div>
-                    <p className="mt-2 text-sm text-slate-600">{plan.blurb}</p>
+                    <p className={`mt-2 text-sm ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                      {plan.blurb}
+                    </p>
                   </div>
 
-                  <ul className="space-y-2.5 text-sm text-slate-800">
+                  <ul className={`space-y-2.5 text-sm ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>
                     {plan.features.map((item) => (
                       <li key={item} className="flex items-center gap-3">
-                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100">
+                        <span className={`flex h-6 w-6 items-center justify-center rounded-full ${isDarkMode ? 'bg-emerald-900/30 text-emerald-400 ring-emerald-700' : 'bg-emerald-50 text-emerald-600 ring-emerald-100'} ring-1`}>
                           <Check className="h-3.5 w-3.5" />
                         </span>
                         <span className="leading-snug">{item}</span>
@@ -214,10 +243,10 @@ const PricingPage = () => {
                       type="button"
                       onClick={() => handleSubscribe(plan.key)}
                       disabled={isDisabled}
-                      className={`group inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 ${
+                      className={`group inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${isDarkMode ? 'focus-visible:outline-slate-100' : 'focus-visible:outline-slate-900'} ${
                         plan.highlight
-                          ? "bg-slate-900 text-white hover:-translate-y-0.5"
-                          : "bg-slate-900/5 text-slate-900 hover:bg-slate-900/10 hover:-translate-y-0.5"
+                          ? (isDarkMode ? 'bg-slate-100 text-slate-900' : 'bg-slate-900 text-white') + ' hover:-translate-y-0.5'
+                          : (isDarkMode ? 'bg-slate-100/10 text-slate-100 hover:bg-slate-100/20' : 'bg-slate-900/5 text-slate-900 hover:bg-slate-900/10') + ' hover:-translate-y-0.5'
                       } disabled:opacity-60 disabled:cursor-not-allowed`}
                     >
                       {isLoading ? (
@@ -233,13 +262,13 @@ const PricingPage = () => {
           })}
         </div>
 
-        <div className="mt-12 flex flex-col items-center gap-3 text-center text-sm text-slate-600">
-          <div className="flex items-center gap-2 text-slate-500">
-            <span className="h-px w-6 bg-slate-200" />
+        <div className={`mt-12 flex flex-col items-center gap-3 text-center text-sm ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+          <div className={`flex items-center gap-2 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+            <span className={`h-px w-6 ${isDarkMode ? 'bg-slate-700' : 'bg-slate-200'}`} />
             Thoughtfully simple — cancel anytime
-            <span className="h-px w-6 bg-slate-200" />
+            <span className={`h-px w-6 ${isDarkMode ? 'bg-slate-700' : 'bg-slate-200'}`} />
           </div>
-          <p className="max-w-2xl text-slate-500">
+          <p className={`max-w-2xl ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
             We keep payments minimal: secure checkout, instant activation, and a
             clean dashboard to manage your subscription.
           </p>
