@@ -132,23 +132,23 @@ const PricingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 relative overflow-hidden">
+    <div className="min-h-screen bg-white text-slate-900 relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-20 top-10 h-64 w-64 rounded-full bg-cyan-400/10 blur-3xl" />
-        <div className="absolute right-0 top-20 h-72 w-72 rounded-full bg-amber-300/10 blur-3xl" />
-        <div className="absolute inset-x-0 bottom-[-30%] h-80 bg-gradient-to-t from-slate-900 via-slate-950" />
+        <div className="absolute -left-20 top-10 h-64 w-64 rounded-full bg-cyan-300/10 blur-3xl" />
+        <div className="absolute right-0 top-20 h-72 w-72 rounded-full bg-amber-200/20 blur-3xl" />
+        <div className="absolute inset-x-6 top-28 h-72 rounded-3xl bg-gradient-to-r from-slate-50 via-white to-slate-50" />
       </div>
 
       <div className="relative max-w-5xl mx-auto px-6 pb-16 pt-14 sm:pt-16 lg:pt-20">
         <header className="flex flex-col gap-4 text-center items-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.25em] text-slate-300/80 ring-1 ring-white/10">
-            <Star className="h-3.5 w-3.5 fill-amber-300 text-amber-300" />{" "}
+          <span className="inline-flex items-center gap-2 rounded-full bg-slate-900/5 px-4 py-2 text-xs uppercase tracking-[0.25em] text-slate-500 ring-1 ring-slate-900/10">
+            <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-500" />{" "}
             Premium access
           </span>
-          <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-white">
+          <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-slate-900">
             Pricing that stays out of the way
           </h1>
-          <p className="max-w-2xl text-sm sm:text-base text-slate-300">
+          <p className="max-w-2xl text-sm sm:text-base text-slate-600">
             Choose the pace that matches your workflow. Transparent pricing,
             elegant experience, no surprises.
           </p>
@@ -162,25 +162,25 @@ const PricingPage = () => {
             return (
               <div
                 key={plan.key}
-                className={`relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-7 shadow-[0_30px_80px_-35px_rgba(0,0,0,0.6)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_35px_90px_-40px_rgba(0,0,0,0.75)] ${
-                  plan.highlight ? "ring-1 ring-amber-200/30" : ""
+                className={`relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-7 shadow-[0_25px_70px_-45px_rgba(15,23,42,0.35)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-[0_30px_80px_-50px_rgba(15,23,42,0.45)] ${
+                  plan.highlight ? "ring-1 ring-amber-200/80" : ""
                 }`}
               >
                 <div
-                  className={`absolute inset-0 opacity-60 bg-gradient-to-br ${plan.accent}`}
+                  className={`absolute inset-0 opacity-70 bg-gradient-to-br ${plan.accent}`}
                 />
                 <div className="relative flex flex-col h-full gap-6">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.2em] text-slate-300/80">
+                      <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
                         {plan.highlight ? "Best for momentum" : "Flexible"}
                       </p>
-                      <h2 className="mt-2 text-2xl font-semibold text-white">
+                      <h2 className="mt-2 text-2xl font-semibold text-slate-900">
                         {plan.name}
                       </h2>
                     </div>
                     {plan.badge ? (
-                      <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-amber-100 ring-1 ring-amber-200/40">
+                      <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700 ring-1 ring-amber-200">
                         {plan.badge}
                       </span>
                     ) : null}
@@ -188,20 +188,20 @@ const PricingPage = () => {
 
                   <div>
                     <div className="flex items-end gap-2">
-                      <span className="text-4xl font-semibold text-white">
+                      <span className="text-4xl font-semibold text-slate-900">
                         {plan.priceLabel}
                       </span>
-                      <span className="text-sm text-slate-300">
+                      <span className="text-sm text-slate-500">
                         {plan.cadence}
                       </span>
                     </div>
-                    <p className="mt-2 text-sm text-slate-300">{plan.blurb}</p>
+                    <p className="mt-2 text-sm text-slate-600">{plan.blurb}</p>
                   </div>
 
-                  <ul className="space-y-2.5 text-sm text-slate-100/90">
+                  <ul className="space-y-2.5 text-sm text-slate-800">
                     {plan.features.map((item) => (
                       <li key={item} className="flex items-center gap-3">
-                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-emerald-200">
+                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100">
                           <Check className="h-3.5 w-3.5" />
                         </span>
                         <span className="leading-snug">{item}</span>
@@ -214,10 +214,10 @@ const PricingPage = () => {
                       type="button"
                       onClick={() => handleSubscribe(plan.key)}
                       disabled={isDisabled}
-                      className={`group inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${
+                      className={`group inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 ${
                         plan.highlight
-                          ? "bg-white text-slate-900 hover:-translate-y-0.5"
-                          : "bg-white/10 text-white hover:bg-white/15 hover:-translate-y-0.5"
+                          ? "bg-slate-900 text-white hover:-translate-y-0.5"
+                          : "bg-slate-900/5 text-slate-900 hover:bg-slate-900/10 hover:-translate-y-0.5"
                       } disabled:opacity-60 disabled:cursor-not-allowed`}
                     >
                       {isLoading ? (
@@ -233,13 +233,13 @@ const PricingPage = () => {
           })}
         </div>
 
-        <div className="mt-12 flex flex-col items-center gap-3 text-center text-sm text-slate-300">
-          <div className="flex items-center gap-2 text-slate-200">
-            <span className="h-px w-6 bg-white/20" />
+        <div className="mt-12 flex flex-col items-center gap-3 text-center text-sm text-slate-600">
+          <div className="flex items-center gap-2 text-slate-500">
+            <span className="h-px w-6 bg-slate-200" />
             Thoughtfully simple — cancel anytime
-            <span className="h-px w-6 bg-white/20" />
+            <span className="h-px w-6 bg-slate-200" />
           </div>
-          <p className="max-w-2xl text-slate-400">
+          <p className="max-w-2xl text-slate-500">
             We keep payments minimal: secure checkout, instant activation, and a
             clean dashboard to manage your subscription.
           </p>
