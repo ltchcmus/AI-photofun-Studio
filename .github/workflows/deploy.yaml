@@ -19,77 +19,46 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
-    name: "Deploy Application"
+  detect-changes:
+    name: "Detect Changes"
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      backendAI: ${{ steps.filter.outputs.backendAI }}
+      backendSocial: ${{ steps.filter.outputs.backendSocial }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check changed files
+        id: filter
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            frontend:
+              - 'src/frontend/**'
+            backendAI:
+              - 'src/backend/backendAI/**'
+            backendSocial:
+              - 'src/backend/backendSocial/**'
+
+  deploy-backend-social:
+    name: "Deploy Backend Social"
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backendSocial == 'true'
     runs-on: ubuntu-latest
     steps:
-      - name: "SSH"
+      - name: "Deploy Backend Social via SSH"
         env:
-          DEPLOY_PATH: "/var/www/html/nmcnpm.lethanhcong.site/"
           BRANCH: "test"
 
-          # Repository Variables
-          CORS_ORIGINS: ${{ vars.CORS_ORIGINS }}
-          DEBUG: ${{ vars.DEBUG }}
-          GPU_DEVICE_ID: ${{ vars.GPU_DEVICE_ID }}
-          MONGO_DB_NAME: ${{ vars.MONGO_DB_NAME }}
-          MONGO_URI: ${{ vars.MONGO_URI }}
-          SECRET_KEY: ${{ vars.SECRET_KEY }}
-          TIME_ZONE: ${{ vars.TIME_ZONE }}
-          USE_GPU: ${{ vars.USE_GPU }}
-          USE_TZ: ${{ vars.USE_TZ }}
-          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
-          VITE_GOOGLE_REDIRECT_URI: ${{ vars.VITE_GOOGLE_REDIRECT_URI }}
           GOOGLE_REDIRECT_FRONTEND: ${{ vars.GOOGLE_REDIRECT_FRONTEND }}
           GOOGLE_REDIRECT_FRONTEND_FAILURE: ${{ vars.GOOGLE_REDIRECT_FRONTEND_FAILURE }}
-          VITE_SOCIAL_GATWAY_API_URL: ${{ vars.VITE_SOCIAL_GATWAY_API_URL }}
-          VITE_TURN_CREDENTIAL_1: ${{ vars.VITE_TURN_CREDENTIAL_1 }}
-          VITE_TURN_CREDENTIAL_2: ${{ vars.VITE_TURN_CREDENTIAL_2 }}
-          VITE_TURN_URL_1: ${{ vars.VITE_TURN_URL_1 }}
-          VITE_TURN_URL_2: ${{ vars.VITE_TURN_URL_2 }}
-          VITE_TURN_USERNAME_1: ${{ vars.VITE_TURN_USERNAME_1 }}
-          VITE_TURN_USERNAME_2: ${{ vars.VITE_TURN_USERNAME_2 }}
-          VITE_API_GATEWAY: ${{ vars.VITE_API_GATEWAY }}
-          VITE_AI_API_URL: ${{ vars.VITE_AI_API_URL }}
-          VITE_SOCKET_URL: ${{ vars.VITE_SOCKET_URL }}
-          VITE_SOCKET_COMMENT_URL: ${{ vars.VITE_SOCKET_COMMENT_URL }}
-          VITE_COMMENT_API_URL: ${{ vars.VITE_COMMENT_API_URL }}
-          VITE_PAYMENT_API_URL: ${{ vars.VITE_PAYMENT_API_URL }}
-          VITE_FILE_UPLOAD_URL: ${{ vars.VITE_FILE_UPLOAD_URL }}
-          VITE_CHATBOT_API_URL: ${{ vars.VITE_CHATBOT_API_URL }}
-          MODELSTUDIO_API_BASE: ${{ vars.MODELSTUDIO_API_BASE }}
-          FREEPIK_API_KEY: ${{ secrets.FREEPIK_API_KEY }}
+          CORS_ORIGINS: ${{ vars.CORS_ORIGINS }}
 
-          # Repository Secrets
-          GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          SUPABASE_DB_HOST: ${{ secrets.SUPABASE_DB_HOST }}
-          SUPABASE_DB_NAME: ${{ secrets.SUPABASE_DB_NAME }}
-          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-          SUPABASE_DB_PORT: ${{ secrets.SUPABASE_DB_PORT }}
-          SUPABASE_DB_SSLMODE: ${{ secrets.SUPABASE_DB_SSLMODE }}
-          SUPABASE_DB_USER: ${{ secrets.SUPABASE_DB_USER }}
-          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
-          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
-          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
-          VITE_FIREBASE_MEASUREMENT_ID: ${{ secrets.VITE_FIREBASE_MEASUREMENT_ID }}
-          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
-          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
-          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
-          MODELSTUDIO_API_KEY: ${{ secrets.MODELSTUDIO_API_KEY }}
-          VITE_PAYMENT_API_KEY: ${{ secrets.VITE_PAYMENT_API_KEY }}
-          VITE_CHATBOT_BEARER_TOKEN: ${{ secrets.VITE_CHATBOT_BEARER_TOKEN }}
-          VITE_CHATBOT_USER_ID: ${{ secrets.VITE_CHATBOT_USER_ID }}
-          VITE_CHATBOT_X_API_KEY: ${{ secrets.VITE_CHATBOT_X_API_KEY }}
-          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          JWT_ALGORITHM: ${{ secrets.JWT_ALGORITHM }}
-          JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
-          JWT_AUDIENCE: ${{ secrets.JWT_AUDIENCE }}
-          TOKEN_SERVICE_URL: ${{ secrets.TOKEN_SERVICE_URL }}
-          TOKEN_API_KEY_1: ${{ secrets.TOKEN_API_KEY_1 }}
-          TOKEN_API_KEY_2: ${{ secrets.TOKEN_API_KEY_2 }}
-          TOKEN_SERVICE_TIMEOUT: ${{ secrets.TOKEN_SERVICE_TIMEOUT }}
 
         uses: appleboy/ssh-action@v0.1.6
         with:
@@ -98,7 +67,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE }}
           port: ${{ secrets.SSH_PORT }}
           command_timeout: 50m
-          envs: DEPLOY_PATH,BRANCH,DEBUG,MONGO_DB_NAME,MONGO_URI,SECRET_KEY,GEMINI_API_KEYS,GOOGLE_CLIENT_SECRET,OPENAI_API_KEY,FREEPIK_API_KEY,GOOGLE_REDIRECT_FRONTEND,GOOGLE_REDIRECT_FRONTEND_FAILURE,SUPABASE_DB_HOST,SUPABASE_DB_NAME,SUPABASE_DB_PASSWORD,SUPABASE_DB_PORT,SUPABASE_DB_SSLMODE,SUPABASE_DB_USER,VITE_GOOGLE_CLIENT_ID,VITE_GOOGLE_REDIRECT_URI,VITE_SOCIAL_GATWAY_API_URL,VITE_TURN_CREDENTIAL_1,VITE_TURN_CREDENTIAL_2,VITE_TURN_URL_1,VITE_TURN_URL_2,VITE_TURN_USERNAME_1,VITE_TURN_USERNAME_2,VITE_API_GATEWAY,VITE_AI_API_URL,VITE_FILE_UPLOAD_URL,VITE_SOCKET_URL,VITE_SOCKET_COMMENT_URL,VITE_COMMENT_API_URL,VITE_PAYMENT_API_URL,VITE_CHATBOT_API_URL,MODELSTUDIO_API_BASE,VITE_FIREBASE_API_KEY,VITE_FIREBASE_APP_ID,VITE_FIREBASE_AUTH_DOMAIN,VITE_FIREBASE_MEASUREMENT_ID,VITE_FIREBASE_MESSAGING_SENDER_ID,VITE_FIREBASE_PROJECT_ID,VITE_FIREBASE_STORAGE_BUCKET,MODELSTUDIO_API_KEY,VITE_PAYMENT_API_KEY,VITE_CHATBOT_BEARER_TOKEN,VITE_CHATBOT_USER_ID,VITE_CHATBOT_X_API_KEY,JWT_SECRET_KEY,JWT_ALGORITHM,JWT_ISSUER,JWT_AUDIENCE,TOKEN_SERVICE_URL,TOKEN_API_KEY_1,TOKEN_API_KEY_2,TOKEN_SERVICE_TIMEOUT,CORS_ORIGINS,TIME_ZONE,USE_TZ,USE_GPU,GPU_DEVICE_ID
+          envs: BRANCH,GOOGLE_CLIENT_SECRET,CORS_ORIGINS,GOOGLE_REDIRECT_FRONTEND,GOOGLE_REDIRECT_FRONTEND_FAILURE
           script: |
             WORKSPACE="/home/$USER/AI-photofun-Studio"
             if [ -d "$WORKSPACE" ]; then
@@ -116,7 +85,6 @@ jobs:
             echo "Deploying backendSocial..."
             cd $WORKSPACE/src/backend/backendSocial
 
-            # Create .env file for docker-compose to read
             cat > .env << EOF
             GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
             CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000,https://nmcnpm.lethanhcong.site:46337,$CORS_ORIGINS
@@ -136,6 +104,67 @@ jobs:
             sleep 15
             sudo docker-compose ps
             sudo docker-compose logs --tail=50 api-gateway
+  deploy-backend-ai:
+    name: "Deploy Backend AI"
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backendAI == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Deploy Backend AI via SSH"
+        env:
+          BRANCH: "test"
+
+          CORS_ORIGINS: ${{ vars.CORS_ORIGINS }}
+          DEBUG: ${{ vars.DEBUG }}
+          GPU_DEVICE_ID: ${{ vars.GPU_DEVICE_ID }}
+          MONGO_DB_NAME: ${{ vars.MONGO_DB_NAME }}
+          MONGO_URI: ${{ vars.MONGO_URI }}
+          SECRET_KEY: ${{ vars.SECRET_KEY }}
+          TIME_ZONE: ${{ vars.TIME_ZONE }}
+          USE_GPU: ${{ vars.USE_GPU }}
+          USE_TZ: ${{ vars.USE_TZ }}
+          MODELSTUDIO_API_BASE: ${{ vars.MODELSTUDIO_API_BASE }}
+          FREEPIK_API_KEY: ${{ secrets.FREEPIK_API_KEY }}
+
+          GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SUPABASE_DB_HOST: ${{ secrets.SUPABASE_DB_HOST }}
+          SUPABASE_DB_NAME: ${{ secrets.SUPABASE_DB_NAME }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_DB_PORT: ${{ secrets.SUPABASE_DB_PORT }}
+          SUPABASE_DB_SSLMODE: ${{ secrets.SUPABASE_DB_SSLMODE }}
+          SUPABASE_DB_USER: ${{ secrets.SUPABASE_DB_USER }}
+          MODELSTUDIO_API_KEY: ${{ secrets.MODELSTUDIO_API_KEY }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          JWT_ALGORITHM: ${{ secrets.JWT_ALGORITHM }}
+          JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
+          JWT_AUDIENCE: ${{ secrets.JWT_AUDIENCE }}
+          TOKEN_SERVICE_URL: ${{ secrets.TOKEN_SERVICE_URL }}
+          TOKEN_API_KEY_1: ${{ secrets.TOKEN_API_KEY_1 }}
+          TOKEN_API_KEY_2: ${{ secrets.TOKEN_API_KEY_2 }}
+          TOKEN_SERVICE_TIMEOUT: ${{ secrets.TOKEN_SERVICE_TIMEOUT }}
+
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE }}
+          port: ${{ secrets.SSH_PORT }}
+          command_timeout: 50m
+          envs: BRANCH,DEBUG,MONGO_DB_NAME,MONGO_URI,SECRET_KEY,GEMINI_API_KEYS,OPENAI_API_KEY,FREEPIK_API_KEY,SUPABASE_DB_HOST,SUPABASE_DB_NAME,SUPABASE_DB_PASSWORD,SUPABASE_DB_PORT,SUPABASE_DB_SSLMODE,SUPABASE_DB_USER,MODELSTUDIO_API_BASE,MODELSTUDIO_API_KEY,JWT_SECRET_KEY,JWT_ALGORITHM,JWT_ISSUER,JWT_AUDIENCE,TOKEN_SERVICE_URL,TOKEN_API_KEY_1,TOKEN_API_KEY_2,TOKEN_SERVICE_TIMEOUT,CORS_ORIGINS,TIME_ZONE,USE_TZ,USE_GPU,GPU_DEVICE_ID
+          script: |
+            WORKSPACE="/home/$USER/AI-photofun-Studio"
+            if [ -d "$WORKSPACE" ]; then
+              cd $WORKSPACE
+              git fetch origin
+              git reset --hard origin/$BRANCH
+              git clean -fd
+            else
+              cd /home/$USER
+              git clone https://github.com/Dev-Web-2005/AI-photofun-Studio.git
+              cd AI-photofun-Studio
+              git checkout $BRANCH
+            fi
 
             echo "Deploying backendAI..."
             cd $WORKSPACE/src/backend/backendAI
@@ -179,6 +208,70 @@ jobs:
             sudo docker-compose ps
             sudo docker-compose logs --tail=30 backendAI
 
+  deploy-frontend:
+    name: "Deploy Frontend"
+    needs: detect-changes
+    if: needs.detect-changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Deploy Frontend via SSH"
+        env:
+          DEPLOY_PATH: "/var/www/html/nmcnpm.lethanhcong.site/"
+          BRANCH: "test"
+
+          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
+          VITE_GOOGLE_REDIRECT_URI: ${{ vars.VITE_GOOGLE_REDIRECT_URI }}
+          VITE_SOCIAL_GATWAY_API_URL: ${{ vars.VITE_SOCIAL_GATWAY_API_URL }}
+          VITE_TURN_CREDENTIAL_1: ${{ vars.VITE_TURN_CREDENTIAL_1 }}
+          VITE_TURN_CREDENTIAL_2: ${{ vars.VITE_TURN_CREDENTIAL_2 }}
+          VITE_TURN_URL_1: ${{ vars.VITE_TURN_URL_1 }}
+          VITE_TURN_URL_2: ${{ vars.VITE_TURN_URL_2 }}
+          VITE_TURN_USERNAME_1: ${{ vars.VITE_TURN_USERNAME_1 }}
+          VITE_TURN_USERNAME_2: ${{ vars.VITE_TURN_USERNAME_2 }}
+          VITE_API_GATEWAY: ${{ vars.VITE_API_GATEWAY }}
+          VITE_AI_API_URL: ${{ vars.VITE_AI_API_URL }}
+          VITE_SOCKET_URL: ${{ vars.VITE_SOCKET_URL }}
+          VITE_SOCKET_COMMENT_URL: ${{ vars.VITE_SOCKET_COMMENT_URL }}
+          VITE_COMMENT_API_URL: ${{ vars.VITE_COMMENT_API_URL }}
+          VITE_PAYMENT_API_URL: ${{ vars.VITE_PAYMENT_API_URL }}
+          VITE_FILE_UPLOAD_URL: ${{ vars.VITE_FILE_UPLOAD_URL }}
+          VITE_CHATBOT_API_URL: ${{ vars.VITE_CHATBOT_API_URL }}
+
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_MEASUREMENT_ID: ${{ secrets.VITE_FIREBASE_MEASUREMENT_ID }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+          VITE_PAYMENT_API_KEY: ${{ secrets.VITE_PAYMENT_API_KEY }}
+          VITE_CHATBOT_BEARER_TOKEN: ${{ secrets.VITE_CHATBOT_BEARER_TOKEN }}
+          VITE_CHATBOT_USER_ID: ${{ secrets.VITE_CHATBOT_USER_ID }}
+          VITE_CHATBOT_X_API_KEY: ${{ secrets.VITE_CHATBOT_X_API_KEY }}
+
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE }}
+          port: ${{ secrets.SSH_PORT }}
+          command_timeout: 50m
+          envs: DEPLOY_PATH,BRANCH,VITE_GOOGLE_CLIENT_ID,VITE_GOOGLE_REDIRECT_URI,VITE_SOCIAL_GATWAY_API_URL,VITE_TURN_CREDENTIAL_1,VITE_TURN_CREDENTIAL_2,VITE_TURN_URL_1,VITE_TURN_URL_2,VITE_TURN_USERNAME_1,VITE_TURN_USERNAME_2,VITE_API_GATEWAY,VITE_AI_API_URL,VITE_FILE_UPLOAD_URL,VITE_SOCKET_URL,VITE_SOCKET_COMMENT_URL,VITE_COMMENT_API_URL,VITE_PAYMENT_API_URL,VITE_CHATBOT_API_URL,VITE_FIREBASE_API_KEY,VITE_FIREBASE_APP_ID,VITE_FIREBASE_AUTH_DOMAIN,VITE_FIREBASE_MEASUREMENT_ID,VITE_FIREBASE_MESSAGING_SENDER_ID,VITE_FIREBASE_PROJECT_ID,VITE_FIREBASE_STORAGE_BUCKET,VITE_PAYMENT_API_KEY,VITE_CHATBOT_BEARER_TOKEN,VITE_CHATBOT_USER_ID,VITE_CHATBOT_X_API_KEY
+          script: |
+            WORKSPACE="/home/$USER/AI-photofun-Studio"
+            if [ -d "$WORKSPACE" ]; then
+              cd $WORKSPACE
+              git fetch origin
+              git reset --hard origin/$BRANCH
+              git clean -fd
+            else
+              cd /home/$USER
+              git clone https://github.com/Dev-Web-2005/AI-photofun-Studio.git
+              cd AI-photofun-Studio
+              git checkout $BRANCH
+            fi
+
+            echo "Deploying frontend..."
             cd $WORKSPACE/src/frontend
             rm -rf dist node_modules/.vite
 
