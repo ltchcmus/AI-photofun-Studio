@@ -177,7 +177,8 @@ const CreateWithAI = () => {
   };
 
   return (
-    <d{/* Premium Feature Modal */}
+    <div className="space-y-6">
+      {/* Premium Feature Modal */}
       <PremiumFeatureModal
         isOpen={showPremiumModal}
         onClose={() => setShowPremiumModal(false)}
@@ -185,7 +186,6 @@ const CreateWithAI = () => {
         isDarkMode={isDarkMode}
       />
 
-      iv className="space-y-6">
       <header
         className={`${
           isDarkMode
