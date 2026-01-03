@@ -11,6 +11,7 @@ import {
   Film,
   Video,
   MessageCircle,
+  Crown,
 } from "lucide-react";
 import PremiumUpgradeCTA from "../components/common/PremiumUpgradeCTA";
 import { useAuthContext } from "../context/AuthContext";
@@ -75,6 +76,7 @@ const CreateWithAI = () => {
       title: "Image to Video",
       description: "Bring still images to life with motion",
       color: "pink",
+      premiumOnly: true,
     },
   ];
 
@@ -114,10 +116,17 @@ const CreateWithAI = () => {
       icon: <Video className="w-6 h-6" />,
       title: "Prompt to Video",
       description: "Generate videos from text",
+      premiumOnly: true,
     },
   ];
 
   const handleSelectTool = (tool) => {
+    // Check if tool requires premium and user is not premium
+    if (tool.premiumOnly && !isPremium) {
+      navigate("/pricing");
+      return;
+    }
+
     if (tool.id === "ai-chat") {
       navigate("/ai-chat");
       return;
@@ -253,7 +262,10 @@ const CreateWithAI = () => {
 
           {/* Featured Tools */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {featuredTools.map((tool, index) => (
+            {featuredTools.map((tool, index) => {
+              const isLocked = tool.premiumOnly && !isPremium;
+              
+              return (
               <button
                 key={tool.id}
                 onClick={() => handleSelectTool(tool)}
@@ -284,6 +296,20 @@ const CreateWithAI = () => {
 
                 {/* Content */}
                 <div className="relative z-10 space-y-4">
+                  {/* Premium Badge */}
+                  {isLocked && (
+                    <div className="absolute -top-2 -right-2 z-20">
+                      <div className={`flex items-center gap-1 px-2.5 py-1 rounded-full ${
+                        isDarkMode
+                          ? "bg-amber-500 text-slate-900"
+                          : "bg-amber-400 text-slate-900"
+                      } shadow-lg text-xs font-semibold`}>
+                        <Crown className="w-3.5 h-3.5" />
+                        Premium
+                      </div>
+                    </div>
+                  )}
+
                   <div
                     className={`relative w-14 h-14 ${
                       isDarkMode
@@ -317,7 +343,7 @@ const CreateWithAI = () => {
                     } group-hover/card:translate-x-2 transition-all duration-300`}
                   >
                     <span className="group-hover/card:font-semibold transition-all">
-                      Get Started
+                      {isLocked ? "Upgrade to Premium" : "Get Started"}
                     </span>
                     <svg
                       className="w-4 h-4 ml-1 group-hover/card:translate-x-1 group-hover/card:scale-110 transition-all duration-300"
@@ -335,7 +361,8 @@ const CreateWithAI = () => {
                   </div>
                 </div>
               </button>
-            ))}
+            );
+            })}
           </div>
 
           {/* Divider */}
@@ -365,17 +392,33 @@ const CreateWithAI = () => {
 
           {/* Other Tools Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {otherTools.map((tool, index) => (
-              <button
+            {otherTools.map((tool, index) => {
+              const isLocked = tool.premiumOnly && !isPremium;
+              
+              return (
+                <button
                 key={tool.id}
                 onClick={() => handleSelectTool(tool)}
-                className={`group/tool ${
+                className={`group/tool relative ${
                   isDarkMode
                     ? "bg-slate-800 border-slate-700 hover:border-slate-500 hover:shadow-xl hover:shadow-slate-900/60"
                     : "bg-white border-gray-200 hover:border-gray-400 hover:shadow-xl hover:shadow-gray-900/10"
                 } border rounded-xl p-4 text-left transition-all duration-300 hover:-translate-y-1 hover:scale-105 active:scale-95 animate-fade-in`}
                 style={{ animationDelay: `${(index + 3) * 50}ms` }}
               >
+                {/* Premium Badge */}
+                {isLocked && (
+                  <div className="absolute -top-1.5 -right-1.5 z-20">
+                    <div className={`flex items-center justify-center w-6 h-6 rounded-full ${
+                      isDarkMode
+                        ? "bg-amber-500 text-slate-900"
+                        : "bg-amber-400 text-slate-900"
+                    } shadow-lg`}>
+                      <Crown className="w-3.5 h-3.5" />
+                    </div>
+                  </div>
+                )}
+
                 <div className="space-y-3">
                   <div
                     className={`relative w-10 h-10 ${
@@ -408,7 +451,8 @@ const CreateWithAI = () => {
                   </div>
                 </div>
               </button>
-            ))}
+              );
+            })}
           </div>
 
           {/* Premium CTA Card - Show to non-premium users */}
