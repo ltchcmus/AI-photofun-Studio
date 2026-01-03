@@ -264,104 +264,106 @@ const CreateWithAI = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {featuredTools.map((tool, index) => {
               const isLocked = tool.premiumOnly && !isPremium;
-              
+
               return (
-              <button
-                key={tool.id}
-                onClick={() => handleSelectTool(tool)}
-                className={`group/card relative ${
-                  isDarkMode
-                    ? "bg-slate-800 border-slate-700 hover:border-slate-400 hover:shadow-2xl hover:shadow-slate-900/60"
-                    : "bg-white border-gray-200 hover:border-gray-900 hover:shadow-2xl hover:shadow-gray-900/20"
-                } border-2 rounded-2xl p-6 text-left transition-all duration-500 overflow-hidden hover:-translate-y-2 hover:scale-[1.03] active:scale-[0.98] animate-fade-in`}
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                {/* Glow effect on hover */}
-                <div
-                  className={`absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 ${
+                <button
+                  key={tool.id}
+                  onClick={() => handleSelectTool(tool)}
+                  className={`group/card relative ${
                     isDarkMode
-                      ? "bg-gradient-to-br from-slate-600/30 via-transparent to-slate-700/30"
-                      : "bg-gradient-to-br from-gray-100/80 via-transparent to-gray-200/80"
-                  }`}
-                />
-
-                {/* Subtle background shape */}
-                <div
-                  className={`absolute top-0 right-0 w-32 h-32 ${
-                    isDarkMode
-                      ? "bg-slate-700/50 group-hover/card:bg-slate-600/60"
-                      : "bg-gray-50 group-hover/card:bg-gray-100"
-                  } rounded-full -mr-16 -mt-16 transition-all duration-500 group-hover/card:scale-150`}
-                ></div>
-
-                {/* Content */}
-                <div className="relative z-10 space-y-4">
-                  {/* Premium Badge */}
-                  {isLocked && (
-                    <div className="absolute -top-2 -right-2 z-20">
-                      <div className={`flex items-center gap-1 px-2.5 py-1 rounded-full ${
-                        isDarkMode
-                          ? "bg-amber-500 text-slate-900"
-                          : "bg-amber-400 text-slate-900"
-                      } shadow-lg text-xs font-semibold`}>
-                        <Crown className="w-3.5 h-3.5" />
-                        Premium
-                      </div>
-                    </div>
-                  )}
-
+                      ? "bg-slate-800 border-slate-700 hover:border-slate-400 hover:shadow-2xl hover:shadow-slate-900/60"
+                      : "bg-white border-gray-200 hover:border-gray-900 hover:shadow-2xl hover:shadow-gray-900/20"
+                  } border-2 rounded-2xl p-6 text-left transition-all duration-500 overflow-hidden hover:-translate-y-2 hover:scale-[1.03] active:scale-[0.98] animate-fade-in`}
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  {/* Glow effect on hover */}
                   <div
-                    className={`relative w-14 h-14 ${
+                    className={`absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 ${
                       isDarkMode
-                        ? "bg-slate-100 text-slate-900"
-                        : "bg-gray-900 text-white"
-                    } rounded-xl flex items-center justify-center group-hover/card:scale-110 group-hover/card:rotate-6 transition-all duration-500 overflow-hidden`}
-                  >
-                    <span className="relative z-10">{tool.icon}</span>
-                    {/* Icon shimmer effect */}
-                    <span className="absolute inset-0 -translate-x-full group-hover/card:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-                  </div>
-                  <div>
-                    <h3
-                      className={`font-bold text-lg mb-1 ${
-                        isDarkMode ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      {tool.title}
-                    </h3>
-                    <p
-                      className={`text-sm ${
-                        isDarkMode ? "text-slate-400" : "text-gray-600"
-                      }`}
-                    >
-                      {tool.description}
-                    </p>
-                  </div>
+                        ? "bg-gradient-to-br from-slate-600/30 via-transparent to-slate-700/30"
+                        : "bg-gradient-to-br from-gray-100/80 via-transparent to-gray-200/80"
+                    }`}
+                  />
+
+                  {/* Subtle background shape */}
                   <div
-                    className={`flex items-center text-xs font-medium ${
-                      isDarkMode ? "text-slate-300" : "text-gray-900"
-                    } group-hover/card:translate-x-2 transition-all duration-300`}
-                  >
-                    <span className="group-hover/card:font-semibold transition-all">
-                      {isLocked ? "Upgrade to Premium" : "Get Started"}
-                    </span>
-                    <svg
-                      className="w-4 h-4 ml-1 group-hover/card:translate-x-1 group-hover/card:scale-110 transition-all duration-300"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
+                    className={`absolute top-0 right-0 w-32 h-32 ${
+                      isDarkMode
+                        ? "bg-slate-700/50 group-hover/card:bg-slate-600/60"
+                        : "bg-gray-50 group-hover/card:bg-gray-100"
+                    } rounded-full -mr-16 -mt-16 transition-all duration-500 group-hover/card:scale-150`}
+                  ></div>
+
+                  {/* Content */}
+                  <div className="relative z-10 space-y-4">
+                    {/* Premium Badge */}
+                    {isLocked && (
+                      <div className="absolute -top-2 -right-2 z-20">
+                        <div
+                          className={`flex items-center gap-1 px-2.5 py-1 rounded-full ${
+                            isDarkMode
+                              ? "bg-amber-500 text-slate-900"
+                              : "bg-amber-400 text-slate-900"
+                          } shadow-lg text-xs font-semibold`}
+                        >
+                          <Crown className="w-3.5 h-3.5" />
+                          Premium
+                        </div>
+                      </div>
+                    )}
+
+                    <div
+                      className={`relative w-14 h-14 ${
+                        isDarkMode
+                          ? "bg-slate-100 text-slate-900"
+                          : "bg-gray-900 text-white"
+                      } rounded-xl flex items-center justify-center group-hover/card:scale-110 group-hover/card:rotate-6 transition-all duration-500 overflow-hidden`}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
+                      <span className="relative z-10">{tool.icon}</span>
+                      {/* Icon shimmer effect */}
+                      <span className="absolute inset-0 -translate-x-full group-hover/card:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                    </div>
+                    <div>
+                      <h3
+                        className={`font-bold text-lg mb-1 ${
+                          isDarkMode ? "text-white" : "text-gray-900"
+                        }`}
+                      >
+                        {tool.title}
+                      </h3>
+                      <p
+                        className={`text-sm ${
+                          isDarkMode ? "text-slate-400" : "text-gray-600"
+                        }`}
+                      >
+                        {tool.description}
+                      </p>
+                    </div>
+                    <div
+                      className={`flex items-center text-xs font-medium ${
+                        isDarkMode ? "text-slate-300" : "text-gray-900"
+                      } group-hover/card:translate-x-2 transition-all duration-300`}
+                    >
+                      <span className="group-hover/card:font-semibold transition-all">
+                        {isLocked ? "Upgrade to Premium" : "Get Started"}
+                      </span>
+                      <svg
+                        className="w-4 h-4 ml-1 group-hover/card:translate-x-1 group-hover/card:scale-110 transition-all duration-300"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </div>
                   </div>
-                </div>
-              </button>
-            );
+                </button>
+              );
             })}
           </div>
 
@@ -394,63 +396,65 @@ const CreateWithAI = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {otherTools.map((tool, index) => {
               const isLocked = tool.premiumOnly && !isPremium;
-              
+
               return (
                 <button
-                key={tool.id}
-                onClick={() => handleSelectTool(tool)}
-                className={`group/tool relative ${
-                  isDarkMode
-                    ? "bg-slate-800 border-slate-700 hover:border-slate-500 hover:shadow-xl hover:shadow-slate-900/60"
-                    : "bg-white border-gray-200 hover:border-gray-400 hover:shadow-xl hover:shadow-gray-900/10"
-                } border rounded-xl p-4 text-left transition-all duration-300 hover:-translate-y-1 hover:scale-105 active:scale-95 animate-fade-in`}
-                style={{ animationDelay: `${(index + 3) * 50}ms` }}
-              >
-                {/* Premium Badge */}
-                {isLocked && (
-                  <div className="absolute -top-1.5 -right-1.5 z-20">
-                    <div className={`flex items-center justify-center w-6 h-6 rounded-full ${
-                      isDarkMode
-                        ? "bg-amber-500 text-slate-900"
-                        : "bg-amber-400 text-slate-900"
-                    } shadow-lg`}>
-                      <Crown className="w-3.5 h-3.5" />
+                  key={tool.id}
+                  onClick={() => handleSelectTool(tool)}
+                  className={`group/tool relative ${
+                    isDarkMode
+                      ? "bg-slate-800 border-slate-700 hover:border-slate-500 hover:shadow-xl hover:shadow-slate-900/60"
+                      : "bg-white border-gray-200 hover:border-gray-400 hover:shadow-xl hover:shadow-gray-900/10"
+                  } border rounded-xl p-4 text-left transition-all duration-300 hover:-translate-y-1 hover:scale-105 active:scale-95 animate-fade-in`}
+                  style={{ animationDelay: `${(index + 3) * 50}ms` }}
+                >
+                  {/* Premium Badge */}
+                  {isLocked && (
+                    <div className="absolute -top-1.5 -right-1.5 z-20">
+                      <div
+                        className={`flex items-center justify-center w-6 h-6 rounded-full ${
+                          isDarkMode
+                            ? "bg-amber-500 text-slate-900"
+                            : "bg-amber-400 text-slate-900"
+                        } shadow-lg`}
+                      >
+                        <Crown className="w-3.5 h-3.5" />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="space-y-3">
+                    <div
+                      className={`relative w-10 h-10 ${
+                        isDarkMode
+                          ? "bg-slate-700 text-slate-300 group-hover/tool:bg-slate-100 group-hover/tool:text-slate-900"
+                          : "bg-gray-100 text-gray-700 group-hover/tool:bg-gray-900 group-hover/tool:text-white"
+                      } rounded-lg flex items-center justify-center transition-all duration-300 group-hover/tool:scale-110 group-hover/tool:rotate-6 overflow-hidden`}
+                    >
+                      <span className="relative z-10">{tool.icon}</span>
+                      {/* Icon glow effect */}
+                      <span className="absolute inset-0 opacity-0 group-hover/tool:opacity-100 transition-opacity duration-300 bg-gradient-to-br from-white/20 to-transparent" />
+                    </div>
+                    <div>
+                      <h4
+                        className={`font-semibold text-sm mb-1 transition-all duration-300 group-hover/tool:font-bold ${
+                          isDarkMode ? "text-white" : "text-gray-900"
+                        }`}
+                      >
+                        {tool.title}
+                      </h4>
+                      <p
+                        className={`text-xs transition-colors duration-300 ${
+                          isDarkMode
+                            ? "text-slate-400 group-hover/tool:text-slate-300"
+                            : "text-gray-500 group-hover/tool:text-gray-600"
+                        } line-clamp-2`}
+                      >
+                        {tool.description}
+                      </p>
                     </div>
                   </div>
-                )}
-
-                <div className="space-y-3">
-                  <div
-                    className={`relative w-10 h-10 ${
-                      isDarkMode
-                        ? "bg-slate-700 text-slate-300 group-hover/tool:bg-slate-100 group-hover/tool:text-slate-900"
-                        : "bg-gray-100 text-gray-700 group-hover/tool:bg-gray-900 group-hover/tool:text-white"
-                    } rounded-lg flex items-center justify-center transition-all duration-300 group-hover/tool:scale-110 group-hover/tool:rotate-6 overflow-hidden`}
-                  >
-                    <span className="relative z-10">{tool.icon}</span>
-                    {/* Icon glow effect */}
-                    <span className="absolute inset-0 opacity-0 group-hover/tool:opacity-100 transition-opacity duration-300 bg-gradient-to-br from-white/20 to-transparent" />
-                  </div>
-                  <div>
-                    <h4
-                      className={`font-semibold text-sm mb-1 transition-all duration-300 group-hover/tool:font-bold ${
-                        isDarkMode ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      {tool.title}
-                    </h4>
-                    <p
-                      className={`text-xs transition-colors duration-300 ${
-                        isDarkMode
-                          ? "text-slate-400 group-hover/tool:text-slate-300"
-                          : "text-gray-500 group-hover/tool:text-gray-600"
-                      } line-clamp-2`}
-                    >
-                      {tool.description}
-                    </p>
-                  </div>
-                </div>
-              </button>
+                </button>
               );
             })}
           </div>
