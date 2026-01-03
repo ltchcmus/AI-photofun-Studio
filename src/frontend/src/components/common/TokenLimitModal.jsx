@@ -111,9 +111,7 @@ const TokenLimitModal = ({ isOpen, onClose, tokensRemaining = 0 }) => {
               {/* Glow effect */}
               <div
                 className={`absolute inset-0 rounded-2xl ${
-                  isOutOfTokens
-                    ? "bg-red-500/20"
-                    : "bg-amber-500/20"
+                  isOutOfTokens ? "bg-red-500/20" : "bg-amber-500/20"
                 } blur-xl opacity-50`}
               />
             </div>

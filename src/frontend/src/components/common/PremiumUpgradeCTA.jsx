@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Crown,
-  Sparkles,
-  Zap,
-  Star,
-  ArrowRight,
-  X,
-  Check,
-} from "lucide-react";
+import { Crown, Sparkles, Zap, Star, ArrowRight, X, Check } from "lucide-react";
 
 /**
  * Premium Upgrade CTA Component
