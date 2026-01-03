@@ -84,7 +84,10 @@ const PremiumFeatureModal = ({ isOpen, onClose, featureName, isDarkMode }) => {
             </div>
             {/* Decorative sparkles */}
             <Sparkles className="w-4 h-4 text-amber-500 absolute -top-1 -right-1 animate-pulse" />
-            <Lock className="w-3 h-3 text-amber-500 absolute -bottom-1 -left-1 animate-pulse" style={{ animationDelay: "500ms" }} />
+            <Lock
+              className="w-3 h-3 text-amber-500 absolute -bottom-1 -left-1 animate-pulse"
+              style={{ animationDelay: "500ms" }}
+            />
           </div>
 
           {/* Text */}
